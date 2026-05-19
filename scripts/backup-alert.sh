@@ -1,0 +1,102 @@
+#!/bin/bash
+###############################################################################
+# backup-alert.sh — Alert if backup failed or issues detected
+###############################################################################
+# Execute: 0 6 * * * /opt/docker-apps/scripts/backup-alert.sh
+# Purpose: Check daily que backup succeeded, send alert si hay problemas
+###############################################################################
+
+set -e
+
+LOG_DIR="/opt/docker-apps/logs"
+BACKUP_DIR="/opt/docker-apps/data/backups/daily"
+ALERT_EMAIL="${ALERT_EMAIL:-ops@example.com}"
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+
+check_backup() {
+  # Verify tar backup from today exists
+  local today=$(date +%Y%m%d)
+  local mysql_file=$(ls -t "$BACKUP_DIR"/mysql_${today}_*.sql 2>/dev/null | head -1)
+  local volume_file=$(ls -t "$BACKUP_DIR"/volumes_${today}_*.tar.gz 2>/dev/null | head -1)
+  
+  local issues=""
+  
+  # Check MySQL backup
+  if [ -z "$mysql_file" ]; then
+    issues+="❌ MySQL backup MISSING for today\n"
+  else
+    local size=$(du -h "$mysql_file" | cut -f1)
+    echo "✅ MySQL backup exists: $size"
+  fi
+  
+  # Check volumes backup
+  if [ -z "$volume_file" ]; then
+    issues+="❌ Volumes backup MISSING for today\n"
+  else
+    local size=$(du -h "$volume_file" | cut -f1)
+    echo "✅ Volumes backup exists: $size"
+  fi
+  
+  # Check backup.log for errors
+  if [ -f "$LOG_DIR/backup.log" ]; then
+    if grep -q "ERROR\|FAILED" "$LOG_DIR/backup.log" | tail -1; then
+      issues+="⚠️  Errors found in backup.log\n"
+    fi
+  fi
+  
+  # If issues, send alert
+  if [ -n "$issues" ]; then
+    echo -e "ALERT: Backup issues detected\n\n$issues" | \
+      mail -s "🚨 NL360 Backup ALERT" "$ALERT_EMAIL"
+    return 1
+  fi
+  
+  return 0
+}
+
+check_s3_sync() {
+  if [ ! -f "/opt/docker-apps/config/s3-backup.conf" ]; then
+    return 0  # S3 not configured
+  fi
+  
+  source /opt/docker-apps/config/s3-backup.conf
+  
+  if [ -f "$LOG_DIR/backup-s3-sync.log" ]; then
+    if grep -q "ERROR\|✅ S3 sync completed" "$LOG_DIR/backup-s3-sync.log" | tail -1 | grep -q ERROR; then
+      echo "❌ S3 sync failed"
+      return 1
+    else
+      echo "✅ S3 sync OK"
+    fi
+  fi
+  return 0
+}
+
+check_disk_space() {
+  # Check if backup dir is > 80% full
+  local usage=$(df /opt/docker-apps | awk 'NR==2 {print $5}' | sed 's/%//')
+  
+  if [ "$usage" -gt 80 ]; then
+    echo "⚠️  Disk usage: ${usage}% (FULL!)"
+    return 1
+  else
+    echo "✅ Disk usage: ${usage}%"
+    return 0
+  fi
+}
+
+echo "=== BACKUP HEALTH CHECK ==="
+echo ""
+
+backup_ok=$(check_backup && echo 1 || echo 0)
+s3_ok=$(check_s3_sync && echo 1 || echo 0)
+disk_ok=$(check_disk_space && echo 1 || echo 0)
+
+echo ""
+if [ "$backup_ok" -eq 1 ] && [ "$s3_ok" -eq 1 ] && [ "$disk_ok" -eq 1 ]; then
+  echo "✅ ALL CHECKS PASSED"
+  exit 0
+else
+  echo "❌ SOME CHECKS FAILED - sent alert to $ALERT_EMAIL"
+  exit 1
+fi

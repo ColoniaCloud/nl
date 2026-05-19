@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #16a34a;
+  --color-secondary: #15803d;
+  --color-accent: #f97316;
+  --font-heading: "Lora";
+  --font-body: "Source Sans 3";
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  background: #fefdfb;
+  color: #1c1917;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading), Georgia, serif;
+}
+
+/* Fresh-specific: organic rounded shapes */
+.fresh-blob {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+/* Wavy section separator */
+.fresh-wave {
+  width: 80px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--color-primary);
+  opacity: 0.4;
+}
+
+/* Soft card hover */
+.fresh-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.fresh-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,0.1);
+}
+
+/* Badge pill */
+.fresh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fef7ed; }
+::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 3px; }

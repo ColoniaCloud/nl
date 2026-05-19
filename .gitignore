@@ -1,0 +1,66 @@
+# === SECRETOS — NUNCA SUBIR ===
+.env
+.env.*
+!.env.example
+config/secrets/
+config/.env.production
+config/.env.local
+infrastructure/config/secrets/
+infrastructure/traefik/acme.json
+letsencrypt/
+cookies.txt
+
+# === DOCUMENTACION CON CREDENCIALES ===
+Agent-Docu/
+
+# === DATOS / VOLUMENES DOCKER ===
+mysql/
+wordpress/
+n8n/
+sites/
+sites-lander/
+uploads/
+filebrowser/
+data/
+
+# === DEPENDENCIAS ===
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# === BUILD ARTIFACTS ===
+dist/
+.next/
+build/
+out/
+*.log
+*.tmp
+
+# === BACKUPS Y ARCHIVOS PESADOS ===
+_backup_*/
+*.tar.gz
+*.sql
+*.sqlite
+*.backup
+*.bak
+docker-compose.yml.bak*
+
+# === IDE Y SISTEMA ===
+.DS_Store
+.vscode/
+vscode_config/
+.cache/
+*.swp
+*.swo
+*~
+
+# === CERTIFICADOS Y CLAVES ===
+.ssh/
+*.pem
+*.pfx
+*.key
+
+# === DOCS TEMPORALES ===
+TEMP-*.md
+WIP-*.md

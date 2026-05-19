@@ -1,0 +1,182 @@
+# Infrastructure composition - refactored for FASE 3
+# Location: infrastructure/docker-compose.yml
+# Note: This is a REFERENCE file. Still run from /opt/docker-apps root
+# Usage: docker compose -f infrastructure/docker-compose.yml up -d
+# OR: migrate paths and use: cd infrastructure && docker compose up -d
+
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - app-network
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CF_API_EMAIL=${CF_API_EMAIL}
+      - CF_API_KEY=${CF_API_KEY}
+    volumes:
+      # NOTE: When migrating, update these paths
+      - ./infrastructure/traefik/traefik.yml:/traefik.yml:ro
+      - ./infrastructure/traefik/acme.json:/acme.json
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.nl360.site`)"
+      - "traefik.http.routers.dashboard.tls.certresolver=myresolver"
+      - "traefik.http.routers.dashboard.service=dashboard@internal"
+
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      # NOTE: When migrating, update these paths
+      - ./infrastructure/volumes/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+      interval: 10s
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: mysql_db
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_TABLE_PREFIX: wp_
+    volumes:
+      # NOTE: When migrating, update these paths
+      - ./infrastructure/volumes/wordpress:/var/www/html
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wordpress.entrypoints=websecure"
+      - "traefik.http.routers.wordpress.rule=Host(`api.nl360.site`)"
+      - "traefik.http.routers.wordpress.tls.certresolver=myresolver"
+      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
+
+  escribitor:
+    image: docker-apps-escritorio:latest
+    container_name: escritorio
+    restart: unless-stopped
+    networks:
+      - app-network
+    build:
+      context: ./applications/escritorio
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql_db
+      - wordpress
+    environment:
+      WP_BASE_URL: ${WP_BASE_URL:-https://api.nl360.site}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://nl360.site}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    volumes:
+      # NOTE: When migrating, update these paths
+      - ./applications/escritorio:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/sites:/opt/docker-apps/sites
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.escritorio.entrypoints=websecure"
+      - "traefik.http.routers.escritorio.rule=Host(`nl360.site`)"
+      - "traefik.http.routers.escritorio.tls.certresolver=myresolver"
+      - "traefik.http.services.escritorio.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      timeout: 5s
+      retries: 5
+      interval: 30s
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    networks:
+      - app-network
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_HOST: automata.nl360.site
+      N8N_PROTOCOL: https
+      WEBHOOK_URL: https://automata.nl360.site/
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD}
+      DB_TYPE: mysql
+      DB_MYSQL_HOST: mysql_db
+      DB_MYSQL_USER: ${MYSQL_USER}
+      DB_MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      DB_MYSQL_DATABASE: n8n
+    volumes:
+      # NOTE: When migrating, update these paths
+      - ./infrastructure/volumes/n8n:/home/node/.n8n
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.rule=Host(`automata.nl360.site`)"
+      - "traefik.http.routers.n8n.tls.certresolver=myresolver"
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    networks:
+      - app-network
+    environment:
+      PMA_HOST: mysql_db
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
+      - "traefik.http.routers.phpmyadmin.rule=Host(`db.nl360.site`)"
+      - "traefik.http.routers.phpmyadmin.tls.certresolver=myresolver"
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+
+networks:
+  app-network:
+    driver: bridge
+
+# MIGRATION NOTES:
+# ===============
+# This is REFERENCE for what the refactored docker-compose looks like
+# Current paths (will stay until FASE 4):
+#   ./mysql → ./infrastructure/volumes/mysql
+#   ./wordpress → ./infrastructure/volumes/wordpress
+#   ./n8n → ./infrastructure/volumes/n8n
+#   ./sites → ./data/sites
+#
+# To activate (FASE 4):
+#   1. Copy current volumes to new locations (rsync, no downtime)
+#   2. Update docker-compose.yml with new paths
+#   3. Perform rolling deployment
+#   4. Verify all services healthy
+#   5. Remove old directories

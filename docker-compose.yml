@@ -1,0 +1,266 @@
+services:
+  # --- TRAEFIK (PROXY) ---
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - DOCKER_CLIENT_API_VERSION=1.44
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL:-admin@nl360.site}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - app-network
+
+  # --- MYSQL ---
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # --- WORDPRESS ---
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      NL360_INTERNAL_SECRET: ${NL360_INTERNAL_SECRET}
+      NL360_FRONTEND_URL: ${NL360_FRONTEND_URL:-https://nl360.site}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      WORDPRESS_CONFIG_EXTRA: |
+        if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $$_SERVER['HTTPS'] = 'on';
+        }
+        if (!empty($$_SERVER['HTTP_X_FORWARDED_HOST'])) {
+            $$_SERVER['HTTP_HOST'] = $$_SERVER['HTTP_X_FORWARDED_HOST'];
+        }
+        define('FORCE_SSL_ADMIN', true);
+    volumes:
+      - ./wordpress:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      # Ruta principal: api.nl360.site + subsitios *.nl360.site
+      - "traefik.http.routers.wordpress.rule=Host(`api.nl360.site`) || HostRegexp(`{subdomain:[a-z0-9-]+}.nl360.site`)"
+      - "traefik.http.routers.wordpress.entrypoints=websecure"
+      - "traefik.http.routers.wordpress.tls.certresolver=myresolver"
+      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
+      - "traefik.http.routers.wordpress.priority=10"
+      # Ruta WP-Admin en nl360.site: mayor prioridad que Next.js (30)
+      - "traefik.http.routers.wp-admin.rule=Host(`nl360.site`) && (PathPrefix(`/wp-admin`) || PathPrefix(`/wp-login.php`) || PathPrefix(`/wp-cron.php`) || PathPrefix(`/wp-json`))"
+      - "traefik.http.routers.wp-admin.entrypoints=websecure"
+      - "traefik.http.routers.wp-admin.tls.certresolver=myresolver"
+      - "traefik.http.routers.wp-admin.service=wordpress"
+      - "traefik.http.routers.wp-admin.priority=50"
+      # Bloquear xmlrpc.php y wp-signup.php en todos los dominios (prioridad máxima)
+      - "traefik.http.middlewares.block-xmlrpc.ipwhitelist.sourcerange=127.0.0.1/32"
+      - "traefik.http.routers.block-xmlrpc.rule=Path(`/xmlrpc.php`) || Path(`/wp-signup.php`) || Path(`/wp-activate.php`)"
+      - "traefik.http.routers.block-xmlrpc.entrypoints=websecure"
+      - "traefik.http.routers.block-xmlrpc.middlewares=block-xmlrpc"
+      - "traefik.http.routers.block-xmlrpc.service=wordpress"
+      - "traefik.http.routers.block-xmlrpc.tls.certresolver=myresolver"
+      - "traefik.http.routers.block-xmlrpc.priority=100"
+      # Rate limiting en wp-login.php: máx 10 intentos/minuto por IP
+      - "traefik.http.middlewares.wp-login-ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.wp-login-ratelimit.ratelimit.burst=15"
+      - "traefik.http.middlewares.wp-login-ratelimit.ratelimit.period=1m"
+      - "traefik.http.routers.wp-login-rl.rule=Path(`/wp-login.php`)"
+      - "traefik.http.routers.wp-login-rl.entrypoints=websecure"
+      - "traefik.http.routers.wp-login-rl.middlewares=wp-login-ratelimit"
+      - "traefik.http.routers.wp-login-rl.service=wordpress"
+      - "traefik.http.routers.wp-login-rl.tls.certresolver=myresolver"
+      - "traefik.http.routers.wp-login-rl.priority=90"
+
+  # --- PHPMYADMIN ---
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_ABSOLUTE_URI: https://db.nl360.site/
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin.rule=Host(`db.nl360.site`)"
+      - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
+      - "traefik.http.routers.phpmyadmin.tls.certresolver=myresolver"
+      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
+      - "traefik.http.routers.phpmyadmin.priority=20"
+
+  # --- N8N ---
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - N8N_HOST=automata.nl360.site
+      - NL360_WEBHOOK_SECRET=${NL360_WEBHOOK_SECRET}
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://automata.nl360.site/
+      - GENERIC_TIMEZONE=America/Mexico_City
+      - N8N_EDITOR_BASE_URL=https://automata.nl360.site/
+      - N8N_ENV_ALLOWLIST=NL360_WEBHOOK_SECRET,OPENAI_API_KEY
+
+    volumes:
+      - ./n8n:/home/node/.n8n
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.n8n.rule=Host(`automata.nl360.site`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.tls.certresolver=myresolver"
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+      - "traefik.http.routers.n8n.priority=20"
+
+  # --- VS CODE SERVER ---
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    restart: always
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Montevideo
+      # 👇 Recomendación: mover a .env (pero lo dejo como lo tenías)
+      - PASSWORD=${CODESERVER_PASSWORD}
+      - SUDO_PASSWORD=${CODESERVER_SUDO_PASSWORD}
+    volumes:
+      - /opt/docker-apps/vscode_config:/config
+      - /opt/docker-apps:/config/workspace
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vscode.rule=Host(`files.nl360.site`)"
+      - "traefik.http.routers.vscode.entrypoints=websecure"
+      - "traefik.http.routers.vscode.tls.certresolver=myresolver"
+      - "traefik.http.services.vscode.loadbalancer.server.port=8443"
+      - "traefik.http.routers.vscode.priority=20"
+
+  # ✅ NUEVO: Next.js (escritorio)
+  escritorio:
+    env_file:
+      - ./.env
+      - ./.env.local
+      - ./escritorio/.env.local
+    build:
+      context: ./escritorio
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_VOICE_FALLBACK=1
+    container_name: escritorio
+    restart: always
+    environment:
+      - N8N_WEBHOOK_CREATE_SITE_URL=https://automata.nl360.site/webhook/create-site-trigger
+      - WP_URL=https://api.nl360.site
+      - AUTH_COOKIE_NAME=nl360_jwt
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - VENICE_API_KEY=${VENICE_API_KEY}
+      - WP_BASE_URL=${WP_URL}
+      - NL360_JWT_COOKIE_NAME=${AUTH_COOKIE_NAME}
+      - NL360_INTERNAL_SECRET=${NL360_INTERNAL_SECRET}
+      - MYSQL_HOST=mysql_db
+      - MYSQL_PORT=3306
+      - GOOGLE_PLACES_API_KEY=${GOOGLE_PLACES_API_KEY}
+      - FORGE_DEPLOYER_PRIVATE_KEY=${FORGE_DEPLOYER_PRIVATE_KEY}
+      - FORGE_DEPLOYER_ADDRESS=${FORGE_DEPLOYER_ADDRESS}
+      - ETHERSCAN_API_KEY=${ETHERSCAN_API_KEY}
+      - POLYGONSCAN_API_KEY=${POLYGONSCAN_API_KEY}
+      - BASESCAN_API_KEY=${BASESCAN_API_KEY}
+      - ARBISCAN_API_KEY=${ARBISCAN_API_KEY}
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/docker-apps/sites:/opt/docker-apps/sites
+      - /opt/docker-apps/scripts:/opt/docker-apps/scripts
+      - /opt/docker-apps/nubia-templates:/opt/docker-apps/nubia-templates:ro
+
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.escritorio.rule=Host(`nl360.site`) || Host(`www.nl360.site`)"
+      - "traefik.http.routers.escritorio.entrypoints=websecure"
+      - "traefik.http.routers.escritorio.tls.certresolver=myresolver"
+      # Muy importante: mayor que 10 para ganarle al catch-all de WP
+      - "traefik.http.routers.escritorio.priority=30"
+      - "traefik.http.services.escritorio.loadbalancer.server.port=3000"
+
+networks:
+  app-network:
+    driver: bridge

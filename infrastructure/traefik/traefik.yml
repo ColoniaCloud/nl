@@ -1,0 +1,92 @@
+# Traefik Static Configuration (v2.11)
+# Location: infrastructure/traefik/traefik.yml
+# Reference: https://doc.traefik.io/traefik/
+
+global:
+  sendAnonymousUsage: false
+  checkNewVersion: false
+
+# API Dashboard
+api:
+  insecure: false  # Require HTTPS for dashboard
+  dashboard: true
+  debug: false
+
+# Entrypoints
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+          permanent: true
+
+  websecure:
+    address: :443
+    http:
+      tls:
+        certResolver: myresolver
+
+# Providers
+providers:
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    exposedByDefault: false
+    network: app-network
+    swarmMode: false
+  
+  file:
+    # Future: external config files
+    directory: ./infrastructure/traefik/dynamic/
+    watch: true
+
+# ACME - Let's Encrypt Certificates
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: ${ACME_EMAIL:-admin@nl360.site}
+      storage: ./infrastructure/traefik/acme.json
+      httpChallenge:
+        entryPoint: web
+      # Optional: Cloudflare DNS challenge (faster)
+      # dnsChallenge:
+      #   provider: cloudflare
+      #   resolvers:
+      #     - 1.1.1.1:53
+      #     - 1.0.0.1:53
+
+# Logging
+log:
+  level: INFO
+  format: json
+  filePath: ./logs/traefik.log
+
+# Access Logs
+accessLog:
+  format: json
+  filePath: ./logs/access.log
+  fields:
+    defaultMode: keep
+    names:
+      ClientUsername: drop
+    headers:
+      defaultMode: drop
+      names:
+        User-Agent: keep
+        Authorization: drop
+
+# Metrics (optional - Prometheus)
+metrics:
+  prometheus:
+    entryPoint: metrics
+    addEntryPointsLabels: true
+    addServicesLabels: true
+
+metrics:
+  prometheus: {}
+
+# Experimental Features
+experimental:
+  plugins: {}

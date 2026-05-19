@@ -1,0 +1,26 @@
+{
+  "storeName": "Mi Tienda Spark",
+  "tagline": "Tecnologia al alcance de todos",
+  "apiUrl": "https://nl360.site",
+  "subdomain": "demo-spark",
+  "colors": {
+    "primary": "#0ea5e9",
+    "secondary": "#0284c7",
+    "accent": "#f43f5e"
+  },
+  "fonts": {
+    "heading": "Space Grotesk",
+    "body": "DM Sans"
+  },
+  "images": {
+    "hero": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80",
+    "collection": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1200&q=80",
+    "banner": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&q=80"
+  },
+  "payments": {
+    "bankTransfer": { "enabled": false },
+    "mercadopago": { "enabled": false },
+    "coinbase": { "enabled": false }
+  },
+  "contact": {}
+}

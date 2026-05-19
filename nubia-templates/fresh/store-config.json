@@ -1,0 +1,26 @@
+{
+  "storeName": "Mi Tienda Fresh",
+  "tagline": "Productos naturales, sabor autentico",
+  "apiUrl": "https://nl360.site",
+  "subdomain": "demo-fresh",
+  "colors": {
+    "primary": "#16a34a",
+    "secondary": "#15803d",
+    "accent": "#f97316"
+  },
+  "fonts": {
+    "heading": "Lora",
+    "body": "Source Sans 3"
+  },
+  "images": {
+    "hero": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600&q=80",
+    "collection": "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1200&q=80",
+    "banner": "https://images.unsplash.com/photo-1506484381205-f7945b68db56?w=1200&q=80"
+  },
+  "payments": {
+    "bankTransfer": { "enabled": false },
+    "mercadopago": { "enabled": false },
+    "coinbase": { "enabled": false }
+  },
+  "contact": {}
+}

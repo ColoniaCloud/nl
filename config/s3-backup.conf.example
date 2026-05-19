@@ -1,0 +1,48 @@
+# AWS S3 Backup Configuration
+# Location: /opt/docker-apps/config/s3-backup.conf
+# 
+# Este archivo contiene credenciales — NO commitear a git
+# Protegido: 600 permisos recomendados
+#
+# Crear bucket S3:
+# aws s3 mb s3://nl360-backups-prod --region us-east-1
+#
+# ⚠️  TODO: Reemplaza los valores con los reales de tu cuenta AWS
+
+# ─── AWS Credentials ────────────────────────────────────────────────────────
+# Obtener: https://console.aws.amazon.com/iam/
+AWS_ACCESS_KEY_ID="AKIAIOSFODNN7EXAMPLE"
+AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+AWS_REGION="us-east-1"
+
+# ─── S3 Backup Bucket ──────────────────────────────────────────────────────
+S3_BUCKET="nl360-backups-prod"
+S3_PATH_PREFIX="backups"
+
+# ─── Storage Class (optimization) ──────────────────────────────────────────
+# Opciones:
+#   - STANDARD (default, cost higher)
+#   - STANDARD_IA (infrequent access, cheaper)
+#   - GLACIER_IR (instant retrieval archive, cheapest + fast)
+#
+# Recomendación: GLACIER_IR para backups (restore en minutos, costo bajo)
+S3_STORAGE_CLASS="GLACIER_IR"
+
+# ─── Retention Policy ──────────────────────────────────────────────────────
+# Cuánto tiempo guardar backups en S3 (días)
+# 90 = 3 meses, 365 = 1 año
+S3_RETENTION_DAYS="90"
+
+# ─── Encryption ────────────────────────────────────────────────────────────
+# Habilitar Server-Side Encryption (SSE-S3)
+# 0 = disabled, 1 = enabled
+S3_ENCRYPTION_ENABLED="1"
+
+# ─── Notifications ────────────────────────────────────────────────────────
+# Email para alertas de backup failure (opcional)
+ALERT_EMAIL="ops@example.com"
+
+# ─── Maximum Retry ────────────────────────────────────────────────────────
+# Si upload fail, intentar X veces
+MAX_RETRY="3"
+RETRY_WAIT_SECONDS="60"
