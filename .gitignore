@@ -21,7 +21,12 @@ sites/
 sites-lander/
 uploads/
 filebrowser/
-data/
+/data/
+# data/ anclado a la raíz (solo ignora /opt/docker-apps/data/ — backups MySQL).
+# escritorio/data/ queda trackeable; ignoramos solo lo que no debe ir al repo:
+escritorio/data/conversations.json
+# Curriculums y prompts de MentorIA sí van al repo (son datos de aplicación,
+# no volúmenes Docker).
 
 # === DEPENDENCIAS ===
 node_modules/

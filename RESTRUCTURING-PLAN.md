@@ -338,6 +338,14 @@ La reorganización de directorios (`mysql/` → `infrastructure/volumes/mysql/`,
 
 ---
 
+## 🗒️ Deuda Técnica Documentada
+
+Artefactos huérfanos o inconsistencias detectadas durante refactors, pendientes de resolución.
+
+- [ ] Investigar y eliminar (o conectar) `escritorio/data/conversations.json` — archivo huérfano de 3 bytes (`{}`) sin referencias en el código. Probablemente artefacto de un prototipo anterior.
+
+---
+
 ## 🚀 Inicio de FASE 1: Gestión de Secretos
 
 Ejecutaré ahora la FASE 1 completa (sin modificar servicios en prod).

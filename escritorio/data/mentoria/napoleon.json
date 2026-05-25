@@ -1,0 +1,192 @@
+{
+  "id": "NAPOLEON",
+  "promptFile": "napoleon.md",
+  "title": "Napoleon",
+  "subtitle": "Las Leyes del Exito",
+  "description": "Los principios que han guiado a los grandes: una filosofia del exito documentada durante 20 anos de investigacion con Carnegie, Ford, Rockefeller y Edison.",
+  "icon": "Crown",
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-6",
+  "persona": {
+    "voice": "Mentor firme, inspirador y calido. Didactico y directo, como un maestro que ya recorrio el camino.",
+    "style": "Tuteo natural, espanol, tono motivador. Evoca las Leyes como conocimiento propio, no como citas externas."
+  },
+  "totalLessons": 7,
+  "welcome": {
+    "content": "Bienvenido. Soy **Napoleon**, tu mentor en los principios del exito.\n\nExiste una filosofia del exito que ha transformado a miles de personas — principios documentados despues de decadas de investigacion con los hombres mas exitosos del siglo XX: Carnegie, Ford, Rockefeller, Edison.\n\nRecorreremos **7 modulos** juntos. No como teoria — como un plan de accion real para tu vida.\n\n¿Estas listo para empezar?",
+    "options": ["Empezar por el Modulo 1", "Ver el plan completo", "Tengo una pregunta primero"]
+  },
+  "completionMessage": "Has completado los 7 modulos de Las Leyes del Exito. Ahora llevas contigo los principios que guiaron a los grandes. El verdadero trabajo comienza cuando sales de aqui: aplicarlos a diario, hasta que sean tu segunda naturaleza.",
+  "lessons": [
+    {
+      "id": 1,
+      "slug": "proposito-definido",
+      "title": "El Poder del Proposito Definido",
+      "objectives": [
+        "Articular una vision clara de lo que realmente quieres",
+        "Escribir tu Declaracion de Proposito",
+        "Identificar el precio que estas dispuesto a pagar"
+      ],
+      "keyConcepts": [
+        "Proposito definido vs. deseo vago",
+        "La fe como combustible del proposito",
+        "El deseo ardiente que se convierte en obsesion",
+        "El proposito debe ser especifico y medible"
+      ],
+      "sourceContext": "El primer principio es tener un proposito claro, especifico y escrito. Sin proposito definido, una persona es como un barco sin timon. Toda gran fortuna o logro comenzo con un deseo ardiente que se volvio obsesion mental. No basta con 'querer ser rico' o 'querer tener exito'. Debes especificar: cuanto, cuando, que estas dispuesto a dar a cambio y que plan concreto seguiras. La declaracion de proposito escrita, leida en voz alta cada manana y cada noche, impregna el subconsciente que luego trabaja 24 horas en tu favor.",
+      "advanceCriteria": [
+        "El alumno tiene claridad sobre QUE quiere (especifico)",
+        "Puede nombrar CUANDO lo quiere (plazo concreto)",
+        "Reconoce QUE esta dispuesto a dar a cambio",
+        "Ha esbozado o escrito una declaracion de proposito"
+      ],
+      "deliverable": "Una declaracion escrita de proposito con objetivo, plazo, precio y plan",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 2,
+      "slug": "arquitectura-confianza",
+      "title": "Arquitectura de la Confianza",
+      "objectives": [
+        "Identificar tus creencias limitantes y su origen",
+        "Aprender a reprogramar el subconsciente via autosugestion",
+        "Enfrentar y nombrar tus fantasmas del miedo"
+      ],
+      "keyConcepts": [
+        "Los 6 fantasmas del miedo: pobreza, critica, enfermedad, perder el amor, vejez, muerte",
+        "Autosugestion positiva repetida",
+        "El subconsciente como tierra fertil — crece lo que siembras",
+        "Creencias limitantes disfrazadas de 'realismo'"
+      ],
+      "sourceContext": "El subconsciente acepta cualquier pensamiento que le presentes con conviccion y emocion, y lo convierte en realidad. Los 6 fantasmas del miedo — pobreza, critica, enfermedad, perdida del amor, vejez y muerte — son los bloqueos principales. La autosugestion es la tecnica de influenciar el propio subconsciente mediante afirmaciones emocionales repetidas. Leer tu declaracion de proposito con sentimiento, no solo con la voz, graba la meta en el subconsciente.",
+      "advanceCriteria": [
+        "Identifico al menos 2 creencias limitantes que lo frenan",
+        "Nombro al menos 1 de los 6 fantasmas del miedo que lo afecta",
+        "Formulo al menos 1 afirmacion positiva para repetir diariamente"
+      ],
+      "deliverable": "Lista de creencias limitantes + afirmaciones de reemplazo",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 3,
+      "slug": "mente-maestra",
+      "title": "La Dinamica de la Mente Maestra",
+      "objectives": [
+        "Entender el concepto de alianza estrategica",
+        "Identificar a 2-3 personas que podrian formar parte de tu Mente Maestra",
+        "Definir un plan de reuniones periodicas"
+      ],
+      "keyConcepts": [
+        "Mente Maestra: alianza de mentes en perfecta armonia hacia un objetivo comun",
+        "Sinergia: el grupo genera mas que la suma de sus partes",
+        "Dar valor antes de pedir — reciprocidad genuina",
+        "Liderazgo dentro del grupo"
+      ],
+      "sourceContext": "Ningun hombre logra el exito sin la cooperacion de otros. La Mente Maestra es la coordinacion de conocimientos y esfuerzos, en espiritu de armonia, entre dos o mas personas con un proposito definido. Andrew Carnegie atribuyo su fortuna a su grupo de 50 hombres. El grupo genera una 'tercera mente' — una inteligencia combinada superior. No se trata de networking superficial: es compromiso mutuo, reuniones periodicas, objetivos compartidos.",
+      "advanceCriteria": [
+        "Identifica al menos 2 candidatos para su Mente Maestra (nombres o perfiles)",
+        "Entiende que debe APORTAR valor al grupo, no solo recibir",
+        "Define frecuencia de reuniones (semanal, quincenal, mensual)"
+      ],
+      "deliverable": "Lista de candidatos a Mente Maestra + cadencia propuesta",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 4,
+      "slug": "disciplina-financiera",
+      "title": "Disciplina Financiera",
+      "objectives": [
+        "Adoptar el habito de ahorrar al menos 10% de cada ingreso",
+        "Entender la diferencia entre activos y pasivos",
+        "Disenar un plan financiero simple de 12 meses"
+      ],
+      "keyConcepts": [
+        "Pagate a ti primero — 10% minimo antes de cualquier gasto",
+        "El ahorro como semilla que se convierte en inversion",
+        "Inversion inteligente: formacion, activos productivos",
+        "Libertad financiera = ingresos pasivos > gastos"
+      ],
+      "sourceContext": "El habito de ahorrar es el primer peldano de la libertad financiera. Quien gasta todo lo que gana vive en esclavitud, sin importar su salario. La regla es simple: el 10% de cada ingreso se ahorra automaticamente, antes de pagar cualquier deuda o gasto. Ese capital luego se invierte en activos que generen mas ingresos: educacion, negocios propios, instrumentos financieros. El objetivo final es que los ingresos pasivos cubran todos los gastos — alli comienza la verdadera libertad.",
+      "advanceCriteria": [
+        "Se compromete a ahorrar al menos 10% de sus proximos ingresos",
+        "Distingue gastos necesarios de gastos evitables",
+        "Identifica al menos 1 destino futuro de inversion (formacion, activo, negocio)"
+      ],
+      "deliverable": "Plan de ahorro + destino de inversion",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 5,
+      "slug": "liderazgo-iniciativa",
+      "title": "Liderazgo e Iniciativa",
+      "objectives": [
+        "Conocer los 11 atributos del lider",
+        "Autoevaluarse en cada uno",
+        "Elegir 2-3 atributos a fortalecer este trimestre"
+      ],
+      "keyConcepts": [
+        "Los 11 atributos: coraje valiente, autocontrol, sentido de justicia, decision, plan definido, habito de hacer mas de lo esperado, personalidad agradable, simpatia y comprension, dominio del detalle, voluntad de asumir responsabilidad, cooperacion",
+        "La iniciativa: hacer lo correcto sin que nadie te lo pida",
+        "El segundo kilometro: hacer mas de lo que se espera de ti",
+        "Lideres por accidente vs. lideres por diseno"
+      ],
+      "sourceContext": "El liderazgo no es un titulo — es un comportamiento. Existen 11 atributos que todo lider posee en algun grado. Los grandes lideres no esperaron a ser elegidos: tomaron la iniciativa. El habito de hacer mas de lo esperado (el segundo kilometro) es lo que diferencia a un empleado de un lider en formacion. Cuando haces mas de lo que te pagan, el mundo eventualmente te paga mas de lo que haces.",
+      "advanceCriteria": [
+        "Se autoevalua honestamente en al menos 5 de los 11 atributos",
+        "Identifica 2-3 areas concretas para fortalecer",
+        "Define una accion concreta de 'segundo kilometro' para esta semana"
+      ],
+      "deliverable": "Autoevaluacion + plan de fortalecimiento trimestral",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 6,
+      "slug": "concentracion",
+      "title": "El Arte de la Concentracion",
+      "objectives": [
+        "Entender el costo del multitasking",
+        "Disenar bloques de trabajo profundo de 90 minutos",
+        "Aplicar una rutina semanal de enfoque"
+      ],
+      "keyConcepts": [
+        "Concentracion: foco total en una sola cosa a la vez",
+        "El multitasking como ilusion — reduce productividad y calidad",
+        "Trabajo profundo vs. trabajo superficial",
+        "Ritual de entrada al trabajo profundo",
+        "Gestion de interrupciones digitales"
+      ],
+      "sourceContext": "La capacidad de concentrar la atencion en un solo objetivo, sin distraerse, es la herramienta mas poderosa de todo profesional. El multitasking es una ilusion — el cerebro alterna tareas y paga un costo cognitivo en cada cambio. Los grandes trabajadores se entrenaron para entrar en estado de concentracion profunda por bloques de 60 a 90 minutos, sin interrupciones. La clave no es la fuerza de voluntad — es disenar el ambiente: apagar notificaciones, establecer horario sagrado, tener una lista clara de 1-3 prioridades diarias.",
+      "advanceCriteria": [
+        "Define un bloque diario (o al menos 3 veces por semana) de trabajo profundo sin distracciones",
+        "Identifica y neutraliza sus distracciones principales",
+        "Establece 1-3 prioridades claras para cada jornada"
+      ],
+      "deliverable": "Ritual diario de concentracion escrito",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 7,
+      "slug": "etica-regla-de-oro",
+      "title": "Etica y Relaciones Humanas (Regla de Oro)",
+      "objectives": [
+        "Entender que la integridad es estrategia de largo plazo",
+        "Aplicar la Regla de Oro en decisiones cotidianas",
+        "Construir un codigo personal de conducta"
+      ],
+      "keyConcepts": [
+        "Regla de Oro: trata a los demas como quieres ser tratado",
+        "La reputacion se construye en decadas y se pierde en un minuto",
+        "Ganar-ganar como unica ecuacion sostenible",
+        "Etica profesional y personal no son dos cosas — son una"
+      ],
+      "sourceContext": "El exito sin etica es un castillo de arena. La Regla de Oro no es un consejo moral — es una ecuacion matematica: lo que siembras en otros vuelve a ti, multiplicado. Quien trampea, enga~na o explota a otros cosecha desconfianza, conflicto y ruina eventual. Quien aplica la Regla de Oro construye una red de reciprocidad que lo sostiene en las crisis. El liderazgo etico es tambien el unico liderazgo verdadero — los demas tipos son autoridad temporal que tarde o temprano se derrumba.",
+      "advanceCriteria": [
+        "Puede dar al menos 1 ejemplo concreto de aplicacion en su vida",
+        "Identifica al menos 1 area donde aun no aplica la Regla de Oro completamente",
+        "Esboza su propio codigo personal de conducta en 3-5 puntos"
+      ],
+      "deliverable": "Codigo personal de conducta + plan de cierre del curso",
+      "estimatedTurns": 3
+    }
+  ]
+}
