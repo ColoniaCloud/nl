@@ -343,6 +343,15 @@ La reorganización de directorios (`mysql/` → `infrastructure/volumes/mysql/`,
 Artefactos huérfanos o inconsistencias detectadas durante refactors, pendientes de resolución.
 
 - [ ] Investigar y eliminar (o conectar) `escritorio/data/conversations.json` — archivo huérfano de 3 bytes (`{}`) sin referencias en el código. Probablemente artefacto de un prototipo anterior.
+- [ ] Resolver dead data: `persona.voice` y `persona.style` en los JSONs de agentes ya no son leídos por `buildSystemPrompt` (su contenido se extrajo a `data/mentoria/prompts/*.md` en el refactor de Fase 3). Decidir si se eliminan de los JSONs y de la interface `Curriculum`, o si se conservan para uso futuro (UI, exports, etc.). Verificar antes de eliminar que ningún componente de UI los consume.
+
+---
+
+## 📐 Convenciones de Arquitectura
+
+### Archivos de identidad en `data/mentoria/prompts/`
+
+Los archivos `.md` en este directorio contienen **únicamente** identidad del agente y reglas de conducta. **No deben contener** metadata de UI como `subtitle`, `title`, `icon`, ni nombres de variantes/planes. La UI ya conoce esos datos desde el JSON; el modelo solo necesita saber quién es y cómo hablar.
 
 ---
 
