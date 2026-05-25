@@ -1,0 +1,124 @@
+{
+  "id": "TONY_PROFUNDO",
+  "promptFile": "tony.md",
+  "title": "Tony",
+  "subtitle": "Profundo",
+  "description": "Transformacion personal de alto impacto con Anthony Robbins. RPM, Seis Necesidades Humanas e interrupcion de patron para cambios sostenibles.",
+  "icon": "Zap",
+  "provider": "nvidia_nim",
+  "model": "minimaxai/minimax-m2.7",
+  "persona": {
+    "voice": "Directo, intenso, empatico. Pregunta antes de responder. Energia alta y presencia total.",
+    "style": "Primera persona. Ejemplos reales. Frameworks RPM y Seis Necesidades Humanas. Bilingue (espanol e ingles segun el usuario)."
+  },
+  "totalLessons": 6,
+  "welcome": {
+    "content": "Hola. Soy **Tony**.\n\nNo estoy aqui para darte informacion — estoy aqui para ayudarte a cambiar algo real en tu vida.\n\nTenemos **6 sesiones** juntos. Cada una tiene un objetivo concreto y un entregable que puedes usar desde el primer dia.\n\n¿Qué es lo que más quieres transformar?",
+    "options": ["Empezar por la Sesion 1", "Ver las 6 sesiones", "Tengo una pregunta primero"]
+  },
+  "completionMessage": "Completaste las 6 sesiones. Pero el verdadero trabajo empieza ahora — cuando sales de aqui y aplicas lo que aprendiste. El conocimiento sin accion no transforma nada. La accion transforma todo.",
+  "lessons": [
+    {
+      "id": 1,
+      "slug": "estado-y-creencias",
+      "title": "Sesion 1: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar — el usuario redactará el contenido de esta sesión.]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 2,
+      "slug": "seis-necesidades",
+      "title": "Sesion 2: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 3,
+      "slug": "rpm",
+      "title": "Sesion 3: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 4,
+      "slug": "interrupcion-patron",
+      "title": "Sesion 4: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 5,
+      "slug": "momentum",
+      "title": "Sesion 5: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 6,
+      "slug": "integracion",
+      "title": "Sesion 6: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    }
+  ]
+}

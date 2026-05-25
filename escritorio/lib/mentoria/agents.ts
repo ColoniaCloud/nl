@@ -69,6 +69,8 @@ const AGENTS: Array<{ id: string; file: string }> = [
   { id: "NAPOLEON", file: "napoleon.json" },
   { id: "NEVILLE_DISRUPTIVO_1", file: "neville-disruptivo-1.json" },
   { id: "NEVILLE_DISRUPTIVO_2", file: "neville-disruptivo-2.json" },
+  { id: "TONY_PROFUNDO", file: "tony-profundo.json" },
+  { id: "TONY_DISRUPTIVO", file: "tony-disruptivo.json" },
 ];
 
 const DATA_DIR = path.join(process.cwd(), "data", "mentoria");
