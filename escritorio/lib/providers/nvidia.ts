@@ -97,6 +97,13 @@ export const nvidiaProvider: Provider = {
 
     const reader = res.body.getReader();
     let full = "";
+    // 90s timeout waiting for the first chunk — protects against NVIDIA NIM cold start.
+    // Resets once the first content token arrives; the rest of the stream is unlimited.
+    const FIRST_CHUNK_TIMEOUT_MS = 90_000;
+    let firstChunkReceived = false;
+    let coldStartTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+      if (!firstChunkReceived) reader.cancel();
+    }, FIRST_CHUNK_TIMEOUT_MS);
     try {
       for await (const data of parseSSE(reader)) {
         if (data === "[DONE]") break;
@@ -104,6 +111,10 @@ export const nvidiaProvider: Provider = {
           const obj = JSON.parse(data);
           const delta = obj?.choices?.[0]?.delta?.content;
           if (typeof delta === "string" && delta.length > 0) {
+            if (!firstChunkReceived) {
+              firstChunkReceived = true;
+              if (coldStartTimer) { clearTimeout(coldStartTimer); coldStartTimer = null; }
+            }
             full += delta;
             yield { type: "delta", text: delta };
           }
@@ -111,8 +122,15 @@ export const nvidiaProvider: Provider = {
           // ignore malformed chunk
         }
       }
+      if (!firstChunkReceived) {
+        throw new ProviderError(
+          "NVIDIA NIM tardó más de 90s en responder (posible cold start). Reintentá.",
+          "timeout"
+        );
+      }
       yield { type: "done", fullText: full };
     } finally {
+      if (coldStartTimer) clearTimeout(coldStartTimer);
       try {
         reader.releaseLock();
       } catch {}

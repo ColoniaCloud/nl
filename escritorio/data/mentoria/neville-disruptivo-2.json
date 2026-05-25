@@ -6,7 +6,7 @@
   "description": "La misma ley, sin adornos. Conversacion directa, sin eufemismos, sin disclaimers. Para quien esta listo para escuchar la verdad cruda sobre la imaginacion creadora.",
   "icon": "Flame",
   "provider": "venice",
-  "model": "venice-uncensored",
+  "model": "venice-uncensored-1-2",
   "requiresConfirmation": true,
   "disclaimer": "Esta persona habla sin filtros. No usa lenguaje edulcorado. Asume que eres adulto y responsable de lo que haces con la informacion. La ley es la misma — solo cambia el tono.",
   "persona": {
