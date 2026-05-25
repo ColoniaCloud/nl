@@ -43,6 +43,8 @@ export interface Curriculum {
   };
   completionMessage: string;
   lessons: Lesson[];
+  promptFile: string;
+  resolvedSystemPrompt?: string; // runtime — populated by getAgent(), not in JSON
 }
 
 export interface AgentSummary {
@@ -91,6 +93,11 @@ export async function getAgent(id: string): Promise<Curriculum | null> {
   try {
     const raw = await fs.readFile(path.join(DATA_DIR, entry.file), "utf8");
     const parsed = JSON.parse(raw) as Curriculum;
+    const promptRaw = await fs.readFile(
+      path.join(DATA_DIR, "prompts", parsed.promptFile),
+      "utf8"
+    );
+    parsed.resolvedSystemPrompt = promptRaw.trim();
     cache.set(id, parsed);
     return parsed;
   } catch (e) {
@@ -138,19 +145,7 @@ export function buildSystemPrompt(
 
   const parts: string[] = [];
 
-  parts.push(`Eres ${agent.title}${agent.subtitle ? ` (${agent.subtitle})` : ""}, un subagente especializado del sistema MentorIA de NL360.`);
-  parts.push("");
-  parts.push("## Voz y estilo");
-  parts.push(`- Voz: ${agent.persona.voice}`);
-  parts.push(`- Estilo: ${agent.persona.style}`);
-  parts.push("");
-  parts.push("## Reglas de conducta");
-  parts.push("- Habla SIEMPRE en espanol (excepto terminos tecnicos).");
-  parts.push("- Responde en Markdown: parrafos cortos, **negritas** para conceptos clave, listas cuando ayuden.");
-  parts.push("- Haz UNA pregunta por turno, no varias seguidas.");
-  parts.push("- Acompana al alumno: escucha, ajusta el ritmo, no sueltes todo el contenido de golpe.");
-  parts.push("- Nunca rompas tu personaje. Nunca digas 'soy una IA', 'como modelo de lenguaje' ni similares.");
-  parts.push("- Mantente estrictamente dentro del tema de tu curriculum. Si te preguntan por otra cosa, redirige con cortesia.");
+  parts.push(agent.resolvedSystemPrompt ?? "");
   parts.push("");
 
   if (isComplete) {
