@@ -92,6 +92,7 @@ interface ToolDef {
   Icon: React.ElementType;
   initialContent: string;
   initialOptions: string[];
+  provider: "anthropic" | "venice" | "nvidia_nim";
 }
 
 // ─── Tool definitions ─────────────────────────────────────────────────────────
@@ -127,11 +128,12 @@ function summaryToToolDef(a: AgentSummary): ToolDef {
     Icon,
     initialContent: a.welcome.content,
     initialOptions: a.welcome.options,
+    provider: a.provider,
   };
 }
 
 /* Legacy TOOLS reference — superseded by the dynamic list from the API. */
-const _LEGACY_TOOLS: ToolDef[] = [
+const _LEGACY_TOOLS = [
   {
     id: "LEYES_EXITO",
     title: "Las Leyes del Exito",
