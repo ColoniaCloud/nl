@@ -8,7 +8,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-export type Provider = "anthropic" | "venice";
+export type Provider = "anthropic" | "venice" | "nvidia_nim";
 
 export interface Lesson {
   id: number;

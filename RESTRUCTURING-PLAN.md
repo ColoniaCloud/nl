@@ -343,6 +343,7 @@ La reorganización de directorios (`mysql/` → `infrastructure/volumes/mysql/`,
 Artefactos huérfanos o inconsistencias detectadas durante refactors, pendientes de resolución.
 
 - [ ] Investigar y eliminar (o conectar) `escritorio/data/conversations.json` — archivo huérfano de 3 bytes (`{}`) sin referencias en el código. Probablemente artefacto de un prototipo anterior.
+- [ ] Pendiente: test runtime de Neville Sin Filtros (Disruptivo-2) tras recargar saldo de Venice. Validar que el tono directo/sin disclaimers se preservó después del refactor de Fase 3.
 - [ ] Resolver dead data: `persona.voice` y `persona.style` en los JSONs de agentes ya no son leídos por `buildSystemPrompt` (su contenido se extrajo a `data/mentoria/prompts/*.md` en el refactor de Fase 3). Decidir si se eliminan de los JSONs y de la interface `Curriculum`, o si se conservan para uso futuro (UI, exports, etc.). Verificar antes de eliminar que ningún componente de UI los consume.
 
 ---
