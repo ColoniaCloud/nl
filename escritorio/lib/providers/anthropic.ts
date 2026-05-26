@@ -57,6 +57,7 @@ export const anthropicProvider: Provider = {
           system: opts.system,
           messages: mapped,
           max_tokens: opts.maxTokens ?? 4096,
+          ...(opts.temperature !== undefined && { temperature: opts.temperature }),
         },
         { signal: opts.signal }
       );

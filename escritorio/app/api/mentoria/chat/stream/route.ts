@@ -192,6 +192,7 @@ export async function POST(req: NextRequest) {
           messages,
           model: agent.model,
           maxTokens: 2048,
+          temperature: agent.temperature,
         });
 
         for await (const ev of iter) {

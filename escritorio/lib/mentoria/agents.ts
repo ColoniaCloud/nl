@@ -30,6 +30,7 @@ export interface Curriculum {
   icon: string;
   provider: Provider;
   model: string;
+  temperature?: number;
   requiresConfirmation?: boolean;
   disclaimer?: string;
   persona: {

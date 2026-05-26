@@ -80,6 +80,7 @@ export const veniceProvider: Provider = {
         ...opts.messages.map((m) => ({ role: m.role, content: m.content })),
       ],
     } as Record<string, unknown>;
+    if (opts.temperature !== undefined) body.temperature = opts.temperature;
     // suppress unused variable
     void messages;
 

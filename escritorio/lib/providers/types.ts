@@ -22,6 +22,7 @@ export interface StreamOptions {
   messages: ChatMessage[];
   model: string;
   maxTokens?: number;
+  temperature?: number;
   signal?: AbortSignal;
 }
 
