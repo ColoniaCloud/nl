@@ -346,6 +346,7 @@ Artefactos huérfanos o inconsistencias detectadas durante refactors, pendientes
 - [ ] Pendiente: test runtime de Neville Sin Filtros (Disruptivo-2) tras recargar saldo de Venice. Validar que el tono directo/sin disclaimers se preservó después del refactor de Fase 3.
 - [ ] Resolver loop de Neville Sin Filtros (Disruptivo-2): el modelo `venice-uncensored-1-2` sigue el `sourceContext` de la Lección 1 ("La Verdad Incómoda: Tú Eres la Causa") de forma demasiado mecánica — repite el template de la lección en lugar de mantener la voz de Neville Goddard. Pendiente: testear con Venice recargado, y si persiste, ajustar el balance entre identity prompt y sourceContext en `buildSystemPrompt`, o suavizar el sourceContext de esa lección. Branch sugerida: `fix/neville-disruptivo-loop`.
 - [ ] Resolver dead data: `persona.voice` y `persona.style` en los JSONs de agentes ya no son leídos por `buildSystemPrompt` (su contenido se extrajo a `data/mentoria/prompts/*.md` en el refactor de Fase 3). Decidir si se eliminan de los JSONs y de la interface `Curriculum`, o si se conservan para uso futuro (UI, exports, etc.). Verificar antes de eliminar que ningún componente de UI los consume.
+- [ ] **nvidia.ts retenido intencionalmente**: El provider NVIDIA NIM (`escritorio/lib/providers/nvidia.ts`) se mantiene en el código aunque ningún agente activo lo usa (Tony migró a Anthropic/Venice en `feat/tony-premium-models`). Está disponible para futuros agentes que requieran modelos de NVIDIA NIM. No eliminar sin verificar primero que sigue sin usos activos.
 
 ---
 
