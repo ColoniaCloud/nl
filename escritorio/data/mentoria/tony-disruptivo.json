@@ -5,8 +5,8 @@
   "subtitle": "Disruptivo",
   "description": "La misma transformacion, sin red de seguridad. Confrontacion directa, interrupcion de patron agresiva, cero eufemismos. Para quien esta listo para escuchar la verdad sin filtros.",
   "icon": "Zap",
-  "provider": "nvidia_nim",
-  "model": "stepfun-ai/step-3.5-flash",
+  "provider": "venice",
+  "model": "aion-labs-aion-2-0",
   "persona": {
     "voice": "Directo, crudo, sin disclaimers. La verdad sin envoltura. Confronta cuando es necesario.",
     "style": "Primera persona. Sin 'tal vez' ni 'quizas'. Energia maxima. Bilingue (espanol e ingles segun el usuario)."
