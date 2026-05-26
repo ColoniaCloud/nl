@@ -19,6 +19,7 @@ import {
   Handshake,
   Eye,
   Flame,
+  Zap,
   Sparkles,
   GraduationCap,
   Clock,
@@ -44,6 +45,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Handshake,
   Eye,
   Flame,
+  Zap,
   Sparkles,
   GraduationCap,
   BookOpen,
@@ -90,6 +92,7 @@ interface ToolDef {
   Icon: React.ElementType;
   initialContent: string;
   initialOptions: string[];
+  provider: "anthropic" | "venice" | "nvidia_nim";
 }
 
 // ─── Tool definitions ─────────────────────────────────────────────────────────
@@ -109,7 +112,7 @@ interface AgentSummary {
   subtitle?: string;
   description: string;
   icon: string;
-  provider: "anthropic" | "venice";
+  provider: "anthropic" | "venice" | "nvidia_nim";
   requiresConfirmation?: boolean;
   disclaimer?: string;
   totalLessons: number;
@@ -125,11 +128,12 @@ function summaryToToolDef(a: AgentSummary): ToolDef {
     Icon,
     initialContent: a.welcome.content,
     initialOptions: a.welcome.options,
+    provider: a.provider,
   };
 }
 
 /* Legacy TOOLS reference — superseded by the dynamic list from the API. */
-const _LEGACY_TOOLS: ToolDef[] = [
+const _LEGACY_TOOLS = [
   {
     id: "LEYES_EXITO",
     title: "Las Leyes del Exito",
@@ -841,6 +845,7 @@ export default function MentoriaPage() {
   const [currentSessionId, setCurrentSessionId] = useState<string>(genId);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showWarmup, setShowWarmup] = useState(false);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
@@ -1435,7 +1440,11 @@ export default function MentoriaPage() {
     ]);
     setInput("");
     setLoading(true);
+    setShowWarmup(false);
     setError(null);
+    const warmupTimer = activeTool.provider === "nvidia_nim"
+      ? setTimeout(() => setShowWarmup(true), 8_000)
+      : null;
 
     const history = messages
       .filter((m) => m.id !== "init")
@@ -1548,6 +1557,8 @@ export default function MentoriaPage() {
       setMessages((prev) => prev.filter((m) => m.id !== agentMsgId));
       setError(e.message || "Error de conexion. Intenta de nuevo.");
     } finally {
+      if (warmupTimer) clearTimeout(warmupTimer);
+      setShowWarmup(false);
       setLoading(false);
     }
   }
@@ -2481,12 +2492,19 @@ export default function MentoriaPage() {
 
             {/* Typing indicator */}
             {loading && (
-              <div className="flex justify-start">
-                <div className="text-foreground px-1 flex gap-1.5 items-center py-2">
-                  <div className="size-1.5 rounded-full bg-muted-foreground/60 animate-bounce" />
-                  <div className="size-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:100ms]" />
-                  <div className="size-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:200ms]" />
+              <div className="flex flex-col items-start gap-1">
+                <div className="flex justify-start">
+                  <div className="text-foreground px-1 flex gap-1.5 items-center py-2">
+                    <div className="size-1.5 rounded-full bg-muted-foreground/60 animate-bounce" />
+                    <div className="size-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:100ms]" />
+                    <div className="size-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:200ms]" />
+                  </div>
                 </div>
+                {showWarmup && (
+                  <p className="px-1 text-xs text-muted-foreground">
+                    El primer mensaje a Tony puede tardar hasta un minuto (el modelo se está calentando). Aguardá...
+                  </p>
+                )}
               </div>
             )}
 

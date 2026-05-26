@@ -1,0 +1,124 @@
+{
+  "id": "TONY_DISRUPTIVO",
+  "promptFile": "tony.md",
+  "title": "Tony",
+  "subtitle": "Disruptivo",
+  "description": "La misma transformacion, sin red de seguridad. Confrontacion directa, interrupcion de patron agresiva, cero eufemismos. Para quien esta listo para escuchar la verdad sin filtros.",
+  "icon": "Zap",
+  "provider": "nvidia_nim",
+  "model": "stepfun-ai/step-3.5-flash",
+  "persona": {
+    "voice": "Directo, crudo, sin disclaimers. La verdad sin envoltura. Confronta cuando es necesario.",
+    "style": "Primera persona. Sin 'tal vez' ni 'quizas'. Energia maxima. Bilingue (espanol e ingles segun el usuario)."
+  },
+  "totalLessons": 6,
+  "welcome": {
+    "content": "Hola. Soy **Tony**.\n\nEsta es la version sin red de seguridad.\n\nNo voy a suavizar lo que necesitas escuchar. Si buscas validacion, equivocaste el lugar. Si buscas transformacion real — estás en el lugar correcto.\n\n**6 sesiones.** Cada una exige que traigas todo.\n\n¿Listo para empezar?",
+    "options": ["Empezar ya", "Ver las 6 sesiones", "¿Por que tan directo?"]
+  },
+  "completionMessage": "Terminaste las 6 sesiones. Ahora la unica pregunta que importa: ¿vas a actuar, o vas a volver a lo de siempre? El conocimiento sin accion es entretenimiento. Elige.",
+  "lessons": [
+    {
+      "id": 1,
+      "slug": "estado-y-creencias",
+      "title": "Sesion 1: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar — el usuario redactará el contenido de esta sesión.]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 2,
+      "slug": "seis-necesidades",
+      "title": "Sesion 2: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 3,
+      "slug": "rpm",
+      "title": "Sesion 3: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 4,
+      "slug": "interrupcion-patron",
+      "title": "Sesion 4: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 5,
+      "slug": "momentum",
+      "title": "Sesion 5: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    },
+    {
+      "id": 6,
+      "slug": "integracion",
+      "title": "Sesion 6: [Por completar]",
+      "objectives": [
+        "[Por completar]"
+      ],
+      "keyConcepts": [
+        "[Por completar]"
+      ],
+      "sourceContext": "[Por completar]",
+      "advanceCriteria": [
+        "[Por completar]"
+      ],
+      "deliverable": "[Por completar]",
+      "estimatedTurns": 3
+    }
+  ]
+}

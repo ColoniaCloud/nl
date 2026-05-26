@@ -8,7 +8,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-export type Provider = "anthropic" | "venice";
+export type Provider = "anthropic" | "venice" | "nvidia_nim";
 
 export interface Lesson {
   id: number;
@@ -43,6 +43,8 @@ export interface Curriculum {
   };
   completionMessage: string;
   lessons: Lesson[];
+  promptFile: string;
+  resolvedSystemPrompt?: string; // runtime — populated by getAgent(), not in JSON
 }
 
 export interface AgentSummary {
@@ -67,6 +69,8 @@ const AGENTS: Array<{ id: string; file: string }> = [
   { id: "NAPOLEON", file: "napoleon.json" },
   { id: "NEVILLE_DISRUPTIVO_1", file: "neville-disruptivo-1.json" },
   { id: "NEVILLE_DISRUPTIVO_2", file: "neville-disruptivo-2.json" },
+  { id: "TONY_PROFUNDO", file: "tony-profundo.json" },
+  { id: "TONY_DISRUPTIVO", file: "tony-disruptivo.json" },
 ];
 
 const DATA_DIR = path.join(process.cwd(), "data", "mentoria");
@@ -91,6 +95,11 @@ export async function getAgent(id: string): Promise<Curriculum | null> {
   try {
     const raw = await fs.readFile(path.join(DATA_DIR, entry.file), "utf8");
     const parsed = JSON.parse(raw) as Curriculum;
+    const promptRaw = await fs.readFile(
+      path.join(DATA_DIR, "prompts", parsed.promptFile),
+      "utf8"
+    );
+    parsed.resolvedSystemPrompt = promptRaw.trim();
     cache.set(id, parsed);
     return parsed;
   } catch (e) {
@@ -138,19 +147,7 @@ export function buildSystemPrompt(
 
   const parts: string[] = [];
 
-  parts.push(`Eres ${agent.title}${agent.subtitle ? ` (${agent.subtitle})` : ""}, un subagente especializado del sistema MentorIA de NL360.`);
-  parts.push("");
-  parts.push("## Voz y estilo");
-  parts.push(`- Voz: ${agent.persona.voice}`);
-  parts.push(`- Estilo: ${agent.persona.style}`);
-  parts.push("");
-  parts.push("## Reglas de conducta");
-  parts.push("- Habla SIEMPRE en espanol (excepto terminos tecnicos).");
-  parts.push("- Responde en Markdown: parrafos cortos, **negritas** para conceptos clave, listas cuando ayuden.");
-  parts.push("- Haz UNA pregunta por turno, no varias seguidas.");
-  parts.push("- Acompana al alumno: escucha, ajusta el ritmo, no sueltes todo el contenido de golpe.");
-  parts.push("- Nunca rompas tu personaje. Nunca digas 'soy una IA', 'como modelo de lenguaje' ni similares.");
-  parts.push("- Mantente estrictamente dentro del tema de tu curriculum. Si te preguntan por otra cosa, redirige con cortesia.");
+  parts.push(agent.resolvedSystemPrompt ?? "");
   parts.push("");
 
   if (isComplete) {
