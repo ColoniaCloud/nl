@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("Manu Dev");
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
@@ -406,7 +409,9 @@ function parseMessage(text: string): {
     try {
       options = JSON.parse(optionsMatch[1]);
       cleanText = cleanText.replace(optionsMatch[0], "");
-    } catch {}
+    } catch (error) {
+      logger.warn("Error al parsear marker OPTIONS — se omiten las opciones sugeridas");
+    }
   }
 
   const colorsMatch = cleanText.match(/<!--COLORS:(\[[\s\S]*?\])-->/);
@@ -414,7 +419,9 @@ function parseMessage(text: string): {
     try {
       colors = JSON.parse(colorsMatch[1]);
       cleanText = cleanText.replace(colorsMatch[0], "");
-    } catch {}
+    } catch (error) {
+      logger.warn("Error al parsear marker COLORS — se omite la paleta de colores");
+    }
   }
 
   const fontsMatch = cleanText.match(/<!--FONTS:(\[[\s\S]*?\])-->/);
@@ -422,7 +429,9 @@ function parseMessage(text: string): {
     try {
       fonts = JSON.parse(fontsMatch[1]);
       cleanText = cleanText.replace(fontsMatch[0], "");
-    } catch {}
+    } catch (error) {
+      logger.warn("Error al parsear marker FONTS — se omiten las tipografías");
+    }
   }
 
   const uploadMatch = cleanText.match(/<!--UPLOAD:([a-z]+)-->/);

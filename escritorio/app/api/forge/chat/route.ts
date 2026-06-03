@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("Forge");
 import { cookies } from "next/headers";
 import { getUserId } from "@/app/api/forge/projects/route";
 import {
@@ -45,17 +48,23 @@ export async function POST(req: NextRequest) {
 
   const standardMatch = response.match(/<!--FORGE_STANDARD:(\[[\s\S]*?\])-->/);
   if (standardMatch) {
-    try { visuals.standardPicker = JSON.parse(standardMatch[1]); } catch {}
+    try { visuals.standardPicker = JSON.parse(standardMatch[1]); } catch (error) {
+      logger.warn("Error al parsear marker FORGE_STANDARD — se omite el selector de token estándar");
+    }
   }
 
   const networkMatch = response.match(/<!--FORGE_NETWORK:(\[[\s\S]*?\])-->/);
   if (networkMatch) {
-    try { visuals.networkOptions = JSON.parse(networkMatch[1]); } catch {}
+    try { visuals.networkOptions = JSON.parse(networkMatch[1]); } catch (error) {
+      logger.warn("Error al parsear marker FORGE_NETWORK — se omiten las opciones de red");
+    }
   }
 
   const featuresMatch = response.match(/<!--FORGE_FEATURES:(\[[\s\S]*?\])-->/);
   if (featuresMatch) {
-    try { visuals.featureOptions = JSON.parse(featuresMatch[1]); } catch {}
+    try { visuals.featureOptions = JSON.parse(featuresMatch[1]); } catch (error) {
+      logger.warn("Error al parsear marker FORGE_FEATURES — se omiten las opciones de features");
+    }
   }
 
   // Check if FORGE_READY

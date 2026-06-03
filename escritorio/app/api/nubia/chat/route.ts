@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("Nubia");
 import { cookies } from "next/headers";
 import { getUserId } from "@/app/api/nubia/projects/route";
 import {
@@ -52,12 +55,16 @@ export async function POST(req: NextRequest) {
 
   const colorsMatch = response.match(/<!--NUBIA_COLORS:(\[[\s\S]*?\])-->/);
   if (colorsMatch) {
-    try { visuals.colorPalettes = JSON.parse(colorsMatch[1]); } catch {}
+    try { visuals.colorPalettes = JSON.parse(colorsMatch[1]); } catch (error) {
+      logger.warn("Error al parsear marker NUBIA_COLORS — se omiten las paletas de color");
+    }
   }
 
   const fontsMatch = response.match(/<!--NUBIA_FONTS:(\[[\s\S]*?\])-->/);
   if (fontsMatch) {
-    try { visuals.fontOptions = JSON.parse(fontsMatch[1]); } catch {}
+    try { visuals.fontOptions = JSON.parse(fontsMatch[1]); } catch (error) {
+      logger.warn("Error al parsear marker NUBIA_FONTS — se omiten las opciones de tipografía");
+    }
   }
 
   // Strip visual markers from the reply text
