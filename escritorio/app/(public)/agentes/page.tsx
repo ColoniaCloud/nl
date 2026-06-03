@@ -1,14 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AGENTS } from "@/lib/public-agents";
-
-const COLOR_MAP: Record<string, { bg: string; text: string; dot: string }> = {
-  emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
-  rose:    { bg: "bg-rose-500/10",    text: "text-rose-400",    dot: "bg-rose-400" },
-  orange:  { bg: "bg-orange-500/10",  text: "text-orange-400",  dot: "bg-orange-400" },
-  sky:     { bg: "bg-sky-500/10",     text: "text-sky-400",     dot: "bg-sky-400" },
-  violet:  { bg: "bg-violet-500/10",  text: "text-violet-400",  dot: "bg-violet-400" },
-};
+import { AGENT_META } from "@/lib/agent-colors";
 
 export default function AgentesPage() {
   return (
@@ -30,7 +23,7 @@ export default function AgentesPage() {
       {/* Agent grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {AGENTS.map((agent) => {
-          const c = COLOR_MAP[agent.color] ?? COLOR_MAP.violet;
+          const c = AGENT_META[agent.slug as keyof typeof AGENT_META] ?? AGENT_META["manu-dev"];
           return (
             <Link
               key={agent.slug}
@@ -39,18 +32,18 @@ export default function AgentesPage() {
             >
               {/* Top row */}
               <div className="flex items-start justify-between mb-4">
-                <div className={`rounded-xl ${c.bg} p-2.5`}>
-                  <span className={`block h-5 w-5 ${c.dot} rounded-full`} />
+                <div className={`rounded-xl ${c.bgClass} p-2.5`}>
+                  <span className={`block h-5 w-5 ${c.dotClass} rounded-full`} />
                 </div>
                 {agent.badge && (
-                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bg} ${c.text}`}>
+                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bgClass} ${c.textClass}`}>
                     {agent.badge}
                   </span>
                 )}
               </div>
 
               <h2 className="text-xl font-semibold text-white mb-1">{agent.name}</h2>
-              <p className={`text-xs font-medium mb-3 ${c.text}`}>{agent.tagline}</p>
+              <p className={`text-xs font-medium mb-3 ${c.textClass}`}>{agent.tagline}</p>
               <p className="text-sm text-zinc-400 leading-relaxed mb-5">{agent.description}</p>
 
               {/* Sub-agents preview */}
@@ -67,7 +60,7 @@ export default function AgentesPage() {
                 </div>
               )}
 
-              <div className={`flex items-center gap-1 text-xs font-medium ${c.text}`}>
+              <div className={`flex items-center gap-1 text-xs font-medium ${c.textClass}`}>
                 Ver agente <ArrowRight className="size-3 group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>

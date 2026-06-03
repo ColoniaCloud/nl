@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "@/lib/schemas/auth";
 
 function safeNextPath(): string {
   if (typeof window === "undefined") return "/workspace";
@@ -12,12 +15,16 @@ function safeNextPath(): string {
 
 export default function LoginPage() {
   const [nextPath, setNextPath] = useState<string>("/workspace");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [unverified, setUnverified] = useState(false);
   const [verified, setVerified] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
   useEffect(() => {
     setNextPath(safeNextPath());
@@ -25,8 +32,7 @@ export default function LoginPage() {
     if (url.searchParams.get("verified") === "1") setVerified(true);
   }, []);
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(data: LoginFormData) {
     setError("");
     setLoading(true);
 
@@ -34,14 +40,14 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: data.username, password: data.password }),
       });
 
-      const data = await res.json().catch(() => ({}));
+      const json = await res.json().catch(() => ({}));
 
-      if (!res.ok || !data?.ok) {
-        setUnverified(!!data?.unverified);
-        setError(data?.error || "Credenciales incorrectas");
+      if (!res.ok || !json?.ok) {
+        setUnverified(!!json?.unverified);
+        setError(json?.error || "Credenciales incorrectas");
         return;
       }
       setUnverified(false);
@@ -57,6 +63,7 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-zinc-950 text-zinc-100">
       {/* Decor */}
+      {/* brand-color: bg-violet-600/10, bg-violet-900/10 */}
       <div className="pointer-events-none absolute -left-32 -top-24 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 top-32 h-96 w-96 rounded-full bg-indigo-600/10 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full bg-violet-900/10 blur-3xl" />
@@ -85,46 +92,52 @@ export default function LoginPage() {
 
         {/* Card */}
         <div className="relative">
+          {/* brand-color: from-violet-500/20 */}
           <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-violet-500/20 to-indigo-500/10" />
-          <div className="relative rounded-3xl border border-white/[0.10] bg-zinc-900/80 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur">
+          <div className="relative rounded-3xl border border-white/[0.10] bg-zinc-900/80 p-6 shadow-[var(--shadow-xl)] backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-sm text-zinc-500">NL360</div>
                 <div className="text-lg font-semibold text-white">Iniciar sesion</div>
               </div>
+              {/* brand-color: border-violet-500/30, bg-violet-500/10, text-violet-300 */}
               <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-300">
                 Backoffice
               </span>
             </div>
 
-            <form onSubmit={onSubmit} className="mt-6 grid gap-4">
-              <label className="grid gap-2 text-sm">
-                <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
+              <label htmlFor="username" className="grid gap-2 text-sm">
+                <span className="react-aria-Label text-xs uppercase tracking-wide">
                   Usuario
                 </span>
                 <input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="username"
+                  {...register("username")}
                   autoComplete="username"
-                  required
-                  className="h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-3 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20"
+                  className="react-aria-Input w-full h-10"
                   placeholder="tuusuario"
                 />
+                {errors.username && (
+                  <p className="react-aria-FieldError">{errors.username.message}</p>
+                )}
               </label>
 
-              <label className="grid gap-2 text-sm">
-                <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              <label htmlFor="password" className="grid gap-2 text-sm">
+                <span className="react-aria-Label text-xs uppercase tracking-wide">
                   Contrasena
                 </span>
                 <input
+                  id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                   autoComplete="current-password"
-                  required
-                  className="h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-3 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20"
+                  className="react-aria-Input w-full h-10"
                   placeholder="••••••••"
                 />
+                {errors.password && (
+                  <p className="react-aria-FieldError">{errors.password.message}</p>
+                )}
               </label>
 
               {verified && !error && (
@@ -151,10 +164,11 @@ export default function LoginPage() {
                 </div>
               )}
 
+              {/* brand-color: bg-violet-600, hover:bg-violet-500 */}
               <button
                 type="submit"
                 disabled={loading}
-                className="mt-1 w-full inline-flex h-11 items-center justify-center rounded-xl bg-violet-600 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-70"
+                className="react-aria-Button btn-primary w-full mt-1 h-10 text-sm font-semibold"
               >
                 {loading ? "Ingresando..." : "Ingresar"}
               </button>
@@ -162,13 +176,14 @@ export default function LoginPage() {
               <div className="flex items-center justify-between pt-2">
                 <Link
                   href="/recuperar-contrasena"
-                  className="text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+                  className="react-aria-Link text-xs"
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
+                {/* brand-color: text-violet-400, hover:text-violet-300 */}
                 <Link
                   href="/registro"
-                  className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+                  className="react-aria-Link text-xs"
                 >
                   Crear cuenta
                 </Link>

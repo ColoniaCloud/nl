@@ -327,6 +327,7 @@ export default function CuentaPage() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
+              aria-label={t.label}
               className={cn(
                 "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors flex-1 justify-center",
                 tab === t.id
