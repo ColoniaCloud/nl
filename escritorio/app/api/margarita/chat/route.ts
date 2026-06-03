@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createLogger } from "@/lib/logger";
+
+const logger = createLogger("Margarita");
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
@@ -225,7 +228,9 @@ function parseMessage(text: string): {
       cleanText = cleanText.replace(margaritaMatch[0], "");
       next = parsed.next;
       data = parsed.data;
-    } catch {}
+    } catch (error) {
+      logger.warn("Error al parsear marker MARGARITA — se omite el bloque de control de flujo");
+    }
   }
 
   const optionsMatch = cleanText.match(/<!--OPTIONS:(\[[\s\S]*?\])-->/);
@@ -233,7 +238,9 @@ function parseMessage(text: string): {
     try {
       options = JSON.parse(optionsMatch[1]);
       cleanText = cleanText.replace(optionsMatch[0], "");
-    } catch {}
+    } catch (error) {
+      logger.warn("Error al parsear marker OPTIONS — se omiten las opciones sugeridas");
+    }
   }
 
   return { cleanText: cleanText.trim(), next, data, options };
