@@ -89,7 +89,7 @@ export async function GET() {
             agent: "margarita",
             title: r.business_name || "Proyecto Marketing",
             subtitle: r.industry || "Marketing",
-            href: `/services/vilma`,
+            href: `/services/margarita`,
             updatedAt: r.created_at,
           });
         }

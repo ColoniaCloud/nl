@@ -4,6 +4,9 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronLeft } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, type RegisterFormData } from "@/lib/schemas/auth";
 
 type Plan = "free" | "basic" | "pro" | "elite";
 type Step = "plan" | "account";
@@ -47,7 +50,7 @@ const PLANS: {
     tokens: "250,000 tokens/mes",
     features: [
       "2 sitios web con Manu",
-      "Agente Vilma (marketing)",
+      "Agente Margarita (marketing)",
       "Acceso a MentorIA",
       "250,000 tokens al mes",
     ],
@@ -61,7 +64,7 @@ const PLANS: {
     tokens: "1,000,000 tokens/mes",
     features: [
       "Sitios ilimitados",
-      "Todos los agentes (Manu, Vilma, Jordan)",
+      "Todos los agentes (Manu, Margarita, Jordan)",
       "Acceso a MentorIA",
       "1,000,000 tokens al mes",
     ],
@@ -76,27 +79,24 @@ function RegistroInner() {
 
   const [step, setStep] = useState<Step>(planParam ? "account" : "plan");
   const [plan, setPlan] = useState<Plan>(planParam ?? "free");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPwd, setConfirmPwd] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema) });
 
   function selectPlan(p: Plan) {
     setPlan(p);
     setStep("account");
   }
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(data: RegisterFormData) {
     setError("");
 
-    if (password !== confirmPwd) {
-      setError("Las contrasenas no coinciden.");
-      return;
-    }
     if (!acceptTerms) {
       setError("Debes aceptar los terminos de servicio.");
       return;
@@ -107,12 +107,18 @@ function RegistroInner() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, plan, referralCode: refParam || undefined }),
+        body: JSON.stringify({
+          username: data.username,
+          email: data.email,
+          password: data.password,
+          plan,
+          referralCode: refParam || undefined,
+        }),
       });
-      const data = await res.json().catch(() => ({}));
+      const json = await res.json().catch(() => ({}));
 
-      if (!res.ok || !data?.ok) {
-        setError(data?.error || "Error al crear la cuenta.");
+      if (!res.ok || !json?.ok) {
+        setError(json?.error || "Error al crear la cuenta.");
         return;
       }
 
@@ -144,7 +150,7 @@ function RegistroInner() {
                 Ya tienes cuenta?{" "}
                 <Link
                   href="/login"
-                  className="text-violet-400 hover:text-violet-300 transition-colors"
+                  className="react-aria-Link text-xs"
                 >
                   Iniciar sesion
                 </Link>
@@ -154,7 +160,7 @@ function RegistroInner() {
                 Ya tienes cuenta?{" "}
                 <Link
                   href="/login"
-                  className="text-violet-400 hover:text-violet-300 transition-colors"
+                  className="react-aria-Link text-xs"
                 >
                   Iniciar sesion
                 </Link>
@@ -234,65 +240,69 @@ function RegistroInner() {
               )}
             </div>
 
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                <label htmlFor="reg-username" className="react-aria-Label block text-xs mb-1.5">
                   Nombre de usuario
                 </label>
                 <input
+                  id="reg-username"
                   type="text"
-                  required
-                  minLength={3}
-                  maxLength={60}
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  {...register("username")}
                   placeholder="mi_usuario"
-                  className="w-full h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/60 transition-colors"
+                  className="react-aria-Input w-full h-10"
                 />
+                {errors.username && (
+                  <p className="react-aria-FieldError">{errors.username.message}</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                <label htmlFor="reg-email" className="react-aria-Label block text-xs mb-1.5">
                   Email
                 </label>
                 <input
+                  id="reg-email"
                   type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                   placeholder="tu@email.com"
-                  className="w-full h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/60 transition-colors"
+                  className="react-aria-Input w-full h-10"
                 />
+                {errors.email && (
+                  <p className="react-aria-FieldError">{errors.email.message}</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                <label htmlFor="reg-password" className="react-aria-Label block text-xs mb-1.5">
                   Contrasena
                 </label>
                 <input
+                  id="reg-password"
                   type="password"
-                  required
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                   placeholder="Minimo 8 caracteres"
-                  className="w-full h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/60 transition-colors"
+                  className="react-aria-Input w-full h-10"
                 />
+                {errors.password && (
+                  <p className="react-aria-FieldError">{errors.password.message}</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1.5">
+                <label htmlFor="reg-confirm-password" className="react-aria-Label block text-xs mb-1.5">
                   Confirmar contrasena
                 </label>
                 <input
+                  id="reg-confirm-password"
                   type="password"
-                  required
-                  minLength={8}
-                  value={confirmPwd}
-                  onChange={(e) => setConfirmPwd(e.target.value)}
+                  {...register("confirmPassword")}
                   placeholder="Repite tu contrasena"
-                  className="w-full h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-4 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-violet-500/60 transition-colors"
+                  className="react-aria-Input w-full h-10"
                 />
+                {errors.confirmPassword && (
+                  <p className="react-aria-FieldError">{errors.confirmPassword.message}</p>
+                )}
               </div>
 
               <label className="flex items-start gap-2.5 cursor-pointer">
@@ -304,11 +314,11 @@ function RegistroInner() {
                 />
                 <span className="text-xs text-zinc-400">
                   Acepto los{" "}
-                  <Link href="/terminos" className="text-violet-400 hover:text-violet-300 underline">
+                  <Link href="/terminos" className="react-aria-Link underline">
                     Terminos de servicio
                   </Link>{" "}
                   y la{" "}
-                  <Link href="/privacidad" className="text-violet-400 hover:text-violet-300 underline">
+                  <Link href="/privacidad" className="react-aria-Link underline">
                     Politica de privacidad
                   </Link>
                 </span>
@@ -323,7 +333,7 @@ function RegistroInner() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="react-aria-Button btn-primary w-full h-10 text-sm font-semibold"
               >
                 {loading ? "Creando cuenta..." : "Crear cuenta"}
                 {!loading && <ArrowRight className="size-4" />}

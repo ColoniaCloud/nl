@@ -46,8 +46,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     annualUsd: 1490,
     tokens: "250,000 tokens/mes",
     maxSites: 2,
-    tools: ["Manu Dev", "Vilma", "MentorIA"],
-    features: ["2 sitios web", "Manu Dev", "Vilma", "MentorIA", "250k tokens/mes"],
+    tools: ["Manu Dev", "Margarita", "MentorIA"],
+    features: ["2 sitios web", "Manu Dev", "Margarita", "MentorIA", "250k tokens/mes"],
   },
   elite: {
     id: "elite",
@@ -57,7 +57,7 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     annualUsd: 2990,
     tokens: "1,000,000 tokens/mes",
     maxSites: "unlimited",
-    tools: ["Manu Dev", "Vilma", "Jordan", "MentorIA"],
+    tools: ["Manu Dev", "Margarita", "Jordan", "MentorIA"],
     features: ["Sitios ilimitados", "Todos los agentes", "1M tokens/mes", "Soporte prioritario"],
   },
 };
@@ -71,7 +71,7 @@ export const PLANS_SPECIAL: Record<string, PlanConfig> = {
     annualUsd: 0,
     tokens: "unlimited",
     maxSites: 3,
-    tools: ["Manu Dev", "Vilma", "Jordan", "MentorIA"],
+    tools: ["Manu Dev", "Margarita", "Jordan", "MentorIA"],
     features: ["3 sitios web/dia", "Todos los agentes", "Uso libre"],
   },
 };

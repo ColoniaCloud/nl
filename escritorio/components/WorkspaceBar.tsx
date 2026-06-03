@@ -9,7 +9,7 @@ function usePageLabel(pathname: string): string {
   if (pathname === "/workspace") return "Inicio";
   if (pathname.startsWith("/services/manu-dev")) return "Manu Dev";
   if (pathname.startsWith("/services/lander")) return "Lander";
-  if (pathname.startsWith("/services/margarita") || pathname.startsWith("/services/vilma")) return "Margarita";
+  if (pathname.startsWith("/services/margarita")) return "Margarita";
   if (pathname.startsWith("/services/grant")) return "Jordan";
   if (pathname.startsWith("/services/mentoria")) return "MentorIA";
   return "Backoffice";
