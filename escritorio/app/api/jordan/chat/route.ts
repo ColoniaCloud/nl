@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
       resolvedConvId = conversationId;
     } else {
       const title = message.slice(0, 60);
-      resolvedConvId = await createConversation(userId, title);
+      resolvedConvId = await createConversation(userId, title, tool);
     }
 
     // If history is empty but we have a conversation, load it from DB
