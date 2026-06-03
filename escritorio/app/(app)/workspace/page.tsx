@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Code2, Clock, Megaphone, Handshake, GraduationCap, ShoppingBag, Coins } from "lucide-react";
+import { Code2, Clock, Megaphone, Handshake, GraduationCap, ShoppingBag, Coins, Sparkles, ArrowRight } from "lucide-react";
 import AgentCard from "@/components/AgentCard";
+import { AGENT_META as AGENT_COLORS } from "@/lib/agent-colors";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -16,27 +17,28 @@ interface RecentItem {
   updatedAt: string;
 }
 
-const AGENT_META: Record<string, { Icon: React.ElementType; bg: string; text: string; label: string }> = {
-  "manu-dev": { Icon: Code2, bg: "bg-emerald-500/20", text: "text-emerald-400", label: "Dev" },
-  nubia:      { Icon: ShoppingBag, bg: "bg-violet-500/20", text: "text-violet-400", label: "Nubia" },
-  forge:      { Icon: Coins, bg: "bg-amber-500/20", text: "text-amber-400", label: "Forge" },
-  margarita:  { Icon: Megaphone, bg: "bg-rose-500/20", text: "text-rose-400", label: "Margarita" },
-  jordan:     { Icon: Handshake, bg: "bg-orange-500/20", text: "text-orange-400", label: "Jordan" },
-  mentoria:   { Icon: GraduationCap, bg: "bg-sky-500/20", text: "text-sky-400", label: "MentorIA" },
+const AGENT_ICONS: Record<string, { Icon: React.ElementType; label: string }> = {
+  "manu-dev": { Icon: Code2, label: "Dev" },
+  nubia:      { Icon: ShoppingBag, label: "Nubia" },
+  forge:      { Icon: Coins, label: "Forge" },
+  margarita:  { Icon: Megaphone, label: "Margarita" },
+  jordan:     { Icon: Handshake, label: "Jordan" },
+  mentoria:   { Icon: GraduationCap, label: "MentorIA" },
 };
 
 // ─── Recent chat card ─────────────────────────────────────────────────────────
 
 function RecentChatCard({ item }: { item: RecentItem }) {
-  const meta = AGENT_META[item.agent] || AGENT_META["manu-dev"];
+  const colors = AGENT_COLORS[item.agent] ?? AGENT_COLORS["manu-dev"];
+  const icons = AGENT_ICONS[item.agent] ?? AGENT_ICONS["manu-dev"];
   return (
     <Link href={item.href} className="group block">
-      <div className="rounded-xl border border-border bg-card/60 p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-card hover:border-white/[0.15] hover:shadow-[0_4px_16px_rgba(0,0,0,0.3)]">
+      <div className="rounded-xl border border-border bg-card/60 p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-card hover:border-white/[0.15] hover:shadow-[var(--shadow-md)]">
         <div className="flex items-center gap-2 mb-2.5">
-          <div className={`flex h-6 w-6 items-center justify-center rounded-md flex-shrink-0 ${meta.bg} ${meta.text}`}>
-            <meta.Icon className="size-3" />
+          <div className={`flex h-6 w-6 items-center justify-center rounded-md flex-shrink-0 ${colors.bgClass} ${colors.textClass}`}>
+            <icons.Icon className="size-3" />
           </div>
-          <span className="text-[11px] font-semibold text-muted-foreground">{meta.label}</span>
+          <span className="text-[11px] font-semibold text-muted-foreground">{icons.label}</span>
         </div>
         <p className="text-xs font-medium text-foreground truncate leading-snug mb-2">
           {item.title}
@@ -75,7 +77,7 @@ export default function Home() {
 
         {/* Hero */}
         <section className="mb-14 text-center nl-fade-in-down">
-          <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-white/[0.10] backdrop-blur-sm border border-white/[0.15] shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
+          <div className="mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-2xl bg-white/[0.10] backdrop-blur-sm border border-white/[0.15] shadow-[var(--shadow-lg)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="https://api.nl360.site/wp-content/uploads/2026/01/Isotipo-NL360-Black.svg"
@@ -118,7 +120,7 @@ export default function Home() {
             <AgentCard
               title="Margarita"
               description="Marketing: contenido, ads, email y automatizacion de campanas."
-              href="/services/vilma"
+              href="/services/margarita"
               icon="bullhorn"
               color="rose"
             />
@@ -161,10 +163,24 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-border bg-card/30 px-5 py-6 text-center">
-              <p className="text-xs text-muted-foreground">
-                Aun no tienes actividad. Abre un agente para comenzar.
-              </p>
+            <div className="rounded-2xl border border-border bg-zinc-900/40 px-6 py-10 flex flex-col items-center text-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.06] border border-white/[0.10]">
+                <Sparkles className="size-6 text-white/50" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white/80 mb-1">
+                  Todavía no creaste nada
+                </p>
+                <p className="text-xs text-muted-foreground max-w-xs">
+                  Empezá con Manu Dev y tené tu sitio web listo en minutos.
+                </p>
+              </div>
+              <Link
+                href="/services/manu-dev"
+                className="inline-flex items-center gap-2 rounded-xl bg-white/[0.08] border border-white/[0.12] px-4 py-2 text-xs font-semibold text-white/80 hover:bg-white/[0.13] hover:text-white transition-colors"
+              >
+                Crear mi primer sitio <ArrowRight className="size-3.5" />
+              </Link>
             </div>
           )}
         </section>

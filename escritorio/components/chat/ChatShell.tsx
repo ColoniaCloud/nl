@@ -18,11 +18,10 @@ function convId() {
   return w.__NL360_CONV__ as string;
 }
 
-function agentSlug(agentName: string): "manu" | "vilma" | "grant" | "mentoria" {
+function agentSlug(agentName: string): "manu" | "grant" | "mentoria" {
   const v = agentName.trim().toLowerCase();
   if (v === "mentoria" || v === "mentoriaia" || v === "mentoria ia") return "mentoria";
   if (v === "manu") return "manu";
-  if (v === "vilma") return "vilma";
   return "grant";
 }
 
