@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
+import {
+  createConversation,
+  getConversationMessages,
+  addMessage,
+  updateConversationTitle,
+  getUserId,
+} from "@/lib/db-jordan";
 
 export const runtime = "nodejs";
 
@@ -136,6 +143,7 @@ export async function POST(req: NextRequest) {
     tool: ToolType;
     history: { role: "user" | "model"; parts: string }[];
     message: string;
+    conversationId?: number;
   };
 
   try {
@@ -144,12 +152,60 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
 
-  const { tool, history = [], message } = body;
+  const { tool, history = [], message, conversationId } = body;
 
   if (!tool || !VALID_TOOLS.includes(tool)) {
     return NextResponse.json({ ok: false, error: "invalid_tool" }, { status: 400 });
   }
 
+  // ── Persistence: resolve or create conversation ──────────────────────────
+  let resolvedConvId: number | undefined;
+  const userId = await getUserId(token);
+
+  if (userId) {
+    if (conversationId) {
+      resolvedConvId = conversationId;
+    } else {
+      const title = message.slice(0, 60);
+      resolvedConvId = await createConversation(userId, title);
+    }
+
+    // If history is empty but we have a conversation, load it from DB
+    const effectiveHistory =
+      history.length === 0 && resolvedConvId
+        ? (await getConversationMessages(resolvedConvId)).map((m) => ({
+            role: m.role === "assistant" ? ("model" as const) : ("user" as const),
+            parts: m.content,
+          }))
+        : history;
+
+    try {
+      const { reply, options } = await callAnthropic(tool, effectiveHistory, message);
+      if (!reply) {
+        return NextResponse.json({ ok: false, error: "empty_response" }, { status: 502 });
+      }
+
+      // Save both messages
+      await addMessage(resolvedConvId!, "user", message);
+      await addMessage(resolvedConvId!, "assistant", reply);
+
+      // Update conversation title on first message
+      if (!conversationId) {
+        await updateConversationTitle(resolvedConvId!, message.slice(0, 60));
+      }
+
+      return NextResponse.json({ ok: true, reply, options, provider: "anthropic", conversationId: resolvedConvId });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "unknown";
+      console.error("[Jordan] error:", msg);
+      return NextResponse.json(
+        { ok: false, error: "Jordan esta experimentando dificultades. Intenta de nuevo." },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Fallback: no userId — call LLM without persistence (backward compat)
   try {
     const { reply, options } = await callAnthropic(tool, history, message);
     if (!reply) {
