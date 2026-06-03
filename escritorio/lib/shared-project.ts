@@ -102,7 +102,7 @@ export async function upsertBrandbook(
 
   // Build dynamic SET clause with only provided fields
   const fields: string[] = [];
-  const values: unknown[] = [];
+  const values: (string | number | null)[] = [];
 
   const map: [keyof BrandbookUpdate, string][] = [
     ["name", "name"],

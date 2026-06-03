@@ -14,6 +14,9 @@ import {
   type NbProject,
 } from "@/lib/nubia/db-nubia";
 import { nubiaChat, parseNubiaReady, generateTagline } from "@/lib/nubia/nubia-ai";
+import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared-project";
+import { generateLogo } from "@/lib/logo-generator";
+import getPool from "@/lib/db-manu";
 
 export const runtime = "nodejs";
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
@@ -40,8 +43,11 @@ export async function POST(req: NextRequest) {
   // Save user message
   await saveChatMessage(userId, "user", message, step || "onboarding", project_id);
 
-  // Get AI response
-  const response = await nubiaChat(messages, step || "onboarding");
+  // Get brand context from shared_projects to avoid re-asking known data
+  const brandContext = await getBrandContext(userId);
+
+  // Get AI response (inject brand context so it knows what's already collected)
+  const response = await nubiaChat(messages, step || "onboarding", brandContext);
 
   // Save assistant message
   await saveChatMessage(userId, "assistant", response, step || "onboarding", project_id);
@@ -87,6 +93,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ reply: altMsg, step: "subdomain_conflict" });
     }
 
+    const colors = (ready.colors as any) || {};
+    const fonts = (ready.fonts as any) || {};
+
+    // Upsert shared brandbook with all collected data
+    const sharedId = await upsertBrandbook(userId, {
+      name: String(ready.name || "Mi Tienda"),
+      industry: String(ready.industry || ""),
+      email: String((ready as any).email || "") || undefined,
+      phone: String((ready as any).phone || "") || undefined,
+      whatsapp: String((ready as any).whatsapp || "") || undefined,
+      primary_color: colors.primary || undefined,
+      secondary_color: colors.secondary || undefined,
+      accent_color: colors.accent || undefined,
+      font_heading: fonts.heading || undefined,
+      font_body: fonts.body || undefined,
+    });
+
     // Create project
     const projectId = await createProject({
       user_id: userId,
@@ -94,17 +117,23 @@ export async function POST(req: NextRequest) {
       name: String(ready.name || "Mi Tienda"),
       description: String(ready.industry || ""),
       industry: String(ready.industry || ""),
-      template: (["boutique", "fresh", "spark", "classic", "neon", "terra", "classic", "neon", "terra"].includes(String(ready.template)) ? ready.template : "boutique") as NbProject["template"],
+      template: (["boutique", "fresh", "spark", "classic", "neon", "terra"].includes(String(ready.template)) ? ready.template : "boutique") as NbProject["template"],
       email: String((ready as any).email || ""),
       phone: String((ready as any).phone || ""),
       location: String((ready as any).location || ""),
       whatsapp: String((ready as any).whatsapp || ""),
     });
 
+    // Link nubia project to shared_projects and update nb_projects.shared_project_id
+    await linkAgentProject(sharedId, "nubia", projectId);
+    const pool = getPool();
+    await pool.execute(
+      "UPDATE nb_projects SET shared_project_id = ? WHERE id = ?",
+      [sharedId, projectId]
+    );
+
     // Generate tagline and save design
     const tagline = await generateTagline(String(ready.name), String(ready.industry || "productos"));
-    const colors = (ready.colors as any) || {};
-    const fonts = (ready.fonts as any) || {};
     await upsertDesign(projectId, {
       primary_color: colors.primary || "#6366f1",
       secondary_color: colors.secondary || "#4f46e5",
@@ -113,6 +142,26 @@ export async function POST(req: NextRequest) {
       font_body: fonts.body || "Inter",
       tagline,
     });
+
+    // Persist tagline to shared brandbook
+    if (tagline) await upsertBrandbook(userId, { tagline });
+
+    // Generate logo with Recraft
+    const logoResult = await generateLogo({
+      businessName: String(ready.name),
+      industry: String(ready.industry || ""),
+      primaryColor: colors.primary,
+      secondaryColor: colors.secondary,
+      accentColor: colors.accent,
+      style: "modern",
+    });
+    if (logoResult) {
+      await pool.execute(
+        "UPDATE nb_projects SET logo_url = ? WHERE id = ?",
+        [logoResult.url, projectId]
+      );
+      await upsertBrandbook(userId, { logo_url: logoResult.url });
+    }
 
     const cleanReply = (cleanedReply.replace(/<NUBIA_READY>[\s\S]*?<\/NUBIA_READY>/, "").trim())
       || `Perfecto! Tu tienda "${ready.name}" esta lista para construirse. Haz clic en "Crear tienda" para continuar.`;
