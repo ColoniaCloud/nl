@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { upsertBrandbook, getSharedProject } from "@/lib/shared-project";
+import { generateLogo } from "@/lib/logo-generator";
 
 export const runtime = "nodejs";
 
@@ -125,6 +127,22 @@ export async function POST(req: NextRequest) {
       logo_url,
     } = body;
 
+    // Sync to shared brandbook (non-blocking helper)
+    const syncShared = async (finalLogoUrl?: string) => {
+      const brandData: Record<string, string | undefined> = {};
+      if (business_name) brandData.name = business_name;
+      if (industry) brandData.industry = industry;
+      if (description) brandData.description = description;
+      if (primary_color) brandData.primary_color = primary_color;
+      if (secondary_color) brandData.secondary_color = secondary_color;
+      if (accent_color) brandData.accent_color = accent_color;
+      if (font_heading) brandData.font_heading = font_heading;
+      if (font_body) brandData.font_body = font_body;
+      if (tagline) brandData.tagline = tagline;
+      if (finalLogoUrl) brandData.logo_url = finalLogoUrl;
+      if (Object.keys(brandData).length > 0) await upsertBrandbook(user.id, brandData);
+    };
+
     if (id) {
       // Update existing
       await pool.execute(
@@ -154,6 +172,7 @@ export async function POST(req: NextRequest) {
           id, user.id,
         ]
       );
+      await syncShared(logo_url);
       return NextResponse.json({ brandbook_id: id });
     }
 
@@ -174,7 +193,30 @@ export async function POST(req: NextRequest) {
       ]
     )) as any;
 
-    return NextResponse.json({ brandbook_id: result.insertId });
+    // Generate logo if we have enough brand data and no logo yet
+    let finalLogoUrl = logo_url;
+    if (!finalLogoUrl && business_name) {
+      const existing = await getSharedProject(user.id);
+      if (!existing?.logo_url) {
+        const logoResult = await generateLogo({
+          businessName: business_name,
+          industry: industry || undefined,
+          primaryColor: primary_color || undefined,
+          secondaryColor: secondary_color || undefined,
+          accentColor: accent_color || undefined,
+        });
+        if (logoResult) {
+          finalLogoUrl = logoResult.url;
+          await pool.execute(
+            "UPDATE mm_brandbooks SET logo_url = ? WHERE id = ?",
+            [finalLogoUrl, result.insertId]
+          );
+        }
+      }
+    }
+
+    await syncShared(finalLogoUrl ?? undefined);
+    return NextResponse.json({ brandbook_id: result.insertId, logo_url: finalLogoUrl ?? null });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Error interno" }, { status: 500 });
   }
