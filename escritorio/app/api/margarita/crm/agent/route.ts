@@ -3,11 +3,13 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { getAgent } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
+const CRM_MODEL = getAgent("margarita")!.models!.crm;
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 async function getUser(token: string): Promise<{ id: number } | null> {
@@ -195,7 +197,7 @@ JSON:
 {"resumen":"...","score":0-100,"score_razon":"...","fortalezas":[],"oportunidades":[],"approach_recomendado":"...","primer_mensaje":"...","objeciones_esperadas":[],"mejor_canal":"email|whatsapp|llamada","urgencia":"alta|media|baja","etiquetas_sugeridas":[]}`;
 
     const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6", max_tokens: 1024,
+      model: CRM_MODEL, max_tokens: 1024,
       messages: [{ role: "user", content: prompt }],
     });
     const raw = msg.content[0]?.type === "text" ? msg.content[0].text : "{}";
@@ -235,7 +237,7 @@ HTML requirements: tabla 600px, fondo #f4f4f5, tarjeta blanca, acento #10b981, i
 Devuelve SOLO el HTML completo.`;
 
     const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6", max_tokens: 4096,
+      model: CRM_MODEL, max_tokens: 4096,
       messages: [{ role: "user", content: prompt }],
     });
     const html = msg.content[0]?.type === "text" ? msg.content[0].text.trim() : "";
@@ -256,7 +258,7 @@ Devuelve SOLO el HTML completo.`;
     const JORDAN_FUNNEL = `Sos Jordan, experto en Funnels de Venta. Ayudas a diseñar embudos de conversión (TOFU, MOFU, BOFU). Conoces los 6 tipos: Lead Magnet, Webinar, High Ticket, Tripwire, Launch y Membership. Usas lenguaje profesional en español rioplatense.`;
 
     const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-6", max_tokens: 2048,
+      model: CRM_MODEL, max_tokens: 2048,
       system: JORDAN_FUNNEL,
       messages: [{
         role: "user",
@@ -357,7 +359,7 @@ Respondé en español rioplatense, de forma concisa y profesional.`;
         iteration++;
 
         const response = await anthropic.messages.create({
-          model: "claude-sonnet-4-6",
+          model: CRM_MODEL,
           max_tokens: 4096,
           system: systemPrompt,
           tools: CRM_TOOLS,

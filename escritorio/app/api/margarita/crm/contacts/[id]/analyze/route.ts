@@ -3,11 +3,13 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { getAgent } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
+const ANALYZE_MODEL = getAgent("margarita")!.model;
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 async function getUser(token: string): Promise<{ id: number } | null> {
@@ -118,7 +120,7 @@ Devuelve este JSON (sin markdown):
 }`;
 
       const msg = await anthropic.messages.create({
-        model: "claude-haiku-4-5-20251001",
+        model: ANALYZE_MODEL,
         max_tokens: 1024,
         messages: [{ role: "user", content: prompt }],
       });

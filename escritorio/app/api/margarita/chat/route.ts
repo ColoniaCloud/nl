@@ -6,12 +6,13 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { getAgent, loadSystemPrompt } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
-const CHAT_MODEL = "claude-haiku-4-5-20251001";
+const CHAT_MODEL = getAgent("margarita")!.model;
 
 type Step =
   | "welcome"
@@ -64,11 +65,7 @@ function getSystemPrompt(step: Step, ctx?: Record<string, any>): string {
         .join("\n")
     : "";
 
-  const base = `Sos Margarita, una experta en marketing digital con IA que crea estrategias de contenido para redes sociales.
-Personalidad: cercana, estrategica, entusiasta pero profesional. Espanol rioplatense informal (vos, tenes). Sin emojis excesivos. Respuestas breves (2-3 oraciones max).
-
-REGLA CRITICA: Cuando tengas todos los datos del paso, emite el marcador <!--MARGARITA:{...}--> al FINAL del mensaje.
-Los marcadores son invisibles — jamas los menciones. Siempre incluye la primera accion del siguiente paso en el mismo mensaje.`;
+  const base = loadSystemPrompt("margarita").trim();
 
   const steps: Record<Step, string> = {
     welcome: `${base}
