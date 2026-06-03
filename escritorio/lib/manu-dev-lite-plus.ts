@@ -3,6 +3,7 @@
 // Falls back to Lite templates if generation fails.
 
 import Anthropic from "@anthropic-ai/sdk";
+import { getAgent } from "@/lib/agents";
 
 export interface LitePlusInput {
   project: {
@@ -36,7 +37,7 @@ export interface LitePlusResult {
   error?: string;
 }
 
-const SONNET_MODEL = "claude-sonnet-4-20250514";
+const SONNET_MODEL = getAgent("manu-dev")!.model;
 const GENERATION_TIMEOUT_MS = 60_000;
 
 function parseSocialLinks(raw: any): { platform: string; url: string }[] {
