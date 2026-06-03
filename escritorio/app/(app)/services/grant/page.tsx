@@ -35,16 +35,8 @@ interface Message {
   timestamp: Date;
 }
 
-interface StoredMessage {
-  id: string;
-  role: "user" | "agent";
-  content: string;
-  options?: string[];
-  timestamp: string;
-}
-
-interface SessionMeta {
-  id: string;
+interface ConversationMeta {
+  id: number;
   title: string;
   updated_at: string;
   message_count: number;
@@ -77,7 +69,7 @@ const TOOLS: ToolDef[] = [
     description: "Disenha, optimiza y analiza embudos de conversion para tu negocio.",
     Icon: Filter,
     initialContent:
-      "Hola, soy **Jordan**, tu experto en Funnels de Venta.\n\nVamos a construir o mejorar tu embudo de conversion. Podes elegir uno de los 6 funnels probados del panel lateral, o contame que necesitas y lo armamos desde cero.\n\n\u00bfPor donde empezamos?",
+      "Hola, soy **Jordan**, tu experto en Funnels de Venta.\n\nVamos a construir o mejorar tu embudo de conversion. Podes elegir uno de los 6 funnels probados del panel lateral, o contame que necesitas y lo armamos desde cero.\n\n¿Por donde empezamos?",
     initialOptions: ["Quiero un Lead Magnet Funnel", "Analizar mi funnel actual", "Empezar desde cero"],
   },
   {
@@ -87,7 +79,7 @@ const TOOLS: ToolDef[] = [
     description: "Analiza el mercado, define tu propuesta de valor y crea una estrategia para escalar.",
     Icon: ChessKnight,
     initialContent:
-      "Hola, soy **Jordan**, tu estratega de negocios.\n\nVamos a analizar tu mercado, tu competencia y definir una hoja de ruta clara para escalar. Primero necesito entender tu negocio.\n\n\u00bfA que te dedicas y cual es tu objetivo principal ahora mismo?",
+      "Hola, soy **Jordan**, tu estratega de negocios.\n\nVamos a analizar tu mercado, tu competencia y definir una hoja de ruta clara para escalar. Primero necesito entender tu negocio.\n\n¿A que te dedicas y cual es tu objetivo principal ahora mismo?",
     initialOptions: ["Analizar mi mercado", "Definir mi propuesta de valor", "Crear un plan de escalado"],
   },
   {
@@ -97,7 +89,7 @@ const TOOLS: ToolDef[] = [
     description: "Entrena a tu equipo para prospectar, calificar leads y agendar llamadas de venta.",
     Icon: MessageCircle,
     initialContent:
-      "Hola, soy **Jordan**, entrenador de Setters de ventas.\n\nVamos a trabajar en prospeccion, calificacion de leads y tecnicas de agendamiento. Puedo darte scripts listos para usar o practicar roleplay con vos.\n\n\u00bfCon que queres arrancar?",
+      "Hola, soy **Jordan**, entrenador de Setters de ventas.\n\nVamos a trabajar en prospeccion, calificacion de leads y tecnicas de agendamiento. Puedo darte scripts listos para usar o practicar roleplay con vos.\n\n¿Con que queres arrancar?",
     initialOptions: ["Scripts de apertura", "Como calificar un lead", "Practicar roleplay setter"],
   },
   {
@@ -107,7 +99,7 @@ const TOOLS: ToolDef[] = [
     description: "Domina el manejo de objeciones y tecnicas de cierre de alto impacto.",
     Icon: Handshake,
     initialContent:
-      "Hola, soy **Jordan**, tu experto en cierre de ventas.\n\nEstoy aca para ayudarte a cerrar mas y mejor. Podemos trabajar una objecion especifica, practicar un cierre o armar tu script de ventas.\n\n\u00bfCual es tu mayor desafio ahora mismo?",
+      "Hola, soy **Jordan**, tu experto en cierre de ventas.\n\nEstoy aca para ayudarte a cerrar mas y mejor. Podemos trabajar una objecion especifica, practicar un cierre o armar tu script de ventas.\n\n¿Cual es tu mayor desafio ahora mismo?",
     initialOptions: ["Tengo una objecion que no puedo manejar", "Quiero practicar un cierre", "Armar mi script"],
   },
   {
@@ -117,7 +109,7 @@ const TOOLS: ToolDef[] = [
     description: "Interpreta tus metricas de negocio y encontra oportunidades ocultas de escalado.",
     Icon: BarChart3,
     initialContent:
-      "Hola, soy **Jordan**, tu analista de datos de crecimiento.\n\nVamos a revisar tus numeros y encontrar donde esta el dinero que se te esta escapando. Compartirme tus metricas actuales: CPL, CAC, conversion rate, ticket promedio, churn.\n\n\u00bfQue metricas tenes disponibles?",
+      "Hola, soy **Jordan**, tu analista de datos de crecimiento.\n\nVamos a revisar tus numeros y encontrar donde esta el dinero que se te esta escapando. Compartirme tus metricas actuales: CPL, CAC, conversion rate, ticket promedio, churn.\n\n¿Que metricas tenes disponibles?",
     initialOptions: ["Analizar mi conversion rate", "Revisar CAC y LTV", "Encontrar cuellos de botella"],
   },
   {
@@ -127,7 +119,7 @@ const TOOLS: ToolDef[] = [
     description: "Disena un sistema de gestion de relaciones con clientes adaptado a tu negocio.",
     Icon: BookUser,
     initialContent:
-      "Hola, soy **Jordan**, tu experto en CRM y gestion de clientes.\n\nVamos a disenar o mejorar tu sistema de seguimiento de leads para que ningun prospecto se pierda. Primero contame como manejas hoy tus contactos.\n\n\u00bfUses algun CRM o herramienta de seguimiento actualmente?",
+      "Hola, soy **Jordan**, tu experto en CRM y gestion de clientes.\n\nVamos a disenar o mejorar tu sistema de seguimiento de leads para que ningun prospecto se pierda. Primero contame como manejas hoy tus contactos.\n\n¿Uses algun CRM o herramienta de seguimiento actualmente?",
     initialOptions: ["Disenar mi CRM desde cero", "Mejorar mi pipeline", "Automatizar seguimiento"],
   },
 ];
@@ -179,53 +171,43 @@ function genId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function toStored(messages: Message[]): StoredMessage[] {
-  return messages.map((m) => ({ ...m, timestamp: m.timestamp.toISOString() }));
-}
-
-function fromStored(stored: StoredMessage[]): Message[] {
-  return stored.map((m) => ({ ...m, timestamp: new Date(m.timestamp) }));
+function fromDBMessages(
+  rows: { id: number; role: string; content: string; created_at: string }[]
+): Message[] {
+  return rows.map((r) => ({
+    id: String(r.id),
+    role: r.role === "assistant" ? "agent" : "user",
+    content: r.content,
+    options: [],
+    timestamp: new Date(r.created_at),
+  }));
 }
 
 function formatDate(iso: string) {
   const d = new Date(iso);
   return (
     d.toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }) +
-    " \u00b7 " +
+    " · " +
     d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })
   );
 }
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 
-async function apiFetchSessions(tool: ToolType): Promise<SessionMeta[]> {
+async function apiFetchConversations(tool: ToolType): Promise<ConversationMeta[]> {
   try {
-    const res = await fetch(`/api/jordan/sessions?tool=${tool}`);
+    const res = await fetch(`/api/jordan/conversations?tool=${tool}`);
     if (!res.ok) return [];
     const data = await res.json();
-    return data.sessions ?? [];
+    return data.conversations ?? [];
   } catch {
     return [];
   }
 }
 
-async function apiUpsertSession(id: string, tool: ToolType, messages: Message[]) {
-  const userMsgs = messages.filter((m) => m.role === "user");
-  if (userMsgs.length === 0) return;
-  const title =
-    userMsgs[0].content.slice(0, 100) + (userMsgs[0].content.length > 100 ? "..." : "");
+async function apiDeleteConversation(id: number) {
   try {
-    await fetch("/api/jordan/sessions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, tool, title, messages: toStored(messages) }),
-    });
-  } catch {}
-}
-
-async function apiDeleteSession(id: string) {
-  try {
-    await fetch(`/api/jordan/sessions/${id}`, { method: "DELETE" });
+    await fetch(`/api/jordan/conversations/${id}`, { method: "DELETE" });
   } catch {}
 }
 
@@ -244,7 +226,7 @@ async function downloadMessagePDF(msg: Message, toolTitle: string) {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text(`Jordan AI \u2014 ${toolTitle}`, margin, 12);
+  doc.text(`Jordan AI — ${toolTitle}`, margin, 12);
 
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
@@ -285,7 +267,7 @@ async function downloadMessagePDF(msg: Message, toolTitle: string) {
     doc.setPage(i);
     doc.setFontSize(7);
     doc.setTextColor(160, 160, 160);
-    doc.text(`nl360.site \u00b7 Jordan AI \u00b7 Pagina ${i}/${totalPages}`, margin, pageH - 8);
+    doc.text(`nl360.site · Jordan AI · Pagina ${i}/${totalPages}`, margin, pageH - 8);
   }
 
   doc.save(`Jordan_${toolTitle}_${msg.id}.pdf`);
@@ -313,12 +295,12 @@ function MarkdownContent({ content }: { content: string }) {
 export default function JordanPage() {
   const [step, setStep] = useState<Step>("dashboard");
   const [activeTool, setActiveTool] = useState<ToolType>("CLOSERS");
-  const [sessionId, setSessionId] = useState<string>("");
+  const [conversationId, setConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sessions, setSessions] = useState<SessionMeta[]>([]);
-  const [sessionsLoading, setSessionsLoading] = useState(false);
+  const [conversations, setConversations] = useState<ConversationMeta[]>([]);
+  const [convsLoading, setConvsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -363,19 +345,15 @@ export default function JordanPage() {
     }
   }
 
-  const loadSessions = useCallback(async (tool: ToolType) => {
-    setSessionsLoading(true);
-    const data = await apiFetchSessions(tool);
-    setSessions(data);
-    setSessionsLoading(false);
+  const loadConversations = useCallback(async (tool: ToolType) => {
+    setConvsLoading(true);
+    const data = await apiFetchConversations(tool);
+    setConversations(data);
+    setConvsLoading(false);
   }, []);
 
   function startNew(tool: ToolType) {
     const toolDef = TOOLS.find((t) => t.id === tool)!;
-    const id =
-      typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : genId();
     const initial: Message = {
       id: genId(),
       role: "agent",
@@ -384,20 +362,21 @@ export default function JordanPage() {
       timestamp: new Date(),
     };
     setActiveTool(tool);
-    setSessionId(id);
+    setConversationId(null);
     setMessages([initial]);
     setInput("");
     setStep("chat");
   }
 
-  async function loadSession(id: string) {
+  async function loadConversation(id: number) {
     try {
-      const res = await fetch(`/api/jordan/sessions/${id}`);
+      const res = await fetch(`/api/jordan/conversations/${id}`);
       if (!res.ok) return;
       const data = await res.json();
-      setActiveTool(data.tool as ToolType);
-      setSessionId(id);
-      setMessages(fromStored(data.messages));
+      const conv = data.conversation;
+      setActiveTool(conv.tool as ToolType);
+      setConversationId(id);
+      setMessages(fromDBMessages(conv.messages));
       setInput("");
       setStep("chat");
     } catch {}
@@ -432,13 +411,21 @@ export default function JordanPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           tool: activeTool,
-          history: buildHistory(messages),
+          // Send empty history when backend already has the conversation;
+          // send full history only for the first message of a new conversation.
+          history: conversationId !== null ? [] : buildHistory(messages),
           message: text.trim(),
+          ...(conversationId !== null && { conversationId }),
         }),
       });
       const data = await res.json();
 
       if (data.ok) {
+        // Capture the conversation ID returned by the backend on first message
+        if (data.conversationId && conversationId === null) {
+          setConversationId(data.conversationId);
+        }
+
         const agentMsg: Message = {
           id: genId(),
           role: "agent",
@@ -446,9 +433,7 @@ export default function JordanPage() {
           options: data.options ?? [],
           timestamp: new Date(),
         };
-        const finalMessages = [...updatedMessages, agentMsg];
-        setMessages(finalMessages);
-        await apiUpsertSession(sessionId, activeTool, finalMessages);
+        setMessages([...updatedMessages, agentMsg]);
       } else {
         setMessages([
           ...updatedMessages,
@@ -530,19 +515,19 @@ export default function JordanPage() {
             ))}
           </div>
 
-          {/* Recent sessions */}
+          {/* Recent conversations */}
           <div>
             <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
               Conversaciones recientes
             </h2>
             {TOOLS.map((tool) => (
-              <RecentSessionsBlock
+              <RecentConversationsBlock
                 key={tool.id}
                 tool={tool}
-                onLoad={loadSession}
+                onLoad={loadConversation}
                 onHistory={() => {
                   setActiveTool(tool.id);
-                  loadSessions(tool.id);
+                  loadConversations(tool.id);
                   setStep("history");
                 }}
               />
@@ -580,11 +565,11 @@ export default function JordanPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-4">
-          {sessionsLoading ? (
+          {convsLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="size-5 text-zinc-500 animate-spin" />
             </div>
-          ) : sessions.length === 0 ? (
+          ) : conversations.length === 0 ? (
             <div className="text-center py-12">
               <History className="size-8 text-zinc-700 mx-auto mb-3" />
               <p className="text-sm text-zinc-500">Sin conversaciones guardadas.</p>
@@ -597,10 +582,10 @@ export default function JordanPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {sessions.map((s) => (
+              {conversations.map((s) => (
                 <div
                   key={s.id}
-                  onClick={() => loadSession(s.id)}
+                  onClick={() => loadConversation(s.id)}
                   className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]
                     hover:border-orange-500/20 hover:bg-orange-500/5 transition-all group cursor-pointer"
                 >
@@ -616,8 +601,8 @@ export default function JordanPage() {
                   <button
                     onClick={async (e) => {
                       e.stopPropagation();
-                      await apiDeleteSession(s.id);
-                      setSessions((prev) => prev.filter((x) => x.id !== s.id));
+                      await apiDeleteConversation(s.id);
+                      setConversations((prev) => prev.filter((x) => x.id !== s.id));
                     }}
                     className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-zinc-600
                       hover:text-red-400 hover:bg-red-400/10 transition-all"
@@ -664,7 +649,7 @@ export default function JordanPage() {
         </button>
         <button
           onClick={() => {
-            loadSessions(activeTool);
+            loadConversations(activeTool);
             setStep("history");
           }}
           title="Historial"
@@ -819,7 +804,7 @@ export default function JordanPage() {
               </button>
             </div>
             <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Enter para enviar \u00b7 Shift+Enter para nueva linea
+              Enter para enviar · Shift+Enter para nueva linea
             </p>
           </div>
         </div>
@@ -828,28 +813,28 @@ export default function JordanPage() {
   );
 }
 
-// ─── RecentSessionsBlock ──────────────────────────────────────────────────────
+// ─── RecentConversationsBlock ─────────────────────────────────────────────────
 
-function RecentSessionsBlock({
+function RecentConversationsBlock({
   tool,
   onLoad,
   onHistory,
 }: {
   tool: ToolDef;
-  onLoad: (id: string) => void;
+  onLoad: (id: number) => void;
   onHistory: () => void;
 }) {
-  const [sessions, setSessions] = useState<SessionMeta[]>([]);
+  const [convs, setConvs] = useState<ConversationMeta[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    apiFetchSessions(tool.id).then((data) => {
-      setSessions(data.slice(0, 3));
+    apiFetchConversations(tool.id).then((data) => {
+      setConvs(data.slice(0, 3));
       setLoaded(true);
     });
   }, [tool.id]);
 
-  if (!loaded || sessions.length === 0) return null;
+  if (!loaded || convs.length === 0) return null;
 
   return (
     <div className="mb-5">
@@ -858,7 +843,7 @@ function RecentSessionsBlock({
         <span className="text-[11px] text-zinc-600">{tool.title}</span>
       </div>
       <div className="space-y-1.5">
-        {sessions.map((s) => (
+        {convs.map((s) => (
           <button
             key={s.id}
             onClick={() => onLoad(s.id)}
@@ -874,7 +859,7 @@ function RecentSessionsBlock({
             </div>
           </button>
         ))}
-        {sessions.length >= 3 && (
+        {convs.length >= 3 && (
           <button
             onClick={onHistory}
             className="w-full text-[10px] text-zinc-600 hover:text-emerald-400 transition-colors py-1"
