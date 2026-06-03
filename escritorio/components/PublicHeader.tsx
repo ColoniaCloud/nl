@@ -27,7 +27,7 @@ export default function PublicHeader() {
 
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[70vw]">
-      <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-zinc-950/80 backdrop-blur-xl px-5 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+      <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-zinc-950/80 backdrop-blur-xl px-5 py-3 shadow-[var(--shadow-lg)]">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -104,7 +104,7 @@ export default function PublicHeader() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="mt-2 rounded-2xl border border-white/[0.08] bg-zinc-950/95 backdrop-blur-xl px-3 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+        <div className="mt-2 rounded-2xl border border-white/[0.08] bg-zinc-950/95 backdrop-blur-xl px-3 py-3 shadow-[var(--shadow-lg)]">
           <nav className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => {
               const active =

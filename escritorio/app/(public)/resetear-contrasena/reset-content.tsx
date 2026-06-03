@@ -4,20 +4,27 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { resetPasswordSchema, type ResetPasswordFormData } from '@/lib/schemas/auth';
 
 export default function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const uid = searchParams.get('uid');
 
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validating, setValidating] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ResetPasswordFormData>({ resolver: zodResolver(resetPasswordSchema) });
 
   useEffect(() => {
     if (!token || !uid) {
@@ -49,33 +56,21 @@ export default function ResetPasswordContent() {
     validate();
   }, [token, uid]);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: ResetPasswordFormData) => {
     setError('');
-
-    if (newPassword.length < 8) {
-      setError('Minimo 8 caracteres.');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError('Contraseñas no coinciden.');
-      return;
-    }
-
     setLoading(true);
 
     try {
       const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, uid, newPassword }),
+        body: JSON.stringify({ token, uid, newPassword: data.newPassword }),
       });
 
-      const data = await res.json().catch(() => ({}));
+      const json = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data?.error || 'Error al cambiar.');
+        setError(json?.error || 'Error al cambiar.');
         return;
       }
 
@@ -125,7 +120,7 @@ export default function ResetPasswordContent() {
                 </p>
                 <Link
                   href="/login"
-                  className="mt-4 inline-block rounded-lg bg-violet-600 px-6 py-2 text-white hover:bg-violet-500"
+                  className="react-aria-Button btn-primary mt-4 px-6 py-2"
                 >
                   Ir al login
                 </Link>
@@ -139,24 +134,23 @@ export default function ResetPasswordContent() {
                 </p>
                 <Link
                   href="/recuperar-contrasena"
-                  className="mt-4 inline-block border border-white/10 rounded-lg px-6 py-2 text-white hover:border-white/30"
+                  className="react-aria-Button mt-4 px-6 py-2"
                 >
                   Nuevo enlace
                 </Link>
               </div>
             ) : (
-              <form onSubmit={onSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-zinc-500">
+                  <label htmlFor="new-password" className="react-aria-Label text-xs">
                     CONTRASEÑA
                   </label>
                   <div className="relative mt-2">
                     <input
+                      id="new-password"
                       type={showPassword ? 'text' : 'password'}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                      className="w-full h-10 rounded-lg border border-white/10 bg-zinc-800 px-3 text-white"
+                      {...register('newPassword')}
+                      className="react-aria-Input w-full h-10"
                     />
                     <button
                       type="button"
@@ -170,19 +164,24 @@ export default function ResetPasswordContent() {
                       )}
                     </button>
                   </div>
+                  {errors.newPassword && (
+                    <p className="react-aria-FieldError">{errors.newPassword.message}</p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-zinc-500">
+                  <label htmlFor="confirm-password" className="react-aria-Label text-xs">
                     CONFIRMAR
                   </label>
                   <input
+                    id="confirm-password"
                     type={showPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className="mt-2 w-full h-10 rounded-lg border border-white/10 bg-zinc-800 px-3 text-white"
+                    {...register('confirmPassword')}
+                    className="react-aria-Input w-full mt-2 h-10"
                   />
+                  {errors.confirmPassword && (
+                    <p className="react-aria-FieldError">{errors.confirmPassword.message}</p>
+                  )}
                 </div>
 
                 {error && (
@@ -194,7 +193,7 @@ export default function ResetPasswordContent() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-10 rounded-lg bg-violet-600 font-semibold text-white hover:bg-violet-500 disabled:opacity-50"
+                  className="react-aria-Button btn-primary w-full h-10 font-semibold"
                 >
                   {loading ? 'Cambiando...' : 'Cambiar'}
                 </button>
@@ -202,7 +201,7 @@ export default function ResetPasswordContent() {
                 <div className="text-center">
                   <Link
                     href="/login"
-                    className="text-xs text-zinc-400 hover:text-white"
+                    className="react-aria-Link text-xs"
                   >
                     Volver al login
                   </Link>

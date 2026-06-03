@@ -1,6 +1,65 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ═══════════════════════════════════════════════════════════
+   REACT ARIA DESIGN SYSTEM TOKENS — @react-aria/example-theme
+   Dark-only: valores directamente en :root (el proyecto usa
+   .dark siempre activo, no prefers-color-scheme)
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* Paleta base — Dark */
+  --rac-background:   #1d1d1d;
+  --rac-gray-50:      #101010;
+  --rac-gray-100:     #393939;
+  --rac-gray-200:     #4f4f4f;
+  --rac-gray-300:     #686868;
+  --rac-gray-400:     #848484;
+  --rac-gray-500:     #a7a7a7;
+  --rac-gray-600:     #cfcfcf;
+  --rac-purple-100:   #3c1e95;
+  --rac-purple-200:   #522acd;
+  --rac-purple-300:   #6f46ed;
+  --rac-purple-400:   #8e6ef1;
+  --rac-purple-500:   #b099f5;
+  --rac-purple-600:   #d5c8fa;
+  --rac-red-100:      #721200;
+  --rac-red-200:      #9c1900;
+  --rac-red-300:      #cc2000;
+  --rac-red-400:      #e95034;
+  --rac-red-500:      #f08c79;
+  --rac-red-600:      #f7c3ba;
+  --rac-highlight-hover:   rgb(255 255 255 / 0.1);
+  --rac-highlight-pressed: rgb(255 255 255 / 0.2);
+
+  /* Semánticas */
+  --rac-focus-ring:              var(--rac-purple-400);
+  --rac-text:                    var(--rac-gray-600);
+  --rac-text-base:               var(--rac-gray-500);
+  --rac-text-hover:              var(--rac-gray-600);
+  --rac-text-disabled:           var(--rac-gray-200);
+  --rac-text-placeholder:        var(--rac-gray-400);
+  --rac-link:                    var(--rac-purple-500);
+  --rac-link-pressed:            var(--rac-purple-600);
+  --rac-border:                  var(--rac-gray-300);
+  --rac-border-hover:            var(--rac-gray-400);
+  --rac-border-pressed:          var(--rac-gray-400);
+  --rac-border-disabled:         var(--rac-gray-100);
+  --rac-field-bg:                var(--rac-gray-50);
+  --rac-field-text:              var(--rac-gray-600);
+  --rac-overlay-bg:              var(--rac-gray-50);
+  --rac-button-bg:               var(--rac-gray-50);
+  --rac-button-bg-pressed:       var(--rac-background);
+  /* Accent — fijo para garantizar contraste con blanco */
+  --rac-accent:                  #6f46ed;
+  --rac-accent-pressed:          #522acd;
+  --rac-accent-invalid:          #cc2000;
+  --rac-accent-fg:               #ffffff;
+  --rac-accent-fg-pressed:       #dddddd;
+  --rac-accent-overlay:          rgb(111 70 237 / 15%);
+  --rac-invalid:                 var(--rac-red-400);
+  --rac-invalid-pressed:         var(--rac-red-500);
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* ─── shadcn/ui CSS variables (New York style, zinc base) ─── */
@@ -35,6 +94,17 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* React Aria tokens → Tailwind utilities */
+  --color-rac-accent:        var(--rac-accent);
+  --color-rac-accent-fg:     var(--rac-accent-fg);
+  --color-rac-bg:            var(--rac-background);
+  --color-rac-field:         var(--rac-field-bg);
+  --color-rac-border:        var(--rac-border);
+  --color-rac-text:          var(--rac-text);
+  --color-rac-text-muted:    var(--rac-text-base);
+  --color-rac-invalid:       var(--rac-invalid);
+  --color-rac-focus:         var(--rac-focus-ring);
+  --color-rac-overlay:       var(--rac-overlay-bg);
 }
 
 :root {
@@ -57,6 +127,11 @@
   --border: rgba(255,255,255,0.10);
   --input: rgba(255,255,255,0.15);
   --ring: #71717a;
+  --brand: #7c3aed;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.25);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.5);
   --sidebar: #09090b;
   --sidebar-foreground: #fafafa;
   --sidebar-primary: #fafafa;
@@ -215,4 +290,266 @@ iframe {
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REACT ARIA COMPONENT STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── BUTTON ── */
+.react-aria-Button {
+  color: var(--rac-text);
+  background: var(--rac-button-bg);
+  border: 1px solid var(--rac-border);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1rem;
+  font-family: inherit;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 6px 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 100ms, border-color 100ms;
+
+  &[data-hovered]      { background: var(--rac-highlight-hover); border-color: var(--rac-border-hover); }
+  &[data-pressed]      { box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1); background: var(--rac-button-bg-pressed); border-color: var(--rac-border-pressed); }
+  &[data-focus-visible]{ outline: 2px solid var(--rac-focus-ring); outline-offset: -1px; }
+  &[data-disabled]     { opacity: 0.4; cursor: not-allowed; }
+
+  &.btn-primary {
+    background: var(--rac-accent); color: var(--rac-accent-fg); border-color: transparent;
+    &[data-hovered] { background: var(--rac-accent-pressed); }
+    &[data-pressed] { background: var(--rac-accent-pressed); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.2); }
+  }
+  &.btn-quiet {
+    background: transparent; border-color: transparent;
+    &[data-hovered] { background: var(--rac-highlight-hover); }
+  }
+}
+
+/* ── TEXT FIELD / INPUT ── */
+.react-aria-TextField {
+  display: flex; flex-direction: column; gap: 4px; width: fit-content; color: var(--rac-text);
+}
+.react-aria-Label {
+  font-size: 0.875rem; font-weight: 500; cursor: default; color: var(--rac-text);
+}
+.react-aria-Input,
+.react-aria-TextArea {
+  padding: 0.286rem 0.571rem;
+  margin: 0;
+  border: 1px solid var(--rac-border);
+  border-radius: 6px;
+  background: var(--rac-field-bg);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--rac-field-text);
+  outline: none;
+  transition: border-color 100ms;
+
+  &::placeholder        { color: var(--rac-text-placeholder); }
+  &[data-hovered]       { border-color: var(--rac-border-hover); }
+  &[data-focused]       { outline: 2px solid var(--rac-focus-ring); outline-offset: -1px; }
+  &[data-invalid]       { border-color: var(--rac-invalid); }
+  &[data-disabled]      { opacity: 0.4; cursor: not-allowed; }
+  &[data-readonly]      { background: var(--rac-background); }
+}
+.react-aria-FieldError { font-size: 0.8125rem; color: var(--rac-invalid); }
+.react-aria-Text[slot="description"] { font-size: 0.8125rem; color: var(--rac-text-base); }
+
+/* ── SELECT ── */
+.react-aria-Select {
+  display: flex; flex-direction: column; gap: 4px; color: var(--rac-text);
+
+  .react-aria-Button {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    min-width: 160px; padding: 0.286rem 0.571rem;
+    border: 1px solid var(--rac-border); border-radius: 6px;
+    background: var(--rac-field-bg); color: var(--rac-field-text); font-size: 1rem;
+    cursor: pointer; outline: none;
+    &[data-hovered]       { border-color: var(--rac-border-hover); }
+    &[data-focus-visible] { outline: 2px solid var(--rac-focus-ring); outline-offset: -1px; }
+    &[data-placeholder] .react-aria-SelectValue { color: var(--rac-text-placeholder); }
+  }
+}
+
+/* ── POPOVER ── */
+.react-aria-Popover {
+  border: 1px solid var(--rac-border); border-radius: 6px;
+  background: var(--rac-overlay-bg);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.3);
+  min-width: var(--trigger-width, 180px); overflow: hidden;
+  &[data-entering] { animation: rac-popover-in 150ms ease; }
+  &[data-exiting]  { animation: rac-popover-in 100ms ease reverse; }
+}
+@keyframes rac-popover-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── LIST BOX ── */
+.react-aria-ListBox { outline: none; max-height: 300px; overflow-y: auto; }
+.react-aria-ListBoxItem {
+  padding: 6px 10px; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; outline: none; color: var(--rac-text);
+  &[data-hovered]  { background: var(--rac-highlight-hover); }
+  &[data-selected] { background: var(--rac-accent); color: var(--rac-accent-fg); }
+  &[data-focused]  { background: var(--rac-highlight-hover); }
+  &[data-disabled] { opacity: 0.4; cursor: not-allowed; }
+}
+.react-aria-Section .react-aria-Header {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--rac-text-base); padding: 6px 10px 2px;
+}
+
+/* ── MENU ── */
+.react-aria-Menu { outline: none; min-width: 160px; }
+.react-aria-MenuItem {
+  padding: 6px 10px; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; outline: none; color: var(--rac-text);
+  &[data-hovered]     { background: var(--rac-highlight-hover); }
+  &[data-focused]     { background: var(--rac-highlight-hover); }
+  &[data-selected]    { color: var(--rac-accent); font-weight: 500; }
+  &[data-disabled]    { opacity: 0.4; cursor: not-allowed; }
+  &[data-destructive] { color: var(--rac-invalid); }
+}
+
+/* ── TABS ── */
+.react-aria-Tabs {
+  display: flex; flex-direction: column;
+  &[data-orientation="horizontal"] .react-aria-TabList { border-bottom: 1px solid var(--rac-border); }
+}
+.react-aria-TabList { display: flex; gap: 0; }
+.react-aria-Tab {
+  padding: 8px 16px; font-size: 0.9rem; cursor: pointer;
+  border: none; background: none; color: var(--rac-text-base);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  outline: none; font-family: inherit; transition: color 100ms;
+  &[data-hovered]       { color: var(--rac-text); }
+  &[data-selected]      { color: var(--rac-accent); border-bottom-color: var(--rac-accent); font-weight: 500; }
+  &[data-focus-visible] { outline: 2px solid var(--rac-focus-ring); outline-offset: -2px; border-radius: 4px; }
+  &[data-disabled]      { opacity: 0.4; cursor: not-allowed; }
+}
+.react-aria-TabPanel { outline: none; padding: 16px 0; color: var(--rac-text); }
+
+/* ── CHECKBOX ── */
+.react-aria-Checkbox {
+  display: flex; align-items: center; gap: 8px; font-size: 1rem;
+  cursor: pointer; color: var(--rac-text); outline: none;
+  .checkbox {
+    width: 18px; height: 18px; border: 2px solid var(--rac-border);
+    border-radius: 4px; background: var(--rac-field-bg); flex-shrink: 0;
+    transition: background 100ms, border-color 100ms;
+    display: flex; align-items: center; justify-content: center;
+    forced-color-adjust: none;
+  }
+  &[data-hovered] .checkbox         { border-color: var(--rac-border-hover); }
+  &[data-selected] .checkbox,
+  &[data-indeterminate] .checkbox   { background: var(--rac-accent); border-color: transparent; color: var(--rac-accent-fg); }
+  &[data-focus-visible] .checkbox   { outline: 2px solid var(--rac-focus-ring); outline-offset: 2px; }
+  &[data-disabled]                  { opacity: 0.4; cursor: not-allowed; }
+}
+
+/* ── SWITCH ── */
+.react-aria-Switch {
+  display: flex; align-items: center; gap: 10px; font-size: 1rem;
+  cursor: pointer; color: var(--rac-text);
+  .indicator {
+    width: 36px; height: 20px; border-radius: 10px; background: var(--rac-gray-200);
+    position: relative; transition: background 200ms; flex-shrink: 0; forced-color-adjust: none;
+    &::before {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; border-radius: 50%; background: white;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.3); transition: left 200ms;
+    }
+  }
+  &[data-selected] .indicator { background: var(--rac-accent); &::before { left: 18px; } }
+  &[data-focus-visible] .indicator { outline: 2px solid var(--rac-focus-ring); outline-offset: 2px; }
+  &[data-disabled] { opacity: 0.4; cursor: not-allowed; }
+}
+
+/* ── MODAL ── */
+.react-aria-ModalOverlay {
+  position: fixed; inset: 0; background: rgb(0 0 0 / 0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+  &[data-entering] { animation: rac-modal-fade 200ms ease; }
+  &[data-exiting]  { animation: rac-modal-fade 150ms ease reverse; }
+}
+@keyframes rac-modal-fade { from { opacity: 0; } to { opacity: 1; } }
+.react-aria-Modal {
+  background: var(--rac-overlay-bg); border: 1px solid var(--rac-border);
+  border-radius: 8px; box-shadow: 0 8px 32px rgb(0 0 0 / 0.4);
+  padding: 24px; max-width: 480px; width: calc(100vw - 2rem); outline: none;
+  &[data-entering] { animation: rac-modal-slide 200ms ease; }
+  &[data-exiting]  { animation: rac-modal-slide 150ms ease reverse; }
+}
+@keyframes rac-modal-slide {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── SEPARATOR ── */
+.react-aria-Separator { border: none; border-top: 1px solid var(--rac-border); margin: 4px 0; }
+
+/* ── TOOLTIP ── */
+.react-aria-Tooltip {
+  background: var(--rac-gray-600); color: var(--rac-gray-50);
+  font-size: 0.8125rem; padding: 4px 10px; border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+  &[data-entering] { animation: rac-tooltip-in 100ms ease; }
+  &[data-exiting]  { animation: rac-tooltip-in 80ms ease reverse; }
+}
+@keyframes rac-tooltip-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── LINK ── */
+.react-aria-Link {
+  color: var(--rac-link); text-decoration: none; outline: none;
+  &[data-hovered]       { text-decoration: underline; }
+  &[data-current]       { color: var(--rac-text); font-weight: 500; }
+  &[data-focus-visible] { outline: 2px solid var(--rac-focus-ring); border-radius: 2px; }
+}
+
+/* ── TOGGLE BUTTON ── */
+.react-aria-ToggleButton {
+  color: var(--rac-text); background: var(--rac-button-bg);
+  border: 1px solid var(--rac-border); border-radius: 4px;
+  padding: 6px 14px; font-size: 1rem; font-family: inherit;
+  cursor: pointer; outline: none; display: inline-flex; align-items: center; gap: 6px;
+  &[data-hovered]       { background: var(--rac-highlight-hover); }
+  &[data-selected]      { background: var(--rac-accent); color: var(--rac-accent-fg); border-color: transparent; }
+  &[data-focus-visible] { outline: 2px solid var(--rac-focus-ring); outline-offset: -1px; }
+  &[data-disabled]      { opacity: 0.4; cursor: not-allowed; }
+}
+
+/* ── TAG ── */
+.react-aria-Tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;
+  border: 1px solid var(--rac-border); color: var(--rac-text);
+  background: var(--rac-field-bg); cursor: default; outline: none;
+  &[data-selected]      { background: var(--rac-accent-overlay); border-color: var(--rac-accent); color: var(--rac-accent); }
+  &[data-focus-visible] { outline: 2px solid var(--rac-focus-ring); outline-offset: -1px; }
+}
+
+/* ── HIGH CONTRAST ── */
+@media (forced-colors: active) {
+  :root {
+    --rac-focus-ring:  Highlight;
+    --rac-text:        ButtonText;
+    --rac-border:      ButtonBorder;
+    --rac-field-bg:    Field;
+    --rac-field-text:  FieldText;
+    --rac-overlay-bg:  Canvas;
+    --rac-button-bg:   ButtonFace;
+    --rac-accent:      Highlight;
+    --rac-accent-fg:   HighlightText;
+    --rac-invalid:     LinkText;
+  }
 }

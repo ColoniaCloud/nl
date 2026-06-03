@@ -73,6 +73,7 @@ export default function PrecioPage() {
           <div
             key={plan.name}
             className={`relative rounded-2xl p-7 flex flex-col ${
+              // brand-color (highlight): border-violet-500/50, bg-violet-500/5
               plan.highlight
                 ? "border-2 border-violet-500/50 bg-violet-500/5"
                 : "border border-white/[0.08] bg-zinc-900/40"
@@ -80,6 +81,7 @@ export default function PrecioPage() {
           >
             {plan.highlight && (
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                {/* brand-color: bg-violet-500 */}
                 <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-violet-500 text-white">
                   Mas popular
                 </span>
@@ -109,6 +111,7 @@ export default function PrecioPage() {
             <Link
               href={plan.href}
               className={`w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                // brand-color (highlight): bg-violet-600, hover:bg-violet-500
                 plan.highlight
                   ? "bg-violet-600 text-white hover:bg-violet-500"
                   : "border border-white/[0.12] text-zinc-300 hover:border-white/[0.20] hover:text-white"

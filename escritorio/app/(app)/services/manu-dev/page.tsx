@@ -3,25 +3,8 @@
 import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPaperPlane,
-  faSpinner,
-  faGlobe,
-  faCheck,
-  faArrowUpRightFromSquare,
-  faRotateRight,
-  faWandMagicSparkles,
-  faChevronRight,
-  faTriangleExclamation,
-  faExpand,
-  faCompress,
-  faUpload,
-  faShareNodes,
-  faBars,
-} from "@fortawesome/free-solid-svg-icons";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Globe, ShoppingBag, Coins } from "lucide-react";
+import { Globe, ShoppingBag, Coins, Send, Loader2, Check, ExternalLink, Wand2, ChevronRight, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import CmsPanel from "@/components/manu-dev/CmsPanel";
 import { TemplateSelector, ModePicker } from "@/components/manu-dev/TemplateSelector";
@@ -120,7 +103,7 @@ function StepIndicator({ current }: { current: Step }) {
                 : active ? "bg-foreground text-background"
                 : "text-muted-foreground/40",
             ].join(" ")}>
-              {done && <FontAwesomeIcon icon={faCheck} className="text-[9px]" />}
+              {done && <Check className="size-2.5" />}
               {STEP_LABELS[s]}
             </div>
             {i < STEPS_FLOW.length - 1 && (
@@ -203,20 +186,20 @@ function BuildTerminal({ logs, status }: {
           NL360 Backoffice - Manu Dev v1.6 {status === "running" ? "trabajando" : status === "done" ? "listo" : "error"}
         </span>
         {status === "running" && (
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-zinc-400 text-[10px]" />
+          <Loader2 className="animate-spin size-3 text-zinc-400" />
         )}
         {status === "done" && (
-          <FontAwesomeIcon icon={faCheck} className="text-emerald-400 text-[10px]" />
+          <Check className="size-3 text-emerald-400" />
         )}
         {status === "error" && (
-          <FontAwesomeIcon icon={faTriangleExclamation} className="text-red-400 text-[10px]" />
+          <AlertTriangle className="size-3 text-red-400" />
         )}
         <button
           onClick={() => setExpanded((v) => !v)}
           title={expanded ? "Minimizar" : "Ampliar consola"}
           className="ml-1 text-zinc-400 hover:text-zinc-200 transition-colors p-0.5"
         >
-          <FontAwesomeIcon icon={expanded ? faCompress : faExpand} className="text-[10px]" />
+          {expanded ? <Minimize2 className="size-3" /> : <Maximize2 className="size-3" />}
         </button>
       </div>
       {/* Log area */}
@@ -336,9 +319,10 @@ function ManuDevHub({
         <div className="flex-shrink-0 px-3 py-2 border-b border-border">
           <button
             onClick={() => setOpenMobile(true)}
+            aria-label="Abrir menú lateral"
             className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted transition-colors"
           >
-            <FontAwesomeIcon icon={faBars} />
+            <Menu className="size-4" />
           </button>
         </div>
       )}
@@ -348,7 +332,7 @@ function ManuDevHub({
           {/* Hero */}
           <div className="text-center mb-8">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 text-xl">
-              <FontAwesomeIcon icon={faGlobe} />
+              <Globe className="size-5" />
             </div>
             <h1 className="text-2xl font-bold text-foreground">Que queres construir hoy?</h1>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -370,9 +354,10 @@ function ManuDevHub({
             <button
               type="submit"
               disabled={!hubInput.trim()}
+              aria-label="Enviar"
               className="flex h-[44px] w-[44px] sm:h-[48px] sm:w-[48px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150"
             >
-              <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
+              <Send className="size-4" />
             </button>
           </form>
 
@@ -812,14 +797,15 @@ function ManuDevPage() {
           {isMobile && (
             <button
               onClick={() => setOpenMobile(true)}
+              aria-label="Abrir menú lateral"
               className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted transition-colors flex-shrink-0"
             >
-              <FontAwesomeIcon icon={faBars} className="text-xs" />
+              <Menu className="size-3" />
             </button>
           )}
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground text-background text-[10px]">
-              <FontAwesomeIcon icon={faGlobe} />
+              <Globe className="size-3" />
             </div>
             <span className="text-sm font-semibold text-foreground">Manu Dev</span>
           </div>
@@ -870,11 +856,11 @@ function ManuDevPage() {
                   className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted transition-colors"
                   title="Abrir menu"
                 >
-                  <FontAwesomeIcon icon={faBars} className="text-sm" />
+                  <Menu className="size-4" />
                 </button>
               )}
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 text-xs">
-                <FontAwesomeIcon icon={faGlobe} />
+                <Globe className="size-3.5" />
               </div>
               <span className="text-sm font-semibold text-foreground truncate">Manu Dev</span>
             </div>
@@ -886,7 +872,7 @@ function ManuDevPage() {
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
                 >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-[10px]" />
+                  <ExternalLink className="size-3" />
                   <span className="hidden sm:inline">Ver sitio</span>
                 </a>
                 {step === "complete" && (
@@ -894,7 +880,7 @@ function ManuDevPage() {
                     onClick={() => setShowCms(true)}
                     className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 text-white px-2.5 py-1.5 text-xs font-semibold hover:bg-emerald-500 transition-colors"
                   >
-                    <FontAwesomeIcon icon={faWandMagicSparkles} className="text-[10px]" />
+                    <Wand2 className="size-3" />
                     <span className="hidden sm:inline">Administrar</span>
                   </button>
                 )}
@@ -907,7 +893,7 @@ function ManuDevPage() {
               onClick={() => setAdvancedOpen((v) => !v)}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 text-[11px] text-muted-foreground hover:bg-muted transition-colors"
             >
-              <FontAwesomeIcon icon={faChevronRight} className={`text-[10px] transition-transform ${advancedOpen ? "rotate-90" : ""}`} />
+              <ChevronRight className={`size-3 transition-transform ${advancedOpen ? "rotate-90" : ""}`} />
               Opciones avanzadas
             </button>
             {advancedOpen && (
@@ -971,7 +957,7 @@ function ManuDevPage() {
                   <div className="h-20 w-20 rounded-xl border border-border bg-muted animate-pulse flex-shrink-0" />
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-1.5">
-                      <FontAwesomeIcon icon={faSpinner} className="animate-spin text-muted-foreground text-xs" />
+                      <Loader2 className="animate-spin size-3 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground">Generando logo con IA...</span>
                     </div>
                     <p className="text-[11px] text-muted-foreground/60">Esto puede tardar unos segundos</p>
@@ -1001,7 +987,7 @@ function ManuDevPage() {
                       if (file) handleLogoUpload(file);
                     }}
                   />
-                  <FontAwesomeIcon icon={faUpload} className="text-muted-foreground text-xs" />
+                  <Upload className="size-3 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">Haz clic para subir tu logo</span>
                 </label>
               )}
@@ -1049,7 +1035,7 @@ function ManuDevPage() {
                 onClick={() => setShowCms(true)}
                 className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-emerald-500 transition-colors"
               >
-                <FontAwesomeIcon icon={faWandMagicSparkles} />
+                <Wand2 className="size-4" />
                 Abrir panel de administracion
               </button>
             </div>
@@ -1080,11 +1066,12 @@ function ManuDevPage() {
             <button
               type="submit"
               disabled={isBlocked || !input.trim() || step === "complete"}
+              aria-label="Enviar mensaje"
               className={`flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150 ${sendBtnPressed ? "scale-90" : "scale-100"}`}
             >
               {loading
-                ? <FontAwesomeIcon icon={faSpinner} className="animate-spin text-sm" />
-                : <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
+                ? <Loader2 className="animate-spin size-4" />
+                : <Send className="size-4" />
               }
             </button>
           </form>

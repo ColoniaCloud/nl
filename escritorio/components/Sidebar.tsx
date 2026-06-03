@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { useManuDevProjects } from "@/hooks/useManuDevProjects";
+import type { ManuDevProject, NubiaProject, ForgeProject } from "@/hooks/useManuDevProjects";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -37,28 +39,6 @@ type MeResponse = {
     roles?: string[];
   };
   plan?: { slug?: string; status?: string };
-};
-
-type ManuDevProject = {
-  id: number;
-  name?: string;
-  subdomain?: string;
-  status: string;
-};
-
-type NubiaProject = {
-  id: number;
-  name: string;
-  subdomain: string;
-  status: string;
-};
-
-type ForgeProject = {
-  id: number;
-  name?: string;
-  token_name?: string;
-  token_symbol?: string;
-  status: string;
 };
 
 type NavItem = {
@@ -163,12 +143,11 @@ export default function AppSidebar() {
   const searchParams = useSearchParams();
   const activeProjectId = searchParams.get("project");
 
+  const { projects: subAgentProjects, refetch: refetchProjects } = useManuDevProjects();
+
   const [me, setMe] = useState<MeResponse | null>(null);
   const [meLoading, setMeLoading] = useState(true);
   const [logoutLoading, setLogoutLoading] = useState(false);
-  const [manuDevProjects, setManuDevProjects] = useState<ManuDevProject[]>([]);
-  const [nubiaProjects, setNubiaProjects] = useState<NubiaProject[]>([]);
-  const [forgeProjects, setForgeProjects] = useState<ForgeProject[]>([]);
   const [openAgents, setOpenAgents] = useState<Record<string, boolean>>({});
   const [openSubHistory, setOpenSubHistory] = useState<Record<string, boolean>>({});
 
@@ -182,21 +161,10 @@ export default function AppSidebar() {
     return () => { alive = false; };
   }, []);
 
-  // Load Manu Dev, Nubia, and Forge projects for sub-items
+  // Refetch projects on navigation
   useEffect(() => {
-    fetch("/api/manu-dev/projects", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => { if (Array.isArray(d?.projects)) setManuDevProjects(d.projects); })
-      .catch(() => {});
-    fetch("/api/nubia/projects", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => { if (Array.isArray(d?.projects)) setNubiaProjects(d.projects); })
-      .catch(() => {});
-    fetch("/api/forge/projects", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => { if (Array.isArray(d?.projects)) setForgeProjects(d.projects); })
-      .catch(() => {});
-  }, [pathname]);
+    refetchProjects();
+  }, [pathname, refetchProjects]);
 
   // Auto-expand the active agent on mount / pathname change
   useEffect(() => {
@@ -219,10 +187,7 @@ export default function AppSidebar() {
   }
 
   function getSubProjects(key: "manuDev" | "nubia" | "forge") {
-    if (key === "manuDev") return manuDevProjects;
-    if (key === "nubia") return nubiaProjects;
-    if (key === "forge") return forgeProjects;
-    return [];
+    return subAgentProjects[key];
   }
 
   function projectLabel(key: "manuDev" | "nubia" | "forge", p: ManuDevProject | NubiaProject | ForgeProject) {

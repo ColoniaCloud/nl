@@ -23,7 +23,7 @@ export default function PublicHome() {
         style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
       >
         {/* FaultyTerminal background */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0" aria-hidden="true">
           <FaultyTerminal
             tint="#2a4b6f"
             scale={1.2}
@@ -57,6 +57,7 @@ export default function PublicHome() {
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-8">
               Tu negocio en modo{" "}
+              {/* brand-color: from-violet-400 */}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">
                 automatico
               </span>

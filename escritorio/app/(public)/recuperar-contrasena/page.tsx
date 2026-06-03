@@ -1,17 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/schemas/auth";
 
 export default function ForgotPasswordPage() {
-  const [identifier, setIdentifier] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
+  const [submittedIdentifier, setSubmittedIdentifier] = useState("");
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendStatus, setResendStatus] = useState<"idle" | "success" | "error">("idle");
+  const [resendError, setResendError] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ForgotPasswordFormData>({ resolver: zodResolver(forgotPasswordSchema) });
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  async function onResend() {
+    if (!submittedIdentifier || resendLoading || cooldown > 0) return;
+    setResendLoading(true);
+    setResendError("");
+    setResendStatus("idle");
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identifier: submittedIdentifier }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setResendError(data?.error || "No pudimos reenviar el email.");
+        setResendStatus("error");
+        return;
+      }
+      setResendStatus("success");
+      setCooldown(30);
+    } catch {
+      setResendError("Error al conectar. Intenta de nuevo.");
+      setResendStatus("error");
+    } finally {
+      setResendLoading(false);
+    }
+  }
+
+  async function onSubmit(data: ForgotPasswordFormData) {
     setError("");
     setSuccess(false);
     setLoading(true);
@@ -20,18 +67,19 @@ export default function ForgotPasswordPage() {
       const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier }),
+        body: JSON.stringify({ identifier: data.identifier }),
       });
 
-      const data = await res.json().catch(() => ({}));
+      const json = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data?.error || "No pudimos procesar tu solicitud");
+        setError(json?.error || "No pudimos procesar tu solicitud");
         return;
       }
 
+      setSubmittedIdentifier(data.identifier);
       setSuccess(true);
-      setIdentifier("");
+      reset();
     } catch {
       setError("Error al conectar. Intenta de nuevo.");
     } finally {
@@ -90,29 +138,57 @@ export default function ForgotPasswordPage() {
                 <p className="text-center text-sm text-zinc-400 mb-6">
                   Hemos enviado un enlace a tu email. Revisa tu bandeja de entrada (y spam) y sigue las instrucciones.
                 </p>
-                <div className="flex items-center gap-2 justify-center">
+                {resendStatus === "success" && (
+                  <div className="flex items-center gap-2 justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 mb-3 text-xs text-emerald-400">
+                    <CheckCircle className="size-3.5 flex-shrink-0" />
+                    Email reenviado
+                  </div>
+                )}
+
+                {resendStatus === "error" && (
+                  <div className="flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 mb-3 text-xs text-red-400">
+                    <AlertCircle className="size-3.5 flex-shrink-0" />
+                    {resendError}
+                  </div>
+                )}
+
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    onClick={onResend}
+                    disabled={resendLoading || cooldown > 0}
+                    className="react-aria-Button w-full h-10 text-sm"
+                  >
+                    {resendLoading && <Loader2 className="size-4 animate-spin" />}
+                    {resendLoading
+                      ? "Enviando..."
+                      : cooldown > 0
+                      ? `Reenviar en ${cooldown}s`
+                      : "Reenviar email"}
+                  </button>
                   <Link
                     href="/login"
-                    className="inline-flex gap-2 px-5 py-2.5 rounded-xl border border-white/[0.12] text-zinc-300 text-sm hover:border-white/[0.20] hover:text-white transition-colors"
+                    className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
                   >
                     Volver al login
                   </Link>
                 </div>
               </div>
             ) : (
-              <form onSubmit={onSubmit} className="mt-6 grid gap-4">
-                <label className="grid gap-2 text-sm">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
+                <label htmlFor="identifier" className="grid gap-2 text-sm">
+                  <span className="react-aria-Label text-xs uppercase tracking-wide">
                     Usuario o Email
                   </span>
                   <input
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
+                    id="identifier"
+                    {...register("identifier")}
                     type="text"
-                    required
-                    className="h-11 rounded-xl border border-white/[0.10] bg-zinc-800 px-3 text-sm text-white placeholder:text-zinc-600 outline-none transition focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20"
+                    className="react-aria-Input w-full h-10"
                     placeholder="tuusuario o email@ejemplo.com"
                   />
+                  {errors.identifier && (
+                    <p className="react-aria-FieldError">{errors.identifier.message}</p>
+                  )}
                 </label>
 
                 {error && (
@@ -125,7 +201,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="mt-2 w-full inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-violet-600 text-sm font-semibold text-white transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="react-aria-Button btn-primary w-full mt-2 h-10 text-sm font-semibold"
                 >
                   {loading && <Loader2 className="size-4 animate-spin" />}
                   {loading ? "Enviando..." : "Enviar enlace"}
@@ -134,7 +210,7 @@ export default function ForgotPasswordPage() {
                 <div className="text-center pt-2">
                   <Link
                     href="/login"
-                    className="text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
+                    className="react-aria-Link text-xs"
                   >
                     Volver al inicio de sesión
                   </Link>
