@@ -19,10 +19,10 @@ export function getPool(): mysql.Pool {
   return pool;
 }
 
+// DEPRECATED: jd_sessions will be dropped after migration to j_conversations + j_messages
 export async function ensureTables(): Promise<void> {
   if (initialized) return;
   const p = getPool();
-  // Drop legacy table if it uses old ENUM schema, then recreate with VARCHAR
   await p.execute(`
     CREATE TABLE IF NOT EXISTS jd_sessions (
       id         CHAR(36)     NOT NULL PRIMARY KEY,
@@ -52,8 +52,17 @@ export interface Conversation {
   id: number;
   user_id: number;
   title: string;
+  tool: string | null;
   created_at: Date;
   updated_at: Date;
+}
+
+export interface ConversationWithMessages extends Conversation {
+  messages: Message[];
+}
+
+export interface ConversationMeta extends Conversation {
+  message_count: number;
 }
 
 export interface Message {
@@ -66,24 +75,63 @@ export interface Message {
 
 // ─── Conversation CRUD ───────────────────────────────────────────────────────
 
-export async function createConversation(userId: number, title = "Nueva conversación"): Promise<number> {
+export async function createConversation(
+  userId: number,
+  title = "Nueva conversación",
+  tool?: string
+): Promise<number> {
   const p = getPool();
   const [result] = await p.execute(
-    `INSERT INTO j_conversations (user_id, title) VALUES (?, ?)`,
-    [userId, title.slice(0, 255)]
+    `INSERT INTO j_conversations (user_id, title, tool) VALUES (?, ?, ?)`,
+    [userId, title.slice(0, 255), tool ?? null]
   ) as any[];
   return result.insertId as number;
 }
 
-export async function getConversations(userId: number): Promise<Conversation[]> {
+export async function getConversations(userId: number, tool?: string): Promise<ConversationMeta[]> {
   const p = getPool();
+  const params: (number | string)[] = [userId];
+  let toolClause = "";
+  if (tool) {
+    toolClause = "AND c.tool = ?";
+    params.push(tool);
+  }
   const [rows] = await p.execute(
-    `SELECT id, user_id, title, created_at, updated_at
-     FROM j_conversations WHERE user_id = ?
-     ORDER BY updated_at DESC LIMIT 50`,
-    [userId]
+    `SELECT c.id, c.user_id, c.title, c.tool, c.created_at, c.updated_at,
+            COUNT(m.id) AS message_count
+     FROM j_conversations c
+     LEFT JOIN j_messages m ON m.conversation_id = c.id
+     WHERE c.user_id = ? ${toolClause}
+     GROUP BY c.id
+     ORDER BY c.updated_at DESC LIMIT 50`,
+    params
   ) as any[];
-  return rows as Conversation[];
+  return rows as ConversationMeta[];
+}
+
+export async function getConversationWithMessages(
+  conversationId: number,
+  userId: number
+): Promise<ConversationWithMessages | null> {
+  const p = getPool();
+  const [convRows] = await p.execute(
+    `SELECT id, user_id, title, tool, created_at, updated_at
+     FROM j_conversations WHERE id = ? AND user_id = ?`,
+    [conversationId, userId]
+  ) as any[];
+  if (!convRows.length) return null;
+  const conv = convRows[0] as Conversation;
+  const messages = await getConversationMessages(conversationId);
+  return { ...conv, messages };
+}
+
+export async function deleteConversation(conversationId: number, userId: number): Promise<boolean> {
+  const p = getPool();
+  const [result] = await p.execute(
+    `DELETE FROM j_conversations WHERE id = ? AND user_id = ?`,
+    [conversationId, userId]
+  ) as any[];
+  return (result as any).affectedRows > 0;
 }
 
 export async function getConversationMessages(conversationId: number): Promise<Message[]> {

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getPool, ensureTables, getUserId } from "@/lib/db-jordan";
+import { createLogger } from "@/lib/logger";
 
+// DEPRECATED: use /api/jordan/conversations/[id] instead
 export const runtime = "nodejs";
+
+const logger = createLogger("Jordan");
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 
@@ -15,11 +19,12 @@ async function auth(): Promise<{ userId: number } | null> {
   return { userId };
 }
 
-// GET /api/jordan/sessions/[id]
+// GET /api/jordan/sessions/[id]  [DEPRECATED — use GET /api/jordan/conversations/[id]]
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  logger.warn("DEPRECATED endpoint /api/jordan/sessions/[id] GET — migrar a /api/jordan/conversations/[id]");
   const session = await auth();
   if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
@@ -47,11 +52,12 @@ export async function GET(
   });
 }
 
-// PUT /api/jordan/sessions/[id]
+// PUT /api/jordan/sessions/[id]  [DEPRECATED]
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  logger.warn("DEPRECATED endpoint /api/jordan/sessions/[id] PUT");
   const session = await auth();
   if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
@@ -85,11 +91,12 @@ export async function PUT(
   return NextResponse.json({ ok: true });
 }
 
-// DELETE /api/jordan/sessions/[id]
+// DELETE /api/jordan/sessions/[id]  [DEPRECATED — use DELETE /api/jordan/conversations/[id]]
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  logger.warn("DEPRECATED endpoint /api/jordan/sessions/[id] DELETE — migrar a /api/jordan/conversations/[id]");
   const session = await auth();
   if (!session) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
