@@ -4,6 +4,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import fs from "fs/promises";
 import path from "path";
 import getPool from "@/lib/db-manu";
+import { getAgent } from "@/lib/agents";
+
+const CONTENT_MODEL = getAgent("manu-dev")!.models!.content;
 import {
   markBuildFailed,
   markBuildQueued,
@@ -196,7 +199,7 @@ USA ESTE FORMATO:
 Mantén toda la estructura existente, solo aplica el cambio solicitado. Sin explicaciones.`;
 
   const resp = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model: CONTENT_MODEL,
     max_tokens: 6000,
     messages: [{ role: "user", content: prompt }],
   });
