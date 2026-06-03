@@ -3,12 +3,13 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { getAgent } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
-const CONTENT_MODEL = "claude-sonnet-4-6";
+const CONTENT_MODEL = getAgent("margarita")!.models!.content;
 
 async function getUser(token: string): Promise<{ id: number } | null> {
   const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {

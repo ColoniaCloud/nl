@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
+import { getAgent } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
 const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY!;
+const SCRAPE_MODEL = getAgent("margarita")!.model;
 
 async function getUser(token: string): Promise<{ id: number } | null> {
   const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
@@ -91,7 +93,7 @@ async function analyzeWebsite(website: string): Promise<{
     const snippet = html.slice(0, 12000); // first 12k chars is enough
 
     const msg = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
+      model: SCRAPE_MODEL,
       max_tokens: 256,
       messages: [{
         role: "user",
