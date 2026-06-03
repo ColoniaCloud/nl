@@ -23,6 +23,9 @@ import {
 import { generateLitePlusSite } from "@/lib/manu-dev-lite-plus";
 import { DAILY_BUILD_CAP, validateModeForRoles } from "@/lib/billing-plans";
 import type { SiteGenerationMode } from "@/lib/billing-plans";
+import { getAgent } from "@/lib/agents";
+
+const CREATE_SITE_MODEL = getAgent("manu-dev")!.models!["create-site"];
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -1214,7 +1217,7 @@ export async function POST(req: NextRequest) {
             let raw = "";
             let charCount = 0;
             const genStream = client.messages.stream({
-              model: "claude-opus-4-7",
+              model: CREATE_SITE_MODEL,
               max_tokens: 32768,
               ...(system ? { system } : {}),
               messages: [{ role: "user", content: prompt }],

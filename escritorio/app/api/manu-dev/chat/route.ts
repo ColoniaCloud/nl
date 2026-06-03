@@ -7,12 +7,15 @@ import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
 import fs from "fs";
 import path from "path";
+import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared-project";
+import { generateLogo } from "@/lib/logo-generator";
+import { getAgent, loadSystemPrompt } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
-const CHAT_MODEL = "claude-sonnet-4-6";
+const CHAT_MODEL = getAgent("manu-dev")!.model;
 
 type Step =
   | "welcome"
@@ -146,21 +149,7 @@ function getSystemPrompt(step: Step, projectData?: Record<string, any>, username
   const industry = projectData?.industry || "general";
   const displayUser = username || "amigo";
 
-  const base = `Sos Manu Dev, un asistente de IA que crea sitios web profesionales de forma automatica.
-Personalidad: directo, positivo y cercano. Espanol rioplatense informal (vos, tenes, queres). Sin frases roboticas ni relleno.
-Respuestas MUY BREVES: maximo 2-3 oraciones por mensaje. Sin emojis. Sin signos de apertura (no ? ni !).
-
-CONTEXTO: Construis y alojas el sitio automaticamente en nl360.site. NO preguntes sobre hosting, servidores ni otras plataformas.
-
-REGLA CRITICA: Cuando tengas TODOS los datos del paso actual, incluye los marcadores al FINAL de tu mensaje.
-Los marcadores son invisibles al usuario — ponlos siempre al final, jamas los menciones.
-IMPORTANTE: Cuando emitas el marcador <!--MANU:-->, tu mensaje debe incluir TAMBIEN la primera pregunta o accion del siguiente paso. No esperes otro mensaje del usuario para abrir el siguiente paso.
-
-SEGURIDAD OPERATIVA (OBLIGATORIO):
-- NUNCA inventes usuarios, contrasenas, credenciales, correos de acceso ni rutas de admin.
-- NUNCA afirmes que se envio un email con accesos si el sistema no lo confirmo explicitamente.
-- NUNCA sugieras URLs como /admin, /wp-admin u otras rutas tecnicas.
-- Si el usuario pide acceso o credenciales, indica que la gestion se hace desde el panel de NL360.`;
+  const base = loadSystemPrompt("manu-dev").trim();
 
   const steps: Record<Step, string> = {
     welcome: `${base}
@@ -568,7 +557,11 @@ export async function POST(req: NextRequest) {
     );
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const systemPrompt = getSystemPrompt(currentStep, projectData ?? undefined, user.name);
+    const brandContext = project_id ? await getBrandContext(user.id) : null;
+    const baseSystemPrompt = getSystemPrompt(currentStep, projectData ?? undefined, user.name);
+    const systemPrompt = brandContext
+      ? `${baseSystemPrompt}\n\nContexto de marca ya registrado:\n${brandContext}`
+      : baseSystemPrompt;
 
     // Build messages — Anthropic requires alternating user/assistant starting with user
     const rawHistory = [
@@ -706,22 +699,26 @@ export async function POST(req: NextRequest) {
               encoder.encode(`data: ${JSON.stringify({ logoGenerating: true })}\n\n`)
             );
             const [dRows] = (await pool.execute(
-              "SELECT primary_color FROM md_design WHERE project_id = ?",
+              "SELECT primary_color, secondary_color, accent_color FROM md_design WHERE project_id = ?",
               [project_id]
             )) as any;
-            const primaryColor = dRows[0]?.primary_color || "#1a1a1a";
-            const url = await generateLogoWithHF(
-              project_id,
-              projectData.name || "Negocio",
-              projectData.industry || "empresa",
-              primaryColor
-            );
-            if (url) {
-              logoPreview = url;
+            const design = dRows[0] || {};
+            const logoResult = await generateLogo({
+              businessName: projectData.name || "Negocio",
+              industry: projectData.industry || "empresa",
+              primaryColor: design.primary_color,
+              secondaryColor: design.secondary_color,
+              accentColor: design.accent_color,
+              style: "modern",
+            });
+            if (logoResult) {
+              logoPreview = logoResult.url;
               await pool.execute(
                 "UPDATE md_projects SET logo_url = ? WHERE id = ? AND user_id = ?",
-                [url, project_id, user.id]
+                [logoResult.url, project_id, user.id]
               );
+              // Persist logo to shared brandbook
+              await upsertBrandbook(user.id, { logo_url: logoResult.url });
               if (!options) options = ["Me gusta, usarlo", "Generar otro logo", "Prefiero subir el mio"];
             } else {
               if (!options) options = ["Continuar sin logo", "Subir mi propio logo", "Intentar generar de nuevo"];
@@ -742,6 +739,13 @@ export async function POST(req: NextRequest) {
               await pool.execute(
                 "UPDATE md_chat_history SET project_id = ? WHERE user_id = ? AND project_id IS NULL",
                 [newProjectId, user.id]
+              );
+              // Upsert shared brandbook and link this md_project
+              const sharedId = await upsertBrandbook(user.id, { name: data.name || "Mi Proyecto" });
+              await linkAgentProject(sharedId, "manu_dev", newProjectId as number);
+              await pool.execute(
+                "UPDATE md_projects SET shared_project_id = ? WHERE id = ?",
+                [sharedId, newProjectId]
               );
               // Generate subdomain suggestions
               const subOptions = await generateSubdomainOptions(pool, data.name || "mi-sitio");
@@ -801,6 +805,11 @@ export async function POST(req: NextRequest) {
                      accent_color = VALUES(accent_color)`,
                   [project_id, data.primary_color, data.secondary_color || "#ffffff", data.accent_color || "#666666"]
                 );
+                await upsertBrandbook(user.id, {
+                  primary_color: data.primary_color,
+                  secondary_color: data.secondary_color || "#ffffff",
+                  accent_color: data.accent_color || "#666666",
+                });
               }
 
             } else if (next === "social" && project_id) {
@@ -810,6 +819,10 @@ export async function POST(req: NextRequest) {
                   "UPDATE md_design SET font_heading = ?, font_body = ? WHERE project_id = ?",
                   [data.font_heading, data.font_body || data.font_heading, project_id]
                 );
+                await upsertBrandbook(user.id, {
+                  font_heading: data.font_heading,
+                  font_body: data.font_body || data.font_heading,
+                });
               }
 
             } else if (next === "site_type" && project_id) {
@@ -884,6 +897,24 @@ export async function POST(req: NextRequest) {
                 phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
                 whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
               };
+              // Record handoff in shared_projects audit log
+              try {
+                const sp = await upsertBrandbook(user.id, {
+                  name: nubiaHandoff.name,
+                  industry: nubiaHandoff.industry,
+                  primary_color: nubiaHandoff.colors.primary || undefined,
+                  secondary_color: nubiaHandoff.colors.secondary || undefined,
+                  accent_color: nubiaHandoff.colors.accent || undefined,
+                  font_heading: nubiaHandoff.fonts.heading || undefined,
+                  font_body: nubiaHandoff.fonts.body || undefined,
+                  email: nubiaHandoff.email || undefined,
+                  whatsapp: nubiaHandoff.whatsapp || undefined,
+                });
+                const { recordHandoff } = await import("@/lib/shared-project");
+                await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
+              } catch (hErr) {
+                logger.warn("No se pudo registrar handoff Manu Dev → Nubia");
+              }
               // Pass redirect info in the response
               nextStep = "redirect_nubia" as Step;
               // Store handoff data as a special field
