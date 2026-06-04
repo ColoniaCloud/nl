@@ -27,7 +27,7 @@ export function PricingCTA({ plans, popularPlanId }: Props) {
     try {
       const me = await fetch("/api/auth/me", { cache: "no-store" });
       if (me.status === 401 || me.status === 403) {
-        router.push("/login?redirect=/precio");
+        router.push(`/registro?plan=${planId}`);
         return;
       }
 
