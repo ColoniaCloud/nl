@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import { getAgent } from "@/lib/agents";
+import { checkAgentAccess } from "@/lib/billing-access";
 
 export const runtime = "nodejs";
 
@@ -10,14 +11,17 @@ const WP_BASE_URL = process.env.WP_BASE_URL!;
 const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY!;
 const SCRAPE_MODEL = getAgent("margarita")!.model;
 
-async function getUser(token: string): Promise<{ id: number } | null> {
+async function getUser(token: string): Promise<{ id: number; roles: string[] } | null> {
   const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
   if (res.ok) {
     const data = await res.json();
-    return data.user?.id ? { id: data.user.id } : null;
+    if (data.user?.id) {
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : [];
+      return { id: data.user.id, roles };
+    }
   }
   const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -25,7 +29,7 @@ async function getUser(token: string): Promise<{ id: number } | null> {
   });
   if (!res2.ok) return null;
   const data2 = await res2.json();
-  return data2.id ? { id: data2.id } : null;
+  return data2.id ? { id: data2.id, roles: [] } : null;
 }
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -130,6 +134,12 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     const user = await getUser(token);
     if (!user?.id) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+
+    // F3: Verificar acceso al agente por plan
+    const agentCheck = checkAgentAccess(user.roles, "margarita");
+    if (!agentCheck.allowed) {
+      return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
+    }
 
     const body = await req.json();
     const {

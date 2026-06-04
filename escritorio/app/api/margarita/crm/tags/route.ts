@@ -2,23 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { checkAgentAccess } from "@/lib/billing-access";
 
 export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
 
-async function getUser(token: string): Promise<{ id: number } | null> {
+async function getUser(token: string): Promise<{ id: number; roles: string[] } | null> {
   try {
     const r = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
     });
-    if (r.ok) { const d = await r.json(); return d.user?.id ? { id: d.user.id } : null; }
+    if (r.ok) {
+      const d = await r.json();
+      if (d.user?.id) {
+        const roles: string[] = Array.isArray(d.roles) ? d.roles : [];
+        return { id: d.user.id, roles };
+      }
+    }
     const r2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
     });
     if (!r2.ok) return null;
-    const d2 = await r2.json(); return d2.id ? { id: d2.id } : null;
+    const d2 = await r2.json(); return d2.id ? { id: d2.id, roles: [] } : null;
   } catch { return null; }
 }
 
@@ -30,6 +37,12 @@ export async function GET(_req: NextRequest) {
     if (!token) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     const user = await getUser(token);
     if (!user?.id) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+
+    // F3: Verificar acceso al agente por plan
+    const agentCheck = checkAgentAccess(user.roles, "margarita");
+    if (!agentCheck.allowed) {
+      return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
+    }
 
     await ensureTables();
     const pool = getPool();
@@ -51,6 +64,12 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     const user = await getUser(token);
     if (!user?.id) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+
+    // F3: Verificar acceso al agente por plan
+    const agentCheck = checkAgentAccess(user.roles, "margarita");
+    if (!agentCheck.allowed) {
+      return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
+    }
 
     await ensureTables();
     const pool = getPool();
@@ -80,6 +99,12 @@ export async function DELETE(req: NextRequest) {
     if (!token) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
     const user = await getUser(token);
     if (!user?.id) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+
+    // F3: Verificar acceso al agente por plan
+    const agentCheck = checkAgentAccess(user.roles, "margarita");
+    if (!agentCheck.allowed) {
+      return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
+    }
 
     await ensureTables();
     const pool = getPool();

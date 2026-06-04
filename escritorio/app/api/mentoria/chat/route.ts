@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getPool, getUserId, ensureTables } from "@/lib/db-mentoria";
+import { getPool, ensureTables } from "@/lib/db-mentoria";
 import { rateLimit } from "@/lib/rate-limit";
+import { checkAgentAccess } from "@/lib/billing-access";
 import { getAgent, buildSystemPrompt, isValidAgentId } from "@/lib/mentoria/agents";
 import { getProvider, mapErrorToUserMessage, ChatMessage } from "@/lib/providers";
 
@@ -13,21 +14,25 @@ const WP_BASE_URL = process.env.WP_BASE_URL!;
 const RATE_CAPACITY = 20;
 const RATE_REFILL_PER_SEC = 1 / 3;
 
-async function isAuthenticated(token: string): Promise<boolean> {
-  try {
-    const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
-    if (res.ok) return true;
-    const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
-    return res2.ok;
-  } catch {
-    return false;
+async function getUser(token: string): Promise<{ id: number; roles: string[] } | null> {
+  const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.user?.id) {
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : [];
+      return { id: data.user.id, roles };
+    }
   }
+  const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (!res2.ok) return null;
+  const data2 = await res2.json();
+  return data2.id ? { id: data2.id, roles: [] } : null;
 }
 
 async function getOrInitProgress(userId: number, tool: string) {
@@ -77,14 +82,17 @@ async function advanceProgress(
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token || !(await isAuthenticated(token))) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!token) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  const user = await getUser(token);
+  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+
+  // F3: Verificar acceso al agente por plan
+  const agentCheck = checkAgentAccess(user.roles, "mentoria");
+  if (!agentCheck.allowed) {
+    return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
   }
 
-  const userId = await getUserId(token);
-  if (!userId) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
-  }
+  const userId = user.id;
 
   const rl = rateLimit(`chat:${userId}`, RATE_CAPACITY, RATE_REFILL_PER_SEC);
   if (!rl.allowed) {

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
 import { ensureTables } from "@/app/api/margarita/projects/route";
+import { checkAgentAccess } from "@/lib/billing-access";
 import { getAgent } from "@/lib/agents";
 
 export const runtime = "nodejs";
@@ -12,17 +13,23 @@ const WP_BASE_URL = process.env.WP_BASE_URL!;
 const CRM_MODEL = getAgent("margarita")!.models!.crm;
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-async function getUser(token: string): Promise<{ id: number } | null> {
+async function getUser(token: string): Promise<{ id: number; roles: string[] } | null> {
   try {
     const r = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
     });
-    if (r.ok) { const d = await r.json(); return d.user?.id ? { id: d.user.id } : null; }
+    if (r.ok) {
+      const d = await r.json();
+      if (d.user?.id) {
+        const roles: string[] = Array.isArray(d.roles) ? d.roles : [];
+        return { id: d.user.id, roles };
+      }
+    }
     const r2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
     });
     if (!r2.ok) return null;
-    const d2 = await r2.json(); return d2.id ? { id: d2.id } : null;
+    const d2 = await r2.json(); return d2.id ? { id: d2.id, roles: [] } : null;
   } catch { return null; }
 }
 
@@ -328,6 +335,10 @@ export async function POST(req: NextRequest) {
       if (!token) { send({ error: "No autenticado" }); writer.close(); return; }
       const user = await getUser(token);
       if (!user?.id) { send({ error: "Token invalido" }); writer.close(); return; }
+
+      // F3: Verificar acceso al agente por plan
+      const agentCheck = checkAgentAccess(user.roles, "margarita");
+      if (!agentCheck.allowed) { send({ error: agentCheck.reason }); writer.close(); return; }
 
       await ensureTables();
 
