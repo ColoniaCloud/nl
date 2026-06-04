@@ -215,7 +215,18 @@ function RegistroInner() {
 
         {/* Step: account form */}
         {step === "account" && (
-          <div className="rounded-2xl border border-white/[0.10] bg-zinc-900/60 backdrop-blur-sm p-8">
+          <>
+            {planParam && planParam !== "free" && selectedPlan && (
+              <div className="rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-3 mb-4">
+                <p className="text-sm font-semibold text-violet-300">
+                  Plan {selectedPlan.name} · {selectedPlan.price}{selectedPlan.period}
+                </p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Completá tu registro para continuar con el pago
+                </p>
+              </div>
+            )}
+            <div className="rounded-2xl border border-white/[0.10] bg-zinc-900/60 backdrop-blur-sm p-8">
             {/* Selected plan badge */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
@@ -340,6 +351,7 @@ function RegistroInner() {
               </button>
             </form>
           </div>
+          </>
         )}
       </div>
     </div>
