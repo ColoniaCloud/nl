@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
 
-export default function PagoExitoPage() {
+interface Props {
+  searchParams: Promise<{ session_id?: string }>;
+}
+
+export default async function PagoExitoPage({ searchParams }: Props) {
+  const { session_id } = await searchParams;
+
   return (
     <div className="py-12 md:py-20 flex flex-col items-center">
       <div className="w-full max-w-md">
@@ -25,23 +31,32 @@ export default function PagoExitoPage() {
             Pago recibido
           </h1>
           <p className="text-sm text-zinc-400 mb-2">
-            Estamos confirmando tu transaccion. Esto puede demorar unos minutos.
+            Estamos verificando tu suscripcion. Esto puede tardar entre 1 y 10 minutos.
           </p>
           <p className="text-sm text-zinc-500 mb-6">
-            Cuando se confirme, tu plan se actualizara automaticamente. Recibirás una notificacion en tu cuenta.
+            Cuando se confirme, tu plan se actualizara automaticamente. No necesitas hacer nada mas.
           </p>
 
           <Link
             href="/workspace"
             className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 transition-colors mb-4"
           >
-            Ir a mi escritorio <ArrowRight className="size-4" />
+            Ir a mi cuenta <ArrowRight className="size-4" />
           </Link>
 
+          {session_id && (
+            <p className="text-[11px] text-zinc-600 mb-3">
+              Referencia: <span className="font-mono">{session_id}</span>
+            </p>
+          )}
+
           <p className="text-xs text-zinc-600">
-            ¿Tardó más de 15 minutos?{" "}
-            <Link href="/enterprise" className="text-zinc-400 hover:text-zinc-300 underline underline-offset-2 transition-colors">
-              Contactanos en soporte
+            ¿Pasaron mas de 15 minutos y tu plan no se activó?{" "}
+            <Link
+              href="/enterprise"
+              className="text-zinc-400 hover:text-zinc-300 underline underline-offset-2 transition-colors"
+            >
+              Contactanos con la referencia
             </Link>
           </p>
         </div>
