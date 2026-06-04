@@ -70,6 +70,11 @@ export default function CRMPage() {
     try {
       const params = new URLSearchParams({ page: String(p), limit: String(LIMIT), ...(q ? { search: q } : {}) });
       const res = await fetch(`/api/margarita/crm/contacts?${params}`, { cache: "no-store" });
+      if (!res.ok) {
+        if (res.status === 401) { router.push("/login"); return; }
+        console.error("Error cargando contactos CRM:", res.status);
+        return;
+      }
       const data = await res.json();
       setContacts(data.contacts || []);
       setTotal(data.total || 0);
@@ -79,6 +84,11 @@ export default function CRMPage() {
   const fetchStats = useCallback(async () => {
     try {
       const res = await fetch("/api/margarita/crm/contacts?limit=1000", { cache: "no-store" });
+      if (!res.ok) {
+        if (res.status === 401) { router.push("/login"); return; }
+        console.error("Error cargando stats CRM:", res.status);
+        return;
+      }
       const allData = await res.json();
       const all = allData.contacts || [];
       const optinCount = all.filter((c: Contact) => c.optin).length;

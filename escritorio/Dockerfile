@@ -24,8 +24,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN apk add --no-cache docker-cli rsync
 
 
-# Copiar archivos de currículum de mentoria
+# Copiar datos de todos los agentes
 COPY --from=builder /app/data/mentoria /app/data/mentoria
+COPY --from=builder /app/data/margarita /app/data/margarita
+COPY --from=builder /app/data/jordan /app/data/jordan
+COPY --from=builder /app/data/manu-dev /app/data/manu-dev
+COPY --from=builder /app/data/nubia /app/data/nubia
+COPY --from=builder /app/data/forge /app/data/forge
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json
