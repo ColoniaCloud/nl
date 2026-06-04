@@ -46,6 +46,7 @@ out/
 _backup_*/
 *.tar.gz
 *.sql
+!escritorio/migrations/*.sql
 *.sqlite
 *.backup
 *.bak
