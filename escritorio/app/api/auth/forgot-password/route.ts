@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createHmac } from "crypto";
 import mysql from "mysql2/promise";
+import { sendPasswordResetEmail } from "@/lib/email";
 
 const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://nl360.site";
 const JWT_SECRET = process.env.NL360_JWT_SECRET || "default-secret-change-me";
@@ -58,10 +59,12 @@ export async function POST(req: Request) {
     const token = generateResetToken(user.ID);
     const resetLink = `${APP_BASE_URL}/resetear-contrasena?token=${token}&uid=${user.ID}`;
 
-    console.log(`\n✉️  PASSWORD RESET LINK FOR: ${user.user_email}`);
-    console.log(`👤 User: ${user.user_login}`);
-    console.log(`🔗 Link: ${resetLink}`);
-    console.log(`⏰ Expires: 1 hour from now\n`);
+    try {
+      await sendPasswordResetEmail(user.user_email, user.user_login, resetLink);
+    } catch (err) {
+      console.error("[forgot-password] email send failed:", err);
+      // No fallar el endpoint — el token fue generado correctamente
+    }
 
     return NextResponse.json(
       { ok: true, message: "Si el usuario existe, recibira un enlace de recuperacion" },
