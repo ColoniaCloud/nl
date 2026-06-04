@@ -27,7 +27,7 @@ export async function ensureTables(): Promise<void> {
     CREATE TABLE IF NOT EXISTS bl_subscriptions (
       id                   CHAR(36)      NOT NULL PRIMARY KEY,
       user_id              INT           NOT NULL,
-      plan_slug            ENUM('nl360_free','nl360_basic','nl360_pro','nl360_elite') NOT NULL,
+      plan_slug            ENUM('nl360_free','nl360_basic','nl360_pro','nl360_elite','nl_setters') NOT NULL,
       billing_cycle        ENUM('monthly','annual') NOT NULL DEFAULT 'monthly',
       gateway              ENUM('coinbase','bank','manual') NOT NULL,
       gateway_charge_id    VARCHAR(255)  NULL,
