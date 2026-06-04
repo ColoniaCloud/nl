@@ -6,9 +6,9 @@ import {
   getConversationMessages,
   addMessage,
   updateConversationTitle,
-  getUserId,
 } from "@/lib/db-jordan";
 import { getAgent, loadSystemPrompt } from "@/lib/agents";
+import { checkAgentAccess } from "@/lib/billing-access";
 
 export const runtime = "nodejs";
 
@@ -22,21 +22,25 @@ const VALID_TOOLS: ToolType[] = ["FUNNELS", "ESTRATEGIA", "SETTERS", "CLOSERS", 
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
-async function isAuthenticated(token: string): Promise<boolean> {
-  try {
-    const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
-    if (res.ok) return true;
-    const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
-    return res2.ok;
-  } catch {
-    return false;
+async function getUser(token: string): Promise<{ id: number; roles: string[] } | null> {
+  const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (res.ok) {
+    const data = await res.json();
+    if (data.user?.id) {
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : [];
+      return { id: data.user.id, roles };
+    }
   }
+  const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (!res2.ok) return null;
+  const data2 = await res2.json();
+  return data2.id ? { id: data2.id, roles: [] } : null;
 }
 
 // ─── System prompts ───────────────────────────────────────────────────────────
@@ -104,9 +108,16 @@ async function callAnthropic(
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token || !(await isAuthenticated(token))) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!token) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  const user = await getUser(token);
+  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+
+  // F3: Verificar acceso al agente por plan
+  const agentCheck = checkAgentAccess(user.roles, "jordan");
+  if (!agentCheck.allowed) {
+    return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
   }
+
   return NextResponse.json({ ok: true, provider: "anthropic" });
 }
 
@@ -115,8 +126,14 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token || !(await isAuthenticated(token))) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!token) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  const user = await getUser(token);
+  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+
+  // F3: Verificar acceso al agente por plan
+  const agentCheck = checkAgentAccess(user.roles, "jordan");
+  if (!agentCheck.allowed) {
+    return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
   }
 
   let body: {
@@ -140,7 +157,7 @@ export async function POST(req: NextRequest) {
 
   // ── Persistence: resolve or create conversation ──────────────────────────
   let resolvedConvId: number | undefined;
-  const userId = await getUserId(token);
+  const userId = user.id;
 
   if (userId) {
     if (conversationId) {
