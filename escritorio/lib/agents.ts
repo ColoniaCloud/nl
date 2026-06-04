@@ -35,7 +35,7 @@ const AGENTS: AgentConfig[] = [
   },
   {
     id: "nubia",
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6",
     promptFile: "data/nubia/prompts/nubia.md",
     models: {
       haiku: "claude-haiku-4-5-20251001",
@@ -43,7 +43,7 @@ const AGENTS: AgentConfig[] = [
   },
   {
     id: "forge",
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-6",
     promptFile: "data/forge/prompts/forge.md",
   },
 ];
