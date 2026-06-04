@@ -22,6 +22,7 @@ import {
 } from "@/lib/manu-dev-build";
 import { generateLitePlusSite } from "@/lib/manu-dev-lite-plus";
 import { DAILY_BUILD_CAP, validateModeForRoles } from "@/lib/billing-plans";
+import { checkMaxSites } from "@/lib/billing-access";
 import type { SiteGenerationMode } from "@/lib/billing-plans";
 import { getAgent } from "@/lib/agents";
 
@@ -876,6 +877,15 @@ export async function POST(req: NextRequest) {
         { status: 429 },
       );
     }
+  }
+
+  // F2: Verificar límite de sitios por plan
+  const maxSitesCheck = await checkMaxSites(user.id, user.roles);
+  if (!maxSitesCheck.allowed) {
+    return Response.json(
+      { ok: false, error: maxSitesCheck.reason },
+      { status: 403 }
+    );
   }
 
   const body = await req.json();
