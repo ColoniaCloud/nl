@@ -100,7 +100,32 @@ export async function checkMaxSites(
   roles: string[]
 ): Promise<SiteCountResult> {
   if (roles.includes("nl_setters")) {
-    return { allowed: true, current: 0, max: "unlimited" };
+    const SETTER_MAX_SITES = 20;
+    try {
+      const pool = getPool();
+      const [rows] = await pool.execute<RowDataPacket[]>(
+        `SELECT COUNT(*) AS cnt FROM md_projects
+         WHERE user_id = ? AND status NOT IN ('draft', 'deleted')`,
+        [userId]
+      );
+      const current = Number(rows[0]?.cnt ?? 0);
+      if (current >= SETTER_MAX_SITES) {
+        return {
+          allowed: false,
+          current,
+          max: SETTER_MAX_SITES,
+          reason: `Los setters pueden crear hasta ${SETTER_MAX_SITES} sitios en total`,
+        };
+      }
+      return { allowed: true, current, max: SETTER_MAX_SITES };
+    } catch {
+      return {
+        allowed: false,
+        current: 0,
+        max: SETTER_MAX_SITES,
+        reason: "Error verificando límite de sitios.",
+      };
+    }
   }
 
   const planId = getPlanFromRoles(roles) as PlanId;
