@@ -58,8 +58,8 @@ export async function POST(req: Request) {
         billing_cycle: billingCycle,
         session_id: sessionId,
       },
-      redirect_url: `${APP_URL}/app/suscripcion/exito?session_id=${sessionId}`,
-      cancel_url: `${APP_URL}/app/suscripcion`,
+      redirect_url: `${APP_URL}/pago/exito?session_id=${sessionId}`,
+      cancel_url: `${APP_URL}/pago/cancelado`,
     }),
   });
 
