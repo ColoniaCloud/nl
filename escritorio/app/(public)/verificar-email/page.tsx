@@ -29,7 +29,7 @@ function VerificarEmailInner() {
         if (data?.ok) {
           const plan = data.pendingPlan as string | null;
           if (plan && plan !== "free") {
-            setLoginHref(`/login?verified=1&next=/suscripcion%3Fplan%3D${encodeURIComponent(plan)}`);
+            setLoginHref(`/login?verified=1&next=/pago%3Fplan%3D${encodeURIComponent(plan)}`);
           }
           setStatus("success");
         } else {
