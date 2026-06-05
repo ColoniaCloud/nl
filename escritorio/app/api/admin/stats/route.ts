@@ -64,6 +64,7 @@ export async function GET() {
     // QUERY D — Setters y cantidad de clientes
     pool.execute<RowDataPacket[]>(
       `SELECT
+         sc.setter_id   AS setter_id,
          wu.user_login  AS setter_username,
          wu.user_email  AS setter_email,
          COUNT(sc.id)   AS client_count
