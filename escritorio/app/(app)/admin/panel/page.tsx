@@ -8,6 +8,8 @@ import MetricasTab from "@/components/admin/MetricasTab";
 import SettersTab from "@/components/admin/SettersTab";
 import UsuariosTab from "@/components/admin/UsuariosTab";
 import CrearCuentaTab from "@/components/admin/CrearCuentaTab";
+import TransferenciasTab from "@/components/admin/TransferenciasTab";
+import ReferidosTab from "@/components/admin/ReferidosTab";
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
@@ -115,7 +117,9 @@ function PanelInner() {
         {activeTab === "usuarios" && <UsuariosTab />}
         {activeTab === "crear-cuenta" && <CrearCuentaTab userRole={userRole!} />}
         {activeTab === "crear-cliente" && <CrearCuentaTab userRole={userRole!} />}
-        {activeTab !== "metricas" && activeTab !== "setters" && activeTab !== "usuarios" && activeTab !== "crear-cuenta" && activeTab !== "crear-cliente" && (
+        {activeTab === "transferencias" && <TransferenciasTab />}
+        {activeTab === "referidos" && <ReferidosTab />}
+        {activeTab !== "metricas" && activeTab !== "setters" && activeTab !== "usuarios" && activeTab !== "crear-cuenta" && activeTab !== "crear-cliente" && activeTab !== "transferencias" && activeTab !== "referidos" && (
           <div className="py-12 text-center text-zinc-500">
             {activeTabConfig?.label} — próximamente
           </div>
