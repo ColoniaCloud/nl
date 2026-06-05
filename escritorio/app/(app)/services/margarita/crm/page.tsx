@@ -217,9 +217,9 @@ export default function CRMPage() {
   }
 
   return (
-    <div className="flex h-dvh bg-background overflow-hidden">
+    <div className="flex flex-col md:flex-row h-dvh bg-background overflow-hidden">
       {/* Main panel */}
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex flex-col flex-1 min-w-0 min-h-0">
         <div className="flex-shrink-0 px-5 py-4 border-b border-border">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -316,7 +316,7 @@ export default function CRMPage() {
 
       {/* Agent panel */}
       {agentOpen && (
-        <div className="w-[380px] flex-shrink-0 border-l border-border flex flex-col bg-card/30">
+        <div className="w-full md:w-[380px] flex-shrink-0 border-t md:border-t-0 md:border-l border-border flex flex-col bg-card/30">
           <div className="flex-shrink-0 flex items-center gap-2 px-4 h-12 border-b border-border">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20">
               <Bot className="size-3.5 text-emerald-400" />
