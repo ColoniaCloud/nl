@@ -25,8 +25,6 @@ export default function MetricasTab() {
   const [errorStats, setErrorStats] = useState("");
 
   useEffect(() => {
-    setLoadingStats(true);
-    setErrorStats("");
     fetch("/api/admin/stats", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
