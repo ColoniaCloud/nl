@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import MetricasTab from "@/components/admin/MetricasTab";
 import SettersTab from "@/components/admin/SettersTab";
+import UsuariosTab from "@/components/admin/UsuariosTab";
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
@@ -110,7 +111,8 @@ function PanelInner() {
       <div className="rounded-2xl border border-white/[0.10] bg-zinc-900/60 backdrop-blur-sm">
         {activeTab === "metricas" && <MetricasTab />}
         {activeTab === "setters" && <SettersTab />}
-        {activeTab !== "metricas" && activeTab !== "setters" && (
+        {activeTab === "usuarios" && <UsuariosTab />}
+        {activeTab !== "metricas" && activeTab !== "setters" && activeTab !== "usuarios" && (
           <div className="py-12 text-center text-zinc-500">
             {activeTabConfig?.label} — próximamente
           </div>
