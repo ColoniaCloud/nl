@@ -42,6 +42,10 @@ export async function ensureTables(): Promise<void> {
       INDEX idx_status (status)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+  await p.execute(`
+    ALTER TABLE bl_subscriptions
+    MODIFY COLUMN gateway ENUM('coinbase','bank','manual','stripe') NOT NULL
+  `).catch(() => {});
 
   await p.execute(`
     CREATE TABLE IF NOT EXISTS bl_invoices (
@@ -62,6 +66,10 @@ export async function ensureTables(): Promise<void> {
       INDEX idx_user_id (user_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+  await p.execute(`
+    ALTER TABLE bl_invoices
+    MODIFY COLUMN gateway ENUM('coinbase','bank','manual','stripe') NOT NULL
+  `).catch(() => {});
 
   await p.execute(`
     CREATE TABLE IF NOT EXISTS bl_webhook_events (
@@ -73,6 +81,10 @@ export async function ensureTables(): Promise<void> {
       INDEX idx_gateway (gateway)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+  await p.execute(`
+    ALTER TABLE bl_webhook_events
+    MODIFY COLUMN gateway ENUM('coinbase','mercadopago','stripe') NOT NULL
+  `).catch(() => {});
 
   await p.execute(`
     CREATE TABLE IF NOT EXISTS bl_coinbase_charges (
@@ -125,6 +137,10 @@ export async function ensureTables(): Promise<void> {
       INDEX idx_gateway_session (gateway_session_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `);
+  await p.execute(`
+    ALTER TABLE bl_checkout_sessions
+    MODIFY COLUMN gateway ENUM('coinbase','bank','stripe') NOT NULL
+  `).catch(() => {});
 
   initialized = true;
 }
