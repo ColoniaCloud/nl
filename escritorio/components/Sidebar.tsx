@@ -117,7 +117,7 @@ function NavLink({
       href={href}
       title={!expanded ? label : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors min-w-0",
+        "flex items-center gap-3 rounded-lg px-2 py-3 text-sm transition-colors min-w-0",
         active
           ? "bg-white/[0.10] text-foreground font-medium"
           : "text-muted-foreground hover:bg-white/[0.07] hover:text-foreground",
@@ -235,7 +235,7 @@ export default function AppSidebar() {
         className={cn(
           "fixed top-9 bottom-0 left-0 z-30 flex flex-col",
           "bg-sidebar border-r border-sidebar-border",
-          "overflow-hidden",
+          "overflow-hidden pb-[env(safe-area-inset-bottom)]",
           // Desktop: width transition
           !isMobile && "transition-[width] duration-200 ease-linear",
           !isMobile && (open ? "w-[280px]" : "w-[56px]"),
@@ -263,7 +263,7 @@ export default function AppSidebar() {
           <button
             onClick={isMobile ? () => setOpenMobile(false) : toggleSidebar}
             title="Toggle sidebar"
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-white/[0.08] hover:text-foreground transition-colors"
+            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-white/[0.08] hover:text-foreground transition-colors"
           >
             <PanelLeft className="size-4" />
           </button>
