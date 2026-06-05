@@ -204,7 +204,7 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
           <div className="px-6 py-4 border-b border-zinc-800 flex-shrink-0 space-y-3 overflow-y-auto max-h-[420px]">
 
             {/* Location + Rubro */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex flex-col gap-1">
                 <label className="text-xs text-zinc-400 font-medium">Rubro *</label>
                 <select value={rubro} onChange={(e) => setRubro(e.target.value)}
@@ -228,7 +228,7 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="flex flex-col gap-1">
                 <label className="text-xs text-zinc-400 font-medium">Estado / Provincia</label>
                 <Input value={estado} onChange={(e) => setEstado(e.target.value)}
