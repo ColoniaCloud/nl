@@ -10,6 +10,8 @@ import UsuariosTab from "@/components/admin/UsuariosTab";
 import CrearCuentaTab from "@/components/admin/CrearCuentaTab";
 import TransferenciasTab from "@/components/admin/TransferenciasTab";
 import ReferidosTab from "@/components/admin/ReferidosTab";
+import MisClientesTab from "@/components/admin/MisClientesTab";
+import MiActividadTab from "@/components/admin/MiActividadTab";
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
@@ -37,6 +39,7 @@ function PanelInner() {
   const [activeTab, setActiveTab] = useState("");
   const [userRole, setUserRole] = useState<"administrator" | "nl_setters" | null>(null);
   const [loading, setLoading] = useState(true);
+  const [setterClients, setSetterClients] = useState<{ id: number; client_id: number; username: string; email: string; plan_slug: string; notes: string | null; created_at: string }[] | null>(null);
 
   useEffect(() => {
     fetch("/api/auth/me", { cache: "no-store" })
@@ -119,7 +122,9 @@ function PanelInner() {
         {activeTab === "crear-cliente" && <CrearCuentaTab userRole={userRole!} />}
         {activeTab === "transferencias" && <TransferenciasTab />}
         {activeTab === "referidos" && <ReferidosTab />}
-        {activeTab !== "metricas" && activeTab !== "setters" && activeTab !== "usuarios" && activeTab !== "crear-cuenta" && activeTab !== "crear-cliente" && activeTab !== "transferencias" && activeTab !== "referidos" && (
+        {activeTab === "mis-clientes" && <MisClientesTab onClientsLoaded={(c) => setSetterClients(c)} />}
+        {activeTab === "mi-actividad" && <MiActividadTab clients={setterClients} />}
+        {activeTab !== "metricas" && activeTab !== "setters" && activeTab !== "usuarios" && activeTab !== "crear-cuenta" && activeTab !== "crear-cliente" && activeTab !== "transferencias" && activeTab !== "referidos" && activeTab !== "mis-clientes" && activeTab !== "mi-actividad" && (
           <div className="py-12 text-center text-zinc-500">
             {activeTabConfig?.label} — próximamente
           </div>
