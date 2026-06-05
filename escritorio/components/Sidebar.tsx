@@ -559,6 +559,25 @@ export default function AppSidebar() {
               </div>
             );
           })}
+
+          {/* ── Admin / Setter panel ─────────────────────────── */}
+          {(me?.user?.roles?.includes("administrator") || me?.user?.roles?.includes("nl_setters")) && (
+            <>
+              <div className="my-2 h-px bg-sidebar-border mx-1" />
+              {isOpen && (
+                <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                  Admin
+                </p>
+              )}
+              <NavLink
+                href="/admin/panel"
+                icon={Layers}
+                label="Panel de control"
+                active={Boolean(pathname?.startsWith("/admin/panel"))}
+                expanded={isOpen}
+              />
+            </>
+          )}
         </nav>
 
         {/* ── Footer ─────────────────────────────────────────────── */}
