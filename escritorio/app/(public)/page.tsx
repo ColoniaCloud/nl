@@ -19,7 +19,7 @@ export default function PublicHome() {
     <div className="pb-12 md:pb-20">
       {/* Hero — full-bleed, flush to top, breaks out of 70vw container */}
       <section
-        className="relative overflow-hidden min-h-screen -mt-24 flex items-center"
+        className="relative overflow-hidden min-h-dvh -mt-24 flex items-center"
         style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
       >
         {/* FaultyTerminal background */}
@@ -47,7 +47,7 @@ export default function PublicHome() {
         <div className="absolute inset-0 bg-zinc-950/55" />
 
         {/* Content — centered back to 70vw, with top padding to clear fixed header */}
-        <div className="relative z-10 w-[70vw] mx-auto pt-36 pb-24 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-36 pb-24 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: badge + title + buttons */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.15] bg-white/[0.07] px-3.5 py-1.5 text-xs text-zinc-300 mb-6">

@@ -7,7 +7,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <PublicHeader />
       {/* pt accounts for floating header (~72px) */}
       <main className="pt-24 flex-1">
-        <div className="w-[70vw] mx-auto">
+        <div className="w-full max-w-5xl mx-auto px-4 sm:px-6">
           {children}
         </div>
       </main>

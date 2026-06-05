@@ -26,7 +26,7 @@ export default function PublicHeader() {
   }, []);
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[70vw]">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90vw] sm:w-[70vw]">
       <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-zinc-950/80 backdrop-blur-xl px-5 py-3 shadow-[var(--shadow-lg)]">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
