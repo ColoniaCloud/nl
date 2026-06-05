@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import MetricasTab from "@/components/admin/MetricasTab";
+import SettersTab from "@/components/admin/SettersTab";
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
@@ -106,9 +108,13 @@ function PanelInner() {
 
       {/* Tab content */}
       <div className="rounded-2xl border border-white/[0.10] bg-zinc-900/60 backdrop-blur-sm">
-        <div className="py-12 text-center text-zinc-500">
-          {activeTabConfig?.label} — próximamente
-        </div>
+        {activeTab === "metricas" && <MetricasTab />}
+        {activeTab === "setters" && <SettersTab />}
+        {activeTab !== "metricas" && activeTab !== "setters" && (
+          <div className="py-12 text-center text-zinc-500">
+            {activeTabConfig?.label} — próximamente
+          </div>
+        )}
       </div>
     </div>
   );
