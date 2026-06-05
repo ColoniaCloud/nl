@@ -217,7 +217,7 @@ export default function CRMPage() {
   }
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-dvh bg-background overflow-hidden">
       {/* Main panel */}
       <div className="flex flex-col flex-1 min-w-0">
         <div className="flex-shrink-0 px-5 py-4 border-b border-border">

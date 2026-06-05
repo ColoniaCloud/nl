@@ -224,7 +224,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   // ── Render ────────────────────────────────────────────────────────────────
 
   if (loading) return (
-    <div className="flex items-center justify-center h-screen bg-background">
+    <div className="flex items-center justify-center h-dvh bg-background">
       <div className="flex gap-1">
         {[0, 150, 300].map((d) => (
           <span key={d} className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" style={{ animationDelay: `${d}ms` }} />
@@ -234,7 +234,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   );
 
   if (error || !contact) return (
-    <div className="flex flex-col items-center justify-center h-screen bg-background gap-4">
+    <div className="flex flex-col items-center justify-center h-dvh bg-background gap-4">
       <AlertCircle className="size-8 text-red-400" />
       <p className="text-muted-foreground">{error || "Lead no encontrado"}</p>
       <button onClick={() => router.back()} className="text-sm text-emerald-400 hover:underline">Volver</button>
@@ -245,7 +245,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const statusCfg = STATUS_CONFIG[contact.status || "nuevo"] || STATUS_CONFIG.nuevo;
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-dvh bg-background overflow-hidden">
       {/* Header */}
       <div className="flex-shrink-0 border-b border-border bg-card/50 px-4 h-12 flex items-center gap-3">
         <button onClick={() => router.back()} className="p-1.5 rounded-md hover:bg-white/[0.07] text-muted-foreground hover:text-foreground transition-colors">

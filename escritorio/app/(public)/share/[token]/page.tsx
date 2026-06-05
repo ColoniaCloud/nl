@@ -58,7 +58,7 @@ export default async function SharePage({
 
   if (!data) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-zinc-950 text-zinc-100 px-4">
+      <main className="min-h-dvh flex items-center justify-center bg-zinc-950 text-zinc-100 px-4">
         <div className="text-center">
           <h1 className="text-xl font-semibold mb-2">Error</h1>
           <p className="text-sm text-zinc-400">No se pudo cargar el enlace compartido.</p>
@@ -78,7 +78,7 @@ export default async function SharePage({
         ? "Este contenido ya no esta disponible."
         : "No se pudo cargar el enlace compartido.";
     return (
-      <main className="min-h-screen flex items-center justify-center bg-zinc-950 text-zinc-100 px-4">
+      <main className="min-h-dvh flex items-center justify-center bg-zinc-950 text-zinc-100 px-4">
         <div className="text-center max-w-md">
           <h1 className="text-xl font-semibold mb-2">Enlace no disponible</h1>
           <p className="text-sm text-zinc-400">{msg}</p>
@@ -96,7 +96,7 @@ export default async function SharePage({
   const messages = data.messages || [];
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-dvh bg-zinc-950 text-zinc-100">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
         {/* Header */}
         <header className="mb-8 border-b border-zinc-800 pb-6">

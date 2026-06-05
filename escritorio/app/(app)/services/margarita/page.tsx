@@ -344,7 +344,7 @@ export default function MargaritaPage() {
 
   if (!started) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-background px-4">
+      <div className="flex flex-col items-center justify-center min-h-dvh bg-background px-4">
         {isMobile && (
           <button
             onClick={() => setOpenMobile(true)}
@@ -397,7 +397,7 @@ export default function MargaritaPage() {
   // ── Chat + Panels ────────────────────────────────────────────────────────
 
   return (
-    <div className="flex h-screen flex-col bg-background overflow-hidden">
+    <div className="flex h-dvh flex-col bg-background overflow-hidden">
 
       {/* Header */}
       <div className="flex-shrink-0 border-b border-border bg-card/50">
