@@ -40,6 +40,7 @@ export default function ReferidosTab() {
     setLoading(false);
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, []);
 
   const totalReferrals = referrers.reduce((a, r) => a + Number(r.total), 0);
