@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { randomUUID } from "crypto";
 import Stripe from "stripe";
 import { getPool, ensureTables, getUserId, COOKIE_NAME } from "@/lib/db-billing";
 import { PLANS, getPlanPrice } from "@/lib/billing-plans";
@@ -59,12 +60,14 @@ export async function POST(req: Request) {
   await ensureTables();
   const pool = getPool();
 
+  const sessionId = randomUUID();
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
   await pool.execute(
     `INSERT INTO bl_checkout_sessions
-       (user_id, plan_slug, billing_cycle, gateway, gateway_session_id, expires_at)
-     VALUES (?, ?, ?, 'stripe', ?, ?)`,
+       (id, user_id, plan_slug, billing_cycle, gateway, gateway_session_id, expires_at)
+     VALUES (?, ?, ?, ?, 'stripe', ?, ?)`,
     [
+      sessionId,
       session.userId,
       plan.slug,
       billingCycle,
