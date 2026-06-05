@@ -78,6 +78,8 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
 
   return (
     <div className="flex flex-col">
+      <div className="overflow-x-auto">
+        <div className="min-w-[640px]">
       {/* Header */}
       <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
         <span>Lead</span>
@@ -181,6 +183,9 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
           </div>
         );
       })}
+
+        </div>
+      </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
