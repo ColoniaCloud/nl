@@ -45,7 +45,7 @@ export async function GET() {
       username: me.slug,
       displayName: me.name,
     },
-    roles: [],
+    roles: me.roles || [],
     capabilities: {},
     warning: "nl360/v1/me not available; returning limited user data",
   });

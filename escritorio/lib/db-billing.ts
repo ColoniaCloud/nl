@@ -198,5 +198,23 @@ export async function getUserMeta(token: string): Promise<{
   } catch {
     // ignore
   }
+  // Fallback: /wp/v2/users/me acepta el mismo Bearer token
+  try {
+    const wpRes = await fetch(
+      `${WP_BASE_URL}/wp-json/wp/v2/users/me`,
+      { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
+    );
+    if (wpRes.ok) {
+      const wp = await wpRes.json();
+      if (wp?.id) {
+        const roles: string[] = wp.roles || [];
+        return {
+          id: Number(wp.id),
+          roles,
+          isAdmin: roles.includes("administrator"),
+        };
+      }
+    }
+  } catch { /* ignore */ }
   return null;
 }
