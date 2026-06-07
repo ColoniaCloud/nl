@@ -1,51 +1,73 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
 import { useState } from "react";
+import { WhatsAppIcon } from "./WhatsAppIcon";
 import { WaChatModal } from "./WaChatModal";
+import { resolveWaPhone } from "@/lib/phone-normalize";
+import { cn } from "@/lib/utils";
 
 interface WaContactButtonProps {
   contactPhone: string | null;
   contactName: string;
+  pais: string | null;
   waConnected: boolean;
+  hasActiveChat: boolean;
 }
 
-function phoneToJid(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  // Argentina: +54 + 10 digits → insert 9 after country code
-  if (digits.startsWith("54") && digits.length === 12) {
-    return `${digits.slice(0, 2)}9${digits.slice(2)}@s.whatsapp.net`;
-  }
-  return `${digits}@s.whatsapp.net`;
-}
-
-export function WaContactButton({ contactPhone, contactName, waConnected }: WaContactButtonProps) {
+export function WaContactButton({
+  contactPhone,
+  contactName,
+  pais,
+  waConnected,
+  hasActiveChat,
+}: WaContactButtonProps) {
   const [open, setOpen] = useState(false);
 
-  if (!contactPhone) return null;
+  const { jid, compatible } = resolveWaPhone(contactPhone, pais);
 
-  const jid = phoneToJid(contactPhone);
+  // No phone at all — render placeholder so column width is stable
+  if (!contactPhone) {
+    return <span className="w-6 h-6 inline-block" />;
+  }
 
-  if (!waConnected) {
+  // Incompatible number (landline, too short, etc.)
+  if (!compatible || !jid) {
     return (
-      <button
-        disabled
-        title="Conectá tu WhatsApp en Margarita → WhatsApp"
-        className="p-1.5 rounded-md text-emerald-600/40 cursor-not-allowed"
+      <span
+        title="Número no compatible con WhatsApp (fijo o formato inválido)"
+        className="p-1 rounded-full text-zinc-600 cursor-default inline-flex items-center justify-center"
       >
-        <MessageCircle className="size-3.5" />
-      </button>
+        <WhatsAppIcon className="size-3.5" />
+      </span>
     );
   }
 
+  // Compatible but WA not connected
+  if (!waConnected) {
+    return (
+      <span
+        title="Conectá tu WhatsApp en el tab WhatsApp"
+        className="p-1 rounded-full text-green-600/40 cursor-default inline-flex items-center justify-center"
+      >
+        <WhatsAppIcon className="size-3.5" />
+      </span>
+    );
+  }
+
+  // Compatible + connected, with or without active chat
   return (
     <>
       <button
         onClick={(e) => { e.stopPropagation(); setOpen(true); }}
-        title={`WhatsApp con ${contactName}`}
-        className="p-1.5 rounded-md text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+        title={hasActiveChat ? `Chat activo con ${contactName}` : `WhatsApp con ${contactName}`}
+        className={cn(
+          "p-1 rounded-full inline-flex items-center justify-center transition-colors hover:bg-green-500/10",
+          hasActiveChat
+            ? "text-green-500 ring-1 ring-green-500"
+            : "text-green-500"
+        )}
       >
-        <MessageCircle className="size-3.5" />
+        <WhatsAppIcon className="size-3.5" />
       </button>
 
       {open && (

@@ -62,6 +62,7 @@ export default function CRMPage() {
 
   const [activeTab, setActiveTab] = useState<"contacts" | "whatsapp">("contacts");
   const [waConnected, setWaConnected] = useState(false);
+  const [activeWaJids, setActiveWaJids] = useState<Set<string>>(new Set());
 
   const [agentOpen, setAgentOpen] = useState(false);
   const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
@@ -109,11 +110,23 @@ export default function CRMPage() {
   useEffect(() => { fetchStats(); }, []);
   useEffect(() => { agentEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [agentMessages]);
 
-  // Load WA connection status
+  // Load WA connection status + active chat JIDs
   useEffect(() => {
     fetch("/api/whatsapp/status")
       .then((r) => r.ok ? r.json() : null)
-      .then((d) => { if (d?.status === "connected") setWaConnected(true); })
+      .then((d) => {
+        if (d?.status === "connected") {
+          setWaConnected(true);
+          fetch("/api/whatsapp/contacts")
+            .then((r) => r.ok ? r.json() : null)
+            .then((data) => {
+              if (data?.contacts) {
+                setActiveWaJids(new Set(data.contacts.map((c: any) => c.jid)));
+              }
+            })
+            .catch(() => {});
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -361,6 +374,7 @@ export default function CRMPage() {
               onView={(c) => router.push(`/services/margarita/crm/contacts/${c.id}`)}
               onPageChange={(p) => { setPage(p); fetchContacts(p, search); }}
               waConnected={waConnected}
+              activeWaJids={activeWaJids}
             />
           )}
         </div>

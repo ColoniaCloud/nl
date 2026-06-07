@@ -7,6 +7,7 @@ import {
   MessageSquare, Target, XCircle, User,
 } from "lucide-react";
 import { WaContactButton } from "@/components/whatsapp/WaContactButton";
+import { resolveWaPhone } from "@/lib/phone-normalize";
 
 export type Contact = {
   id: number;
@@ -39,6 +40,7 @@ type Props = {
   onView?: (c: Contact) => void;
   onPageChange: (page: number) => void;
   waConnected?: boolean;
+  activeWaJids?: Set<string>;
 };
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -65,7 +67,7 @@ function fmtDate(d: string | null) {
   catch { return d; }
 }
 
-export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, onView, onPageChange, waConnected = false }: Props) {
+export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, onView, onPageChange, waConnected = false, activeWaJids }: Props) {
   const totalPages = Math.ceil(total / limit);
 
   if (contacts.length === 0) {
@@ -83,12 +85,13 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
       <div className="overflow-x-auto">
         <div className="min-w-[640px]">
       {/* Header */}
-      <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 px-4 py-2 text-xxs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+      <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1.5rem_auto] gap-3 px-4 py-2 text-xxs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
         <span>Lead</span>
         <span>Contacto</span>
         <span>Rubro / Estado</span>
         <span>Score</span>
         <span>Etiquetas</span>
+        <span />
         <span />
       </div>
 
@@ -103,7 +106,7 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
         return (
           <div
             key={c.id}
-            className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 px-4 py-3 items-center border-b border-border/50 hover:bg-white/[0.02] transition-colors group"
+            className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1.5rem_auto] gap-3 px-4 py-3 items-center border-b border-border/50 hover:bg-white/[0.02] transition-colors group"
           >
             {/* Nombre + empresa */}
             <div className="min-w-0">
@@ -168,13 +171,22 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
               {tags.length > 2 && <span className="text-2xs text-muted-foreground">+{tags.length - 2}</span>}
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* WhatsApp — always visible */}
+            <div className="flex items-center justify-center">
               <WaContactButton
                 contactPhone={c.telefono}
                 contactName={c.nombre}
+                pais={c.pais}
                 waConnected={waConnected}
+                hasActiveChat={!!(activeWaJids && c.telefono && (() => {
+                  const { jid } = resolveWaPhone(c.telefono, c.pais);
+                  return jid ? activeWaJids.has(jid) : false;
+                })())}
               />
+            </div>
+
+            {/* Actions — appear on hover */}
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {onView && (
                 <button onClick={() => onView(c)} className="p-1.5 rounded-md text-muted-foreground hover:text-emerald-400 hover:bg-white/[0.05] transition-colors" title="Ver detalle">
                   <ExternalLink className="size-3.5" />
