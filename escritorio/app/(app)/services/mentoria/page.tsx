@@ -28,7 +28,6 @@ import {
   NotebookPen,
   FileDown,
   Plus,
-  Send,
   Check,
   CloudOff,
   Pencil,
@@ -54,6 +53,7 @@ import {
 import { useMentoriaSession } from "@/hooks/mentoria/useMentoriaSession";
 import { useMentoriaHistory } from "@/hooks/mentoria/useMentoriaHistory";
 import { useMentoriaProgress } from "@/hooks/mentoria/useMentoriaProgress";
+import AgentInput from "@/components/chat/AgentInput";
 
 // Map icon string (as stored in the subagent registry) to a Lucide component.
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -180,12 +180,12 @@ function NotesModal({
         />
         {/* Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-2xs text-muted-foreground">
             Guardado automaticamente
           </span>
           <button
             onClick={() => onChange("")}
-            className="text-[10px] font-bold uppercase text-muted-foreground hover:text-destructive transition-colors"
+            className="text-2xs font-bold uppercase text-muted-foreground hover:text-destructive transition-colors"
           >
             Limpiar
           </button>
@@ -265,11 +265,11 @@ function SessionsModal({
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{session.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-1 text-2xs text-muted-foreground">
                         <Clock className="size-2.5" />
                         {formatDate(session.updated_at)}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-2xs text-muted-foreground">
                         {session.message_count} msg
                       </span>
                     </div>
@@ -277,7 +277,7 @@ function SessionsModal({
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => onLoad(session)}
-                      className="rounded-lg bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide transition-all"
+                      className="rounded-lg bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 text-xxs font-bold uppercase tracking-wide transition-all"
                     >
                       Abrir
                     </button>
@@ -340,7 +340,7 @@ function ChatMessage({
                   <button
                     key={i}
                     onClick={() => onButtonClick(btn)}
-                    className="border border-sky-500/40 bg-sky-500/10 text-sky-400 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wide transition-all hover:bg-sky-600 hover:text-white hover:border-sky-600 active:scale-95"
+                    className="border border-sky-500/40 bg-sky-500/10 text-sky-400 px-3 py-1.5 rounded-full text-xxs font-semibold uppercase tracking-wide transition-all hover:bg-sky-600 hover:text-white hover:border-sky-600 active:scale-95"
                   >
                     {btn}
                   </button>
@@ -389,7 +389,7 @@ function SaveStatusIndicator({
     return (
       <span
         title="Guardando tu conversacion"
-        className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground px-1.5"
+        className="flex items-center gap-1 text-2xs font-medium text-muted-foreground px-1.5"
       >
         <Loader2 className="size-3 animate-spin" />
         <span className="hidden sm:inline">Guardando...</span>
@@ -401,7 +401,7 @@ function SaveStatusIndicator({
     return (
       <span
         title="No se pudo guardar. Reintentando..."
-        className="flex items-center gap-1 text-[10px] font-medium text-destructive px-1.5"
+        className="flex items-center gap-1 text-2xs font-medium text-destructive px-1.5"
       >
         <CloudOff className="size-3" />
         <span className="hidden sm:inline">Error al guardar</span>
@@ -413,7 +413,7 @@ function SaveStatusIndicator({
   return (
     <span
       title={savedAt ? `Ultima vez: ${savedAt.toLocaleTimeString("es-ES")}` : "Guardado"}
-      className="flex items-center gap-1 text-[10px] font-medium text-emerald-500 px-1.5"
+      className="flex items-center gap-1 text-2xs font-medium text-emerald-500 px-1.5"
     >
       <Check className="size-3" />
       <span className="hidden sm:inline">{label}</span>
@@ -422,6 +422,31 @@ function SaveStatusIndicator({
 }
 
 // ─── Main page ────────────────────────────────────────────────────────────────
+
+// ─── Mentor definitions (the 3 personas shown on the dashboard) ──────────────
+const MENTORS = [
+  {
+    key: "napoleon",
+    name: "Napoleón Hill",
+    image: "/agentes/Napoleon.png",
+    primaryId: "NAPOLEON",
+    disruptiveId: null as string | null,
+  },
+  {
+    key: "neville",
+    name: "Neville Goddard",
+    image: "/agentes/Neville.png",
+    primaryId: "NEVILLE_DISRUPTIVO_1",
+    disruptiveId: "NEVILLE_DISRUPTIVO_2",
+  },
+  {
+    key: "tony",
+    name: "Tony Robbins",
+    image: "/agentes/Tony.png",
+    primaryId: "TONY_PROFUNDO",
+    disruptiveId: "TONY_DISRUPTIVO",
+  },
+] as const;
 
 export default function MentoriaPage() {
   // ── Page-level state (navigation + shared agent registry) ────────────────────
@@ -432,6 +457,9 @@ export default function MentoriaPage() {
   const [agentMeta, setAgentMeta] = useState<Record<string, AgentSummary>>({});
   const [confirmDisruptive, setConfirmDisruptive] = useState<AgentSummary | null>(null);
   const [pendingAutoAgent, setPendingAutoAgent] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [recentSessions, setRecentSessions] = useState<Array<{ id: string; title: string; updated_at: string; agentId: string; agentName: string }>>([]);
+  const [recentLoading, setRecentLoading] = useState(false);
 
   // ── Extracted hooks ──────────────────────────────────────────────────────────
   const {
@@ -496,7 +524,6 @@ export default function MentoriaPage() {
     sessionsModalData,
     sessionsModalLoading,
     chatEndRef,
-    textareaRef,
     inputBtnPressed,
     setInput,
     setError,
@@ -598,6 +625,49 @@ export default function MentoriaPage() {
     }
   }, [step, refreshCounts, refreshProgress]);
 
+  // Fetch username once on mount
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => {
+        const name = d?.user?.display_name || d?.user?.name || d?.display_name || "";
+        if (name) setUsername(name.split(" ")[0]);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Fetch recent sessions across all agents when dashboard opens
+  useEffect(() => {
+    if (step !== "dashboard") return;
+    setRecentLoading(true);
+    const allIds = MENTORS.flatMap((m) => m.disruptiveId ? [m.primaryId, m.disruptiveId] : [m.primaryId]);
+    const mentorNameByToolId: Record<string, string> = {};
+    MENTORS.forEach((m) => {
+      mentorNameByToolId[m.primaryId] = m.name;
+      if (m.disruptiveId) mentorNameByToolId[m.disruptiveId] = m.name;
+    });
+
+    Promise.all(
+      allIds.map((id) =>
+        fetch(`/api/mentoria/sessions?tool=${id}&limit=5`)
+          .then((r) => r.ok ? r.json() : { sessions: [] })
+          .then((d) => (d.sessions || []).map((s: SessionMeta) => ({
+            id: s.id,
+            title: s.title,
+            updated_at: s.updated_at,
+            agentId: id,
+            agentName: mentorNameByToolId[id] || id,
+          })))
+          .catch(() => [])
+      )
+    ).then((groups) => {
+      const flat = groups.flat().sort((a, b) =>
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+      setRecentSessions(flat.slice(0, 12));
+    }).finally(() => setRecentLoading(false));
+  }, [step]);
+
   // Detect ?agent= URL param on mount (client-side only)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -611,8 +681,8 @@ export default function MentoriaPage() {
     if (!pendingAutoAgent || availableTools.length === 0) return;
     const pending = pendingAutoAgent;
     setPendingAutoAgent(null);
-    if (pending === "NEVILLE") {
-      setStep("neville-select");
+    if (false) {
+      // neville-select removed
     } else {
       const tool = availableTools.find((t) => t.id === pending);
       if (!tool) return;
@@ -630,8 +700,197 @@ export default function MentoriaPage() {
   if (step === "dashboard") {
     return (
       <div className="h-full overflow-y-auto scrollbar-hide">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12 flex flex-col items-center">
-          {/* Logo */}
+        <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10 sm:py-14">
+
+          {/* ── Greeting ── */}
+          <div className="mb-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1.5">
+              Hola{username ? ` ${username}` : ""},{" "}
+              <span className="text-sky-400">bienvenido/a a MentorIA.</span>
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              El camino del éxito es la constancia, ¿con quién quieres charlar hoy?
+            </p>
+          </div>
+
+          {/* ── Mentor cards ── */}
+          {availableTools.length === 0 ? (
+            <div className="flex items-center justify-center py-16 text-muted-foreground text-sm gap-2">
+              <Loader2 className="size-4 animate-spin" />
+              Cargando mentores...
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-4 sm:gap-8 mb-12">
+              {MENTORS.map((mentor) => {
+                const primaryTool = availableTools.find((t) => t.id === mentor.primaryId);
+                if (!primaryTool) return null;
+                const isProbing = probingTool === mentor.primaryId || probingTool === mentor.disruptiveId;
+                const isDisabled = !!probingTool;
+                const totalSessions =
+                  (sessionCounts[mentor.primaryId] ?? 0) +
+                  (mentor.disruptiveId ? (sessionCounts[mentor.disruptiveId] ?? 0) : 0);
+                const hasSession = totalSessions > 0;
+                const progress1 = dashboardProgress[mentor.primaryId];
+                const progress2 = mentor.disruptiveId ? dashboardProgress[mentor.disruptiveId] : null;
+                const hasProgress = !!(
+                  (progress1 && (progress1.completed > 0 || progress1.isComplete)) ||
+                  (progress2 && (progress2.completed > 0 || progress2.isComplete))
+                );
+                return (
+                  <div key={mentor.key} className="flex flex-col items-center gap-3">
+                    {/* Avatar */}
+                    <div className="relative">
+                      <div className={[
+                        "w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden transition-all duration-300",
+                        hasProgress
+                          ? "ring-[3px] ring-sky-400 ring-offset-2 ring-offset-background"
+                          : "ring-1 ring-border",
+                      ].join(" ")}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={mentor.image}
+                          alt={mentor.name}
+                          className="w-full h-full object-cover"
+                          style={{ objectPosition: "50% 15%" }}
+                        />
+                      </div>
+                      <div className="absolute bottom-0 right-0 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-sky-500 border-2 border-background shadow">
+                        <Check className="size-2.5 sm:size-3 text-white" strokeWidth={3} />
+                      </div>
+                    </div>
+                    {/* Name */}
+                    <p className="text-xs sm:text-sm font-semibold text-foreground text-center leading-tight">
+                      {mentor.name}
+                    </p>
+                    {/* CTA */}
+                    <button
+                      onClick={() => { if (!isDisabled) selectTool(primaryTool); }}
+                      disabled={isDisabled}
+                      className={[
+                        "w-full rounded-xl px-2 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold uppercase tracking-wide transition-all active:scale-95 disabled:opacity-50",
+                        hasSession
+                          ? "bg-gradient-to-b from-sky-400 to-sky-600 text-white shadow-[0_2px_8px_rgba(56,189,248,0.35)] hover:from-sky-300 hover:to-sky-500"
+                          : "bg-gradient-to-b from-zinc-800 to-zinc-900 text-white border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_8px_rgba(0,0,0,0.4)] hover:from-zinc-700 hover:to-zinc-800",
+                      ].join(" ")}
+                    >
+                      {isProbing ? (
+                        <span className="flex items-center justify-center gap-1.5">
+                          <Loader2 className="size-3 animate-spin" /> Conectando...
+                        </span>
+                      ) : hasSession ? "Continuar mentoría" : "Iniciar mentoría"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {probeError && (
+            <div className="mb-6 flex items-center justify-between gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <span>{probeError}</span>
+              <button aria-label="Cerrar" onClick={() => setProbeError(null)}><X className="size-4" /></button>
+            </div>
+          )}
+
+          {/* ── Divider ── */}
+          <div className="border-t border-border mb-8" />
+
+          {/* ── Recent conversations ── */}
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
+              Conversaciones recientes
+            </h3>
+            {recentLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="size-4 animate-spin text-muted-foreground" />
+              </div>
+            ) : recentSessions.length === 0 ? (
+              <div className="text-center py-10 text-muted-foreground">
+                <History className="size-8 mx-auto mb-2 opacity-30" />
+                <p className="text-sm">Todavía no hay conversaciones guardadas.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {recentSessions.map((session) => {
+                  const mentor = MENTORS.find(
+                    (m) => m.primaryId === session.agentId || m.disruptiveId === session.agentId
+                  );
+                  const tool = availableTools.find((t) => t.id === session.agentId);
+                  return (
+                    <button
+                      key={`${session.id}-${session.agentId}`}
+                      onClick={() => tool && loadSession(
+                        { id: session.id, title: session.title, updated_at: session.updated_at, message_count: 0 },
+                        tool
+                      )}
+                      disabled={!!probingTool}
+                      className="w-full text-left flex items-center gap-3 rounded-xl border border-border bg-card/40 px-4 py-3 hover:border-sky-500/40 hover:bg-card/70 transition-all disabled:opacity-50"
+                    >
+                      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden ring-1 ring-border">
+                        {mentor && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={mentor.image} alt={mentor.name} className="w-full h-full object-cover" style={{ objectPosition: "50% 15%" }} />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-foreground truncate font-medium">{session.title}</p>
+                        <span className="flex items-center gap-1 text-2xs text-muted-foreground mt-0.5">
+                          <Clock className="size-2.5" />{formatDate(session.updated_at)}
+                        </span>
+                      </div>
+                      <span className="flex-shrink-0 text-[9px] font-bold uppercase tracking-wide text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded-full px-2 py-0.5">
+                        {mentor?.name.split(" ")[0] ?? session.agentName}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        {/* ── Disruptive confirmation modal ── */}
+        {confirmDisruptive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setConfirmDisruptive(null)}>
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <div className="relative w-full max-w-md rounded-xl border border-amber-500/40 bg-background p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-2 mb-3">
+                <Flame className="size-5 text-amber-400" />
+                <span className="text-sm font-bold uppercase tracking-widest text-amber-400">Modo sin filtros</span>
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {confirmDisruptive.title}{confirmDisruptive.subtitle ? ` — ${confirmDisruptive.subtitle}` : ""}
+              </h3>
+              {confirmDisruptive.disclaimer && (
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{confirmDisruptive.disclaimer}</p>
+              )}
+              <div className="flex items-center justify-end gap-2">
+                <button onClick={() => setConfirmDisruptive(null)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted">Cancelar</button>
+                <button
+                  onClick={() => { const def = summaryToToolDef(confirmDisruptive); setConfirmDisruptive(null); selectTool(def); }}
+                  className="rounded-lg bg-amber-500 hover:bg-amber-400 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-black"
+                >Entiendo, entrar</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // (neville-select step removed — version toggle moved inside chat input)
+  // ──────────────────────────────────────────────────────────────────────────
+  // Old neville-select block intentionally deleted; disruptive toggle is now
+  // rendered inline in the chat input area below.
+  // ──────────────────────────────────────────────────────────────────────────
+  if (step === ("neville-select" as any)) {
+    // Fallback: if somehow landed here, redirect to dashboard
+    setStep("dashboard");
+    return null;
+  }
+
+  {/* placeholder so compiler keeps Step type */}
           <div className="mb-8 flex flex-col items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -653,7 +912,7 @@ export default function MentoriaPage() {
               Tu asistente de aprendizaje. Juntos exploraremos cursos exclusivos y
               llevaremos tu carrera al siguiente nivel.
             </p>
-            <p className="mt-4 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+            <p className="mt-4 text-xxs font-bold uppercase tracking-widest text-muted-foreground">
               ¿En que mentoria nos enfocaremos hoy?
             </p>
           </div>
@@ -677,7 +936,7 @@ export default function MentoriaPage() {
               return (
                 <div
                   key={tool.id}
-                  className="group relative text-left rounded-xl border border-border bg-card/60 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-card hover:border-sky-500/50 hover:shadow-[0_0_24px_rgba(14,165,233,0.18)]"
+                  className="group relative text-left rounded-xl border border-border bg-card/60 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-card hover:border-sky-500/50 hover:shadow-[var(--glow-sky)]"
                 >
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/20 text-sky-400 group-hover:bg-sky-500/30 transition-all">
                     {isProbing ? <Loader2 className="size-4 animate-spin" /> : <TIcon className="size-4" />}
@@ -766,7 +1025,7 @@ export default function MentoriaPage() {
             </div>
           )}
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/40 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/40 px-4 py-2 text-2xs font-bold uppercase tracking-widest text-muted-foreground">
             <BookOpen className="size-3 text-sky-400" />
             Estamos entrenando MentorIA con nuevos cursos
           </div>
@@ -823,9 +1082,9 @@ export default function MentoriaPage() {
     );
   }
 
-  // ── Neville version selector ─────────────────────────────────────────────────
+  // neville-select removed — disruptive toggle lives in chat input now
 
-  if (step === "neville-select") {
+  if (false as boolean && step === "neville-select") {
     const neville1 = availableTools.find((t) => t.id === "NEVILLE_DISRUPTIVO_1");
     const neville2Meta = agentMeta["NEVILLE_DISRUPTIVO_2"];
     const neville2Tool = availableTools.find((t) => t.id === "NEVILLE_DISRUPTIVO_2");
@@ -867,7 +1126,7 @@ export default function MentoriaPage() {
               <button
                 onClick={() => neville1 && selectTool(neville1)}
                 disabled={!!probingTool}
-                className="w-full text-left rounded-xl border border-border bg-card/60 p-4 transition-all hover:-translate-y-0.5 hover:bg-card hover:border-sky-500/50 hover:shadow-[0_0_20px_rgba(14,165,233,0.15)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full text-left rounded-xl border border-border bg-card/60 p-4 transition-all hover:-translate-y-0.5 hover:bg-card hover:border-sky-500/50 hover:shadow-[var(--glow-sky-sm)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-sky-500/20 text-sky-400 mt-0.5">
@@ -880,7 +1139,7 @@ export default function MentoriaPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <span className="font-semibold text-sm text-foreground">Versión Reflexiva</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-sky-400/70">Claude</span>
+                      <span className="text-2xs font-bold uppercase tracking-widest text-sky-400/70">Claude</span>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Pausado, profundo, poético pero claro. Guía con metáforas y calma hacia la ley del ser.
@@ -893,7 +1152,7 @@ export default function MentoriaPage() {
               <button
                 onClick={() => neville2Meta && setConfirmDisruptive(neville2Meta)}
                 disabled={!!probingTool}
-                className="w-full text-left rounded-xl border border-amber-500/30 bg-card/60 p-4 transition-all hover:-translate-y-0.5 hover:bg-card hover:border-amber-500/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.12)] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full text-left rounded-xl border border-amber-500/30 bg-card/60 p-4 transition-all hover:-translate-y-0.5 hover:bg-card hover:border-amber-500/60 hover:shadow-[var(--glow-amber)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400 mt-0.5">
@@ -902,7 +1161,7 @@ export default function MentoriaPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <span className="font-semibold text-sm text-foreground">Sin Filtros</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/70">Venice AI</span>
+                      <span className="text-2xs font-bold uppercase tracking-widest text-amber-400/70">Venice AI</span>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Directo, crudo, sin eufemismos. La misma ley dicha de frente, sin adornos ni disclaimers.
@@ -1020,7 +1279,7 @@ export default function MentoriaPage() {
           </p>
 
           {/* Toggle activo / papelera */}
-          <div className="mb-4 inline-flex rounded-lg border border-border bg-card/60 p-1 text-[11px] font-bold uppercase tracking-wide">
+          <div className="mb-4 inline-flex rounded-lg border border-border bg-card/60 p-1 text-xxs font-bold uppercase tracking-wide">
             <button
               onClick={() => setHistoryView("active")}
               className={`rounded-md px-3 py-1.5 transition-colors ${
@@ -1091,7 +1350,7 @@ export default function MentoriaPage() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                <p className="text-[11px] text-muted-foreground mb-1">
+                <p className="text-xxs text-muted-foreground mb-1">
                   {searchResults.length} resultado{searchResults.length === 1 ? "" : "s"}
                 </p>
                 {searchResults.map((hit) => (
@@ -1111,10 +1370,10 @@ export default function MentoriaPage() {
                   >
                     <p className="text-sm font-semibold text-foreground truncate">{hit.title}</p>
                     <div className="flex items-center gap-3 mt-1 mb-2">
-                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-1 text-2xs text-muted-foreground">
                         <Clock className="size-3" />{formatDate(hit.updatedAt)}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-2xs text-muted-foreground">
                         {hit.role === "user" ? "Alumno" : "MentorIA"}
                       </span>
                     </div>
@@ -1148,16 +1407,16 @@ export default function MentoriaPage() {
                         {session.title}
                       </p>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="flex items-center gap-1 text-2xs text-muted-foreground">
                           <Clock className="size-3" />{formatDate(session.updated_at)}
                         </span>
-                        <span className="text-[10px] text-muted-foreground">{session.message_count} mensajes</span>
+                        <span className="text-2xs text-muted-foreground">{session.message_count} mensajes</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <button
                         onClick={() => restoreFromTrash(session.id)}
-                        className="rounded-lg bg-sky-600 hover:bg-sky-500 text-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-all"
+                        className="rounded-lg bg-sky-600 hover:bg-sky-500 text-white px-3 py-1.5 text-xxs font-bold uppercase tracking-wide transition-all"
                       >
                         Restaurar
                       </button>
@@ -1165,13 +1424,13 @@ export default function MentoriaPage() {
                         <>
                           <button
                             onClick={() => permanentDelete(session.id)}
-                            className="rounded-lg bg-destructive hover:bg-destructive/80 text-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-all"
+                            className="rounded-lg bg-destructive hover:bg-destructive/80 text-white px-3 py-1.5 text-xxs font-bold uppercase tracking-wide transition-all"
                           >
                             Confirmar
                           </button>
                           <button
                             onClick={() => setConfirmPermanentId(null)}
-                            className="rounded-lg border border-border bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-all"
+                            className="rounded-lg border border-border bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground px-3 py-1.5 text-xxs font-bold uppercase tracking-wide transition-all"
                           >
                             Cancelar
                           </button>
@@ -1194,7 +1453,7 @@ export default function MentoriaPage() {
                     <button
                       onClick={loadMoreTrash}
                       disabled={trashLoadingMore}
-                      className="flex items-center gap-2 rounded-lg border border-border bg-card/60 hover:border-sky-500/40 hover:bg-card text-muted-foreground hover:text-foreground px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition-all disabled:opacity-50"
+                      className="flex items-center gap-2 rounded-lg border border-border bg-card/60 hover:border-sky-500/40 hover:bg-card text-muted-foreground hover:text-foreground px-4 py-2 text-xxs font-bold uppercase tracking-wide transition-all disabled:opacity-50"
                     >
                       {trashLoadingMore ? (
                         <Loader2 className="size-3.5 animate-spin" />
@@ -1241,10 +1500,10 @@ export default function MentoriaPage() {
                         <p className="text-sm font-semibold text-foreground truncate">{session.title}</p>
                       )}
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="flex items-center gap-1 text-2xs text-muted-foreground">
                           <Clock className="size-3" />{formatDate(session.updated_at)}
                         </span>
-                        <span className="text-[10px] text-muted-foreground">{session.message_count} mensajes</span>
+                        <span className="text-2xs text-muted-foreground">{session.message_count} mensajes</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
@@ -1302,7 +1561,7 @@ export default function MentoriaPage() {
                       <button
                         onClick={() => loadSession(session, historyTool)}
                         disabled={!!probingTool}
-                        className="rounded-lg bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-all min-w-[80px] flex items-center justify-center"
+                        className="rounded-lg bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white px-3 py-1.5 text-xxs font-bold uppercase tracking-wide transition-all min-w-[80px] flex items-center justify-center"
                       >
                         {probingTool ? <Loader2 className="size-3 animate-spin" /> : "Continuar"}
                       </button>
@@ -1323,7 +1582,7 @@ export default function MentoriaPage() {
                   <button
                     onClick={loadMoreHistory}
                     disabled={historyLoadingMore}
-                    className="flex items-center gap-2 rounded-lg border border-border bg-card/60 hover:border-sky-500/40 hover:bg-card text-muted-foreground hover:text-foreground px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-lg border border-border bg-card/60 hover:border-sky-500/40 hover:bg-card text-muted-foreground hover:text-foreground px-4 py-2 text-xxs font-bold uppercase tracking-wide transition-all disabled:opacity-50"
                   >
                     {historyLoadingMore ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -1483,7 +1742,7 @@ export default function MentoriaPage() {
               {/* Sesiones */}
               <button
                 onClick={openSessionsModal}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xxs font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
               >
                 <History className="size-3.5" />
                 <span className="hidden sm:inline">Sesiones</span>
@@ -1492,7 +1751,7 @@ export default function MentoriaPage() {
               {/* Notas */}
               <button
                 onClick={() => setNotesOpen(true)}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xxs font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
               >
                 <NotebookPen className="size-3.5" />
                 <span className="hidden sm:inline">Notas</span>
@@ -1502,7 +1761,7 @@ export default function MentoriaPage() {
               <button
                 onClick={handleSummary}
                 disabled={summaryLoading || messages.filter(m => m.role === "user").length === 0}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xxs font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40"
               >
                 {summaryLoading ? (
                   <Loader2 className="size-3.5 animate-spin" />
@@ -1516,7 +1775,7 @@ export default function MentoriaPage() {
               <button
                 onClick={startNewChat}
                 disabled={loading}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xxs font-bold uppercase tracking-wide text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-40"
               >
                 <Plus className="size-3.5" />
                 <span className="hidden sm:inline">Nuevo</span>
@@ -1548,7 +1807,7 @@ export default function MentoriaPage() {
                   }}
                 />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground whitespace-nowrap">
+              <span className="text-2xs font-bold uppercase tracking-widest text-muted-foreground whitespace-nowrap">
                 {progress.isComplete
                   ? "Completado"
                   : `Leccion ${progress.currentLessonId} de ${progress.totalLessons}`}
@@ -1613,41 +1872,92 @@ export default function MentoriaPage() {
         {/* ── Input area ── */}
         <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
           <div className="mx-auto w-full max-w-3xl">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="flex items-end gap-1.5 sm:gap-2"
-            >
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
-                  }
-                }}
-                placeholder="Pregunta a MentorIA..."
-                disabled={loading}
-                rows={1}
-                className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:opacity-50 min-h-[36px] sm:min-h-[42px] max-h-[120px]"
-              />
-              <button
-                type="submit"
-                disabled={loading || !input.trim()}
-                aria-label="Enviar mensaje"
-                onPointerDown={() => { inputBtnPressed.current = true; }}
-                onPointerUp={() => { inputBtnPressed.current = false; }}
-                className="flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-sky-600 text-white hover:bg-sky-500 disabled:opacity-40 transition-all duration-150 active:scale-90"
-              >
-                {loading ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
-              </button>
-            </form>
+            {/* Disruptive toggle — shown only for Neville and Tony */}
+            {activeTool && (activeTool.id === "NEVILLE_DISRUPTIVO_1" || activeTool.id === "NEVILLE_DISRUPTIVO_2" || activeTool.id === "TONY_PROFUNDO" || activeTool.id === "TONY_DISRUPTIVO") && (() => {
+              const isNeville = activeTool.id === "NEVILLE_DISRUPTIVO_1" || activeTool.id === "NEVILLE_DISRUPTIVO_2";
+              const isDisruptiveActive = activeTool.id === "NEVILLE_DISRUPTIVO_2" || activeTool.id === "TONY_DISRUPTIVO";
+              const normalId = isNeville ? "NEVILLE_DISRUPTIVO_1" : "TONY_PROFUNDO";
+              const disruptiveId = isNeville ? "NEVILLE_DISRUPTIVO_2" : "TONY_DISRUPTIVO";
+              const normalLabel = isNeville ? "Reflexiva" : "Profundo";
+              const disruptiveLabel = "Sin filtros";
+              return (
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Modo:</span>
+                  <div className="inline-flex rounded-full border border-border bg-card/60 p-0.5 gap-0.5">
+                    <button
+                      onClick={() => {
+                        if (isDisruptiveActive) {
+                          const tool = availableTools.find((t) => t.id === normalId);
+                          if (tool) selectTool(tool);
+                        }
+                      }}
+                      className={[
+                        "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide transition-all",
+                        !isDisruptiveActive ? "bg-sky-600 text-white" : "text-muted-foreground hover:text-foreground",
+                      ].join(" ")}
+                    >
+                      {normalLabel}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!isDisruptiveActive) {
+                          const meta = agentMeta[disruptiveId];
+                          if (meta?.requiresConfirmation) {
+                            setConfirmDisruptive(meta);
+                          } else {
+                            const tool = availableTools.find((t) => t.id === disruptiveId);
+                            if (tool) selectTool(tool);
+                          }
+                        }
+                      }}
+                      className={[
+                        "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide transition-all",
+                        isDisruptiveActive ? "bg-amber-500 text-black" : "text-muted-foreground hover:text-foreground",
+                      ].join(" ")}
+                    >
+                      {disruptiveLabel}
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+            <AgentInput
+              accent="sky"
+              value={input}
+              onChange={setInput}
+              onSend={handleSend}
+              sending={loading}
+              disabled={loading}
+              placeholder="Pregunta a MentorIA..."
+            />
           </div>
         </div>
+
+        {/* Disruptive confirmation modal (from toggle) */}
+        {confirmDisruptive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setConfirmDisruptive(null)}>
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <div className="relative w-full max-w-md rounded-xl border border-amber-500/40 bg-background p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-2 mb-3">
+                <Flame className="size-5 text-amber-400" />
+                <span className="text-sm font-bold uppercase tracking-widest text-amber-400">Modo sin filtros</span>
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {confirmDisruptive.title}{confirmDisruptive.subtitle ? ` — ${confirmDisruptive.subtitle}` : ""}
+              </h3>
+              {confirmDisruptive.disclaimer && (
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{confirmDisruptive.disclaimer}</p>
+              )}
+              <div className="flex items-center justify-end gap-2">
+                <button onClick={() => setConfirmDisruptive(null)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted">Cancelar</button>
+                <button
+                  onClick={() => { const def = summaryToToolDef(confirmDisruptive); setConfirmDisruptive(null); selectTool(def); }}
+                  className="rounded-lg bg-amber-500 hover:bg-amber-400 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-black"
+                >Entiendo, entrar</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
