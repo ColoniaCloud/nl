@@ -1,103 +1,100 @@
-// Maps country names/codes (as stored in `pais` field) to E.164 dial codes
-const COUNTRY_DIAL: Record<string, string> = {
-  // Argentina
-  argentina: "54", ar: "54",
-  // Brazil
-  brasil: "55", brazil: "55", br: "55",
-  // Mexico
-  "méxico": "52", mexico: "52", mx: "52",
-  // Colombia
-  colombia: "57", co: "57",
-  // Chile
-  chile: "56", cl: "56",
-  // Peru
-  "perú": "51", peru: "51", pe: "51",
-  // Uruguay
-  uruguay: "598", uy: "598",
-  // Venezuela
-  venezuela: "58", ve: "58",
-  // Ecuador
-  ecuador: "593", ec: "593",
-  // Bolivia
-  bolivia: "591", bo: "591",
-  // Paraguay
-  paraguay: "595", py: "595",
-  // Panama
-  "panamá": "507", panama: "507", pa: "507",
-  // Costa Rica
-  "costa rica": "506", cr: "506",
-  // Guatemala
-  guatemala: "502", gt: "502",
-  // Honduras
-  honduras: "504", hn: "504",
-  // El Salvador
-  "el salvador": "503", sv: "503",
-  // Nicaragua
-  nicaragua: "505", ni: "505",
-  // Dominican Republic
-  "república dominicana": "1809", "dominicana": "1809", do: "1809",
-  // Cuba
-  cuba: "53", cu: "53",
-  // Spain
-  "españa": "34", spain: "34", es: "34",
-  // USA/Canada
-  "estados unidos": "1", usa: "1", "united states": "1", us: "1",
-  canada: "1", ca: "1",
-};
+// Ordered longest-first so "1809" is tried before "1", etc.
+const DIAL_CODES: [string, string[]][] = [
+  ["1809", ["república dominicana", "republica dominicana", "dominicana", "dominican republic", "rd"]],
+  ["598",  ["uruguay", "uy"]],
+  ["593",  ["ecuador", "ec"]],
+  ["595",  ["paraguay", "py"]],
+  ["591",  ["bolivia", "bo"]],
+  ["507",  ["panamá", "panama", "pa"]],
+  ["506",  ["costa rica", "cr"]],
+  ["505",  ["nicaragua", "ni"]],
+  ["504",  ["honduras", "hn"]],
+  ["503",  ["el salvador", "sv"]],
+  ["502",  ["guatemala", "gt"]],
+  ["351",  ["portugal", "pt"]],
+  ["34",   ["españa", "spain", "es"]],
+  ["58",   ["venezuela", "ve"]],
+  ["57",   ["colombia", "co"]],
+  ["56",   ["chile", "cl"]],
+  ["55",   ["brasil", "brazil", "br"]],
+  ["54",   ["argentina", "ar"]],
+  ["53",   ["cuba", "cu"]],
+  ["52",   ["méxico", "mexico", "mx"]],
+  ["51",   ["perú", "peru", "pe"]],
+  ["1",    ["estados unidos", "united states", "usa", "us", "canada", "ca"]],
+];
 
-function dialCode(pais: string | null | undefined): string | null {
+function dialCodeFromPais(pais: string | null | undefined): string | null {
   if (!pais) return null;
-  return COUNTRY_DIAL[pais.toLowerCase().trim()] ?? null;
+  const norm = pais.toLowerCase().trim();
+  for (const [code, names] of DIAL_CODES) {
+    if (names.includes(norm)) return code;
+  }
+  return null;
 }
 
-/**
- * Returns whether a phone number is a mobile (WhatsApp-compatible) number
- * given the digits WITHOUT country code and the dial code.
- */
-function isMobileNumber(local: string, code: string): boolean {
+function isMobile(local: string, code: string): boolean {
   switch (code) {
-    case "54": // Argentina: mobile = 10 digits
-      return local.length === 10;
-    case "55": // Brazil: area(2) + 9 + 8 digits = 11 digits total
+    // Argentina: 10 digits, OR 11 digits starting with 9 (international +54 9 XX...)
+    case "54":
+      return local.length === 10 || (local.length === 11 && local[0] === "9");
+    case "55":   // Brazil: area(2) + leading 9 + 8 digits = 11 total
       return local.length === 11 && local[2] === "9";
-    case "52": // Mexico: mobile = 10 digits
-      return local.length === 10;
-    case "57": // Colombia: mobile starts with 3
+    // Mexico: 10 digits (new format), or 11 digits starting with 1 (old +521... format)
+    case "52":
+      return local.length === 10 || (local.length === 11 && local[0] === "1");
+    case "57":   // Colombia: starts with 3, 10 digits
       return local.length === 10 && local[0] === "3";
-    case "56": // Chile: mobile starts with 9
+    case "56":   // Chile: starts with 9, 9 digits
       return local.length === 9 && local[0] === "9";
-    case "51": // Peru: mobile starts with 9
+    case "51":   // Peru: starts with 9, 9 digits
       return local.length === 9 && local[0] === "9";
-    case "598": // Uruguay: mobile starts with 09 → local starts with 9, 8 digits
+    case "598":  // Uruguay: starts with 9, 8 digits
       return local.length === 8 && local[0] === "9";
-    case "58": // Venezuela: mobile starts with 04
-      return local.length === 10 && local.startsWith("04");
-    case "593": // Ecuador: mobile starts with 09 → local starts with 9, 9 digits
+    case "58":   // Venezuela: starts with 4, 10 digits
+      return local.length === 10 && local[0] === "4";
+    case "593":  // Ecuador: starts with 9, 9 digits
       return local.length === 9 && local[0] === "9";
-    case "591": // Bolivia: mobile starts with 6 or 7
+    case "591":  // Bolivia: starts with 6 or 7, 8 digits
       return local.length === 8 && (local[0] === "6" || local[0] === "7");
-    case "595": // Paraguay: mobile starts with 09 → local starts with 9, 8 digits
+    case "595":  // Paraguay: starts with 9, 9 digits
       return local.length === 9 && local[0] === "9";
-    case "507": // Panama: mobile 8 digits starting with 6
+    case "507":  // Panama: starts with 6, 8 digits
       return local.length === 8 && local[0] === "6";
-    case "506": // Costa Rica: mobile 8 digits starting with 5,6,7,8
+    case "506":  // Costa Rica: 8 digits starting with 5,6,7,8
       return local.length === 8 && "5678".includes(local[0]);
-    case "502": // Guatemala: 8 digits starting with 3,4,5
+    case "502":  // Guatemala: 8 digits starting with 3,4,5
       return local.length === 8 && "345".includes(local[0]);
-    case "1809": case "1": // DomRep / USA: 10 digits
+    case "505":  // Nicaragua: 8 digits starting with 5,6,7,8
+      return local.length === 8 && "5678".includes(local[0]);
+    case "504":  // Honduras: 8 digits starting with 3,7,8,9
+      return local.length === 8 && "3789".includes(local[0]);
+    case "503":  // El Salvador: 8 digits starting with 6,7
+      return local.length === 8 && (local[0] === "6" || local[0] === "7");
+    case "1809":
+    case "1":
       return local.length === 10;
     default:
-      // Fallback: if at least 8 local digits, assume mobile
-      return local.length >= 8;
+      return local.length >= 7;
   }
 }
 
-/**
- * Builds the WhatsApp JID for a given E.164 number + dial code.
- * Argentina requires inserting a 9 after the country code.
- */
+/** Strips the leading 0 (national trunk prefix) used across LATAM. */
+function stripTrunk(digits: string): string {
+  return digits.startsWith("0") ? digits.slice(1) : digits;
+}
+
+/** Builds the WhatsApp JID with country-specific normalization. */
 function buildJid(code: string, local: string): string {
-  if (code === "54") return `549${local}@s.whatsapp.net`;
+  // Argentina: JID = 549XXXXXXXXXX. Add 9 only if not already present.
+  if (code === "54") {
+    const clean = local.startsWith("9") ? local.slice(1) : local;
+    return `549${clean}@s.whatsapp.net`;
+  }
+  // Mexico old format +521XXXXXXXXXX → strip the leading 1, JID = 52XXXXXXXXXX
+  if (code === "52" && local.length === 11 && local[0] === "1") {
+    return `52${local.slice(1)}@s.whatsapp.net`;
+  }
   return `${code}${local}@s.whatsapp.net`;
 }
 
@@ -107,9 +104,12 @@ export interface PhoneResolution {
 }
 
 /**
- * Normalizes a phone string and determines WhatsApp compatibility.
- * @param phone  Raw phone as stored in the CRM (any format)
- * @param pais   Country name/code as stored in the CRM (free text)
+ * Normalizes a raw phone string and determines WhatsApp (mobile) compatibility.
+ *
+ * Strategy:
+ *  1. If number has explicit international prefix (+ or 00) → parse country code
+ *  2. Otherwise treat as local format: use `pais` to get code, strip trunk 0
+ *  3. Fallback: if 10+ digits with no country info, assume compatible
  */
 export function resolveWaPhone(
   phone: string | null | undefined,
@@ -117,31 +117,42 @@ export function resolveWaPhone(
 ): PhoneResolution {
   if (!phone) return { jid: null, compatible: false };
 
-  const digits = phone.replace(/\D/g, "");
+  const trimmed = phone.trim();
+  const digits = trimmed.replace(/\D/g, "");
   if (digits.length < 6) return { jid: null, compatible: false };
 
-  const code = dialCode(pais);
+  const isInternational = trimmed.startsWith("+") || trimmed.startsWith("00");
 
-  // ── Case 1: number already starts with a known country code ──────────────
-  for (const [, dc] of Object.entries(COUNTRY_DIAL)) {
-    if (!digits.startsWith(dc)) continue;
-    const local = digits.slice(dc.length);
-    const mobile = isMobileNumber(local, dc);
-    if (!mobile) return { jid: null, compatible: false };
-    return { jid: buildJid(dc, local), compatible: true };
+  // ── International format (has + or 00) ───────────────────────────────────
+  if (isInternational) {
+    const d = trimmed.startsWith("00") ? digits.slice(2) : digits;
+    for (const [code] of DIAL_CODES) {
+      if (!d.startsWith(code)) continue;
+      const local = d.slice(code.length);
+      if (local.length < 6 || local.length > 12) continue;
+      const mobile = isMobile(local, code);
+      if (!mobile) return { jid: null, compatible: false };
+      return { jid: buildJid(code, local), compatible: true };
+    }
+    // International but unknown country — allow if long enough
+    return d.length >= 10
+      ? { jid: `${d}@s.whatsapp.net`, compatible: true }
+      : { jid: null, compatible: false };
   }
 
-  // ── Case 2: country code known from `pais`, number has no prefix ─────────
+  // ── Local format — rely on pais ──────────────────────────────────────────
+  const code = dialCodeFromPais(pais);
   if (code) {
-    const local = digits;
-    const mobile = isMobileNumber(local, code);
+    const local = stripTrunk(digits);
+    const mobile = isMobile(local, code);
     if (!mobile) return { jid: null, compatible: false };
     return { jid: buildJid(code, local), compatible: true };
   }
 
-  // ── Case 3: no country info — assume compatible if 10+ digits ────────────
-  if (digits.length >= 10) {
-    return { jid: `${digits}@s.whatsapp.net`, compatible: true };
+  // ── No country info — fallback ───────────────────────────────────────────
+  const local = stripTrunk(digits);
+  if (local.length >= 10) {
+    return { jid: `${local}@s.whatsapp.net`, compatible: true };
   }
 
   return { jid: null, compatible: false };
