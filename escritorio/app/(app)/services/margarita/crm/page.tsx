@@ -9,11 +9,14 @@ import { ScrapePanel } from "@/components/margarita/crm/ScrapePanel";
 import type { ContactData } from "@/components/margarita/crm/ContactForm";
 import {
   Users, Search, Plus, Sparkles, RefreshCw,
-  CheckCircle2, CalendarDays, Send, Bot, X,
+  CheckCircle2, CalendarDays, Bot, X,
   Wrench, ChevronRight, PanelRightClose, PanelRightOpen,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { marked } from "marked";
+import AgentInput from "@/components/chat/AgentInput";
+import { WaConnectPanel } from "@/components/whatsapp/WaConnectPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +59,9 @@ export default function CRMPage() {
   const [editingContact, setEditingContact] = useState<(ContactData & { id?: number }) | null>(null);
   const [scrapeOpen, setScrapeOpen] = useState(false);
   const [stats, setStats] = useState({ total: 0, optin: 0, thisMonth: 0 });
+
+  const [activeTab, setActiveTab] = useState<"contacts" | "whatsapp">("contacts");
+  const [waConnected, setWaConnected] = useState(false);
 
   const [agentOpen, setAgentOpen] = useState(false);
   const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
@@ -102,6 +108,14 @@ export default function CRMPage() {
   useEffect(() => { fetchContacts(page, search); }, [page, search]);
   useEffect(() => { fetchStats(); }, []);
   useEffect(() => { agentEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [agentMessages]);
+
+  // Load WA connection status
+  useEffect(() => {
+    fetch("/api/whatsapp/status")
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d?.status === "connected") setWaConnected(true); })
+      .catch(() => {});
+  }, []);
 
   function openEdit(c: Contact) {
     const tags = Array.isArray(c.etiquetas) ? c.etiquetas
@@ -232,29 +246,62 @@ export default function CRMPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setScrapeOpen(true)}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-white/[0.05] text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Sparkles className="size-3.5 text-emerald-400" /> Buscador IA
-              </button>
-              <button
-                onClick={() => { setEditingContact(null); setSheetOpen(true); }}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
-              >
-                <Plus className="size-3.5" /> Nuevo lead
-              </button>
-              <button
-                onClick={() => setAgentOpen(!agentOpen)}
-                className={cn(
-                  "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors",
-                  agentOpen ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" : "border-border text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
-                )}
-              >
-                <Bot className="size-3.5" />
-                {agentOpen ? <PanelRightClose className="size-3.5" /> : <PanelRightOpen className="size-3.5" />}
-              </button>
+              {activeTab === "contacts" && (
+                <>
+                  <button
+                    onClick={() => setScrapeOpen(true)}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-white/[0.05] text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Sparkles className="size-3.5 text-emerald-400" /> Buscador IA
+                  </button>
+                  <button
+                    onClick={() => { setEditingContact(null); setSheetOpen(true); }}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                  >
+                    <Plus className="size-3.5" /> Nuevo lead
+                  </button>
+                  <button
+                    onClick={() => setAgentOpen(!agentOpen)}
+                    className={cn(
+                      "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors",
+                      agentOpen ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" : "border-border text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+                    )}
+                  >
+                    <Bot className="size-3.5" />
+                    {agentOpen ? <PanelRightClose className="size-3.5" /> : <PanelRightOpen className="size-3.5" />}
+                  </button>
+                </>
+              )}
             </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 mt-3">
+            <button
+              onClick={() => setActiveTab("contacts")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                activeTab === "contacts"
+                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+              )}
+            >
+              <Users className="size-3.5" /> Contactos
+            </button>
+            <button
+              onClick={() => setActiveTab("whatsapp")}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                activeTab === "whatsapp"
+                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+              )}
+            >
+              <MessageCircle className="size-3.5" /> WhatsApp
+              {waConnected && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
+              )}
+            </button>
           </div>
 
           <div className="grid grid-cols-3 gap-3 mt-4">
@@ -274,31 +321,35 @@ export default function CRMPage() {
           </div>
         </div>
 
-        <div className="flex-shrink-0 px-5 py-2.5 border-b border-border flex items-center gap-3">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
-            <Input
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") { setSearch(searchInput); setPage(1); } }}
-              placeholder="Buscar por nombre, empresa, rubro..."
-              className="pl-8 h-8 text-sm bg-muted border-border"
-            />
-          </div>
-          {search && (
-            <button onClick={() => { setSearch(""); setSearchInput(""); setPage(1); }}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground bg-muted px-2 py-1 rounded-md">
-              "{search}" <X className="size-3" />
+        {activeTab === "contacts" && (
+          <div className="flex-shrink-0 px-5 py-2.5 border-b border-border flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+              <Input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { setSearch(searchInput); setPage(1); } }}
+                placeholder="Buscar por nombre, empresa, rubro..."
+                className="pl-8 h-8 text-sm bg-muted border-border"
+              />
+            </div>
+            {search && (
+              <button onClick={() => { setSearch(""); setSearchInput(""); setPage(1); }}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground bg-muted px-2 py-1 rounded-md">
+                "{search}" <X className="size-3" />
+              </button>
+            )}
+            <button onClick={() => fetchContacts(page, search)} className="ml-auto p-1.5 text-muted-foreground hover:text-foreground">
+              <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
             </button>
-          )}
-          <button onClick={() => fetchContacts(page, search)} className="ml-auto p-1.5 text-muted-foreground hover:text-foreground">
-            <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
-          </button>
-          <span className="text-xs text-muted-foreground">{total} leads</span>
-        </div>
+            <span className="text-xs text-muted-foreground">{total} leads</span>
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto">
-          {loading && contacts.length === 0 ? (
+          {activeTab === "whatsapp" ? (
+            <WaConnectPanel />
+          ) : loading && contacts.length === 0 ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground text-sm gap-2">
               <div className="flex gap-1">{[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse" style={{ animationDelay: `${d}ms` }} />)}</div>
               Cargando...
@@ -309,6 +360,7 @@ export default function CRMPage() {
               onEdit={openEdit} onDelete={handleDelete}
               onView={(c) => router.push(`/services/margarita/crm/contacts/${c.id}`)}
               onPageChange={(p) => { setPage(p); fetchContacts(p, search); }}
+              waConnected={waConnected}
             />
           )}
         </div>
@@ -399,30 +451,15 @@ export default function CRMPage() {
           </div>
 
           <div className="flex-shrink-0 border-t border-border p-3">
-            <div className="flex items-end gap-2">
-              <textarea
-                value={agentInput}
-                onChange={(e) => setAgentInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendAgentMessage(agentInput); } }}
-                placeholder="Pedile algo al agente..."
-                rows={1}
-                disabled={agentSending}
-                className="flex-1 resize-none rounded-xl border border-border bg-muted px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-emerald-500 min-h-[36px] sm:min-h-[42px] max-h-[100px] overflow-y-auto"
-                onInput={(e) => { const t = e.target as HTMLTextAreaElement; t.style.height = "auto"; t.style.height = `${Math.min(t.scrollHeight, 100)}px`; }}
-              />
-              <button
-                onClick={() => sendAgentMessage(agentInput)}
-                disabled={agentSending || !agentInput.trim()}
-                className="flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-colors"
-              >
-                {agentSending ? (
-                  <span className="flex gap-0.5">
-                    {[0, 150, 300].map((d) => <span key={d} className="w-1 h-1 rounded-full bg-white animate-pulse" style={{ animationDelay: `${d}ms` }} />)}
-                  </span>
-                ) : <Send className="size-4" />}
-              </button>
-            </div>
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">Enter para enviar · Shift+Enter para nueva linea</p>
+            <AgentInput
+              accent="emerald"
+              value={agentInput}
+              onChange={setAgentInput}
+              onSend={() => sendAgentMessage(agentInput)}
+              sending={agentSending}
+              disabled={agentSending}
+              placeholder="Pedile algo al agente..."
+            />
           </div>
         </div>
       )}

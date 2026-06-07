@@ -6,6 +6,7 @@ import {
   ChevronLeft, ChevronRight, ExternalLink, TrendingUp,
   MessageSquare, Target, XCircle, User,
 } from "lucide-react";
+import { WaContactButton } from "@/components/whatsapp/WaContactButton";
 
 export type Contact = {
   id: number;
@@ -37,6 +38,7 @@ type Props = {
   onDelete: (id: number) => void;
   onView?: (c: Contact) => void;
   onPageChange: (page: number) => void;
+  waConnected?: boolean;
 };
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -63,7 +65,7 @@ function fmtDate(d: string | null) {
   catch { return d; }
 }
 
-export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, onView, onPageChange }: Props) {
+export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, onView, onPageChange, waConnected = false }: Props) {
   const totalPages = Math.ceil(total / limit);
 
   if (contacts.length === 0) {
@@ -81,7 +83,7 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
       <div className="overflow-x-auto">
         <div className="min-w-[640px]">
       {/* Header */}
-      <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+      <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_auto] gap-3 px-4 py-2 text-xxs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
         <span>Lead</span>
         <span>Contacto</span>
         <span>Rubro / Estado</span>
@@ -141,7 +143,7 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
             {/* Rubro / Status */}
             <div className="min-w-0 space-y-1">
               {c.rubro && <p className="text-xs text-muted-foreground truncate">{c.rubro}</p>}
-              <span className={cn("inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium", statusCfg.color)}>
+              <span className={cn("inline-flex items-center gap-1 text-2xs px-1.5 py-0.5 rounded-full font-medium", statusCfg.color)}>
                 {statusCfg.icon}{statusCfg.label}
               </span>
             </div>
@@ -150,7 +152,7 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
             <div>
               <ScorePill score={c.score} />
               {c.optin ? (
-                <div className="flex items-center gap-0.5 text-[10px] text-emerald-400 mt-0.5">
+                <div className="flex items-center gap-0.5 text-2xs text-emerald-400 mt-0.5">
                   <CheckCircle2 className="size-2.5" /> optin
                 </div>
               ) : null}
@@ -159,15 +161,20 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
             {/* Tags */}
             <div className="flex flex-wrap gap-1 min-w-0">
               {tags.slice(0, 2).map((t) => (
-                <span key={t} className="text-[10px] px-1.5 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                <span key={t} className="text-2xs px-1.5 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
                   {t}
                 </span>
               ))}
-              {tags.length > 2 && <span className="text-[10px] text-muted-foreground">+{tags.length - 2}</span>}
+              {tags.length > 2 && <span className="text-2xs text-muted-foreground">+{tags.length - 2}</span>}
             </div>
 
             {/* Actions */}
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <WaContactButton
+                contactPhone={c.telefono}
+                contactName={c.nombre}
+                waConnected={waConnected}
+              />
               {onView && (
                 <button onClick={() => onView(c)} className="p-1.5 rounded-md text-muted-foreground hover:text-emerald-400 hover:bg-white/[0.05] transition-colors" title="Ver detalle">
                   <ExternalLink className="size-3.5" />
