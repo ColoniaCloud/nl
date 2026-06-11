@@ -180,7 +180,7 @@ function SuscripcionInner() {
         </p>
         <button
           onClick={() => { setSelectedPlan(null); setBankSuccess(false); }}
-          className="rounded-lg bg-zinc-700 px-4 py-2 text-sm text-white hover:bg-zinc-600 transition-colors"
+          className="rounded-xl bg-zinc-700 px-4 py-2.5 text-sm text-white hover:bg-zinc-600 transition-colors"
         >
           Volver a suscripcion
         </button>

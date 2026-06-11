@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       asset_description: project.asset_description || "",
       token_name: project.token_name || "Token",
       token_symbol: project.token_symbol || "TKN",
-      token_standard: project.token_standard as "ERC-20" | "ERC-721",
+      token_standard: project.token_standard as "ERC-20" | "ERC-721" | "ERC-1155",
       total_supply: project.total_supply || "1000000",
       decimals: project.decimals,
       network: project.network,

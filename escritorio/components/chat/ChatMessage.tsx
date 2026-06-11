@@ -22,7 +22,7 @@ export default function ChatMessage({ msg }: { msg: Msg }) {
           </div>
         ) : null}
 
-        <div className="mt-2 text-[11px] opacity-70">
+        <div className="mt-2 text-xxs opacity-70">
           {new Date(msg.createdAt).toLocaleString()}
         </div>
       </div>

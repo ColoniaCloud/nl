@@ -71,7 +71,7 @@ export default function MetricasTab() {
       value: String(stats.subscriptions.active),
       sub: "activas",
       extra: Object.entries(stats.subscriptions.byPlan).map(([plan, count]) => (
-        <span key={plan} className="inline-flex items-center gap-1 text-[11px] bg-white/[0.05] border border-white/[0.08] rounded px-1.5 py-0.5">
+        <span key={plan} className="inline-flex items-center gap-1 text-xxs bg-white/[0.05] border border-white/[0.08] rounded px-1.5 py-0.5">
           {plan.replace("nl360_", "")}: {count}
         </span>
       )),

@@ -233,7 +233,7 @@ export function ModePicker({
             <p className={`text-xs font-semibold ${selected === m.id ? "text-emerald-400" : "text-foreground"}`}>
               {m.label}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{m.desc}</p>
+            <p className="text-2xs text-muted-foreground mt-0.5">{m.desc}</p>
           </button>
         ))}
       </div>
@@ -275,7 +275,7 @@ export function TemplateSelector({
               <p className={`text-xs font-semibold ${selected === t.id ? "text-emerald-400" : "text-foreground"}`}>
                 {t.name}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+              <p className="text-2xs text-muted-foreground leading-tight mt-0.5">
                 {t.desc}
               </p>
             </div>

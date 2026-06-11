@@ -16,6 +16,7 @@ export interface LitePlusInput {
     site_type?: string;
     address_type?: string;
     social_links?: any;
+    logo_url?: string;
   };
   design: {
     primary_color?: string;
@@ -144,8 +145,9 @@ ${formInstructions}
 REGLAS TECNICAS:
 - HTML completo: <!doctype html> hasta </html>
 - Usa Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-- Configura Tailwind con los colores del negocio via script tailwind.config inline
-- Google Fonts via <link>: "${input.design?.font_heading || "Inter"}" y "${input.design?.font_body || "Inter"}"
+- Configura Tailwind con los colores del negocio via script tailwind.config inline: primary="${input.design?.primary_color || "#1a1a2e"}", secondary="${input.design?.secondary_color || "#16213e"}", accent="${input.design?.accent_color || "#0f3460"}"
+- Google Fonts via <link rel="preconnect"> y <link rel="stylesheet">: "${input.design?.font_heading || "Inter"}" (titulos) y "${input.design?.font_body || "Inter"}" (cuerpo). Aplica estas fuentes con font-family en el CSS correspondiente.
+- LOGO EN HEADER: ${input.project.logo_url ? `Usa <img src="${input.project.logo_url}" alt="${input.project.name}" style="height:40px;width:auto;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.` : `Muestra el nombre del negocio como texto en el header.`}
 - Mobile-first responsive
 - Contenido en espanol, real y especifico para este negocio (no lorem ipsum)
 - Precios coherentes con la economia de "${input.project.location || "America Latina"}"

@@ -66,7 +66,7 @@ export default function SuscripcionExitoPage() {
           </p>
           <Link
             href="/workspace"
-            className="rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-500 transition-colors"
+            className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-500 transition-colors"
           >
             Ir al workspace
           </Link>
@@ -83,7 +83,7 @@ export default function SuscripcionExitoPage() {
           </p>
           <Link
             href="/app/suscripcion"
-            className="rounded-lg bg-zinc-700 px-4 py-2 text-sm text-white hover:bg-zinc-600 transition-colors"
+            className="rounded-xl bg-zinc-700 px-4 py-2.5 text-sm text-white hover:bg-zinc-600 transition-colors"
           >
             Ver suscripcion
           </Link>

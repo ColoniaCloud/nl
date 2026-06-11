@@ -22,7 +22,7 @@ const PLAN_BADGE: Record<string, { bg: string; text: string; label: string }> = 
 function PlanBadge({ plan }: { plan: string }) {
   const cfg = PLAN_BADGE[plan] ?? { bg: "bg-zinc-500/20", text: "text-zinc-400", label: plan };
   return (
-    <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium ${cfg.bg} ${cfg.text}`}>
+    <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-xxs font-medium ${cfg.bg} ${cfg.text}`}>
       {cfg.label}
     </span>
   );

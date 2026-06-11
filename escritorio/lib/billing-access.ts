@@ -52,6 +52,7 @@ const SLUG_TO_TOOL_NAME: Record<string, string> = {
  */
 export function getPlanFromRoles(roles: string[]): string {
   if (roles.includes("nl_setters")) return "nl_setters";
+  if (roles.includes("administrator")) return "nl_admin";
 
   for (const role of ROLE_HIERARCHY) {
     if (roles.includes(role)) return ROLE_TO_PLAN[role];
@@ -66,7 +67,7 @@ export function getPlanFromRoles(roles: string[]): string {
  * Returns { allowed: false, reason, requiredPlan } when access is denied.
  */
 export function checkAgentAccess(roles: string[], agentSlug: string): AgentAccessResult {
-  if (roles.includes("nl_setters")) return { allowed: true };
+  if (roles.includes("nl_setters") || roles.includes("administrator")) return { allowed: true };
 
   const planId = getPlanFromRoles(roles) as PlanId;
   const plan = PLANS[planId] ?? PLANS.free;
@@ -99,6 +100,10 @@ export async function checkMaxSites(
   userId: number | string,
   roles: string[]
 ): Promise<SiteCountResult> {
+  if (roles.includes("administrator")) {
+    return { allowed: true, current: 0, max: "unlimited" };
+  }
+
   if (roles.includes("nl_setters")) {
     const SETTER_MAX_SITES = 20;
     try {

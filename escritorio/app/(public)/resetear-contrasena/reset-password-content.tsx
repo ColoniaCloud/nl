@@ -122,7 +122,7 @@ export default function ResetPasswordContent() {
         {/* Card */}
         <div className="relative">
           <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-violet-500/20 to-indigo-500/10" />
-          <div className="relative rounded-3xl border border-white/[0.10] bg-zinc-900/80 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur">
+          <div className="relative rounded-3xl border border-border bg-zinc-900/80 p-6 shadow-[var(--shadow-xl)] backdrop-blur">
             <div>
               <div className="text-sm text-zinc-500">NL360</div>
               <div className="text-lg font-semibold text-white">Resetear contraseña</div>

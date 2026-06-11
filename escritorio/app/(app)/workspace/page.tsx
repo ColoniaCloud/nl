@@ -38,12 +38,12 @@ function RecentChatCard({ item }: { item: RecentItem }) {
           <div className={`flex h-6 w-6 items-center justify-center rounded-md flex-shrink-0 ${colors.bgClass} ${colors.textClass}`}>
             <icons.Icon className="size-3" />
           </div>
-          <span className="text-[11px] font-semibold text-muted-foreground">{icons.label}</span>
+          <span className="text-xxs font-semibold text-muted-foreground">{icons.label}</span>
         </div>
         <p className="text-xs font-medium text-foreground truncate leading-snug mb-2">
           {item.title}
         </p>
-        <span className="text-[11px] text-muted-foreground truncate">{item.subtitle}</span>
+        <span className="text-xxs text-muted-foreground truncate">{item.subtitle}</span>
       </div>
     </Link>
   );
@@ -145,7 +145,7 @@ export default function Home() {
         <section className="nl-fade-in-up" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center gap-2.5 mb-4">
             <Clock className="size-3.5 text-white/40" />
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-white/40">
+            <span className="text-xxs font-semibold uppercase tracking-widest text-white/40">
               Actividad reciente
             </span>
           </div>

@@ -271,7 +271,7 @@ function StripeCheckoutForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-medium border border-white/[0.10] text-zinc-400 hover:text-white hover:border-white/[0.20] transition-colors"
+          className="flex-1 inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-medium border border-white/[0.15] text-zinc-400 hover:text-white hover:border-white/[0.30] transition-colors"
         >
           ← Volver
         </button>

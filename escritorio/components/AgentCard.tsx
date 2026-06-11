@@ -28,37 +28,37 @@ const COLORS: Record<ColorKey, { icon: string; cta: string; glow: string }> = {
   violet: {
     icon: "bg-violet-500/20 text-violet-400",
     cta: "text-violet-400",
-    glow: "hover:shadow-[0_0_24px_rgba(139,92,246,0.18)]",
+    glow: "hover:shadow-[var(--glow-violet)]",
   },
   indigo: {
     icon: "bg-indigo-500/20 text-indigo-400",
     cta: "text-indigo-400",
-    glow: "hover:shadow-[0_0_24px_rgba(99,102,241,0.18)]",
+    glow: "hover:shadow-[var(--glow-indigo)]",
   },
   emerald: {
     icon: "bg-emerald-500/20 text-emerald-400",
     cta: "text-emerald-400",
-    glow: "hover:shadow-[0_0_24px_rgba(16,185,129,0.18)]",
+    glow: "hover:shadow-[var(--glow-emerald)]",
   },
   rose: {
     icon: "bg-rose-500/20 text-rose-400",
     cta: "text-rose-400",
-    glow: "hover:shadow-[0_0_24px_rgba(244,63,94,0.18)]",
+    glow: "hover:shadow-[var(--glow-rose)]",
   },
   orange: {
     icon: "bg-orange-500/20 text-orange-400",
     cta: "text-orange-400",
-    glow: "hover:shadow-[0_0_24px_rgba(249,115,22,0.18)]",
+    glow: "hover:shadow-[var(--glow-orange)]",
   },
   sky: {
     icon: "bg-sky-500/20 text-sky-400",
     cta: "text-sky-400",
-    glow: "hover:shadow-[0_0_24px_rgba(14,165,233,0.18)]",
+    glow: "hover:shadow-[var(--glow-sky)]",
   },
   zinc: {
     icon: "bg-zinc-500/20 text-zinc-400",
     cta: "text-zinc-400",
-    glow: "hover:shadow-[0_0_24px_rgba(161,161,170,0.12)]",
+    glow: "hover:shadow-[var(--glow-zinc)]",
   },
 };
 
@@ -105,7 +105,7 @@ export default function AgentCard({
               <Icon className={featured ? "size-5" : "size-4"} />
             </div>
             {badge && (
-              <Badge variant="outline" className="text-[10px] font-semibold tracking-wide">
+              <Badge variant="outline" className="text-2xs font-semibold tracking-wide">
                 {badge}
               </Badge>
             )}

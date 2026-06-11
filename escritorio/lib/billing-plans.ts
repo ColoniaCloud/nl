@@ -111,17 +111,17 @@ export type SiteGenerationMode = "lite" | "lite_plus" | "next";
 
 /** Which generation modes each WP role can access */
 export const ALLOWED_GENERATION_MODES: Record<string, SiteGenerationMode[]> = {
-  nl360_free:    ["lite"],
-  nl360_basic:   ["lite", "lite_plus"],
-  nl360_pro:     ["lite", "lite_plus", "next"],
-  nl360_elite:   ["lite", "lite_plus", "next"],
-  nl_setters:    ["lite", "lite_plus", "next"],
-  administrator: ["lite", "lite_plus", "next"],
+  nl360_free:    ["lite_plus"],
+  nl360_basic:   ["lite_plus", "next"],
+  nl360_pro:     ["lite_plus", "next"],
+  nl360_elite:   ["lite_plus", "next"],
+  nl_setters:    ["lite_plus", "next"],
+  administrator: ["lite_plus", "next"],
 };
 
 /** Default generation mode per WP role */
 export const DEFAULT_GENERATION_MODE: Record<string, SiteGenerationMode> = {
-  nl360_free:    "lite",
+  nl360_free:    "lite_plus",
   nl360_basic:   "lite_plus",
   nl360_pro:     "lite_plus",
   nl360_elite:   "lite_plus",
@@ -135,7 +135,7 @@ export const DEFAULT_GENERATION_MODE: Record<string, SiteGenerationMode> = {
  * Administrator always gets all modes.
  */
 export function getAllowedModes(roles: string[]): SiteGenerationMode[] {
-  if (roles.includes("administrator")) return ["lite", "lite_plus", "next"];
+  if (roles.includes("administrator")) return ["lite_plus", "next"];
 
   const modes = new Set<SiteGenerationMode>();
   for (const role of roles) {
@@ -144,9 +144,9 @@ export function getAllowedModes(roles: string[]): SiteGenerationMode[] {
       for (const m of allowed) modes.add(m);
     }
   }
-  // Fallback: if no recognized plan role, default to free (lite only)
-  if (modes.size === 0) modes.add("lite");
-  return ["lite", "lite_plus", "next"].filter((m) => modes.has(m as SiteGenerationMode)) as SiteGenerationMode[];
+  // Fallback: if no recognized plan role, default to lite_plus
+  if (modes.size === 0) modes.add("lite_plus");
+  return ["lite_plus", "next"].filter((m) => modes.has(m as SiteGenerationMode)) as SiteGenerationMode[];
 }
 
 /**
@@ -156,13 +156,13 @@ export function getAllowedModes(roles: string[]): SiteGenerationMode[] {
 export function getDefaultMode(roles: string[]): SiteGenerationMode {
   if (roles.includes("administrator")) return "lite_plus";
 
-  const priority: SiteGenerationMode[] = ["next", "lite_plus", "lite"];
+  const priority: SiteGenerationMode[] = ["next", "lite_plus"];
   for (const mode of priority) {
     for (const role of roles) {
       if (DEFAULT_GENERATION_MODE[role] === mode) return mode;
     }
   }
-  return "lite";
+  return "lite_plus";
 }
 
 /**

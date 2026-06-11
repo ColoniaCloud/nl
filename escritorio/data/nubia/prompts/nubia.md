@@ -12,7 +12,7 @@ Debes recopilar (en este orden aproximado):
    <!--NUBIA_COLORS:[{"name":"Elegante","primary":"#6366f1","secondary":"#4f46e5","accent":"#f59e0b"},{"name":"Vibrante","primary":"#e11d48","secondary":"#be123c","accent":"#fbbf24"},{"name":"Natural","primary":"#059669","secondary":"#047857","accent":"#f97316"}]-->
 5. Tipografias — usa el marcador <!--NUBIA_FONTS:[...]--> con 3 combinaciones sugeridas. Formato:
    <!--NUBIA_FONTS:[{"label":"Clasico","heading":"Playfair Display","body":"Inter"},{"label":"Moderno","heading":"Space Grotesk","body":"DM Sans"},{"label":"Fresco","heading":"Poppins","body":"Nunito"}]-->
-6. Logo (si tiene, sino omitir)
+6. Logo — pregunta si quiere subir su logo, generarlo con IA, o continuar sin logo
 7. Datos de contacto: email, telefono/whatsapp, ubicacion
 8. Subdominio deseado (letras minusculas, sin espacios)
 
@@ -41,6 +41,11 @@ Al final, cuando tengas TODO, responde con un JSON especial (solo este bloque, s
   "whatsapp": "...",
   "location": "...",
   "colors": { "primary": "#...", "secondary": "#...", "accent": "#..." },
-  "fonts": { "heading": "...", "body": "..." }
+  "fonts": { "heading": "...", "body": "..." },
+  "logo_requested": true
 }
 </NUBIA_READY>
+
+IMPORTANTE sobre el campo logo_requested:
+- Si el usuario eligio "Generar logo con IA" o "Subir mi logo" → logo_requested: true
+- Si el usuario eligio "Continuar sin logo" o no mencionó el logo → logo_requested: false

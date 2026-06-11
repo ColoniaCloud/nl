@@ -1,6 +1,6 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getUserId } from "@/app/api/nubia/projects/route";
+import { getUser } from "@/app/api/nubia/projects/route";
 import {
   getProjectById,
   getDesign,
@@ -8,6 +8,7 @@ import {
   upsertDesign,
   updateProjectStatus,
 } from "@/lib/nubia/db-nubia";
+import { checkAgentAccess, checkMaxSites } from "@/lib/billing-access";
 import { buildStoreConfig, copyTemplate, writeStoreConfig, queueNubiaBuild, fetchUnsplashPhotos } from "@/lib/nubia/nubia-deploy";
 
 export const runtime = "nodejs";
@@ -23,9 +24,20 @@ export async function POST(req: NextRequest) {
   if (!token) {
     return new Response(JSON.stringify({ error: "No autenticado" }), { status: 401 });
   }
-  const userId = await getUserId(token);
-  if (!userId) {
+  const user = await getUser(token);
+  if (!user) {
     return new Response(JSON.stringify({ error: "Token invalido" }), { status: 401 });
+  }
+  const userId = user.id;
+
+  // C2: Verificar acceso al agente y límite de sitios por plan
+  const agentCheck = checkAgentAccess(user.roles, "nubia");
+  if (!agentCheck.allowed) {
+    return NextResponse.json({ error: agentCheck.reason }, { status: 403 });
+  }
+  const maxSitesCheck = await checkMaxSites(userId, user.roles);
+  if (!maxSitesCheck.allowed) {
+    return NextResponse.json({ error: maxSitesCheck.reason }, { status: 403 });
   }
 
   const { project_id } = await req.json();

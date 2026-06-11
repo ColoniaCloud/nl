@@ -27,6 +27,8 @@ import {
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ChatBubble } from "@/components/chat/ChatBubble";
+import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
+import VoiceMicButton from "@/components/chat/VoiceMicButton";
 import NubiaProductManager from "@/components/nubia/NubiaProductManager";
 import NubiaOrdersPanel from "@/components/nubia/NubiaOrdersPanel";
 import NubiaPaymentConfig from "@/components/nubia/NubiaPaymentConfig";
@@ -48,7 +50,7 @@ interface Message {
   selectedTemplate?: string;
 }
 
-type Step = "welcome" | "onboarding" | "ready" | "building" | "complete" | "cms";
+type Step = "welcome" | "onboarding" | "subdomain_conflict" | "ready" | "building" | "complete" | "cms";
 
 type CmsTab = "products" | "orders" | "payments" | "design";
 
@@ -67,6 +69,7 @@ interface Project {
 const STEP_LABELS: Record<Step, string> = {
   welcome: "Inicio",
   onboarding: "Configuracion",
+  subdomain_conflict: "Configuracion",
   ready: "Configuracion",
   building: "Construyendo",
   complete: "Listo",
@@ -92,7 +95,7 @@ function StepIndicator({ current }: { current: Step }) {
         return (
           <div key={s} className="flex items-center flex-shrink-0">
             <div className={[
-              "flex items-center gap-1 rounded-full px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-[11px] font-medium whitespace-nowrap",
+              "flex items-center gap-1 rounded-full px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-xxs font-medium whitespace-nowrap",
               done ? "bg-muted text-muted-foreground"
                 : active ? "bg-foreground text-background"
                 : "text-muted-foreground/40",
@@ -129,24 +132,24 @@ function BuildTerminal({ logs, status }: {
           <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
           <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
         </div>
-        <span className="ml-1 text-[11px] font-mono text-zinc-400 flex-1 text-center">
+        <span className="ml-1 text-xxs font-mono text-zinc-400 flex-1 text-center">
           NL360 Backoffice - Nubia v1.0 {status === "running" ? "construyendo" : status === "done" ? "listo" : "error"}
         </span>
         {status === "running" && (
-          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-zinc-400 text-[10px]" />
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-zinc-400 text-2xs" />
         )}
         {status === "done" && (
-          <FontAwesomeIcon icon={faCheck} className="text-emerald-400 text-[10px]" />
+          <FontAwesomeIcon icon={faCheck} className="text-emerald-400 text-2xs" />
         )}
         {status === "error" && (
-          <FontAwesomeIcon icon={faTriangleExclamation} className="text-red-400 text-[10px]" />
+          <FontAwesomeIcon icon={faTriangleExclamation} className="text-red-400 text-2xs" />
         )}
         <button
           onClick={() => setExpanded((v) => !v)}
           title={expanded ? "Minimizar" : "Ampliar consola"}
           className="ml-1 text-zinc-400 hover:text-zinc-200 transition-colors p-0.5"
         >
-          <FontAwesomeIcon icon={expanded ? faCompress : faExpand} className="text-[10px]" />
+          <FontAwesomeIcon icon={expanded ? faCompress : faExpand} className="text-2xs" />
         </button>
       </div>
       <div className={`bg-zinc-950 px-3 sm:px-4 py-2.5 sm:py-3 overflow-y-auto font-mono text-xs leading-relaxed ${expanded ? "flex-1" : "max-h-[30vh] sm:max-h-[40vh] md:max-h-52"}`}>
@@ -203,7 +206,7 @@ function NubiaPageInner() {
   const [chosenTemplate, setChosenTemplate] = useState<string>("boutique");
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<AgentInputHandle>(null);
   const buildingRef = useRef(false);
 
   function triggerSendPress() {
@@ -233,18 +236,18 @@ function NubiaPageInner() {
       .catch(() => {});
   }, [projectParam]);
 
-  // Handle Manu Dev -> Nubia handoff
-  const handoffParam = searchParams.get("handoff");
+  // M2: Handle Manu Dev -> Nubia handoff via DB-stored id (no URL size limits)
+  const handoffIdParam = searchParams.get("handoff_id");
   const handoffProcessed = useRef(false);
   useEffect(() => {
-    if (!handoffParam || handoffProcessed.current) return;
+    if (!handoffIdParam || handoffProcessed.current) return;
     handoffProcessed.current = true;
-    try {
-      const data = JSON.parse(handoffParam);
-      if (data.name) {
+    fetch(`/api/nubia/handoff?id=${handoffIdParam}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then(({ data }) => {
+        if (!data?.name) return;
         setStarted(true);
         setStep("onboarding");
-        // Build a summary message from the collected data
         const parts: string[] = [`Mi tienda se llama "${data.name}"`];
         if (data.industry) parts.push(`y vende ${data.industry}`);
         if (data.subdomain) parts.push(`El subdominio seria ${data.subdomain}`);
@@ -253,16 +256,15 @@ function NubiaPageInner() {
         if (data.email) parts.push(`Email: ${data.email}`);
         if (data.whatsapp) parts.push(`WhatsApp: ${data.whatsapp}`);
         const summaryMsg = parts.join(". ") + ". Vengo de Manu Dev y quiero crear una tienda completa con carrito y pagos.";
-        // Auto-send as first message
         setMessages([{
           id: uid(),
           role: "assistant",
           content: "Hola! Veo que vienes de Manu Dev con datos de tu negocio. Voy a revisar la informacion y continuar desde aqui.",
         }]);
         setTimeout(() => sendMessage(summaryMsg), 500);
-      }
-    } catch {}
-  }, [handoffParam]);
+      })
+      .catch(() => {});
+  }, [handoffIdParam]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -444,7 +446,7 @@ function NubiaPageInner() {
             <ChevronRight className="w-4 h-4 rotate-180" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/20 text-emerald-400 text-[10px]">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500/20 text-emerald-400 text-2xs">
               <FontAwesomeIcon icon={faShop} />
             </div>
             <span className="text-sm font-semibold text-foreground">{pname}</span>
@@ -480,7 +482,7 @@ function NubiaPageInner() {
             rel="noreferrer"
             className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors flex-shrink-0"
           >
-            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-[10px]" />
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-2xs" />
             <span className="hidden sm:inline">Ver tienda</span>
           </a>
         </div>
@@ -531,33 +533,19 @@ function NubiaPageInner() {
             </p>
           </div>
         </div>
-        <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
+        <div className="flex-shrink-0 bg-background px-2 sm:px-4 pt-2 sm:pt-3 pb-5 sm:pb-6">
           <div className="mx-auto w-full max-w-3xl">
-            <form onSubmit={handleSubmit} className="flex items-end gap-1.5 sm:gap-2">
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Ej: La Boutique de Ana, Sabores del Valle, Digital Pro..."
-                disabled={loading}
-                rows={1}
-                className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 min-h-[36px] sm:min-h-[42px] max-h-[120px]"
-              />
-              <button
-                type="submit"
-                disabled={loading || !input.trim()}
-                className={`flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150 ${sendBtnPressed ? "scale-90" : "scale-100"}`}
-              >
-                {loading
-                  ? <FontAwesomeIcon icon={faSpinner} className="animate-spin text-sm" />
-                  : <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-                }
-              </button>
-            </form>
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Enter para enviar
-            </p>
+            <AgentInput
+              ref={inputRef}
+              accent="emerald"
+              value={input}
+              onChange={setInput}
+              onSend={() => handleSubmit()}
+              sending={loading}
+              disabled={loading}
+              placeholder="Ej: La Boutique de Ana, Sabores del Valle, Digital Pro..."
+              leftSlot={<VoiceMicButton accent="emerald" onText={setInput} disabled={loading} />}
+            />
           </div>
         </div>
       </div>
@@ -565,7 +553,7 @@ function NubiaPageInner() {
   }
 
   // ── Chat view ─────────────────────────────────────────────────────────────
-  const isBlocked = loading || step === "building";
+  const isBlocked = loading || step === "building" || step === "subdomain_conflict";
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -596,7 +584,7 @@ function NubiaPageInner() {
                   rel="noreferrer"
                   className="inline-flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
                 >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-[10px]" />
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-2xs" />
                   <span className="hidden sm:inline">Ver tienda</span>
                 </a>
                 {step === "complete" && (
@@ -604,7 +592,7 @@ function NubiaPageInner() {
                     onClick={() => setShowCms(true)}
                     className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 text-white px-2.5 py-1.5 text-xs font-semibold hover:bg-emerald-500 transition-colors"
                   >
-                    <FontAwesomeIcon icon={faWandMagicSparkles} className="text-[10px]" />
+                    <FontAwesomeIcon icon={faWandMagicSparkles} className="text-2xs" />
                     <span className="hidden sm:inline">Administrar</span>
                   </button>
                 )}
@@ -703,39 +691,42 @@ function NubiaPageInner() {
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
-        <div className="mx-auto w-full max-w-3xl">
-          <form onSubmit={handleSubmit} className="flex items-end gap-1.5 sm:gap-2">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={
-                step === "building" ? "Construyendo tu tienda..."
-                  : step === "complete" ? "La tienda ya esta lista. Usa el panel para administrarla."
-                  : "Escribe tu mensaje..."
-              }
-              disabled={isBlocked || step === "complete"}
-              rows={1}
-              className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 min-h-[36px] sm:min-h-[42px] max-h-[120px]"
-            />
-            <button
-              type="submit"
-              disabled={isBlocked || !input.trim() || step === "complete"}
-              className={`flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150 ${sendBtnPressed ? "scale-90" : "scale-100"}`}
-            >
-              {loading
-                ? <FontAwesomeIcon icon={faSpinner} className="animate-spin text-sm" />
-                : <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-              }
-            </button>
-          </form>
-          {step !== "complete" && (
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Enter para enviar · Shift+Enter para nueva linea
+      {step === "subdomain_conflict" && (
+        <div className="flex-shrink-0 bg-background px-2 sm:px-4 pt-2">
+          <div className="mx-auto w-full max-w-3xl rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 px-4 py-3 flex items-center justify-between gap-3">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              Ese subdominio ya esta en uso. Escribi otro para continuar.
             </p>
-          )}
+            <button
+              className="shrink-0 text-sm font-medium text-amber-900 dark:text-amber-200 underline"
+              onClick={() => {
+                setStep("onboarding");
+                inputRef.current?.focus();
+              }}
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="flex-shrink-0 bg-background px-2 sm:px-4 pt-2 sm:pt-3 pb-5 sm:pb-6">
+        <div className="mx-auto w-full max-w-3xl">
+          <AgentInput
+            ref={inputRef}
+            accent="emerald"
+            value={input}
+            onChange={setInput}
+            onSend={() => handleSubmit()}
+            sending={loading}
+            disabled={isBlocked || step === "complete"}
+            placeholder={
+              step === "building" ? "Construyendo tu tienda..."
+                : step === "subdomain_conflict" ? "Escribi un nuevo subdominio..."
+                : step === "complete" ? "La tienda ya esta lista. Usa el panel para administrarla."
+                : "Escribe tu mensaje..."
+            }
+            leftSlot={<VoiceMicButton accent="emerald" onText={setInput} disabled={isBlocked || step === "complete"} />}
+          />
         </div>
       </div>
     </div>

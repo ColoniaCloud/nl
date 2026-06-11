@@ -82,7 +82,7 @@ export default function CookiesPage() {
               </div>
               <p className="text-sm text-zinc-400 leading-relaxed mb-4">{type.description}</p>
               <div className={`rounded-xl ${c.bg} px-4 py-3`}>
-                <p className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-2">
+                <p className="text-xxs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
                   Ejemplos
                 </p>
                 <ul className="flex flex-col gap-1">

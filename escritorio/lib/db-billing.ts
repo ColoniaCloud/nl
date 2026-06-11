@@ -187,7 +187,7 @@ export async function getUserMeta(token: string): Promise<{
     if (res.ok) {
       const d = await res.json();
       if (d.user?.id) {
-        const roles: string[] = d.roles || [];
+        const roles: string[] = d.user?.roles || d.roles || [];
         return {
           id: Number(d.user.id),
           roles,

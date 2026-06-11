@@ -5,10 +5,8 @@ const logger = createLogger("Manu Dev");
 import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import getPool from "@/lib/db-manu";
-import fs from "fs";
-import path from "path";
 import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared-project";
-import { generateLogo } from "@/lib/logo-generator";
+import { generateLogo, downloadLogoLocally } from "@/lib/logo-generator";
 import { getAgent, loadSystemPrompt } from "@/lib/agents";
 
 export const runtime = "nodejs";
@@ -33,21 +31,28 @@ type Step =
 
 // ─── DB helpers ──────────────────────────────────────────────────────────────
 
+const REQUIRED_MD_COLUMNS: Record<string, string> = {
+  location:        "ALTER TABLE md_projects ADD COLUMN location VARCHAR(255) DEFAULT NULL",
+  audience:        "ALTER TABLE md_projects ADD COLUMN audience VARCHAR(255) DEFAULT NULL",
+  extra_content:   "ALTER TABLE md_projects ADD COLUMN extra_content TEXT DEFAULT NULL",
+  generation_mode: "ALTER TABLE md_projects ADD COLUMN generation_mode VARCHAR(16) DEFAULT 'auto'",
+  site_type:       "ALTER TABLE md_projects ADD COLUMN site_type VARCHAR(32) DEFAULT NULL",
+  address_type:    "ALTER TABLE md_projects ADD COLUMN address_type VARCHAR(16) DEFAULT NULL",
+  social_links:    "ALTER TABLE md_projects ADD COLUMN social_links JSON DEFAULT NULL",
+};
+
 let columnsEnsured = false;
 async function ensureProjectColumns() {
   if (columnsEnsured) return;
   const pool = getPool();
-  const cols = [
-    "ALTER TABLE md_projects ADD COLUMN location VARCHAR(255) DEFAULT NULL",
-    "ALTER TABLE md_projects ADD COLUMN audience VARCHAR(255) DEFAULT NULL",
-    "ALTER TABLE md_projects ADD COLUMN extra_content TEXT DEFAULT NULL",
-    "ALTER TABLE md_projects ADD COLUMN generation_mode VARCHAR(16) DEFAULT 'auto'",
-    "ALTER TABLE md_projects ADD COLUMN site_type VARCHAR(32) DEFAULT NULL",
-    "ALTER TABLE md_projects ADD COLUMN address_type VARCHAR(16) DEFAULT NULL",
-    "ALTER TABLE md_projects ADD COLUMN social_links JSON DEFAULT NULL",
-  ];
-  for (const sql of cols) {
-    try { await pool.execute(sql); } catch {}
+  const [rows] = await pool.execute(
+    "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'md_projects'"
+  ) as any;
+  const existing = new Set((rows as any[]).map((r: any) => r.COLUMN_NAME));
+  for (const [col, sql] of Object.entries(REQUIRED_MD_COLUMNS)) {
+    if (!existing.has(col)) {
+      try { await pool.execute(sql); } catch {}
+    }
   }
   columnsEnsured = true;
 }
@@ -74,36 +79,22 @@ async function getUser(token: string): Promise<{ id: number; name: string } | nu
   return data2.id ? { id: data2.id, name: data2.name || "" } : null;
 }
 
-// ─── Logo generation ─────────────────────────────────────────────────────────
+// ─── Font helpers ────────────────────────────────────────────────────────────
 
-async function generateLogoWithHF(
-  projectId: number,
-  businessName: string,
-  industry: string,
-  primaryColor: string
-): Promise<string | null> {
-  const token = process.env.HUGGING_FACE_TOKEN;
-  if (!token) return null;
-  const prompt = `professional minimalist logo icon for "${businessName}", ${industry} business, primary color ${primaryColor}, clean vector style, white background, simple geometric design, no text`;
-  try {
-    const res = await fetch(
-      "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ inputs: prompt }),
-      }
-    );
-    if (!res.ok) return null;
-    const buffer = Buffer.from(await res.arrayBuffer());
-    const dir = path.join(process.cwd(), "public", "logos");
-    fs.mkdirSync(dir, { recursive: true });
-    const filename = `logo-${projectId}.png`;
-    fs.writeFileSync(path.join(dir, filename), buffer);
-    return `/logos/${filename}`;
-  } catch {
-    return null;
-  }
+const FONT_BODY_DEFAULTS: Record<string, string> = {
+  "Playfair Display": "Inter",
+  "Merriweather": "Open Sans",
+  "Oswald": "Roboto",
+  "Raleway": "Lato",
+  "Space Grotesk": "DM Sans",
+  "Outfit": "Inter",
+  "Sora": "Inter",
+  "Manrope": "Inter",
+};
+
+function resolveBodyFont(heading: string, body?: string): string {
+  if (body && body !== heading) return body;
+  return FONT_BODY_DEFAULTS[heading] ?? "Inter";
 }
 
 // ─── Subdomain helpers ───────────────────────────────────────────────────────
@@ -128,11 +119,16 @@ async function generateSubdomainOptions(pool: any, name: string): Promise<string
   ];
   const available: string[] = [];
   for (const c of candidates) {
-    const [rows] = (await pool.execute(
+    // A1: Check both tables so Manu Dev and Nubia never share the same subdomain
+    const [mdRows] = (await pool.execute(
       "SELECT id FROM md_projects WHERE subdomain = ? LIMIT 1",
       [c]
     )) as any;
-    if (rows.length === 0) {
+    const [nbRows] = (await pool.execute(
+      "SELECT id FROM nb_projects WHERE subdomain = ? LIMIT 1",
+      [c]
+    )) as any;
+    if (mdRows.length === 0 && nbRows.length === 0) {
       available.push(c);
     } else {
       const alt = `${c}-${Math.floor(Math.random() * 90) + 10}`;
@@ -712,13 +708,16 @@ export async function POST(req: NextRequest) {
               style: "modern",
             });
             if (logoResult) {
-              logoPreview = logoResult.url;
+              // Download SVG locally so generated site can use it without external dependency
+              const localPath = await downloadLogoLocally(project_id, logoResult.url);
+              const logoUrl = localPath ?? logoResult.url;
+              logoPreview = logoUrl;
               await pool.execute(
                 "UPDATE md_projects SET logo_url = ? WHERE id = ? AND user_id = ?",
-                [logoResult.url, project_id, user.id]
+                [logoUrl, project_id, user.id]
               );
               // Persist logo to shared brandbook
-              await upsertBrandbook(user.id, { logo_url: logoResult.url });
+              await upsertBrandbook(user.id, { logo_url: logoUrl });
               if (!options) options = ["Me gusta, usarlo", "Generar otro logo", "Prefiero subir el mio"];
             } else {
               if (!options) options = ["Continuar sin logo", "Subir mi propio logo", "Intentar generar de nuevo"];
@@ -779,20 +778,6 @@ export async function POST(req: NextRequest) {
                 options = ["Tengo logo, lo subo", "Generar logo con IA", "Continuar sin logo"];
               }
 
-            } else if (next === "colors" && project_id) {
-              // logo -> colors: Save proposed colors
-              if (data.primary_color) {
-                await pool.execute(
-                  `INSERT INTO md_design (project_id, primary_color, secondary_color, accent_color, font_heading, font_body)
-                   VALUES (?, ?, ?, ?, 'Inter', 'Inter')
-                   ON DUPLICATE KEY UPDATE
-                     primary_color = VALUES(primary_color),
-                     secondary_color = VALUES(secondary_color),
-                     accent_color = VALUES(accent_color)`,
-                  [project_id, data.primary_color, data.secondary_color || "#ffffff", data.accent_color || "#666666"]
-                );
-              }
-
             } else if (next === "fonts" && project_id) {
               // colors -> fonts: Save confirmed colors
               if (data.primary_color) {
@@ -815,13 +800,14 @@ export async function POST(req: NextRequest) {
             } else if (next === "social" && project_id) {
               // fonts -> social: Save fonts
               if (data.font_heading) {
+                const fontBody = resolveBodyFont(data.font_heading, data.font_body);
                 await pool.execute(
                   "UPDATE md_design SET font_heading = ?, font_body = ? WHERE project_id = ?",
-                  [data.font_heading, data.font_body || data.font_heading, project_id]
+                  [data.font_heading, fontBody, project_id]
                 );
                 await upsertBrandbook(user.id, {
                   font_heading: data.font_heading,
-                  font_body: data.font_body || data.font_heading,
+                  font_body: fontBody,
                 });
               }
 
@@ -897,7 +883,8 @@ export async function POST(req: NextRequest) {
                 phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
                 whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
               };
-              // Record handoff in shared_projects audit log
+              // M2: Store handoff in DB and pass only the id — avoids URL length limits
+              let handoffId: number | null = null;
               try {
                 const sp = await upsertBrandbook(user.id, {
                   name: nubiaHandoff.name,
@@ -911,17 +898,15 @@ export async function POST(req: NextRequest) {
                   whatsapp: nubiaHandoff.whatsapp || undefined,
                 });
                 const { recordHandoff } = await import("@/lib/shared-project");
-                await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
+                handoffId = await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
               } catch (hErr) {
                 logger.warn("No se pudo registrar handoff Manu Dev → Nubia");
               }
               // Pass redirect info in the response
               nextStep = "redirect_nubia" as Step;
-              // Store handoff data as a special field
               (options as any) = undefined;
               (colors as any) = undefined;
               (fonts as any) = undefined;
-              // We'll send nubiaHandoff in the response
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
@@ -929,7 +914,7 @@ export async function POST(req: NextRequest) {
                     step: "redirect_nubia",
                     project_id: newProjectId,
                     cleanText: safeCleanText,
-                    nubiaHandoff,
+                    handoffId,
                   })}\n\n`
                 )
               );
@@ -985,9 +970,16 @@ export async function POST(req: NextRequest) {
                 phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
                 whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
               };
+              // M2: Store handoff in DB (fallback path)
+              let fallbackHandoffId: number | null = null;
+              try {
+                const sp = await upsertBrandbook(user.id, {});
+                const { recordHandoff } = await import("@/lib/shared-project");
+                fallbackHandoffId = await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
+              } catch {}
               controller.enqueue(
                 encoder.encode(
-                  `data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: project_id, cleanText: safeCleanText, nubiaHandoff })}\n\n`
+                  `data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: project_id, cleanText: safeCleanText, handoffId: fallbackHandoffId })}\n\n`
                 )
               );
               controller.close();

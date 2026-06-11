@@ -183,7 +183,7 @@ function RegistroInner() {
                 }`}
               >
                 {p.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-violet-500 text-white">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-2xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-violet-500 text-white">
                     Popular
                   </span>
                 )}

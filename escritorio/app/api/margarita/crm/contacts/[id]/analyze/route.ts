@@ -21,7 +21,7 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
     if (r.ok) {
       const d = await r.json();
       if (d.user?.id) {
-        const roles: string[] = Array.isArray(d.roles) ? d.roles : [];
+        const roles: string[] = Array.isArray(d.roles) ? d.roles : (Array.isArray(d.user?.roles) ? d.user.roles : []);
         return { id: d.user.id, roles };
       }
     }
@@ -29,7 +29,7 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
       headers: { Authorization: `Bearer ${token}` }, cache: "no-store",
     });
     if (!r2.ok) return null;
-    const d2 = await r2.json(); return d2.id ? { id: d2.id, roles: [] } : null;
+    const d2 = await r2.json(); return d2.id ? { id: d2.id, roles: Array.isArray(d2.roles) ? d2.roles : [] } : null;
   } catch { return null; }
 }
 

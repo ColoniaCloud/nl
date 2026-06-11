@@ -68,7 +68,7 @@ export function NetworkPicker({
         >
           <div className="flex items-center justify-between">
             <span className="font-medium text-sm text-foreground">{net.name}</span>
-            <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{net.gas}</span>
+            <span className="text-2xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{net.gas}</span>
           </div>
           <div className="text-xs text-muted-foreground mt-1">{net.desc}</div>
         </button>
@@ -112,7 +112,7 @@ export function FeaturePicker({
           >
             <div className="flex items-center gap-2">
               <div
-                className={`w-4 h-4 rounded border flex items-center justify-center text-[10px] ${
+                className={`w-4 h-4 rounded border flex items-center justify-center text-2xs ${
                   chosen.has(f.id) ? "bg-emerald-500 border-emerald-500 text-white" : "border-muted-foreground/40"
                 }`}
               >
@@ -176,7 +176,7 @@ export function ContractViewer({
         <div className="flex items-center gap-2">
           <FileCode2 className="w-4 h-4 text-emerald-400" />
           <span className="text-sm font-medium text-foreground">Contrato compilado</span>
-          <span className="text-[10px] text-muted-foreground">solc {compilerVersion}</span>
+          <span className="text-2xs text-muted-foreground">solc {compilerVersion}</span>
         </div>
         <a
           href={`/api/forge/download?project_id=${projectId}`}

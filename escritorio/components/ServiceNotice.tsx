@@ -8,7 +8,7 @@ export default function ServiceNotice() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 max-w-xs rounded-2xl border border-amber-400/20 bg-black/40 px-4 py-3 text-sm text-white/70 shadow-[0_8px_24px_rgba(0,0,0,0.3)] backdrop-blur-sm">
+    <div className="fixed bottom-5 right-5 z-50 max-w-xs rounded-2xl border border-amber-400/20 bg-black/40 px-4 py-3 text-sm text-white/70 shadow-[var(--shadow-lg)] backdrop-blur-sm">
       <div className="flex items-start gap-3">
         <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-amber-400" />
         <p className="flex-1 leading-snug text-xs text-white/60">

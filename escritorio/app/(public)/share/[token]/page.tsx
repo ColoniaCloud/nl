@@ -101,10 +101,10 @@ export default async function SharePage({
         {/* Header */}
         <header className="mb-8 border-b border-zinc-800 pb-6">
           <div className="flex items-center gap-2 mb-3">
-            <span className="inline-block rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[10px] font-bold uppercase tracking-widest px-3 py-1">
+            <span className="inline-block rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-2xs font-bold uppercase tracking-widest px-3 py-1">
               MentorIA · {data.toolLabel}
             </span>
-            <span className="inline-block rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 text-[10px] uppercase tracking-widest px-3 py-1">
+            <span className="inline-block rounded-full bg-zinc-800 border border-zinc-700 text-zinc-400 text-2xs uppercase tracking-widest px-3 py-1">
               Solo lectura
             </span>
           </div>
@@ -127,11 +127,11 @@ export default async function SharePage({
             const bubbleCls =
               m.role === "user"
                 ? "bg-zinc-800 border-zinc-700"
-                : "bg-[#1e293b] border-sky-900/40";
+                : "bg-muted border-sky-900/40";
             const html = marked.parse(m.content || "", { async: false }) as string;
             return (
               <div key={i} className="space-y-2">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                <div className="text-2xs font-bold uppercase tracking-widest text-zinc-500">
                   {who}
                 </div>
                 <div
@@ -145,7 +145,7 @@ export default async function SharePage({
 
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t border-zinc-800 text-center">
-          <p className="text-[11px] text-zinc-500">
+          <p className="text-xxs text-zinc-500">
             Conversacion compartida desde{" "}
             <Link href="/" className="text-sky-400 hover:underline">
               NL360 MentorIA

@@ -159,20 +159,43 @@ export async function linkAgentProject(
   );
 }
 
-// Record a handoff event between agents for auditing
+// Record a handoff event between agents for auditing.
+// Returns the inserted row id so callers can pass it as a stable reference instead of URL-encoding the full payload.
 export async function recordHandoff(
   userId: number,
   sharedProjectId: number,
   fromAgent: string,
   toAgent: string,
   contextSnapshot?: Record<string, unknown>
-): Promise<void> {
+): Promise<number> {
   const pool = getPool();
-  await pool.execute(
+  const [result] = await pool.execute(
     `INSERT INTO shared_handoffs (user_id, shared_project_id, from_agent, to_agent, context_snapshot)
      VALUES (?, ?, ?, ?, ?)`,
     [userId, sharedProjectId, fromAgent, toAgent, contextSnapshot ? JSON.stringify(contextSnapshot) : null]
-  );
+  ) as any;
+  return result.insertId as number;
+}
+
+// Retrieve handoff data by its row id, scoped to the requesting user for security.
+export async function getHandoff(
+  handoffId: number,
+  userId: number
+): Promise<Record<string, unknown> | null> {
+  const pool = getPool();
+  const [rows] = await pool.execute(
+    "SELECT context_snapshot FROM shared_handoffs WHERE id = ? AND user_id = ?",
+    [handoffId, userId]
+  ) as any;
+  const row = (rows as any[])[0];
+  if (!row?.context_snapshot) return null;
+  try {
+    return typeof row.context_snapshot === "string"
+      ? JSON.parse(row.context_snapshot)
+      : row.context_snapshot;
+  } catch {
+    return null;
+  }
 }
 
 // Returns a compact one-line brand context string for injecting into system prompts.

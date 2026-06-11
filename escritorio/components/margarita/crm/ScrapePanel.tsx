@@ -261,7 +261,7 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
               <SlidersHorizontal className="size-3.5" />
               Filtros avanzados
               {(filterHasWebsite || filterHasWhatsapp || filterPlatforms.length > 0) && (
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-violet-900/50 text-violet-300 border-violet-800/50 ml-1">
+                <Badge variant="secondary" className="text-2xs px-1.5 py-0 bg-violet-900/50 text-violet-300 border-violet-800/50 ml-1">
                   {[filterHasWebsite, filterHasWhatsapp, filterPlatforms.length > 0 ? "plataformas" : null].filter(Boolean).length} activos
                 </Badge>
               )}
@@ -290,7 +290,7 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
                   <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
                     <MessageCircle className="size-3.5 text-emerald-500" />
                     WhatsApp
-                    <span className="text-[10px] text-zinc-600 font-normal">(requiere analisis IA del sitio web)</span>
+                    <span className="text-2xs text-zinc-600 font-normal">(requiere analisis IA del sitio web)</span>
                   </div>
                   <FilterToggle
                     label="Tiene WhatsApp"
@@ -306,7 +306,7 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
                   <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
                     <ShoppingBag className="size-3.5 text-blue-400" />
                     Servicios de terceros
-                    <span className="text-[10px] text-zinc-600 font-normal">(requiere analisis IA del sitio web)</span>
+                    <span className="text-2xs text-zinc-600 font-normal">(requiere analisis IA del sitio web)</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {PLATFORMS.map((p) => (
@@ -328,7 +328,7 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
                     <button
                       type="button"
                       onClick={() => setFilterPlatforms([])}
-                      className="text-[10px] text-zinc-600 hover:text-zinc-400"
+                      className="text-2xs text-zinc-600 hover:text-zinc-400"
                     >
                       Limpiar seleccion
                     </button>
@@ -386,12 +386,12 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-medium text-zinc-100">{c.nombre}</span>
                         {c._hasWhatsapp && (
-                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-emerald-900/40 text-emerald-400 border-emerald-800/50 gap-1">
+                          <Badge variant="secondary" className="text-2xs px-1.5 py-0 bg-emerald-900/40 text-emerald-400 border-emerald-800/50 gap-1">
                             <MessageCircle className="size-2.5" /> WhatsApp
                           </Badge>
                         )}
                         {(c._platforms || []).map((p) => (
-                          <Badge key={p} variant="secondary" className="text-[10px] px-1.5 py-0 bg-blue-900/30 text-blue-400 border-blue-800/40">
+                          <Badge key={p} variant="secondary" className="text-2xs px-1.5 py-0 bg-blue-900/30 text-blue-400 border-blue-800/40">
                             {p}
                           </Badge>
                         ))}

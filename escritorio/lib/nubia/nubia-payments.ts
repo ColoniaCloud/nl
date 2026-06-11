@@ -153,6 +153,38 @@ export async function createCoinbaseCharge(
 }
 
 /**
+ * Verify MercadoPago webhook signature.
+ * MP sends: x-signature: ts=<timestamp>,v1=<hmac>
+ * Signed manifest: id:<data.id>;request-id:<x-request-id>;ts:<ts>
+ */
+export async function verifyMpWebhook(
+  dataId: string,
+  requestId: string,
+  xSignature: string,
+  webhookSecret: string
+): Promise<boolean> {
+  const tsMatch = xSignature.match(/ts=([^,]+)/);
+  const v1Match = xSignature.match(/v1=([^,]+)/);
+  if (!tsMatch || !v1Match) return false;
+  const ts = tsMatch[1];
+  const receivedHmac = v1Match[1];
+  const manifest = `id:${dataId};request-id:${requestId};ts:${ts}`;
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(webhookSecret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signatureBuffer = await crypto.subtle.sign("HMAC", key, encoder.encode(manifest));
+  const computedHex = Array.from(new Uint8Array(signatureBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  return computedHex === receivedHmac;
+}
+
+/**
  * Verify Coinbase Commerce webhook signature.
  */
 export async function verifyCoinbaseWebhook(

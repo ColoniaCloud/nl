@@ -43,7 +43,7 @@ export async function GET() {
     username: data.user?.username,
     displayName: data.user?.displayName,
     email: data.user?.email || "",
-    roles: data.roles || [],
+    roles: data.user?.roles || data.roles || [],
     plan: data.plan || null,
   });
 }

@@ -82,6 +82,7 @@ export type NbPaymentConfig = {
   coinbase_enabled: number;
   coinbase_api_key: string | null;
   coinbase_webhook_secret: string | null;
+  mercadopago_webhook_secret: string | null;
 };
 
 export type NbOrder = {
@@ -219,11 +220,17 @@ export async function updateProjectInfo(
 
 export async function subdomainAvailable(subdomain: string): Promise<boolean> {
   const pool = getPool();
-  const [rows] = await pool.execute(
+  // A1: Check both tables so Nubia and Manu Dev never share the same subdomain
+  const [nbRows] = await pool.execute(
     "SELECT id FROM nb_projects WHERE subdomain = ? LIMIT 1",
     [subdomain]
   );
-  return (rows as unknown[]).length === 0;
+  if ((nbRows as unknown[]).length > 0) return false;
+  const [mdRows] = await pool.execute(
+    "SELECT id FROM md_projects WHERE subdomain = ? LIMIT 1",
+    [subdomain]
+  );
+  return (mdRows as unknown[]).length === 0;
 }
 
 // ─── Design ──────────────────────────────────────────────────────────────────
@@ -384,8 +391,9 @@ export async function upsertPaymentConfig(projectId: number, data: Partial<Omit<
       `INSERT INTO nb_payment_config (project_id, bank_transfer_enabled, bank_transfer_details,
         mercadopago_enabled, mercadopago_access_token, mercadopago_public_key,
         mercadopago_country, mercadopago_currency,
-        coinbase_enabled, coinbase_api_key, coinbase_webhook_secret)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        coinbase_enabled, coinbase_api_key, coinbase_webhook_secret,
+        mercadopago_webhook_secret)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         projectId,
         data.bank_transfer_enabled ?? 0,
@@ -398,6 +406,7 @@ export async function upsertPaymentConfig(projectId: number, data: Partial<Omit<
         data.coinbase_enabled ?? 0,
         data.coinbase_api_key ?? null,
         data.coinbase_webhook_secret ?? null,
+        data.mercadopago_webhook_secret ?? null,
       ]
     );
   } else {

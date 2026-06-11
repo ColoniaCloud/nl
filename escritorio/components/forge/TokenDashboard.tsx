@@ -153,18 +153,18 @@ export function TokenDashboard({ projectId, deployInfo, abi, onVerify }: Dashboa
         <div className="flex items-center gap-2">
           <CircleDot className="w-4 h-4 text-emerald-400" />
           <span className="text-sm font-semibold text-foreground">Token Dashboard</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">
+          <span className="text-2xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">
             Testnet
           </span>
         </div>
-        <span className="text-[10px] text-muted-foreground">{deployInfo.testnetNetwork}</span>
+        <span className="text-2xs text-muted-foreground">{deployInfo.testnetNetwork}</span>
       </div>
 
       {/* Contract Info Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border">
         {/* Address */}
         <div className="bg-muted/30 px-4 py-3">
-          <div className="text-[10px] text-muted-foreground mb-1">Direccion del contrato</div>
+          <div className="text-2xs text-muted-foreground mb-1">Direccion del contrato</div>
           <div className="flex items-center gap-1.5">
             <code className="text-xs text-foreground font-mono">{shortAddr(deployInfo.address)}</code>
             <button
@@ -186,7 +186,7 @@ export function TokenDashboard({ projectId, deployInfo, abi, onVerify }: Dashboa
 
         {/* TX Hash */}
         <div className="bg-muted/30 px-4 py-3">
-          <div className="text-[10px] text-muted-foreground mb-1">Transaccion de deploy</div>
+          <div className="text-2xs text-muted-foreground mb-1">Transaccion de deploy</div>
           <div className="flex items-center gap-1.5">
             <code className="text-xs text-foreground font-mono">{shortAddr(deployInfo.txHash)}</code>
             <button
@@ -200,7 +200,7 @@ export function TokenDashboard({ projectId, deployInfo, abi, onVerify }: Dashboa
 
         {/* Deployer */}
         <div className="bg-muted/30 px-4 py-3">
-          <div className="text-[10px] text-muted-foreground mb-1">Deployer</div>
+          <div className="text-2xs text-muted-foreground mb-1">Deployer</div>
           <div className="flex items-center gap-1.5">
             <Wallet className="w-3 h-3 text-muted-foreground" />
             <code className="text-xs text-foreground font-mono">{shortAddr(deployInfo.deployer)}</code>
@@ -209,7 +209,7 @@ export function TokenDashboard({ projectId, deployInfo, abi, onVerify }: Dashboa
 
         {/* Verification */}
         <div className="bg-muted/30 px-4 py-3">
-          <div className="text-[10px] text-muted-foreground mb-1">Verificacion</div>
+          <div className="text-2xs text-muted-foreground mb-1">Verificacion</div>
           {verified ? (
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -239,7 +239,7 @@ export function TokenDashboard({ projectId, deployInfo, abi, onVerify }: Dashboa
             </div>
           )}
           {verifyError && (
-            <div className="text-[10px] text-red-400 mt-1">{verifyError}</div>
+            <div className="text-2xs text-red-400 mt-1">{verifyError}</div>
           )}
         </div>
       </div>
@@ -291,7 +291,7 @@ export function TokenDashboard({ projectId, deployInfo, abi, onVerify }: Dashboa
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="bg-muted/30 px-4 py-3">
-      <div className="text-[10px] text-muted-foreground mb-1">{label}</div>
+      <div className="text-2xs text-muted-foreground mb-1">{label}</div>
       <div className="text-sm font-medium text-foreground truncate" title={value}>
         {value}
       </div>

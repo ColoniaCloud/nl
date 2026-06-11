@@ -25,6 +25,7 @@ import { DAILY_BUILD_CAP, validateModeForRoles } from "@/lib/billing-plans";
 import { checkMaxSites } from "@/lib/billing-access";
 import type { SiteGenerationMode } from "@/lib/billing-plans";
 import { getAgent } from "@/lib/agents";
+import { sendBuildErrorReport } from "@/lib/email";
 
 const CREATE_SITE_MODEL = getAgent("manu-dev")!.models!["create-site"];
 
@@ -99,7 +100,7 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
   if (res.ok) {
     const data = await res.json();
     if (data.user?.id) {
-      const roles: string[] = Array.isArray(data.roles) ? data.roles : [];
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : (Array.isArray(data.user?.roles) ? data.user.roles : []);
       return { id: data.user.id, roles };
     }
   }
@@ -109,7 +110,7 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
   });
   if (!res2.ok) return null;
   const data2 = await res2.json();
-  return data2.id ? { id: data2.id, roles: [] } : null;
+  return data2.id ? { id: data2.id, roles: Array.isArray(data2.roles) ? data2.roles : [] } : null;
 }
 
 async function fetchUnsplashPhotos(
@@ -167,6 +168,21 @@ EXPOSE 3000
 CMD ["npm","start"]`,
   // Social links — managed via admin panel, starts empty; updated without rebuild of JS
   "app/social-links.js": `// Redes sociales — administradas desde el panel de control\nexport const socialLinks = [];\n`,
+  // Curated icon re-exports — model imports from './icons' or '../icons' instead of lucide-react directly
+  "app/icons.jsx": `export {
+  Phone, Mail, MapPin, Clock, Star, CheckCircle, ArrowRight, ArrowLeft,
+  ChevronDown, ChevronUp, ChevronRight, ChevronLeft,
+  Menu, X, Search, Filter, ShoppingBag, ShoppingCart,
+  Heart, Share2, Facebook, Instagram, Twitter, Youtube, Linkedin,
+  MessageCircle, Send, Globe, ExternalLink,
+  User, Users, Award, TrendingUp, BarChart2, PieChart,
+  Home, Building2, Briefcase, Calendar, Image, Video,
+  Play, Pause, Volume2, Music2, Camera, Eye,
+  Zap, Shield, Lock, Key, Settings, Info,
+  Plus, Minus, Edit2, Trash2, Upload, Download,
+  Check, AlertTriangle, HelpCircle, Sparkles,
+} from 'lucide-react';
+`,
   // Simple placeholder for dynamic slug routes — avoids asking Claude to generate
   // large data-heavy files that get truncated
   "app/[slug]/page.jsx": `export default function Page({ params }) {
@@ -321,7 +337,7 @@ CRITICO — FORMATO: Responde SOLO con bloques ===FILE:ruta===...===END===. Empi
 
 CRITICO — IMAGENES: NUNCA uses "import Image from 'next/image'" ni el componente <Image>. Siempre usa <img src="url" alt="desc" style={{width:"100%",height:"100%",objectFit:"cover"}} />.
 
-CRITICO — ICONOS: Usa CUALQUIER icono de lucide-react. Import: import { Phone, Mail, Star, ... } from 'lucide-react'. De 'react' solo importa hooks (camelCase) y utilidades: useState, useEffect, useRef, useCallback, useMemo, useContext, useReducer, memo, forwardRef, Fragment, Suspense, lazy, etc. NUNCA pongas un componente PascalCase (Phone, Star, Filter, ShoppingBag, etc.) en import from 'react' — eso causa errores de build. NUNCA emojis como iconos en la interfaz.
+CRITICO — ICONOS: Importa iconos SIEMPRE desde './icons' en app/ o '../icons' en sub-paginas (ej: app/contacto/page.jsx). Ejemplo: import { Phone, Mail, Star, CheckCircle } from './icons'. NUNCA importes desde 'lucide-react' directamente. De 'react' solo importa hooks (camelCase): useState, useEffect, useRef, useCallback, useMemo, useContext, useReducer, memo, forwardRef, Fragment, Suspense, lazy, etc. NUNCA pongas un componente PascalCase en import from 'react'. NUNCA emojis como iconos. Iconos disponibles: Phone, Mail, MapPin, Clock, Star, CheckCircle, ArrowRight, ArrowLeft, ChevronDown, ChevronUp, ChevronRight, ChevronLeft, Menu, X, Search, Filter, ShoppingBag, ShoppingCart, Heart, Share2, Facebook, Instagram, Twitter, Youtube, Linkedin, MessageCircle, Send, Globe, ExternalLink, User, Users, Award, TrendingUp, BarChart2, PieChart, Home, Building2, Briefcase, Calendar, Image, Video, Play, Pause, Volume2, Music2, Camera, Eye, Zap, Shield, Lock, Key, Settings, Info, Plus, Minus, Edit2, Trash2, Upload, Download, Check, AlertTriangle, HelpCircle, Sparkles.
 
 DISENO: Mobile-first con breakpoints Tailwind (sm:, md:, lg:). Animaciones CSS (fadeInUp, hover transitions). Variables CSS custom en :root. Hero de pantalla completa (min-height:100vh) con imagen de fondo y overlay oscuro semitransparente.`;
 
@@ -348,6 +364,50 @@ const KNOWN_REACT_EXPORTS = new Set([
 const KNOWN_NON_ICON_COMPONENTS = new Set([
   "Link", "Head", "Script",
 ]);
+
+/** Map Spanish industry name to English Unsplash search terms */
+function buildUnsplashQuery(industry: string, siteType?: string): string {
+  const ind = (industry || "").toLowerCase();
+  if (ind.includes("restaurante") || ind.includes("comida") || ind.includes("gastro") || ind.includes("cafe") || ind.includes("bar"))
+    return "restaurant food dining ambiance";
+  if (ind.includes("salud") || ind.includes("clinica") || ind.includes("medic") || ind.includes("dental") || ind.includes("psico"))
+    return "healthcare clinic medical professional";
+  if (ind.includes("tecnolog") || ind.includes("software") || ind.includes("digital") || ind.includes("web") || ind.includes("app"))
+    return "technology software modern workspace";
+  if (ind.includes("moda") || ind.includes("ropa") || ind.includes("boutique") || ind.includes("tienda ropa"))
+    return "fashion clothing boutique retail";
+  if (ind.includes("belleza") || ind.includes("spa") || ind.includes("salon") || ind.includes("estetica") || ind.includes("cosmet"))
+    return "beauty salon spa wellness";
+  if (ind.includes("fitness") || ind.includes("gym") || ind.includes("gimnasio") || ind.includes("deporte") || ind.includes("entrena"))
+    return "fitness gym workout training";
+  if (ind.includes("inmobili") || ind.includes("real estate") || ind.includes("propiedad") || ind.includes("bienes raices"))
+    return "real estate architecture modern home";
+  if (ind.includes("educacion") || ind.includes("academia") || ind.includes("escuela") || ind.includes("curso") || ind.includes("universidad"))
+    return "education learning study classroom";
+  if (ind.includes("fotograf"))
+    return "photography studio creative portrait";
+  if (ind.includes("diseño") || ind.includes("diseno") || ind.includes("arte") || ind.includes("creativ") || ind.includes("agencia"))
+    return "design creative studio modern";
+  if (ind.includes("construccion") || ind.includes("arquitect"))
+    return "construction architecture building";
+  if (ind.includes("abogad") || ind.includes("legal") || ind.includes("notari") || ind.includes("juridic"))
+    return "law office professional business";
+  if (ind.includes("finanza") || ind.includes("contad") || ind.includes("inversion") || ind.includes("banco"))
+    return "finance business professional corporate";
+  if (ind.includes("hotel") || ind.includes("hosped") || ind.includes("turismo") || ind.includes("viaje") || ind.includes("resort"))
+    return "hotel travel hospitality luxury";
+  if (ind.includes("taller") || ind.includes("automotri") || ind.includes("mecanica") || ind.includes("auto"))
+    return "automotive workshop car garage";
+  if (ind.includes("jardin") || ind.includes("paisaj") || ind.includes("planta") || ind.includes("agricul"))
+    return "garden landscape nature green";
+  if (ind.includes("pet") || ind.includes("mascota") || ind.includes("veterinar"))
+    return "pet veterinary animals care";
+  if (ind.includes("logistic") || ind.includes("transport") || ind.includes("envio") || ind.includes("mensajer"))
+    return "logistics transport shipping delivery";
+  if (siteType === "store") return "retail shop products modern storefront";
+  if (siteType === "blog") return "workspace writing minimal desk";
+  return "professional business modern office";
+}
 
 /** Industry-specific layout hints */
 function getIndustryHint(industry: string): string {
@@ -377,25 +437,36 @@ GENERA ESTOS 2 ARCHIVOS (ambos OBLIGATORIOS y COMPLETOS):
 
 ===FILE:app/globals.css===
 [CSS COMPLETO con:
-- Variables :root: --color-primary (${design?.primary_color || "#1a1a2e"}), --color-secondary (${design?.secondary_color || "#16213e"}), --color-accent (${design?.accent_color || "#0f3460"}), --color-text, --color-bg
+- Variables :root: --color-primary (${design?.primary_color || "#1a1a2e"}), --color-secondary (${design?.secondary_color || "#16213e"}), --color-accent (${design?.accent_color || "#0f3460"}), --color-text (#1a1a1a), --color-bg (#ffffff), --color-muted (#f5f5f5)
 - @import Google Fonts: "${design?.font_heading || "Inter"}" (titulos) y "${design?.font_body || "Inter"}" (cuerpo). Usa EXACTAMENTE estas fuentes, no elijas otras.
 - @keyframes fadeInUp (translateY 30px a 0, opacity 0 a 1, duration 0.6s), fadeIn, pulse
 - Clases .animate-fade-up { animation: fadeInUp 0.6s ease forwards }, .animate-fade-in
 - .hero { min-height:100vh; position:relative; display:flex; align-items:center; background-size:cover; background-position:center; }
 - .hero-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.55); }
 - Nav sticky: backdrop-filter:blur(10px), fondo semitransparente, z-index alto
-- Cards con hover: transform:translateY(-4px), box-shadow profundo, transition:0.3s
-- Botones CTA: gradiente con var(--color-primary) y var(--color-accent), hover scale(1.03)
-- .section { padding: 5rem 1rem; } .section-alt { background: #f8f8f8; }
-- Grid responsive 1→2→3 columnas para productos/servicios
-- Footer oscuro con texto claro
-- @media (max-width: 768px): nav colapsado, hero texto mas pequeno, grid 1 columna]
+- .section { padding: 5rem 1rem; max-width:1200px; margin:0 auto; } .section-full { padding: 5rem 1rem; } .section-alt { background: var(--color-muted); }
+- .section-header { text-align:center; margin-bottom:3rem; } .section-header h2 { font-size:2.2rem; font-weight:700; margin-bottom:0.75rem; } .section-header p { font-size:1.1rem; color:#666; max-width:600px; margin:0 auto; }
+- .card { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08); transition:transform 0.3s,box-shadow 0.3s; } .card:hover { transform:translateY(-6px); box-shadow:0 8px 28px rgba(0,0,0,0.14); }
+- .card-img { width:100%; height:220px; object-fit:cover; display:block; }
+- .card-body { padding:1.5rem; } .card-body h3 { font-size:1.2rem; font-weight:600; margin-bottom:0.5rem; } .card-body p { color:#555; line-height:1.7; font-size:0.95rem; } .card-price { font-size:1.3rem; font-weight:700; color:var(--color-primary); margin-top:0.75rem; }
+- .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:2rem; } .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+- .split-section { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; } .split-section.reverse { direction:rtl; } .split-section.reverse > * { direction:ltr; }
+- .split-text h2 { font-size:2rem; font-weight:700; margin-bottom:1rem; } .split-text p { color:#555; line-height:1.8; margin-bottom:1rem; font-size:1rem; } .split-text ul { list-style:none; padding:0; } .split-text ul li { display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0; color:#444; }
+- .split-image { width:100%; height:450px; object-fit:cover; border-radius:16px; display:block; }
+- .gallery-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; } .gallery-item { aspect-ratio:4/3; overflow:hidden; border-radius:10px; } .gallery-item img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; } .gallery-item:hover img { transform:scale(1.06); }
+- .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; text-align:center; padding:3rem 0; } .stat-number { font-size:3rem; font-weight:800; color:var(--color-primary); line-height:1; } .stat-label { font-size:0.9rem; color:#666; margin-top:0.5rem; }
+- .testimonial-card { background:#fff; border-radius:12px; padding:2rem; box-shadow:0 2px 12px rgba(0,0,0,0.07); } .testimonial-text { font-style:italic; color:#444; line-height:1.8; margin-bottom:1rem; font-size:1rem; } .testimonial-author { font-weight:600; color:#222; } .testimonial-role { font-size:0.85rem; color:#888; }
+- .cta-section { background:linear-gradient(135deg,var(--color-primary),var(--color-accent)); color:#fff; text-align:center; padding:6rem 1rem; } .cta-section h2 { font-size:2.5rem; font-weight:800; margin-bottom:1rem; } .cta-section p { font-size:1.15rem; opacity:0.9; max-width:550px; margin:0 auto 2rem; }
+- Botones: .btn-primary { background:linear-gradient(135deg,var(--color-primary),var(--color-accent)); color:#fff; padding:0.85rem 2rem; border-radius:8px; font-weight:600; border:none; cursor:pointer; transition:transform 0.2s,opacity 0.2s; } .btn-primary:hover { transform:scale(1.03); opacity:0.92; } .btn-outline { border:2px solid var(--color-primary); color:var(--color-primary); padding:0.8rem 2rem; border-radius:8px; font-weight:600; background:transparent; cursor:pointer; transition:all 0.2s; } .btn-outline:hover { background:var(--color-primary); color:#fff; }
+- Footer oscuro: background:#111; color:#ccc; padding:3rem 1rem; .footer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; max-width:1200px; margin:0 auto; } .footer-bottom { text-align:center; border-top:1px solid #333; padding-top:1.5rem; margin-top:2rem; font-size:0.85rem; }
+- @media (max-width:768px): .grid-2,.grid-3,.split-section,.gallery-grid,.stat-grid,.footer-grid { grid-template-columns:1fr; } .split-section.reverse { direction:ltr; } .split-image { height:280px; } hero texto mas pequeno]
 ===END===
 
 ===FILE:app/layout.jsx===
 [Layout principal. Importa globals.css.
 - Carga Google Fonts via <link rel="preconnect"> y <link rel="stylesheet"> en el <head>: "${design?.font_heading || "Inter"}" y "${design?.font_body || "Inter"}"
-- Nav sticky con backdrop-filter, logo del negocio y links a todas las paginas del menu
+- Nav sticky con backdrop-filter y links a todas las paginas del menu
+- LOGO EN NAV: ${project?.logo_url ? `Usa <a href="/"><img src="${project.logo_url}" alt="${project?.name || "Logo"}" style={{height:"40px",width:"auto",objectFit:"contain"}} /></a> como elemento de marca. NO muestres el nombre del negocio como texto en el nav — solo el logo como link a home.` : `Muestra el nombre del negocio como texto en el nav con link a home (<a href="/">).`}
 - Footer con nombre del negocio, derechos reservados y redes sociales
 - REDES SOCIALES: importa { socialLinks } desde './social-links.js'. Renderiza cada uno como <a href={link.url} target="_blank"> con icono lucide-react segun link.platform: instagram->Instagram, facebook->Facebook, tiktok->Music2, whatsapp->MessageCircle, youtube->Youtube, twitter->Twitter, linkedin->Linkedin, telegram->Send, pinterest->Globe.
 - HAMBURGER MENU: El boton de menu movil (clase nav-menu-toggle) debe tener id="navToggle". La lista ul debe tener id="navLinks". Al final del <body>, antes de cerrar </body>, agrega este script que maneja el toggle en mobile:
@@ -531,7 +602,8 @@ function extractCSSClasses(css: string): string {
 
 function parseImportedLucideIcons(content: string): Set<string> {
   const imported = new Set<string>();
-  const importRegex = /import\s*\{\s*([^}]*)\}\s*from\s*["']lucide-react["'];?/gm;
+  // Accept icons from lucide-react directly OR from our icons.jsx boilerplate
+  const importRegex = /import\s*\{\s*([^}]*)\}\s*from\s*["'](?:lucide-react|\.\.?\/icons)["'];?/gm;
   let m;
   while ((m = importRegex.exec(content)) !== null) {
     const names = m[1]
@@ -994,9 +1066,9 @@ export async function POST(req: NextRequest) {
 
         await prepareBuildInfra();
 
-        // Fetch Unsplash photos — use industry + location for more relevant results
+        // Fetch Unsplash photos — translate industry to English for better results
         send(controller, { status: "images", message: "Buscando imagenes..." });
-        const photoQuery = [project.industry, project.location].filter(Boolean).join(" ") || "business";
+        const photoQuery = buildUnsplashQuery(project.industry || "", project.site_type || "");
         const photos = await fetchUnsplashPhotos(photoQuery, 8);
 
         async function buildAndDeploy(activeMode: "next" | "lite", retryAttempt = 0) {
@@ -1145,7 +1217,6 @@ export async function POST(req: NextRequest) {
         }
 
         async function generateLitePlusAndDeploy(params?: { fallback?: boolean; reason?: string }) {
-          const fallback = params?.fallback === true;
           const reason = params?.reason;
 
           if (reason) {
@@ -1156,43 +1227,73 @@ export async function POST(req: NextRequest) {
             });
           }
 
-          send(controller, {
-            status: "generating",
-            mode: "lite_plus",
-            message: "Generando sitio con IA (Lite+)...",
-          });
+          let lastError = "error desconocido";
 
-          const result = await generateLitePlusSite(
-            { project, design, pages, photos, projectId: Number(project_id) },
-            (msg) => send(controller, { status: "generating", mode: "lite_plus", message: msg }),
-          );
-
-          if (!result.success) {
-            // Fallback to Lite templates
-            send(controller, {
-              status: "fallback",
-              mode: "lite",
-              message: `Lite+ fallo: ${result.error || "error desconocido"}. Generando version Lite...`,
-            });
-            return generateLiteAndDeploy({ fallback: true, reason: result.error || "Lite+ fallo" });
-          }
-
-          if (result.fallbackUsed) {
+          for (let attempt = 1; attempt <= 2; attempt++) {
             send(controller, {
               status: "generating",
               mode: "lite_plus",
-              message: `${result.pagesGenerated} paginas generadas (algunas con fallback).`,
+              message: attempt === 1
+                ? "Generando sitio con IA (Lite+)..."
+                : "Reintentando generacion (intento 2/2)...",
             });
+
+            try {
+              const result = await generateLitePlusSite(
+                { project, design, pages, photos, projectId: Number(project_id) },
+                (msg) => send(controller, { status: "generating", mode: "lite_plus", message: msg }),
+              );
+
+              if (!result.success) {
+                lastError = result.error || "generateLitePlusSite no retorno exito";
+                if (attempt < 2) continue;
+                // Both attempts failed — report error
+                sendBuildErrorReport(lastError, project_id);
+                send(controller, {
+                  status: "error",
+                  message: `<h3>Ups, algo salió mal.</h3><p>Intentamos generar el sitio dos veces pero sucedió un error que nuestro sistema no pudo resolver. Te pedimos disculpas. Acabamos de enviar un reporte de urgencia al equipo técnico. Si esto consumió algún límite de tu plan, no te preocupes, lo restauraremos.</p><code>${lastError.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`,
+                });
+                return false;
+              }
+
+              if (result.fallbackUsed) {
+                send(controller, {
+                  status: "generating",
+                  mode: "lite_plus",
+                  message: `${result.pagesGenerated} paginas generadas (algunas con fallback).`,
+                });
+              }
+
+              send(controller, {
+                status: "writing",
+                mode: "lite_plus",
+                message: `Escribiendo ${result.files.length} archivos...`,
+              });
+              await writeFiles(subdomain, result.files);
+              return buildAndDeploy("lite");
+
+            } catch (err: any) {
+              lastError = String(err?.message || "error desconocido");
+              if (attempt < 2) {
+                send(controller, {
+                  status: "generating",
+                  mode: "lite_plus",
+                  message: `Error en primer intento (${lastError}), reintentando...`,
+                });
+                await delay(3000);
+                continue;
+              }
+              // Both attempts threw — report error
+              sendBuildErrorReport(lastError, project_id);
+              send(controller, {
+                status: "error",
+                message: `<h3>Ups, algo salió mal.</h3><p>Intentamos generar el sitio dos veces pero sucedió un error que nuestro sistema no pudo resolver. Te pedimos disculpas. Acabamos de enviar un reporte de urgencia al equipo técnico. Si esto consumió algún límite de tu plan, no te preocupes, lo restauraremos.</p><code>${lastError.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code>`,
+              });
+              return false;
+            }
           }
 
-          send(controller, {
-            status: "writing",
-            mode: "lite_plus",
-            message: `Escribiendo ${result.files.length} archivos...`,
-          });
-          await writeFiles(subdomain, result.files);
-
-          return buildAndDeploy("lite");
+          return false;
         }
 
         if (generationMode === "lite") {
@@ -1229,6 +1330,10 @@ export async function POST(req: NextRequest) {
             const genStream = client.messages.stream({
               model: CREATE_SITE_MODEL,
               max_tokens: 32768,
+              ...(generationMode === "next" ? {
+                thinking: { type: "adaptive" },
+                output_config: { effort: "high" },
+              } : {}),
               ...(system ? { system } : {}),
               messages: [{ role: "user", content: prompt }],
             });
@@ -1369,18 +1474,12 @@ export async function POST(req: NextRequest) {
           files = [...structureFiles, ...pageFiles, ...innerPageFiles];
         } catch (aiErr: any) {
           const aiMessage = formatProviderError(aiErr, "IA");
-          const fallbackValidation = validateLiteFallbackScope(pages);
-          if (requestedMode !== "lite" && fallbackValidation.ok) {
-            const fallbackDeployed = await generateLitePlusAndDeploy({ reason: aiMessage, fallback: true });
-            if (!fallbackDeployed) {
-              controller.close();
-              return;
-            }
+          // Next mode AI failure → fall back to lite_plus (which handles its own retries)
+          const fallbackDeployed = await generateLitePlusAndDeploy({ reason: aiMessage, fallback: true });
+          if (!fallbackDeployed) {
             controller.close();
             return;
           }
-
-          send(controller, { status: "error", message: aiMessage });
           controller.close();
           return;
         }
@@ -1447,16 +1546,11 @@ export async function POST(req: NextRequest) {
         const deployed = await buildAndDeploy("next");
         if (!deployed) {
           // Fallback to lite+ mode if Next.js build failed
-          const fallbackValidation = validateLiteFallbackScope(pages);
-          if (fallbackValidation.ok) {
-            const fallbackDeployed = await generateLitePlusAndDeploy({
-              reason: "Build Next.js fallido tras auto-fix. Generando version Lite+.",
-              fallback: true,
-            });
-            if (!fallbackDeployed) {
-              controller.close();
-              return;
-            }
+          const fallbackDeployed = await generateLitePlusAndDeploy({
+            reason: "Build Next.js fallido tras auto-fix. Generando version Lite+.",
+            fallback: true,
+          });
+          if (!fallbackDeployed) {
             controller.close();
             return;
           }

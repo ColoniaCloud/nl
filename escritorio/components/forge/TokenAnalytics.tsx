@@ -118,7 +118,7 @@ export function TokenAnalytics({
         <div className="flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-emerald-400" />
           <span className="text-sm font-semibold text-foreground">Analytics</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium capitalize">
+          <span className="text-2xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium capitalize">
             {deployType}
           </span>
         </div>
@@ -173,7 +173,7 @@ export function TokenAnalytics({
           {/* Transfer History */}
           <div className="border-t border-border">
             <div className="px-4 py-2 border-b border-border/50">
-              <span className="text-[11px] font-medium text-muted-foreground">
+              <span className="text-xxs font-medium text-muted-foreground">
                 Historial de transfers ({transfers.length})
               </span>
             </div>
@@ -219,7 +219,7 @@ export function TokenAnalytics({
                             {formatValue(tx.value, decimals)} {tx.tokenSymbol}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
+                        <div className="flex items-center gap-1 text-2xs text-muted-foreground mt-0.5">
                           <span>{shortAddr(tx.from)}</span>
                           <span className="text-border">→</span>
                           <span>{shortAddr(tx.to)}</span>
@@ -228,7 +228,7 @@ export function TokenAnalytics({
 
                       {/* Time + Link */}
                       <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-2xs text-muted-foreground">
                           {timeAgo(tx.timeStamp)}
                         </span>
                         <a
@@ -267,7 +267,7 @@ function StatCard({
     <div className="bg-muted/30 px-4 py-3">
       <div className="flex items-center gap-1.5 mb-1">
         <span className="text-emerald-400">{icon}</span>
-        <span className="text-[10px] text-muted-foreground">{label}</span>
+        <span className="text-2xs text-muted-foreground">{label}</span>
       </div>
       <div className="text-lg font-bold text-foreground">{value}</div>
     </div>

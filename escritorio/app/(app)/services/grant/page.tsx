@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import AgentInput from "@/components/chat/AgentInput";
 import { marked } from "marked";
 import {
   Handshake,
@@ -10,7 +11,6 @@ import {
   MessageSquarePlus,
   History,
   Plus,
-  Send,
   Clock,
   Filter,
   ChessKnight,
@@ -221,7 +221,7 @@ async function downloadMessagePDF(msg: Message, toolTitle: string) {
   const contentW = pageW - margin * 2;
 
   // Header
-  doc.setFillColor(16, 185, 129); // emerald-500
+  doc.setFillColor(249, 115, 22); // orange-500
   doc.rect(0, 0, pageW, 18, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(12);
@@ -290,6 +290,110 @@ function MarkdownContent({ content }: { content: string }) {
   );
 }
 
+// ─── FunnelCarousel (mobile) ──────────────────────────────────────────────────
+
+function FunnelCarousel({
+  items,
+  onSelect,
+  disabled,
+}: {
+  items: FunnelDef[];
+  onSelect: (msg: string) => void;
+  disabled: boolean;
+}) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+  const posRef = useRef(0);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const startPos = useRef(0);
+  const hasDragged = useRef(false);
+  const doubled = useMemo(() => [...items, ...items], [items]);
+
+  useEffect(() => {
+    let lastTs: number | null = null;
+    const SPEED = 0.06; // px/ms  (~60px/s, visible but gentle)
+
+    function tick(ts: number) {
+      const el = trackRef.current;
+      if (!el) { rafRef.current = requestAnimationFrame(tick); return; }
+      if (!isDragging.current) {
+        if (lastTs !== null) {
+          posRef.current -= SPEED * (ts - lastTs);
+          const halfW = el.scrollWidth / 2;
+          if (-posRef.current >= halfW) posRef.current = 0;
+          if (posRef.current > 0) posRef.current = 0;
+        }
+        lastTs = ts;
+      } else {
+        lastTs = null;
+      }
+      el.style.transform = `translateX(${posRef.current}px)`;
+      rafRef.current = requestAnimationFrame(tick);
+    }
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  function startDrag(clientX: number) {
+    isDragging.current = true;
+    hasDragged.current = false;
+    startX.current = clientX;
+    startPos.current = posRef.current;
+  }
+
+  function moveDrag(clientX: number) {
+    if (!isDragging.current) return;
+    const dx = clientX - startX.current;
+    if (Math.abs(dx) > 4) hasDragged.current = true;
+    const el = trackRef.current;
+    if (!el) return;
+    const halfW = el.scrollWidth / 2;
+    let next = startPos.current + dx;
+    if (next > 0) next = 0;
+    if (-next >= halfW) next = -((-next) % halfW);
+    posRef.current = next;
+    el.style.transform = `translateX(${next}px)`;
+  }
+
+  function endDrag() { isDragging.current = false; }
+
+  return (
+    <div
+      className="overflow-hidden py-1.5 cursor-grab active:cursor-grabbing select-none"
+      onMouseDown={(e) => startDrag(e.clientX)}
+      onMouseMove={(e) => moveDrag(e.clientX)}
+      onMouseUp={endDrag}
+      onMouseLeave={endDrag}
+      onTouchStart={(e) => { e.stopPropagation(); startDrag(e.touches[0].clientX); }}
+      onTouchMove={(e) => moveDrag(e.touches[0].clientX)}
+      onTouchEnd={endDrag}
+    >
+      <div
+        ref={trackRef}
+        className="flex gap-2 pl-4 will-change-transform"
+        style={{ width: "max-content" }}
+      >
+        {doubled.map((f, i) => (
+          <button
+            key={`${f.id}-${i}`}
+            onClick={() => {
+              if (hasDragged.current || disabled) return;
+              onSelect(`Quiero construir un ${f.title}. ${f.longDesc} Ayudame a disenarlo para mi negocio.`);
+            }}
+            disabled={disabled}
+            className="flex-shrink-0 w-36 text-left px-2.5 py-2 rounded-xl border border-white/[0.05] bg-white/[0.01] hover:border-orange-500/50 transition-all disabled:opacity-50"
+          >
+            <p className="text-xxs font-semibold text-zinc-300 leading-tight">{f.title}</p>
+            <p className="text-2xs text-zinc-600 mt-0.5 leading-tight">{f.desc}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function JordanPage() {
@@ -303,19 +407,11 @@ export default function JordanPage() {
   const [convsLoading, setConvsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
-    }
-  }, [input]);
 
   // Voice recognition setup
   useEffect(() => {
@@ -475,8 +571,8 @@ export default function JordanPage() {
         <div className="w-full max-w-3xl">
           {/* Header */}
           <div className="flex items-center gap-3 mb-2">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-              <Handshake className="size-5 text-emerald-400" />
+            <div className="h-10 w-10 rounded-xl bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+              <Handshake className="size-5 text-orange-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">Jordan</h1>
@@ -495,19 +591,19 @@ export default function JordanPage() {
                 key={tool.id}
                 onClick={() => startNew(tool.id)}
                 className="group text-left p-4 rounded-2xl border border-white/[0.08] bg-white/[0.02]
-                  hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all duration-200"
+                  hover:border-orange-500/50 transition-all duration-200"
               >
                 <div className="flex items-center gap-2.5 mb-2.5">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/25 transition-colors">
+                  <div className="h-8 w-8 rounded-lg bg-orange-500/15 border border-orange-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-500/25 transition-colors">
                     <tool.Icon className="size-4 text-orange-400" />
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-white leading-tight">{tool.title}</div>
-                    <div className="text-[10px] text-muted-foreground/60">{tool.tagline}</div>
+                    <div className="text-2xs text-muted-foreground/60">{tool.tagline}</div>
                   </div>
                 </div>
-                <p className="text-[11px] text-zinc-500 leading-relaxed">{tool.description}</p>
-                <div className="mt-3 flex items-center gap-1.5 text-[11px] text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                <p className="text-xxs text-zinc-500 leading-relaxed">{tool.description}</p>
+                <div className="mt-3 flex items-center gap-1.5 text-xxs text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Plus className="size-3" />
                   Nueva sesion
                 </div>
@@ -551,12 +647,12 @@ export default function JordanPage() {
           >
             <ArrowLeft className="size-4" />
           </button>
-          <toolDef.Icon className="size-4 text-emerald-400" />
+          <toolDef.Icon className="size-4 text-orange-400" />
           <h1 className="text-sm font-semibold text-white">{toolDef.title} -- Historial</h1>
           <div className="ml-auto">
             <button
               onClick={() => startNew(activeTool)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/20 text-xs text-orange-400 hover:bg-orange-500/25 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/15 border border-orange-500/20 text-xs text-orange-400 hover:bg-orange-500/25 transition-colors"
             >
               <MessageSquarePlus className="size-3.5" />
               Nueva sesion
@@ -575,7 +671,7 @@ export default function JordanPage() {
               <p className="text-sm text-zinc-500">Sin conversaciones guardadas.</p>
               <button
                 onClick={() => startNew(activeTool)}
-                className="mt-4 text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+                className="mt-4 text-xs text-orange-400 hover:text-orange-300 transition-colors"
               >
                 Empezar la primera
               </button>
@@ -587,15 +683,15 @@ export default function JordanPage() {
                   key={s.id}
                   onClick={() => loadConversation(s.id)}
                   className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]
-                    hover:border-orange-500/20 hover:bg-orange-500/5 transition-all group cursor-pointer"
+                    hover:border-orange-500/40 transition-all group cursor-pointer"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-zinc-300 truncate">{s.title || "Sin titulo"}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Clock className="size-3 text-zinc-600" />
-                      <span className="text-[10px] text-zinc-600">{formatDate(s.updated_at)}</span>
-                      <span className="text-[10px] text-zinc-700">·</span>
-                      <span className="text-[10px] text-zinc-600">{s.message_count} mensajes</span>
+                      <span className="text-2xs text-zinc-600">{formatDate(s.updated_at)}</span>
+                      <span className="text-2xs text-zinc-700">·</span>
+                      <span className="text-2xs text-zinc-600">{s.message_count} mensajes</span>
                     </div>
                   </div>
                   <button
@@ -626,19 +722,20 @@ export default function JordanPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Chat header */}
-      <div className="flex items-center gap-3 px-5 py-3 border-b border-white/[0.06] flex-shrink-0">
+      <div className="border-b border-white/[0.06] flex-shrink-0">
+      <div className="mx-auto w-full max-w-3xl flex items-center gap-3 px-5 py-3">
         <button
           onClick={() => setStep("dashboard")}
           className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06] transition-colors"
         >
           <ArrowLeft className="size-4" />
         </button>
-        <div className="h-7 w-7 rounded-lg bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
-          <toolDef.Icon className="size-3.5 text-emerald-400" />
+        <div className="h-7 w-7 rounded-lg bg-orange-500/15 border border-orange-500/20 flex items-center justify-center">
+          <toolDef.Icon className="size-3.5 text-orange-400" />
         </div>
         <div className="flex-1 min-w-0">
           <span className="text-sm font-semibold text-white">{toolDef.title}</span>
-          <span className="ml-2 text-[10px] text-muted-foreground/60">{toolDef.tagline}</span>
+          <span className="ml-2 text-2xs text-muted-foreground/60">{toolDef.tagline}</span>
         </div>
         <button
           onClick={() => startNew(activeTool)}
@@ -658,46 +755,15 @@ export default function JordanPage() {
           <History className="size-4" />
         </button>
       </div>
+      </div>
 
-      {/* Body: funnels panel + chat */}
-      <div className="flex flex-1 overflow-hidden">
-
-        {/* Funnels side panel */}
-        {showFunnelsPanel && (
-          <aside className="w-56 flex-shrink-0 border-r border-white/[0.06] bg-[#1a1a1c] overflow-y-auto">
-            <div className="px-3 py-3 border-b border-white/[0.05]">
-              <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">
-                Funnels probados
-              </p>
-            </div>
-            <div className="p-2 space-y-1.5">
-              {TOP_FUNNELS.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() =>
-                    sendMessage(
-                      `Quiero construir un ${f.title}. ${f.longDesc} Ayudame a disenarlo para mi negocio.`
-                    )
-                  }
-                  disabled={loading}
-                  className="w-full text-left p-2.5 rounded-xl border border-white/[0.05] bg-white/[0.01]
-                    hover:border-orange-500/30 hover:bg-orange-500/8 transition-all group disabled:opacity-50"
-                >
-                  <p className="text-[11px] font-semibold text-zinc-300 group-hover:text-white transition-colors leading-tight">
-                    {f.title}
-                  </p>
-                  <p className="text-[10px] text-zinc-600 mt-0.5 leading-tight">{f.desc}</p>
-                </button>
-              ))}
-            </div>
-          </aside>
-        )}
+      {/* Body: messages + input */}
+      <div className="flex flex-col flex-1 overflow-hidden">
 
         {/* Messages */}
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="pointer-events-none sticky top-0 z-10 h-8 bg-gradient-to-b from-background to-transparent" />
-            <div className="px-3 sm:px-5 pb-6 space-y-5 -mt-8 pt-4">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="pointer-events-none sticky top-0 z-10 h-8 bg-gradient-to-b from-background to-transparent" />
+          <div className="mx-auto w-full max-w-3xl px-3 sm:px-5 pb-6 space-y-5 -mt-8 pt-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -707,7 +773,7 @@ export default function JordanPage() {
                   className={[
                     "max-w-[95%] sm:max-w-[80%] text-xs sm:text-sm leading-relaxed",
                     msg.role === "user"
-                      ? "bg-emerald-600 text-white rounded-xl sm:rounded-2xl sm:rounded-tr-sm px-3 sm:px-4 py-2.5 sm:py-3 whitespace-pre-wrap"
+                      ? "bg-orange-600 text-white rounded-xl sm:rounded-2xl sm:rounded-tr-sm px-3 sm:px-4 py-2.5 sm:py-3 whitespace-pre-wrap"
                       : "text-foreground px-1 flex flex-col gap-1",
                   ].join(" ")}
                 >
@@ -725,7 +791,7 @@ export default function JordanPage() {
                           key={i}
                           onClick={() => sendMessage(opt)}
                           disabled={loading}
-                          className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-colors disabled:opacity-50"
+                          className="rounded-full border border-orange-500/40 bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors disabled:opacity-50"
                         >
                           {opt}
                         </button>
@@ -738,7 +804,7 @@ export default function JordanPage() {
                     <div className="mt-1">
                       <button
                         onClick={() => downloadMessagePDF(msg, toolDef.title)}
-                        className="flex items-center gap-1.5 text-[10px] text-muted-foreground/60 hover:text-emerald-400 transition-colors"
+                        className="flex items-center gap-1.5 text-2xs text-muted-foreground/60 hover:text-orange-400 transition-colors"
                       >
                         <FileDown className="size-3" />
                         Exportar PDF
@@ -760,52 +826,81 @@ export default function JordanPage() {
             )}
 
             <div ref={bottomRef} />
-            </div>
           </div>
+        </div>
+
+        {/* Input + Funnels panel */}
+        <div className="flex-shrink-0 bg-background">
+
+          {/* Funnels — desktop: grid, mobile: carousel */}
+          {showFunnelsPanel && (
+            <>
+              {/* Desktop grid */}
+              <div className="hidden sm:block mx-auto max-w-3xl px-4 pt-3 pb-1">
+                <p className="text-2xs font-semibold text-zinc-600 uppercase tracking-wider mb-2">
+                  Funnels probados
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {TOP_FUNNELS.map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() =>
+                        sendMessage(
+                          `Quiero construir un ${f.title}. ${f.longDesc} Ayudame a disenarlo para mi negocio.`
+                        )
+                      }
+                      disabled={loading}
+                      className="text-left p-2.5 rounded-xl border border-white/[0.05] bg-white/[0.01] hover:border-orange-500/50 transition-all group disabled:opacity-50"
+                    >
+                      <p className="text-xxs font-semibold text-zinc-300 group-hover:text-white transition-colors leading-tight">
+                        {f.title}
+                      </p>
+                      <p className="text-2xs text-zinc-600 mt-0.5 leading-tight">{f.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile carousel */}
+              <div className="sm:hidden">
+                <FunnelCarousel
+                  items={TOP_FUNNELS}
+                  onSelect={sendMessage}
+                  disabled={loading}
+                />
+              </div>
+            </>
+          )}
 
           {/* Input */}
-          <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
-            <div className="flex items-end gap-1.5 sm:gap-2">
-              <textarea
-                ref={textareaRef}
+          <div className="px-2 sm:px-4 pt-2 sm:pt-3 pb-5 sm:pb-6">
+            <div className="mx-auto w-full max-w-3xl">
+              <AgentInput
+                accent="amber"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Escribe tu mensaje..."
-                rows={1}
+                onChange={setInput}
+                onSend={() => sendMessage(input)}
+                sending={loading}
                 disabled={loading}
-                className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 min-h-[36px] sm:min-h-[42px] max-h-[120px]"
+                placeholder="Escribe tu mensaje..."
+                leftSlot={
+                  recognitionRef.current !== undefined ? (
+                    <button
+                      onClick={toggleVoice}
+                      disabled={loading}
+                      title={isListening ? "Detener grabacion" : "Hablar"}
+                      className={`nl-send-btn flex items-center justify-center rounded-full transition-colors disabled:opacity-40 ${
+                        isListening
+                          ? "bg-red-500/20 border border-red-500/40 text-red-400 animate-pulse"
+                          : "border border-border text-muted-foreground hover:text-orange-400 hover:border-orange-500/40 hover:bg-orange-500/10"
+                      }`}
+                    >
+                      {isListening ? <MicOff className="size-3.5" /> : <Mic className="size-3.5" />}
+                    </button>
+                  ) : null
+                }
               />
-              {/* Mic button */}
-              {recognitionRef.current !== undefined && (
-                <button
-                  onClick={toggleVoice}
-                  disabled={loading}
-                  title={isListening ? "Detener grabacion" : "Hablar"}
-                  className={`flex-shrink-0 h-9 w-9 sm:h-[42px] sm:w-[42px] rounded-lg sm:rounded-xl flex items-center justify-center transition-colors disabled:opacity-40 ${
-                    isListening
-                      ? "bg-red-500/20 border border-red-500/40 text-red-400 animate-pulse"
-                      : "border border-border text-muted-foreground hover:text-emerald-400 hover:border-emerald-500/40 hover:bg-emerald-500/10"
-                  }`}
-                >
-                  {isListening ? <MicOff className="size-3.5" /> : <Mic className="size-3.5" />}
-                </button>
-              )}
-              <button
-                onClick={() => sendMessage(input)}
-                disabled={loading || !input.trim()}
-                className="flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
-              >
-                {loading ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Send className="size-3.5" />
-                )}
-              </button>
             </div>
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Enter para enviar · Shift+Enter para nueva linea
-            </p>
           </div>
         </div>
       </div>
@@ -840,7 +935,7 @@ function RecentConversationsBlock({
     <div className="mb-5">
       <div className="flex items-center gap-2 mb-2">
         <tool.Icon className="size-3.5 text-muted-foreground/60" />
-        <span className="text-[11px] text-zinc-600">{tool.title}</span>
+        <span className="text-xxs text-zinc-600">{tool.title}</span>
       </div>
       <div className="space-y-1.5">
         {convs.map((s) => (
@@ -848,21 +943,21 @@ function RecentConversationsBlock({
             key={s.id}
             onClick={() => onLoad(s.id)}
             className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl
-              border border-white/[0.05] bg-white/[0.01] hover:border-emerald-500/20
-              hover:bg-emerald-500/5 transition-all group"
+              border border-white/[0.05] bg-white/[0.01] hover:border-orange-500/40
+              transition-all group"
           >
             <div className="flex-1 min-w-0">
               <p className="text-xs text-zinc-400 truncate group-hover:text-zinc-200 transition-colors">
                 {s.title || "Sin titulo"}
               </p>
-              <p className="text-[10px] text-zinc-700 mt-0.5">{formatDate(s.updated_at)}</p>
+              <p className="text-2xs text-zinc-700 mt-0.5">{formatDate(s.updated_at)}</p>
             </div>
           </button>
         ))}
         {convs.length >= 3 && (
           <button
             onClick={onHistory}
-            className="w-full text-[10px] text-zinc-600 hover:text-emerald-400 transition-colors py-1"
+            className="w-full text-2xs text-zinc-600 hover:text-orange-400 transition-colors py-1"
           >
             Ver todas las conversaciones
           </button>

@@ -230,7 +230,7 @@ export function TemplatePicker({
               <p className={`text-xs font-semibold ${selected === t.id ? "text-emerald-400" : "text-foreground"}`}>
                 {t.name}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+              <p className="text-2xs text-muted-foreground leading-tight mt-0.5">
                 {t.desc}
               </p>
             </div>
@@ -324,7 +324,7 @@ export function ColorPalettePreview({
               <PaletteSvg palette={p} template={template} size={140} />
             </div>
             <div className="mt-1.5 text-center">
-              <p className={`text-[11px] font-semibold ${selected === p.name ? "text-emerald-400" : "text-foreground"}`}>
+              <p className={`text-xxs font-semibold ${selected === p.name ? "text-emerald-400" : "text-foreground"}`}>
                 {p.name}
               </p>
               <div className="flex justify-center gap-1 mt-1">
@@ -397,7 +397,7 @@ export function NubiaFontPreview({
               Tu Tienda
             </p>
             <p
-              className="text-[11px] text-muted-foreground mt-1 leading-snug"
+              className="text-xxs text-muted-foreground mt-1 leading-snug"
               style={{ fontFamily: `"${opt.body}", sans-serif` }}
             >
               Los mejores productos al mejor precio

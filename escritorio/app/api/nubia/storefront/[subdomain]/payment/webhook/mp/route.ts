@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProjectBySubdomain, getPaymentConfig, getOrderByNumber, updateOrderPayment } from "@/lib/nubia/db-nubia";
-import { getMpPaymentInfo } from "@/lib/nubia/nubia-payments";
+import { getMpPaymentInfo, verifyMpWebhook } from "@/lib/nubia/nubia-payments";
 
 export async function POST(
   req: NextRequest,
@@ -9,8 +9,9 @@ export async function POST(
   const params = await _params;
   const { subdomain } = params;
 
+  const rawBody = await req.text();
   let body: any;
-  try { body = await req.json(); } catch { return NextResponse.json({ ok: true }); }
+  try { body = JSON.parse(rawBody); } catch { return NextResponse.json({ ok: true }); }
 
   // MercadoPago sends type=payment with data.id
   if (body.type !== "payment" || !body.data?.id) {
@@ -22,6 +23,22 @@ export async function POST(
 
   const payConfig = await getPaymentConfig(project.id);
   if (!payConfig?.mercadopago_access_token) return NextResponse.json({ ok: true });
+
+  // Verify MP webhook signature when a secret is configured
+  if (payConfig.mercadopago_webhook_secret) {
+    const xSignature = req.headers.get("x-signature") ?? "";
+    const xRequestId = req.headers.get("x-request-id") ?? "";
+    const valid = await verifyMpWebhook(
+      String(body.data.id),
+      xRequestId,
+      xSignature,
+      payConfig.mercadopago_webhook_secret
+    );
+    if (!valid) {
+      console.warn(`[nubia/webhook/mp] Invalid signature for subdomain: ${subdomain}`);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+  }
 
   try {
     const info = await getMpPaymentInfo(payConfig.mercadopago_access_token, String(body.data.id));

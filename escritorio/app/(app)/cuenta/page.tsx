@@ -86,7 +86,7 @@ function statusBadge(status: string) {
     closed: "Cerrado",
   };
   return (
-    <span className={cn("px-2 py-0.5 rounded-full text-[11px] font-medium", styles[status] || styles.open)}>
+    <span className={cn("px-2 py-0.5 rounded-full text-xxs font-medium", styles[status] || styles.open)}>
       {labels[status] || status}
     </span>
   );
@@ -357,7 +357,7 @@ export default function CuentaPage() {
                     disabled
                     className="w-full rounded-lg border border-border bg-white/[0.03] px-3 py-2.5 text-sm text-muted-foreground cursor-not-allowed"
                   />
-                  <p className="mt-1 text-[11px] text-muted-foreground/60">
+                  <p className="mt-1 text-xxs text-muted-foreground/60">
                     El nombre de usuario no se puede cambiar.
                   </p>
                 </div>
@@ -558,7 +558,7 @@ export default function CuentaPage() {
                             </p>
                           </div>
                           <span className={cn(
-                            "px-2 py-0.5 rounded-full text-[11px] font-medium",
+                            "px-2 py-0.5 rounded-full text-xxs font-medium",
                             r.status === "converted"
                               ? "bg-emerald-500/20 text-emerald-400"
                               : "bg-amber-500/20 text-amber-400"
@@ -697,7 +697,7 @@ export default function CuentaPage() {
                         {statusBadge(t.status)}
                       </div>
                       <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-                        <span className="text-[11px] text-muted-foreground hidden sm:block">
+                        <span className="text-xxs text-muted-foreground hidden sm:block">
                           {formatDate(t.created_at)}
                         </span>
                         {expandedTicket === t.id ? (
@@ -715,7 +715,7 @@ export default function CuentaPage() {
                         </div>
                         {t.admin_reply && (
                           <div className="mt-3 rounded-lg bg-violet-500/10 border border-violet-500/20 p-3">
-                            <p className="text-[11px] font-semibold text-violet-400 mb-1">
+                            <p className="text-xxs font-semibold text-violet-400 mb-1">
                               Respuesta del equipo:
                             </p>
                             <p className="text-sm text-foreground whitespace-pre-wrap">

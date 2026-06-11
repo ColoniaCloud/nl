@@ -30,7 +30,7 @@ const AGENTS: AgentConfig[] = [
     promptFile: "data/manu-dev/prompts/manu-dev.md",
     models: {
       content: "claude-haiku-4-5-20251001",
-      "create-site": "claude-opus-4-7",
+      "create-site": "claude-sonnet-4-6",
     },
   },
   {

@@ -36,7 +36,7 @@ export default function PlanCard({
       )}
     >
       {isPro && !isCurrentPlan && (
-        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-violet-600 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-violet-600 px-3 py-0.5 text-2xs font-bold uppercase tracking-wider text-white">
           Popular
         </span>
       )}
@@ -45,7 +45,7 @@ export default function PlanCard({
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold text-white">{plan.name}</span>
           {isCurrentPlan && (
-            <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-[10px] text-violet-300 font-medium">
+            <span className="rounded-full bg-violet-500/20 px-2 py-0.5 text-2xs text-violet-300 font-medium">
               Plan actual
             </span>
           )}

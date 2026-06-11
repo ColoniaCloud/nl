@@ -36,7 +36,7 @@ export default function AgentesPage() {
                   <span className={`block h-5 w-5 ${c.dotClass} rounded-full`} />
                 </div>
                 {agent.badge && (
-                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bgClass} ${c.textClass}`}>
+                  <span className={`text-2xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bgClass} ${c.textClass}`}>
                     {agent.badge}
                   </span>
                 )}
@@ -52,7 +52,7 @@ export default function AgentesPage() {
                   {agent.subAgents.map((sub) => (
                     <span
                       key={sub.slug}
-                      className="text-[11px] px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400"
+                      className="text-xxs px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400"
                     >
                       {sub.name}
                     </span>

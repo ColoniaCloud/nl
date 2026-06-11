@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
+import { EtherealShadow } from "@/components/ui/etheral-shadow";
 
 const FaultyTerminal = dynamic(
   () => import("@/components/lander/FaultyTerminal"),
@@ -17,6 +18,15 @@ const AgentWorkflow = dynamic(
 export default function PublicHome() {
   return (
     <div className="pb-12 md:pb-20">
+      {/* Ethereal animated background — fixed, behind all content */}
+      <EtherealShadow
+        color="rgba(88, 28, 135, 0.75)"
+        animation={{ scale: 55, speed: 65 }}
+        noise={{ opacity: 0.5, scale: 1.2 }}
+        sizing="fill"
+        className="fixed inset-0 -z-10 pointer-events-none w-screen h-screen"
+      />
+
       {/* Hero — full-bleed, flush to top, breaks out of 70vw container */}
       <section
         className="relative overflow-hidden min-h-dvh -mt-24 flex items-center"

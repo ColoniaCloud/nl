@@ -116,6 +116,7 @@ function NavLink({
     <Link
       href={href}
       title={!expanded ? label : undefined}
+      data-no-relief
       className={cn(
         "flex items-center gap-3 rounded-lg px-2 py-3 text-sm transition-colors min-w-0",
         active
@@ -207,6 +208,7 @@ export default function AppSidebar() {
   const displayName = me?.user?.displayName || "Cuenta";
   const username = me?.user?.username ? `@${me.user.username}` : "";
   const membership = useMemo(() => {
+    if ((me?.user?.roles || []).includes("administrator")) return "admin";
     if (me?.plan?.slug) return me.plan.slug;
     const nlRole = (me?.user?.roles || []).find((r) => r.startsWith("nl360_"));
     return nlRole || "free";
@@ -233,7 +235,7 @@ export default function AppSidebar() {
       {/* Sidebar panel */}
       <aside
         className={cn(
-          "fixed top-9 bottom-0 left-0 z-30 flex flex-col",
+          "fixed top-9 bottom-0 left-0 z-50 flex flex-col",
           "bg-sidebar border-r border-sidebar-border",
           "overflow-hidden pb-[env(safe-area-inset-bottom)]",
           // Desktop: width transition
@@ -323,7 +325,7 @@ export default function AppSidebar() {
 
           {/* Agents label */}
           {isOpen && (
-            <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+            <p className="px-2 pb-1 text-xxs font-semibold uppercase tracking-wider text-muted-foreground/60">
               Agentes
             </p>
           )}
@@ -341,6 +343,7 @@ export default function AppSidebar() {
                   <div className="flex items-center gap-0">
                     <Link
                       href="/services/manu-dev"
+                      data-no-relief
                       className={cn(
                         "flex flex-1 items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors min-w-0",
                         isAnySubActive
@@ -353,7 +356,8 @@ export default function AppSidebar() {
                     </Link>
                     <button
                       onClick={() => toggleAgent(groupKey)}
-                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-white/[0.08] hover:text-foreground transition-colors"
+                      data-no-relief
+                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-white/60 hover:bg-white/[0.08] hover:text-white transition-colors"
                       title="Desplegar agentes"
                     >
                       <ChevronRight
@@ -394,6 +398,7 @@ export default function AppSidebar() {
                           <div className="flex items-center gap-0">
                             <Link
                               href={sub.href}
+                              data-no-relief
                               className={cn(
                                 "flex flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
                                 isSubActive
@@ -407,7 +412,8 @@ export default function AppSidebar() {
                             <Link
                               href={sub.href}
                               title="Nuevo"
-                              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-white/[0.08] hover:text-foreground transition-colors"
+                              data-no-relief
+                              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-emerald-400 hover:bg-white/[0.08] hover:text-emerald-300 transition-colors"
                             >
                               <Plus className="size-3" />
                             </Link>
@@ -415,7 +421,8 @@ export default function AppSidebar() {
                               <button
                                 onClick={() => toggleSubHistory(sub.href)}
                                 title="Historial"
-                                className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-white/[0.08] hover:text-foreground transition-colors"
+                                data-no-relief
+                                className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-white/60 hover:bg-white/[0.08] hover:text-white transition-colors"
                               >
                                 <ChevronRight
                                   className={cn(
@@ -434,6 +441,7 @@ export default function AppSidebar() {
                                 <Link
                                   key={p.id}
                                   href={`${sub.href}?project=${p.id}`}
+                                  data-no-relief
                                   className={cn(
                                     "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
                                     activeProjectId === String(p.id) && pathname?.startsWith(sub.href)
@@ -460,6 +468,7 @@ export default function AppSidebar() {
                               {sub.projectsKey === "forge" && (
                                 <Link
                                   href="/services/forge/marketplace"
+                                  data-no-relief
                                   className={cn(
                                     "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
                                     pathname === "/services/forge/marketplace"
@@ -492,6 +501,7 @@ export default function AppSidebar() {
                 {isOpen ? (
                   <button
                     onClick={() => toggleAgent(item.href)}
+                    data-no-relief
                     className={cn(
                       "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors min-w-0 text-left",
                       active
@@ -503,7 +513,7 @@ export default function AppSidebar() {
                     <span className="flex-1 truncate">{item.label}</span>
                     <ChevronRight
                       className={cn(
-                        "size-3.5 flex-shrink-0 text-muted-foreground transition-transform duration-150",
+                        "size-3.5 flex-shrink-0 text-white/60 transition-transform duration-150",
                         isExpanded && "rotate-90"
                       )}
                     />
@@ -512,6 +522,7 @@ export default function AppSidebar() {
                   <Link
                     href={item.href}
                     title={item.label}
+                    data-no-relief
                     className={cn(
                       "flex items-center justify-center rounded-lg px-0 py-2 text-sm transition-colors min-w-0",
                       active
@@ -527,9 +538,10 @@ export default function AppSidebar() {
                   <div className="ml-4 mt-0.5 mb-1 border-l border-border pl-2 space-y-0.5">
                     <Link
                       href={item.href}
+                      data-no-relief
                       className={cn(
                         "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
-                        "text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+                        "text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.05]"
                       )}
                     >
                       <Plus className="size-3 flex-shrink-0" />
@@ -542,6 +554,7 @@ export default function AppSidebar() {
                         <Link
                           key={sub.href}
                           href={sub.href}
+                          data-no-relief
                           className={cn(
                             "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
                             pathname?.startsWith(sub.href)
@@ -565,7 +578,7 @@ export default function AppSidebar() {
             <>
               <div className="my-2 h-px bg-sidebar-border mx-1" />
               {isOpen && (
-                <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                <p className="px-2 pb-1 text-xxs font-semibold uppercase tracking-wider text-muted-foreground/60">
                   Admin
                 </p>
               )}

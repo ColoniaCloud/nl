@@ -85,7 +85,7 @@ export function PricingCTA({ plans, popularPlanId }: Props) {
             }`}
           >
             Anual
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-emerald-400">
+            <span className="text-2xs font-semibold uppercase tracking-wide text-emerald-400">
               −{annualSaving(plans.find((p) => p.id === popularPlanId)!)}%
             </span>
           </button>
@@ -112,7 +112,7 @@ export function PricingCTA({ plans, popularPlanId }: Props) {
             >
               {isPopular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-violet-500 text-white">
+                  <span className="text-xxs font-semibold uppercase tracking-wider px-3 py-1 rounded-full bg-violet-500 text-white">
                     Mas popular
                   </span>
                 </div>

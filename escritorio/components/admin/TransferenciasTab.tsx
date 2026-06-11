@@ -215,7 +215,7 @@ export default function TransferenciasTab() {
                 {t.status !== "pending" && (
                   <span
                     className={cn(
-                      "flex-shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase",
+                      "flex-shrink-0 rounded-full px-2 py-0.5 text-2xs font-semibold uppercase",
                       t.status === "approved"
                         ? "bg-emerald-400/10 text-emerald-400"
                         : "bg-red-400/10 text-red-400"

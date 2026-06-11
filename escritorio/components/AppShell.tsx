@@ -22,8 +22,8 @@ function MainContent({ children }: { children: React.ReactNode }) {
   const pl = isMobile ? 0 : open ? 280 : 56;
   return (
     <main
-      className="nl-main bg-background min-h-svh flex-1 transition-[padding-left] duration-200 ease-linear"
-      style={{ paddingLeft: `${pl}px`, paddingTop: "36px" }}
+      className="nl-main nl-workspace-offset bg-background min-h-svh flex-1 transition-[padding-left] duration-200 ease-linear"
+      style={{ paddingLeft: `${pl}px` }}
     >
       {children}
     </main>

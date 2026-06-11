@@ -210,13 +210,13 @@ export default function AgentWorkflow() {
                     >
                       {agent.name}
                     </div>
-                    <div className="text-[10px] text-zinc-600 mt-0.5">
+                    <div className="text-2xs text-zinc-600 mt-0.5">
                       {agent.role}
                     </div>
                   </div>
 
                   {isDone && (
-                    <div className="text-[10px] text-emerald-400/80 text-center leading-tight mt-1 animate-fade-in">
+                    <div className="text-2xs text-emerald-400/80 text-center leading-tight mt-1 animate-fade-in">
                       {agent.output}
                     </div>
                   )}
@@ -254,7 +254,7 @@ export default function AgentWorkflow() {
         <div className="mt-8 rounded-xl border border-white/[0.05] bg-black/30 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest">
+            <span className="text-2xs text-zinc-500 font-mono uppercase tracking-widest">
               Activity log
             </span>
           </div>
@@ -263,14 +263,14 @@ export default function AgentWorkflow() {
             className="space-y-1 max-h-24 overflow-y-auto scrollbar-none"
           >
             {log.length === 0 && (
-              <p className="text-[11px] text-zinc-700 font-mono">
+              <p className="text-xxs text-zinc-700 font-mono">
                 Esperando eventos...
               </p>
             )}
             {log.map((entry, i) => (
               <p
                 key={i}
-                className="text-[11px] text-zinc-400 font-mono animate-fade-in"
+                className="text-xxs text-zinc-400 font-mono animate-fade-in"
               >
                 <span className="text-zinc-600 mr-2">
                   {new Date(entry.ts).toLocaleTimeString("es-MX", {

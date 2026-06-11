@@ -45,7 +45,7 @@ export default async function PagoExitoPage({ searchParams }: Props) {
           </Link>
 
           {session_id && (
-            <p className="text-[11px] text-zinc-600 mb-3">
+            <p className="text-xxs text-zinc-600 mb-3">
               Referencia: <span className="font-mono">{session_id}</span>
             </p>
           )}

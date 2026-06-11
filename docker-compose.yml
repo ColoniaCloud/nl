@@ -261,6 +261,32 @@ services:
       - "traefik.http.routers.escritorio.priority=30"
       - "traefik.http.services.escritorio.loadbalancer.server.port=3000"
 
+  # --- WA SERVICE (Baileys multi-sesión) ---
+  wa-service:
+    build:
+      context: ./services/wa-service
+    container_name: wa-service
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      SERVICE_SECRET: ${WA_SERVICE_SECRET}
+      NL360_URL: http://escritorio:3000
+      WEBHOOK_SECRET: ${WA_WEBHOOK_SECRET}
+    volumes:
+      - wa_auth_states:/app/auth_states
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3002/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    # No expuesto en Traefik — solo accesible desde escritorio vía red interna
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  wa_auth_states:

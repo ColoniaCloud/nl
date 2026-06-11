@@ -132,7 +132,7 @@ function TokenCard({ token }: { token: MarketToken }) {
               </span>
             )}
             <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+              className={`text-2xs px-1.5 py-0.5 rounded-full font-medium ${
                 isMainnet
                   ? "bg-emerald-500/20 text-emerald-400"
                   : "bg-amber-500/20 text-amber-400"
@@ -148,10 +148,10 @@ function TokenCard({ token }: { token: MarketToken }) {
       <div className="px-4 py-3 space-y-2">
         {/* Badges */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${std.color}`}>
+          <span className={`text-2xs px-1.5 py-0.5 rounded-full font-medium ${std.color}`}>
             {std.label}
           </span>
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${net.color}`}>
+          <span className={`text-2xs px-1.5 py-0.5 rounded-full font-medium ${net.color}`}>
             {net.label}
           </span>
         </div>
@@ -159,13 +159,13 @@ function TokenCard({ token }: { token: MarketToken }) {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-2">
           <div>
-            <div className="text-[10px] text-muted-foreground">Supply</div>
+            <div className="text-2xs text-muted-foreground">Supply</div>
             <div className="text-xs font-medium text-foreground">
               {formatSupply(token.totalSupply, token.decimals)}
             </div>
           </div>
           <div>
-            <div className="text-[10px] text-muted-foreground">Contrato</div>
+            <div className="text-2xs text-muted-foreground">Contrato</div>
             <div className="text-xs font-mono text-foreground">
               {address ? shortAddr(address) : "—"}
             </div>
@@ -175,13 +175,13 @@ function TokenCard({ token }: { token: MarketToken }) {
 
       {/* Footer */}
       <div className="px-4 py-2.5 border-t border-border/50 flex items-center justify-between">
-        <span className="text-[10px] text-muted-foreground">
+        <span className="text-2xs text-muted-foreground">
           {timeAgo(token.updatedAt)} ago
         </span>
         <div className="flex items-center gap-2">
           <Link
             href={`/services/forge?project=${token.id}`}
-            className="text-[11px] text-emerald-400 hover:text-emerald-300 font-medium transition-colors flex items-center gap-1"
+            className="text-xxs text-emerald-400 hover:text-emerald-300 font-medium transition-colors flex items-center gap-1"
           >
             Detalles
             <ArrowUpRight className="w-3 h-3" />
@@ -263,7 +263,7 @@ export default function MarketplacePage() {
               </div>
               <div>
                 <h1 className="text-sm font-semibold text-foreground">Forge Marketplace</h1>
-                <p className="text-[11px] text-muted-foreground">Tokens deployados en blockchain</p>
+                <p className="text-xxs text-muted-foreground">Tokens deployados en blockchain</p>
               </div>
             </div>
             <Link

@@ -4,8 +4,10 @@ import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Globe, ShoppingBag, Coins, Send, Loader2, Check, ExternalLink, Wand2, ChevronRight, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
+import { Globe, ShoppingBag, Coins, Loader2, Check, ExternalLink, Wand2, ChevronRight, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
 import { ChatBubble } from "@/components/chat/ChatBubble";
+import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
+import VoiceMicButton from "@/components/chat/VoiceMicButton";
 import CmsPanel from "@/components/manu-dev/CmsPanel";
 import { TemplateSelector, ModePicker } from "@/components/manu-dev/TemplateSelector";
 import type { LiteTemplateId } from "@/components/manu-dev/TemplateSelector";
@@ -98,7 +100,7 @@ function StepIndicator({ current }: { current: Step }) {
         return (
           <div key={s} className="flex items-center flex-shrink-0">
             <div className={[
-              "flex items-center gap-1 rounded-full px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-[11px] font-medium whitespace-nowrap",
+              "flex items-center gap-1 rounded-full px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-xxs font-medium whitespace-nowrap",
               done ? "bg-muted text-muted-foreground"
                 : active ? "bg-foreground text-background"
                 : "text-muted-foreground/40",
@@ -182,7 +184,7 @@ function BuildTerminal({ logs, status }: {
           <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
           <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
         </div>
-        <span className="ml-1 text-[11px] font-mono text-zinc-400 flex-1 text-center">
+        <span className="ml-1 text-xxs font-mono text-zinc-400 flex-1 text-center">
           NL360 Backoffice - Manu Dev v1.6 {status === "running" ? "trabajando" : status === "done" ? "listo" : "error"}
         </span>
         {status === "running" && (
@@ -216,7 +218,9 @@ function BuildTerminal({ logs, status }: {
                 ? "text-emerald-400"
                 : "text-green-400"
             }>
-              {line}
+              {status === "error" && i === logs.length - 1 && line.startsWith("<")
+                ? <span dangerouslySetInnerHTML={{ __html: line }} />
+                : line}
             </span>
           </div>
         ))}
@@ -279,7 +283,7 @@ function ManuDevHub({
 }) {
   const [hubInput, setHubInput] = useState("");
   const [recent, setRecent] = useState<RecentItem[]>([]);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<AgentInputHandle>(null);
 
   useEffect(() => {
     fetch("/api/recent", { cache: "no-store" })
@@ -341,25 +345,17 @@ function ManuDevHub({
           </div>
 
           {/* Input */}
-          <form onSubmit={handleSubmit} className="flex items-end gap-1.5 sm:gap-2 mb-8">
-            <textarea
+          <div className="mb-8">
+            <AgentInput
               ref={inputRef}
+              accent="emerald"
               value={hubInput}
-              onChange={(e) => setHubInput(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onChange={setHubInput}
+              onSend={() => { const text = hubInput.trim(); if (text) onStart(text); }}
               placeholder="Ej: Quiero una tienda de ropa, quiero tokenizar un terreno..."
-              rows={1}
-              className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 min-h-[44px] sm:min-h-[48px] max-h-[120px]"
+              leftSlot={<VoiceMicButton accent="emerald" onText={setHubInput} />}
             />
-            <button
-              type="submit"
-              disabled={!hubInput.trim()}
-              aria-label="Enviar"
-              className="flex h-[44px] w-[44px] sm:h-[48px] sm:w-[48px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150"
-            >
-              <Send className="size-4" />
-            </button>
-          </form>
+          </div>
 
           {/* Agent cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
@@ -400,7 +396,7 @@ function ManuDevHub({
                       <Icon className="size-3.5 flex-shrink-0 text-muted-foreground" />
                       <div className="min-w-0 flex-1">
                         <div className="text-xs font-medium text-foreground truncate">{item.title}</div>
-                        <div className="text-[10px] text-muted-foreground truncate">{item.subtitle}</div>
+                        <div className="text-2xs text-muted-foreground truncate">{item.subtitle}</div>
                       </div>
                     </Link>
                   );
@@ -441,7 +437,7 @@ function ManuDevPage() {
   const [pendingBuildPid, setPendingBuildPid] = useState<number | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<LiteTemplateId | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<AgentInputHandle>(null);
   const buildingRef = useRef(false);
   const [sendBtnPressed, setSendBtnPressed] = useState(false);
 
@@ -471,7 +467,6 @@ function ManuDevPage() {
   // Available modes for mode picker
   const availableModes: ModeOption[] = (() => {
     const modes: ModeOption[] = [
-      { id: "lite", label: "Lite", desc: "Template predefinido, ultra rapido" },
       { id: "lite_plus", label: "Lite+", desc: "IA genera HTML unico" },
     ];
     if (hasNextAccess) {
@@ -729,10 +724,12 @@ function ManuDevPage() {
               buildingRef.current = true;
               triggerBuildPid = newPid;
             }
-            if (parsed.step === "redirect_nubia" && parsed.nubiaHandoff) {
-              // Redirect to Nubia with collected data
+            if (parsed.step === "redirect_nubia") {
+              // M2: Pass the DB-stored handoff id instead of the full JSON in the URL
               const params = new URLSearchParams();
-              params.set("handoff", JSON.stringify(parsed.nubiaHandoff));
+              if (parsed.handoffId) {
+                params.set("handoff_id", String(parsed.handoffId));
+              }
               router.push(`/services/nubia?${params.toString()}`);
               return;
             }
@@ -750,15 +747,14 @@ function ManuDevPage() {
       inputRef.current?.focus();
       if (triggerBuildPid) {
         if (isFreeUser) {
-          // Free users must pick a template before building
-          setPendingBuildPid(triggerBuildPid);
-          setGenerationMode("lite");
+          // Free users only have lite_plus — start immediately, no picker needed
+          startBuild(triggerBuildPid, "lite_plus");
         } else if (isBasicUser || hasNextAccess) {
-          // Paid users pick their generation mode
+          // Paid users pick their generation mode (lite_plus or next)
           setPendingBuildPid(triggerBuildPid);
         } else {
-          // Fallback: start immediately
-          startBuild(triggerBuildPid);
+          // Fallback: start immediately with lite_plus
+          startBuild(triggerBuildPid, "lite_plus");
         }
       }
     }
@@ -804,7 +800,7 @@ function ManuDevPage() {
             </button>
           )}
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground text-background text-[10px]">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-foreground text-background text-2xs">
               <Globe className="size-3" />
             </div>
             <span className="text-sm font-semibold text-foreground">Manu Dev</span>
@@ -891,7 +887,7 @@ function ManuDevPage() {
           <div className="mt-2">
             <button
               onClick={() => setAdvancedOpen((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 text-[11px] text-muted-foreground hover:bg-muted transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 text-xxs text-muted-foreground hover:bg-muted transition-colors"
             >
               <ChevronRight className={`size-3 transition-transform ${advancedOpen ? "rotate-90" : ""}`} />
               Opciones avanzadas
@@ -899,14 +895,14 @@ function ManuDevPage() {
             {advancedOpen && (
               <div className="mt-2 rounded-xl border border-border bg-muted/40 p-2.5 sm:p-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] text-muted-foreground">Modo de generacion:</span>
-                  {(["auto", "lite", "lite_plus", "next"] as GenerationMode[]).map((m) => (
+                  <span className="text-xxs text-muted-foreground">Modo de generacion:</span>
+                  {(hasNextAccess ? ["lite_plus", "next"] as GenerationMode[] : ["lite_plus"] as GenerationMode[]).map((m) => (
                     <button
                       key={m}
                       onClick={() => updateGenerationMode(m)}
                       disabled={modeSaving || loading}
                       className={[
-                        "rounded-full px-2.5 py-1 text-[11px] font-medium border transition-colors",
+                        "rounded-full px-2.5 py-1 text-xxs font-medium border transition-colors",
                         generationMode === m
                           ? "bg-emerald-600 text-white border-emerald-600"
                           : "border-border text-foreground hover:bg-emerald-500/10 hover:border-emerald-500/40",
@@ -916,8 +912,8 @@ function ManuDevPage() {
                     </button>
                   ))}
                 </div>
-                <p className="mt-1.5 text-[10px] text-muted-foreground">
-                  Recomendado: {recommendedMode || "auto"} · Lite elegible: {liteEligible === null ? "-" : liteEligible ? "si" : "no"}
+                <p className="mt-1.5 text-2xs text-muted-foreground">
+                  Modo activo: {generationMode === "auto" ? "lite_plus" : generationMode}
                 </p>
               </div>
             )}
@@ -960,7 +956,7 @@ function ManuDevPage() {
                       <Loader2 className="animate-spin size-3 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground">Generando logo con IA...</span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground/60">Esto puede tardar unos segundos</p>
+                    <p className="text-xxs text-muted-foreground/60">Esto puede tardar unos segundos</p>
                   </div>
                 </div>
               )}
@@ -996,22 +992,13 @@ function ManuDevPage() {
           {/* Template / Mode picker before build */}
           {pendingBuildPid && !buildStatus && (
             <div className="rounded-xl border border-border bg-muted/40 p-4 space-y-3">
-              {isFreeUser ? (
-                <TemplateSelector
-                  onSelect={(templateId) => {
-                    setSelectedTemplate(templateId);
-                    startBuild(pendingBuildPid, "lite", templateId);
-                  }}
-                />
-              ) : (
-                <ModePicker
-                  modes={availableModes}
-                  onSelect={(modeId) => {
-                    setGenerationMode(modeId as GenerationMode);
-                    startBuild(pendingBuildPid, modeId);
-                  }}
-                />
-              )}
+              <ModePicker
+                modes={availableModes}
+                onSelect={(modeId) => {
+                  setGenerationMode(modeId as GenerationMode);
+                  startBuild(pendingBuildPid, modeId);
+                }}
+              />
             </div>
           )}
           {/* Build terminal */}
@@ -1045,41 +1032,24 @@ function ManuDevPage() {
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
+      <div className="flex-shrink-0 bg-background px-2 sm:px-4 pt-2 sm:pt-3 pb-5 sm:pb-6">
         <div className="mx-auto w-full max-w-3xl">
-          <form onSubmit={handleSubmit} className="flex items-end gap-1.5 sm:gap-2">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={
-                pendingBuildPid ? "Elige una opcion arriba para continuar..."
-                : step === "building" ? "Construyendo tu sitio..."
-                : step === "complete" ? "El sitio ya esta listo. Usa el panel para editarlo."
-                : "Escribe tu mensaje..."
-              }
-              disabled={isBlocked || step === "complete"}
-              rows={1}
-              className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 min-h-[36px] sm:min-h-[42px] max-h-[120px]"
-            />
-            <button
-              type="submit"
-              disabled={isBlocked || !input.trim() || step === "complete"}
-              aria-label="Enviar mensaje"
-              className={`flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150 ${sendBtnPressed ? "scale-90" : "scale-100"}`}
-            >
-              {loading
-                ? <Loader2 className="animate-spin size-4" />
-                : <Send className="size-4" />
-              }
-            </button>
-          </form>
-          {step !== "complete" && (
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Enter para enviar · Shift+Enter para nueva linea
-            </p>
-          )}
+          <AgentInput
+            ref={inputRef}
+            accent="emerald"
+            value={input}
+            onChange={setInput}
+            onSend={() => handleSubmit()}
+            sending={loading}
+            disabled={isBlocked || step === "complete"}
+            placeholder={
+              pendingBuildPid ? "Elige una opcion arriba para continuar..."
+              : step === "building" ? "Construyendo tu sitio..."
+              : step === "complete" ? "El sitio ya esta listo. Usa el panel para editarlo."
+              : "Escribe tu mensaje..."
+            }
+            leftSlot={<VoiceMicButton accent="emerald" onText={setInput} disabled={isBlocked || step === "complete"} />}
+          />
         </div>
       </div>
     </div>

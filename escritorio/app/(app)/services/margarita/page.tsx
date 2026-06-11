@@ -24,6 +24,8 @@ import {
   Twitter,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
+import VoiceMicButton from "@/components/chat/VoiceMicButton";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -132,7 +134,7 @@ export default function MargaritaPage() {
   const [activePanel, setActivePanel] = useState<"chat" | "strategy" | "content">("chat");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<AgentInputHandle>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -344,51 +346,66 @@ export default function MargaritaPage() {
 
   if (!started) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-dvh bg-background px-4">
+      <div className="flex flex-col h-full bg-background">
         {isMobile && (
           <button
             onClick={() => setOpenMobile(true)}
-            className="absolute top-4 left-4 rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-white/[0.07]"
+            className="absolute top-4 left-4 rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-white/[0.07] z-10"
           >
             <PanelLeft className="size-5" />
           </button>
         )}
 
-        <div className="flex flex-col items-center text-center max-w-lg">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/20 mb-6">
-            <Megaphone className="size-8 text-emerald-400" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-3">Margarita Mkt</h1>
-          <p className="text-muted-foreground text-base leading-relaxed mb-2">
-            Tu estratega de marketing digital con IA. Creo estrategias de contenido
-            personalizadas, genero posts listos para publicar y los programo en tus redes sociales.
-          </p>
-          <p className="text-muted-foreground/70 text-sm mb-8">
-            Integrado con tu brandbook de Manu Dev &bull; ClickUp &bull; Meta &bull; LinkedIn
-          </p>
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-4 py-10">
+          <div className="w-full max-w-2xl flex flex-col items-center text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 mb-5">
+              <Megaphone className="size-7 text-emerald-400" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Margarita Mkt</h1>
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-2 max-w-lg">
+              Tu estratega de marketing digital con IA. Creo estrategias de contenido
+              personalizadas, genero posts listos para publicar y los programo en tus redes sociales.
+            </p>
+            <p className="text-muted-foreground/60 text-xs sm:text-sm mb-8">
+              Integrado con tu brandbook de Manu Dev &bull; ClickUp &bull; Meta &bull; LinkedIn
+            </p>
 
-          <div className="grid grid-cols-2 gap-3 w-full mb-8 text-left">
-            {[
-              { icon: <Sparkles className="size-4 text-emerald-400" />, title: "Brandbook con IA", desc: "Importa tu marca de Manu Dev o creala desde cero" },
-              { icon: <BarChart3 className="size-4 text-blue-400" />, title: "Estrategia de contenido", desc: "Pilares, frecuencia y guia de voz por plataforma" },
-              { icon: <Image className="size-4 text-emerald-400" />, title: "Posts generados", desc: "Captions, hashtags e imagenes para 2 semanas" },
-              { icon: <Calendar className="size-4 text-amber-400" />, title: "Calendario en ClickUp", desc: "Aprueba y programa desde ClickUp automaticamente" },
-            ].map((f, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-4">
-                <div className="mb-2">{f.icon}</div>
-                <div className="text-sm font-medium text-foreground mb-1">{f.title}</div>
-                <div className="text-xs text-muted-foreground leading-relaxed">{f.desc}</div>
-              </div>
-            ))}
+            <div className="grid grid-cols-2 gap-3 w-full text-left">
+              {[
+                { icon: <Sparkles className="size-4 text-emerald-400" />, title: "Brandbook con IA", desc: "Importa tu marca de Manu Dev o creala desde cero" },
+                { icon: <BarChart3 className="size-4 text-blue-400" />, title: "Estrategia de contenido", desc: "Pilares, frecuencia y guia de voz por plataforma" },
+                { icon: <Image className="size-4 text-emerald-400" />, title: "Posts generados", desc: "Captions, hashtags e imagenes para 2 semanas" },
+                { icon: <Calendar className="size-4 text-amber-400" />, title: "Calendario en ClickUp", desc: "Aprueba y programa desde ClickUp automaticamente" },
+              ].map((f, i) => (
+                <div key={i} className="rounded-xl border border-border bg-card p-4">
+                  <div className="mb-2">{f.icon}</div>
+                  <div className="text-sm font-medium text-foreground mb-1">{f.title}</div>
+                  <div className="text-xs text-muted-foreground leading-relaxed">{f.desc}</div>
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
 
-          <button
-            onClick={startConversation}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors"
-          >
-            <Megaphone className="size-4" />
-            Empezar con Margarita
-          </button>
+        {/* Input fixed at bottom */}
+        <div className="flex-shrink-0 bg-background px-4 pt-3 pb-5 sm:pb-6">
+          <div className="mx-auto w-full max-w-2xl">
+            <AgentInput
+              accent="emerald"
+              value={input}
+              onChange={setInput}
+              onSend={() => {
+                if (!input.trim()) return;
+                setStarted(true);
+                sendMessage(input);
+              }}
+              sending={sending}
+              disabled={sending}
+              placeholder="Hola Margarita, quiero crear mi estrategia de marketing..."
+              leftSlot={<VoiceMicButton accent="emerald" onText={setInput} disabled={sending} />}
+            />
+          </div>
         </div>
       </div>
     );
@@ -485,7 +502,8 @@ export default function MargaritaPage() {
           )}
         >
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+          <div className="flex-1 overflow-y-auto">
+            <div className="mx-auto w-full max-w-3xl px-4 py-4 space-y-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -574,42 +592,24 @@ export default function MargaritaPage() {
             )}
 
             <div ref={messagesEndRef} />
+            </div>
           </div>
 
           {/* Input */}
-          <div className="flex-shrink-0 border-t border-border bg-card/30 p-4">
-            <div className="flex items-end gap-2">
-              <textarea
+          <div className="flex-shrink-0 bg-card/30 px-4 pt-3 pb-5 sm:pb-6">
+            <div className="mx-auto w-full max-w-3xl">
+              <AgentInput
                 ref={inputRef}
+                accent="emerald"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Escribe tu mensaje..."
-                rows={1}
-                className="flex-1 resize-none rounded-xl border border-border bg-muted px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:border-emerald-500 focus:ring-emerald-500 min-h-[36px] sm:min-h-[42px] max-h-[120px] overflow-y-auto"
-                style={{ height: "auto" }}
-                onInput={(e) => {
-                  const t = e.target as HTMLTextAreaElement;
-                  t.style.height = "auto";
-                  t.style.height = `${Math.min(t.scrollHeight, 120)}px`;
-                }}
+                onChange={setInput}
+                onSend={() => sendMessage(input)}
+                sending={sending}
                 disabled={sending}
+                placeholder="Escribe tu mensaje..."
+                leftSlot={<VoiceMicButton accent="emerald" onText={setInput} disabled={sending} />}
               />
-              <button
-                onClick={() => sendMessage(input)}
-                disabled={sending || !input.trim()}
-                className="flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                {sending ? (
-                  <span className="flex gap-0.5 items-center">
-                    <span className="w-1 h-1 rounded-full bg-white animate-pulse" style={{animationDelay:"0ms"}} />
-                    <span className="w-1 h-1 rounded-full bg-white animate-pulse" style={{animationDelay:"150ms"}} />
-                    <span className="w-1 h-1 rounded-full bg-white animate-pulse" style={{animationDelay:"300ms"}} />
-                  </span>
-                ) : <Send className="size-4" />}
-              </button>
             </div>
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">Enter para enviar · Shift+Enter para nueva linea</p>
           </div>
         </div>
 

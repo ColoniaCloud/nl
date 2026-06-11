@@ -49,11 +49,13 @@ import {
   copyToClipboard,
   apiFetchNotes,
   apiSaveNotes,
+  apiDeleteSession,
 } from "@/hooks/mentoria/api";
 import { useMentoriaSession } from "@/hooks/mentoria/useMentoriaSession";
 import { useMentoriaHistory } from "@/hooks/mentoria/useMentoriaHistory";
 import { useMentoriaProgress } from "@/hooks/mentoria/useMentoriaProgress";
 import AgentInput from "@/components/chat/AgentInput";
+import VoiceMicButton from "@/components/chat/VoiceMicButton";
 
 // Map icon string (as stored in the subagent registry) to a Lucide component.
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -299,6 +301,55 @@ function SessionsModal({
   );
 }
 
+// ─── ConfirmDeleteModal ───────────────────────────────────────────────────────
+
+function ConfirmDeleteModal({
+  title,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      onClick={onCancel}
+    >
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div
+        className="relative w-full max-w-sm rounded-xl border border-border bg-background p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <Trash2 className="size-5 text-destructive" />
+          <span className="text-sm font-bold text-foreground">Eliminar conversación</span>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+          ¿Eliminar{" "}
+          <span className="font-semibold text-foreground">"{title}"</span>
+          ? La conversación se moverá a la papelera.
+        </p>
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            className="rounded-lg bg-destructive hover:bg-destructive/80 text-white px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── ChatMessage ──────────────────────────────────────────────────────────────
 
 function ChatMessage({
@@ -460,6 +511,7 @@ export default function MentoriaPage() {
   const [username, setUsername] = useState<string>("");
   const [recentSessions, setRecentSessions] = useState<Array<{ id: string; title: string; updated_at: string; agentId: string; agentName: string }>>([]);
   const [recentLoading, setRecentLoading] = useState(false);
+  const [confirmDeleteSession, setConfirmDeleteSession] = useState<{ id: string; title: string; onConfirm: () => Promise<void> } | null>(null);
 
   // ── Extracted hooks ──────────────────────────────────────────────────────────
   const {
@@ -509,6 +561,7 @@ export default function MentoriaPage() {
   const {
     activeTool,
     messages,
+    currentSessionId,
     input,
     loading,
     showWarmup,
@@ -817,31 +870,57 @@ export default function MentoriaPage() {
                   );
                   const tool = availableTools.find((t) => t.id === session.agentId);
                   return (
-                    <button
+                    <div
                       key={`${session.id}-${session.agentId}`}
-                      onClick={() => tool && loadSession(
-                        { id: session.id, title: session.title, updated_at: session.updated_at, message_count: 0 },
-                        tool
-                      )}
-                      disabled={!!probingTool}
-                      className="w-full text-left flex items-center gap-3 rounded-xl border border-border bg-card/40 px-4 py-3 hover:border-sky-500/40 hover:bg-card/70 transition-all disabled:opacity-50"
+                      className="flex items-center gap-3 rounded-xl border border-border bg-card/40 px-4 py-3 hover:border-sky-500/40 hover:bg-card/70 transition-all group"
                     >
-                      <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden ring-1 ring-border">
-                        {mentor && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={mentor.image} alt={mentor.name} className="w-full h-full object-cover" style={{ objectPosition: "50% 15%" }} />
+                      {/* Clickable area */}
+                      <button
+                        onClick={() => tool && loadSession(
+                          { id: session.id, title: session.title, updated_at: session.updated_at, message_count: 0 },
+                          tool
                         )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground truncate font-medium">{session.title}</p>
-                        <span className="flex items-center gap-1 text-2xs text-muted-foreground mt-0.5">
-                          <Clock className="size-2.5" />{formatDate(session.updated_at)}
+                        disabled={!!probingTool}
+                        className="flex items-center gap-3 flex-1 min-w-0 text-left disabled:opacity-50"
+                      >
+                        <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden ring-1 ring-border">
+                          {mentor && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={mentor.image} alt={mentor.name} className="w-full h-full object-cover" style={{ objectPosition: "50% 15%" }} />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground truncate font-medium">{session.title}</p>
+                          <span className="flex items-center gap-1 text-2xs text-muted-foreground mt-0.5">
+                            <Clock className="size-2.5" />{formatDate(session.updated_at)}
+                          </span>
+                        </div>
+                        <span className="flex-shrink-0 text-[9px] font-bold uppercase tracking-wide text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded-full px-2 py-0.5">
+                          {mentor?.name.split(" ")[0] ?? session.agentName}
                         </span>
-                      </div>
-                      <span className="flex-shrink-0 text-[9px] font-bold uppercase tracking-wide text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded-full px-2 py-0.5">
-                        {mentor?.name.split(" ")[0] ?? session.agentName}
-                      </span>
-                    </button>
+                      </button>
+                      {/* Delete button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteSession({
+                            id: session.id,
+                            title: session.title,
+                            onConfirm: async () => {
+                              await apiDeleteSession(session.id);
+                              setRecentSessions((prev) =>
+                                prev.filter((s) => !(s.id === session.id && s.agentId === session.agentId))
+                              );
+                              setConfirmDeleteSession(null);
+                            },
+                          });
+                        }}
+                        title="Eliminar conversación"
+                        className="flex-shrink-0 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -849,6 +928,15 @@ export default function MentoriaPage() {
           </div>
 
         </div>
+
+        {/* ── Delete confirmation modal ── */}
+        {confirmDeleteSession && (
+          <ConfirmDeleteModal
+            title={confirmDeleteSession.title}
+            onConfirm={confirmDeleteSession.onConfirm}
+            onCancel={() => setConfirmDeleteSession(null)}
+          />
+        )}
 
         {/* ── Disruptive confirmation modal ── */}
         {confirmDisruptive && (
@@ -888,198 +976,6 @@ export default function MentoriaPage() {
     // Fallback: if somehow landed here, redirect to dashboard
     setStep("dashboard");
     return null;
-  }
-
-  {/* placeholder so compiler keeps Step type */}
-          <div className="mb-8 flex flex-col items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://nl360.site/wp-content/uploads/2026/01/MentorIA-Next-Level-Logo.png"
-              alt="MentorIA Logo"
-              className="h-14 w-auto object-contain"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-            />
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/20">
-              <BookOpen className="size-4 text-sky-400" />
-            </div>
-          </div>
-
-          <div className="text-center mb-10">
-            <h1 className="text-2xl font-bold text-foreground mb-3">
-              Hola, soy <span className="text-sky-400">MentorIA</span>
-            </h1>
-            <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
-              Tu asistente de aprendizaje. Juntos exploraremos cursos exclusivos y
-              llevaremos tu carrera al siguiente nivel.
-            </p>
-            <p className="mt-4 text-xxs font-bold uppercase tracking-widest text-muted-foreground">
-              ¿En que mentoria nos enfocaremos hoy?
-            </p>
-          </div>
-
-          {/* Tool cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-10">
-            {availableTools.length === 0 && (
-              <div className="col-span-full flex items-center justify-center py-10 text-muted-foreground text-sm">
-                <Loader2 className="size-4 animate-spin mr-2" />
-                Cargando mentores...
-              </div>
-            )}
-            {availableTools.map((tool) => {
-              const TIcon = tool.Icon;
-              const isProbing = probingTool === tool.id;
-              const isDisabled = !!probingTool;
-              const count = sessionCounts[tool.id] ?? 0;
-              const moreCount = sessionHasMore[tool.id] ?? false;
-              const meta = agentMeta[tool.id];
-              const needsConfirm = !!meta?.requiresConfirmation;
-              return (
-                <div
-                  key={tool.id}
-                  className="group relative text-left rounded-xl border border-border bg-card/60 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-card hover:border-sky-500/50 hover:shadow-[var(--glow-sky)]"
-                >
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/20 text-sky-400 group-hover:bg-sky-500/30 transition-all">
-                    {isProbing ? <Loader2 className="size-4 animate-spin" /> : <TIcon className="size-4" />}
-                  </div>
-                  <h3 className="font-semibold text-foreground text-sm mb-1">{tool.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-3">{tool.description}</p>
-
-                  {/* Lesson progress */}
-                  {progressLoading && dashboardProgress[tool.id] === undefined ? (
-                    <div className="mb-3 h-1.5 w-full rounded-full bg-white/[0.06] overflow-hidden">
-                      <div className="h-full w-1/3 rounded-full bg-sky-500/30 animate-pulse" />
-                    </div>
-                  ) : dashboardProgress[tool.id] ? (
-                    <div className="mb-3">
-                      {dashboardProgress[tool.id]!.isComplete ? (
-                        <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5">
-                          <Check className="size-2.5" /> Completado
-                        </span>
-                      ) : (
-                        <>
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-[9px] text-muted-foreground">
-                              {dashboardProgress[tool.id]!.completed} / {dashboardProgress[tool.id]!.totalLessons} lecciones
-                            </span>
-                          </div>
-                          <div className="h-1 w-full rounded-full bg-white/[0.06] overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-sky-400 transition-all duration-500"
-                              style={{
-                                width: dashboardProgress[tool.id]!.totalLessons > 0
-                                  ? `${Math.round((dashboardProgress[tool.id]!.completed / dashboardProgress[tool.id]!.totalLessons) * 100)}%`
-                                  : "0%",
-                              }}
-                            />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ) : null}
-
-                  {count > 0 && (
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-sky-400 bg-sky-500/10 border border-sky-500/20 rounded-full px-2 py-0.5">
-                        <History className="size-2.5" />
-                        {count}{moreCount ? "+" : ""} {count === 1 ? "chat" : "chats"}
-                      </span>
-                      <button
-                        onClick={() => !isDisabled && openHistory(tool)}
-                        disabled={isDisabled}
-                        className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground hover:text-sky-400 transition-colors disabled:opacity-40"
-                      >
-                        Ver historial
-                      </button>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      if (isDisabled) return;
-                      if (needsConfirm && meta) {
-                        setConfirmDisruptive(meta);
-                      } else {
-                        selectTool(tool);
-                      }
-                    }}
-                    disabled={isDisabled}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-sky-400 disabled:opacity-40"
-                  >
-                    {isProbing ? "Conectando..." : needsConfirm ? "Entrar" : "Comenzar"}
-                    {!isProbing && <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>}
-                  </button>
-                  {needsConfirm && (
-                    <div className="mt-2 text-[9px] font-bold uppercase tracking-wide text-amber-400/80">
-                      Sin filtros
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {probeError && (
-            <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive w-full">
-              <span>{probeError}</span>
-              <button aria-label="Cerrar" onClick={() => setProbeError(null)}><X className="size-4" /></button>
-            </div>
-          )}
-
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/40 px-4 py-2 text-2xs font-bold uppercase tracking-widest text-muted-foreground">
-            <BookOpen className="size-3 text-sky-400" />
-            Estamos entrenando MentorIA con nuevos cursos
-          </div>
-        </div>
-
-        {/* Disruptive (uncensored) confirmation modal */}
-        {confirmDisruptive && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onClick={() => setConfirmDisruptive(null)}
-          >
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-            <div
-              className="relative w-full max-w-md rounded-xl border border-amber-500/40 bg-background p-6 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <Flame className="size-5 text-amber-400" />
-                <span className="text-sm font-bold uppercase tracking-widest text-amber-400">
-                  Entrada al modo sin filtros
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                {confirmDisruptive.title}
-                {confirmDisruptive.subtitle ? ` — ${confirmDisruptive.subtitle}` : ""}
-              </h3>
-              {confirmDisruptive.disclaimer && (
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                  {confirmDisruptive.disclaimer}
-                </p>
-              )}
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  onClick={() => setConfirmDisruptive(null)}
-                  className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:bg-muted"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => {
-                    const def = summaryToToolDef(confirmDisruptive);
-                    setConfirmDisruptive(null);
-                    selectTool(def);
-                  }}
-                  className="rounded-lg bg-amber-500 hover:bg-amber-400 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-black"
-                >
-                  Entiendo, entrar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    );
   }
 
   // neville-select removed — disruptive toggle lives in chat input now
@@ -1716,6 +1612,15 @@ export default function MentoriaPage() {
         onClose={() => setSessionsModalOpen(false)}
       />
 
+      {/* Delete confirmation modal */}
+      {confirmDeleteSession && (
+        <ConfirmDeleteModal
+          title={confirmDeleteSession.title}
+          onConfirm={confirmDeleteSession.onConfirm}
+          onCancel={() => setConfirmDeleteSession(null)}
+        />
+      )}
+
       <div className="flex h-full flex-col bg-background">
         {/* ── Header ── */}
         <div className="border-b border-border bg-background px-3 sm:px-4 py-2.5 flex-shrink-0">
@@ -1779,6 +1684,24 @@ export default function MentoriaPage() {
               >
                 <Plus className="size-3.5" />
                 <span className="hidden sm:inline">Nuevo</span>
+              </button>
+
+              {/* Eliminar sesión actual */}
+              <button
+                onClick={() => setConfirmDeleteSession({
+                  id: currentSessionId,
+                  title: activeTool?.title ?? "esta conversación",
+                  onConfirm: async () => {
+                    await apiDeleteSession(currentSessionId);
+                    setConfirmDeleteSession(null);
+                    goBack();
+                  },
+                })}
+                title="Eliminar esta conversación"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xxs font-bold uppercase tracking-wide text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+              >
+                <Trash2 className="size-3.5" />
+                <span className="hidden sm:inline">Eliminar</span>
               </button>
 
               {/* Divider + provider badge */}
@@ -1870,7 +1793,7 @@ export default function MentoriaPage() {
         </div>
 
         {/* ── Input area ── */}
-        <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
+        <div className="flex-shrink-0 bg-background px-2 sm:px-4 pt-2 sm:pt-3 pb-5 sm:pb-6">
           <div className="mx-auto w-full max-w-3xl">
             {/* Disruptive toggle — shown only for Neville and Tony */}
             {activeTool && (activeTool.id === "NEVILLE_DISRUPTIVO_1" || activeTool.id === "NEVILLE_DISRUPTIVO_2" || activeTool.id === "TONY_PROFUNDO" || activeTool.id === "TONY_DISRUPTIVO") && (() => {
@@ -1929,6 +1852,7 @@ export default function MentoriaPage() {
               sending={loading}
               disabled={loading}
               placeholder="Pregunta a MentorIA..."
+              leftSlot={<VoiceMicButton accent="sky" onText={setInput} disabled={loading} />}
             />
           </div>
         </div>

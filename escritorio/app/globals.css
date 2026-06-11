@@ -140,6 +140,41 @@
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255,255,255,0.10);
   --sidebar-ring: #71717a;
+
+  /* ─── Layout tokens ─── */
+  --workspacebar-h: 36px;
+
+  /* ─── Chat tokens ─── */
+  --bubble-max-w: 95%;
+  --bubble-max-w-sm: 85%;
+  --send-btn-size: 44px;
+  --textarea-min-h: 44px;
+  --textarea-max-h: 120px;
+
+  /* ─── Button shadow tokens ─── */
+  --btn-shadow:        0 1px 3px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+  --btn-shadow-hover:  0 4px 8px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.12);
+  --btn-shadow-active: 0 1px 2px rgba(0,0,0,0.20), inset 0 1px 3px rgba(0,0,0,0.10);
+
+  /* ─── AgentCard glow tokens ─── */
+  --glow-violet:  0 0 24px rgba(139,92,246,0.18);
+  --glow-indigo:  0 0 24px rgba(99,102,241,0.18);
+  --glow-emerald: 0 0 24px rgba(16,185,129,0.18);
+  --glow-rose:    0 0 24px rgba(244,63,94,0.18);
+  --glow-orange:  0 0 24px rgba(249,115,22,0.18);
+  --glow-sky:     0 0 24px rgba(14,165,233,0.18);
+  --glow-zinc:    0 0 24px rgba(161,161,170,0.12);
+  --glow-sky-sm:  0 0 20px rgba(14,165,233,0.15);
+  --glow-amber:   0 0 20px rgba(245,158,11,0.12);
+
+  /* ─── Border opacity variants ─── */
+  --border-subtle: rgba(255,255,255,0.08);
+  --border-faint:  rgba(255,255,255,0.06);
+
+  /* ─── Text size tokens ─── */
+  --text-2xs: 0.625rem;
+  --text-xxs: 0.6875rem;
+
   color-scheme: dark;
 }
 
@@ -291,6 +326,37 @@ iframe {
 .animate-fade-in {
   animation: fade-in 0.3s ease-out forwards;
 }
+
+/* ─── Chat bubble ─── */
+.nl-bubble {
+  max-width: var(--bubble-max-w);
+}
+@media (min-width: 640px) {
+  .nl-bubble { max-width: var(--bubble-max-w-sm); }
+}
+
+/* ─── Send button (44px, táctil) ─── */
+.nl-send-btn {
+  height: var(--send-btn-size);
+  width:  var(--send-btn-size);
+  flex-shrink: 0;
+}
+
+/* ─── Chat textarea ─── */
+.nl-textarea {
+  min-height: var(--textarea-min-h);
+  max-height: var(--textarea-max-h);
+  overflow-y: auto;
+}
+
+/* ─── Workspace top offset ─── */
+.nl-workspace-offset {
+  padding-top: var(--workspacebar-h);
+}
+
+/* ─── Micro text sizes ─── */
+.text-2xs { font-size: var(--text-2xs); line-height: 1.4; }
+.text-xxs  { font-size: var(--text-xxs); line-height: 1.4; }
 
 /* ═══════════════════════════════════════════════════════════
    REACT ARIA COMPONENT STYLES
@@ -536,6 +602,44 @@ iframe {
   background: var(--rac-field-bg); cursor: default; outline: none;
   &[data-selected]      { background: var(--rac-accent-overlay); border-color: var(--rac-accent); color: var(--rac-accent); }
   &[data-focus-visible] { outline: 2px solid var(--rac-focus-ring); outline-offset: -1px; }
+}
+
+/* ─── Button Relief — botones inline (no usan <Button> shadcn) ─── */
+a[class*="bg-white"][class*="rounded"],
+a[class*="bg-violet"][class*="rounded"],
+a[class*="bg-emerald"][class*="rounded"],
+a[class*="bg-zinc-7"][class*="rounded"],
+button[class*="bg-violet"][class*="rounded"],
+button[class*="bg-emerald"][class*="rounded"],
+button[class*="bg-zinc-7"][class*="rounded"] {
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0.10) 0%, rgba(0,0,0,0.08) 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.10);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+a[class*="bg-white"][class*="rounded"]:hover,
+a[class*="bg-violet"][class*="rounded"]:hover,
+a[class*="bg-emerald"][class*="rounded"]:hover,
+a[class*="bg-zinc-7"][class*="rounded"]:hover,
+button[class*="bg-violet"][class*="rounded"]:hover:not(:disabled),
+button[class*="bg-emerald"][class*="rounded"]:hover:not(:disabled),
+button[class*="bg-zinc-7"][class*="rounded"]:hover:not(:disabled) {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.14);
+  transform: translateY(-1px);
+}
+a[class*="bg-white"][class*="rounded"]:active,
+a[class*="bg-violet"][class*="rounded"]:active,
+a[class*="bg-emerald"][class*="rounded"]:active,
+a[class*="bg-zinc-7"][class*="rounded"]:active,
+button[class*="bg-violet"][class*="rounded"]:active,
+button[class*="bg-emerald"][class*="rounded"]:active,
+button[class*="bg-zinc-7"][class*="rounded"]:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18), inset 0 1px 3px rgba(0,0,0,0.12);
+}
+[data-no-relief] {
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 /* ── HIGH CONTRAST ── */

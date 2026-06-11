@@ -403,7 +403,7 @@ export function WalletDeploy({
             </div>
             <div>
               <h2 className="text-sm font-semibold text-foreground">Deploy a Mainnet</h2>
-              <p className="text-[11px] text-muted-foreground">Con tu wallet de MetaMask</p>
+              <p className="text-xxs text-muted-foreground">Con tu wallet de MetaMask</p>
             </div>
           </div>
           <button
@@ -416,7 +416,7 @@ export function WalletDeploy({
 
         {/* Network Selector */}
         <div className="px-5 py-3 border-b border-border/50 bg-muted/30">
-          <label className="text-[10px] text-muted-foreground block mb-1.5">Red de destino</label>
+          <label className="text-2xs text-muted-foreground block mb-1.5">Red de destino</label>
           <div className="relative">
             <select
               value={selectedNetwork}

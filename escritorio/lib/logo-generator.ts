@@ -1,4 +1,6 @@
 import { createLogger } from "@/lib/logger";
+import fs from "fs";
+import path from "path";
 
 const logger = createLogger("LogoGenerator");
 
@@ -116,6 +118,32 @@ export async function generateLogo(params: LogoParams): Promise<LogoResult | nul
 
   } catch (error) {
     logger.error("Error generando logo con Recraft", error);
+    return null;
+  }
+}
+
+// ─── Local download ───────────────────────────────────────────────────────────
+
+/**
+ * Downloads a remote logo URL and saves it to /public/logos/logo-{projectId}.svg.
+ * Returns the local absolute URL (using NL360_FRONTEND_URL) or null on failure.
+ * Shared by Manu Dev and Nubia so generated sites load logos without CORS/expiry issues.
+ */
+export async function downloadLogoLocally(
+  projectId: number,
+  remoteUrl: string
+): Promise<string | null> {
+  try {
+    const res = await fetch(remoteUrl, { signal: AbortSignal.timeout(20_000) });
+    if (!res.ok) return null;
+    const buffer = Buffer.from(await res.arrayBuffer());
+    const dir = path.join(process.cwd(), "public", "logos");
+    fs.mkdirSync(dir, { recursive: true });
+    const filename = `logo-${projectId}.svg`;
+    fs.writeFileSync(path.join(dir, filename), buffer);
+    const frontendUrl = process.env.NL360_FRONTEND_URL || "https://nl360.site";
+    return `${frontendUrl}/logos/${filename}`;
+  } catch {
     return null;
   }
 }

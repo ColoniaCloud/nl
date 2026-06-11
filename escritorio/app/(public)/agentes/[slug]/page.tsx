@@ -70,7 +70,7 @@ export default async function AgentDetailPage({
                 className="rounded-xl border border-white/[0.08] bg-zinc-900/40 p-5"
               >
                 {sub.badge && (
-                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bg} ${c.text} mb-3 inline-block`}>
+                  <span className={`text-2xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bg} ${c.text} mb-3 inline-block`}>
                     {sub.badge}
                   </span>
                 )}

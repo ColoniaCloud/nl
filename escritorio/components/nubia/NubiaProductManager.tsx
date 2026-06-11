@@ -328,7 +328,7 @@ export default function NubiaProductManager({ projectId, industry }: Props) {
                   <div className="flex flex-col items-center gap-1.5 text-zinc-500">
                     <ImagePlus className="w-6 h-6" />
                     <span className="text-xs">Arrastra una imagen o haz clic para seleccionar</span>
-                    <span className="text-[10px] text-zinc-600">PNG, JPG, WebP hasta 5MB</span>
+                    <span className="text-2xs text-zinc-600">PNG, JPG, WebP hasta 5MB</span>
                   </div>
                 )}
               </div>

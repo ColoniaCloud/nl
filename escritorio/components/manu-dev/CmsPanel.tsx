@@ -246,7 +246,7 @@ function LayoutModal({ projectId, initialDesign, onClose, onSaved }: {
             <div className="space-y-2">
               <div className="flex items-center gap-2 rounded-lg bg-amber-500/10 border border-amber-500/30 px-3 py-2">
                 <FontAwesomeIcon icon={faTriangleExclamation} className="text-amber-400 text-xs flex-shrink-0" />
-                <p className="text-[11px] text-amber-400">Los cambios al CSS son irreversibles. Edita con cuidado.</p>
+                <p className="text-xxs text-amber-400">Los cambios al CSS son irreversibles. Edita con cuidado.</p>
               </div>
               <textarea value={cssContent} onChange={e => setCssContent(e.target.value)}
                 rows={14} spellCheck={false}
@@ -328,7 +328,7 @@ function PagesModal({ projectId, pages, onClose, onSaved }: {
         ) : (
           <>
             <div className="px-4 py-3 border-b border-border flex-shrink-0">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">Selecciona una pagina</p>
+              <p className="text-xxs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Selecciona una pagina</p>
               <div className="space-y-0.5">
                 {pages.map(page => (
                   <button key={page.id}
@@ -338,14 +338,14 @@ function PagesModal({ projectId, pages, onClose, onSaved }: {
                       selectedPage?.id === page.id ? "bg-accent text-accent-foreground" : "text-foreground hover:bg-muted",
                     ].join(" ")}>
                     <span>{page.title}</span>
-                    <FontAwesomeIcon icon={faChevronRight} className="text-[10px] opacity-50" />
+                    <FontAwesomeIcon icon={faChevronRight} className="text-2xs opacity-50" />
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="text-xxs font-semibold uppercase tracking-wide text-muted-foreground">
                 Describí el cambio en: <span className="text-foreground normal-case font-bold">{selectedPage?.title ?? "—"}</span>
               </p>
               <textarea value={changeText} onChange={e => setChangeText(e.target.value)}
@@ -535,7 +535,7 @@ function MessagesModal({ projectId, onClose }: { projectId: number; onClose: () 
                 <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExpand(msg.id)}>
                   <div className="flex items-baseline justify-between gap-2">
                     <p className="text-sm font-semibold text-foreground truncate">{msg.name || "Anonimo"}</p>
-                    <p className="text-[11px] text-muted-foreground flex-shrink-0">
+                    <p className="text-xxs text-muted-foreground flex-shrink-0">
                       {new Date(msg.created_at).toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit", year: "2-digit" })}
                     </p>
                   </div>
@@ -1276,12 +1276,12 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
         <div className="flex items-center gap-2">
           <a href={siteUrl} target="_blank" rel="noreferrer"
             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors">
-            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-[10px]" />
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-2xs" />
             Ver sitio
           </a>
           <button onClick={() => { rebuild(); }} disabled={rebuilding}
             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-40">
-            <FontAwesomeIcon icon={faWandMagicSparkles} className="text-[10px]" />
+            <FontAwesomeIcon icon={faWandMagicSparkles} className="text-2xs" />
             Auto-Fix
           </button>
           <button onClick={rebuild} disabled={rebuilding}
@@ -1300,7 +1300,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
           </button>
           <button onClick={() => setActiveModal(activeModal === "support" ? null : "support")}
             className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 text-white px-3 py-1.5 text-xs font-semibold hover:bg-emerald-600 transition-colors">
-            <FontAwesomeIcon icon={faHeadset} className="text-[10px]" />
+            <FontAwesomeIcon icon={faHeadset} className="text-2xs" />
             Soporte
           </button>
         </div>
@@ -1324,7 +1324,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
                 ? "bg-accent text-accent-foreground"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted"
             ].join(" ")}>
-            <FontAwesomeIcon icon={icon} className="text-[11px]" />
+            <FontAwesomeIcon icon={icon} className="text-xxs" />
             {label}
             {badge ? (
               <span className="absolute -top-1 -right-1 bg-blue-500 text-white rounded-full text-[9px] font-bold min-w-[14px] h-[14px] flex items-center justify-center px-0.5">

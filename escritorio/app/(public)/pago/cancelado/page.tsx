@@ -48,7 +48,7 @@ export default function PagoCanceladoPage() {
 
           <Link
             href="/workspace"
-            className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/[0.12] text-zinc-300 text-sm hover:border-white/[0.20] hover:text-white transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/[0.15] text-zinc-300 text-sm hover:border-white/[0.30] hover:text-white transition-colors"
           >
             Volver al escritorio
           </Link>

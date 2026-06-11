@@ -16,7 +16,7 @@ export async function getUser(token: string): Promise<{ id: number; roles: strin
   if (res.ok) {
     const data = await res.json();
     if (data.user?.id) {
-      const roles: string[] = Array.isArray(data.roles) ? data.roles : [];
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : (Array.isArray(data.user?.roles) ? data.user.roles : []);
       return { id: data.user.id, roles };
     }
   }
@@ -26,7 +26,7 @@ export async function getUser(token: string): Promise<{ id: number; roles: strin
   });
   if (!res2.ok) return null;
   const data2 = await res2.json();
-  return data2.id ? { id: data2.id, roles: [] } : null;
+  return data2.id ? { id: data2.id, roles: Array.isArray(data2.roles) ? data2.roles : [] } : null;
 }
 
 /** Backward-compat wrapper for routes that only need the user id. */

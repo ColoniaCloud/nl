@@ -76,7 +76,7 @@ export default function InvoiceTable({ invoices }: InvoiceTableProps) {
               <td className="py-2.5 text-right">
                 <span
                   className={cn(
-                    "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase",
+                    "rounded-full px-2 py-0.5 text-2xs font-semibold uppercase",
                     STATUS_STYLES[inv.status]
                   )}
                 >

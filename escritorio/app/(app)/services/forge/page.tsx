@@ -14,6 +14,8 @@ import { Coins, ArrowUpRight, Wallet, Layers } from "lucide-react";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
 import { ChatBubble } from "@/components/chat/ChatBubble";
+import AgentInput from "@/components/chat/AgentInput";
+import VoiceMicButton from "@/components/chat/VoiceMicButton";
 import {
   StandardPicker,
   NetworkPicker,
@@ -92,7 +94,7 @@ function StepIndicator({ current }: { current: Step }) {
           <div key={s} className="flex items-center flex-shrink-0">
             <div
               className={[
-                "flex items-center gap-1 rounded-full px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-[11px] font-medium whitespace-nowrap",
+                "flex items-center gap-1 rounded-full px-1.5 sm:px-2.5 py-0.5 text-[9px] sm:text-xxs font-medium whitespace-nowrap",
                 done
                   ? "bg-muted text-muted-foreground"
                   : active
@@ -159,22 +161,12 @@ function ForgePageInner() {
   const [mainnetData, setMainnetData] = useState<{ address: string; txHash: string; network: string; chainId: number; explorer: string } | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
   const isBlocked = sending || compiling || deploying;
 
   // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // Auto-resize textarea
-  useEffect(() => {
-    const el = inputRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 120) + "px";
-  }, [input]);
 
   // Load existing project if URL has ?project=N
   useEffect(() => {
@@ -731,20 +723,20 @@ function ForgePageInner() {
                     <div className="flex items-center gap-2">
                       <Wallet className="w-4 h-4 text-emerald-400" />
                       <span className="text-sm font-semibold text-foreground">Mainnet Deploy</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">
+                      <span className="text-2xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">
                         {mainnetData.network}
                       </span>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border">
                     <div className="bg-muted/30 px-4 py-3">
-                      <div className="text-[10px] text-muted-foreground mb-1">Contrato</div>
+                      <div className="text-2xs text-muted-foreground mb-1">Contrato</div>
                       <a href={mainnetData.explorer} target="_blank" rel="noreferrer" className="text-xs text-emerald-400 hover:text-emerald-300 font-mono">
                         {mainnetData.address.slice(0, 10)}...{mainnetData.address.slice(-8)}
                       </a>
                     </div>
                     <div className="bg-muted/30 px-4 py-3">
-                      <div className="text-[10px] text-muted-foreground mb-1">TX Hash</div>
+                      <div className="text-2xs text-muted-foreground mb-1">TX Hash</div>
                       <code className="text-xs text-foreground font-mono">
                         {mainnetData.txHash.slice(0, 10)}...{mainnetData.txHash.slice(-8)}
                       </code>
@@ -788,43 +780,26 @@ function ForgePageInner() {
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 border-t border-border bg-background px-2 sm:px-4 py-2 sm:py-3">
+      <div className="flex-shrink-0 bg-background px-2 sm:px-4 pt-2 sm:pt-3 pb-5 sm:pb-6">
         <div className="mx-auto w-full max-w-3xl">
-          <form onSubmit={handleSubmit} className="flex items-end gap-1.5 sm:gap-2">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={
-                step === "generating"
-                  ? "Generando contrato..."
-                  : step === "compiled"
-                  ? "Pedi cambios al contrato o pregunta lo que necesites..."
-                  : step === "deployed"
-                  ? "Pregunta sobre tu token deployado..."
-                  : "Describe tu activo o responde la pregunta..."
-              }
-              disabled={isBlocked}
-              rows={1}
-              className="flex-1 resize-none rounded-lg sm:rounded-xl border border-border bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 min-h-[36px] sm:min-h-[42px] max-h-[120px]"
-            />
-            <button
-              type="submit"
-              disabled={isBlocked || !input.trim()}
-              className={`flex h-9 w-9 sm:h-[42px] sm:w-[42px] flex-shrink-0 items-center justify-center rounded-lg sm:rounded-xl bg-emerald-600 text-white hover:bg-emerald-500 disabled:opacity-40 transition-all duration-150 ${sendBtnPressed ? "scale-90" : "scale-100"}`}
-            >
-              {isBlocked
-                ? <FontAwesomeIcon icon={faSpinner} className="animate-spin text-sm" />
-                : <FontAwesomeIcon icon={faPaperPlane} className="text-sm" />
-              }
-            </button>
-          </form>
-          {step !== "compiled" && (
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Enter para enviar · Shift+Enter para nueva linea
-            </p>
-          )}
+          <AgentInput
+            accent="emerald"
+            value={input}
+            onChange={setInput}
+            onSend={send}
+            sending={isBlocked}
+            disabled={isBlocked}
+            placeholder={
+              step === "generating"
+                ? "Generando contrato..."
+                : step === "compiled"
+                ? "Pedi cambios al contrato o pregunta lo que necesites..."
+                : step === "deployed"
+                ? "Pregunta sobre tu token deployado..."
+                : "Describe tu activo o responde la pregunta..."
+            }
+            leftSlot={<VoiceMicButton accent="emerald" onText={setInput} disabled={isBlocked} />}
+          />
         </div>
       </div>
 

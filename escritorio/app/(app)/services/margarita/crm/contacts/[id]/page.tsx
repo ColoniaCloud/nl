@@ -725,7 +725,7 @@ function ListBlock({ title, items, color }: { title: string; items: string[]; co
       <ul className="space-y-1">
         {items.map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-xs text-foreground">
-            <span className={cn("flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5", colorMap[color] || colorMap.blue)}>
+            <span className={cn("flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-2xs font-bold mt-0.5", colorMap[color] || colorMap.blue)}>
               {i + 1}
             </span>
             {item}

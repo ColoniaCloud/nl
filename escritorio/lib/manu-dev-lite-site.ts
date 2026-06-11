@@ -244,19 +244,47 @@ function getIndustryThemeClass(industry: string): string {
   return "theme-professional";
 }
 
+function buildGoogleFontsLink(fontHeading: string, fontBody: string): string {
+  const families = Array.from(new Set([fontHeading, fontBody].filter(Boolean)))
+    .map((f) => `family=${encodeURIComponent(f)}:wght@400;500;600;700`)
+    .join("&");
+  if (!families) return "";
+  return `<link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?${families}&display=swap" rel="stylesheet" />`;
+}
+
 function baseLayout(params: {
   title: string;
   businessName: string;
+  logoUrl?: string;
   navLinks: { href: string; label: string }[];
   body: string;
   primaryColor: string;
+  secondaryColor?: string;
   accentColor: string;
+  fontHeading?: string;
+  fontBody?: string;
   themeClass: string;
 }) {
-  const { title, businessName, navLinks, body, primaryColor, accentColor, themeClass } = params;
+  const { title, businessName, logoUrl, navLinks, body, primaryColor, secondaryColor, accentColor, fontHeading, fontBody, themeClass } = params;
   const nav = navLinks
     .map((l) => `<a href="${l.href}" class="nav-link">${l.label}</a>`)
     .join("\n");
+
+  const fontsLink = fontHeading || fontBody
+    ? buildGoogleFontsLink(fontHeading || "Inter", fontBody || "Inter")
+    : "";
+
+  const fontVars = fontHeading || fontBody
+    ? `--font-heading:${fontHeading || "Inter"},sans-serif;--font-body:${fontBody || "Inter"},sans-serif;`
+    : "";
+
+  const secondaryVar = secondaryColor ? `--secondary:${secondaryColor};` : "";
+
+  const brandContent = logoUrl
+    ? `<img src="${logoUrl}" alt="${businessName}" style="height:40px;width:auto;object-fit:contain;" />`
+    : businessName;
 
   return `<!doctype html>
 <html lang="es">
@@ -264,14 +292,15 @@ function baseLayout(params: {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>${title}</title>
+    ${fontsLink}
     <link rel="stylesheet" href="/assets/styles.css" />
-    <style>:root{--primary:${primaryColor};--accent:${accentColor};}</style>
+    <style>:root{--primary:${primaryColor};${secondaryVar}--accent:${accentColor};${fontVars}}</style>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   </head>
   <body x-data="siteUi()" class="${themeClass}">
     <header class="site-header">
       <div class="container header-row">
-        <a class="brand" href="/index.html">${businessName}</a>
+        <a class="brand" href="/index.html">${brandContent}</a>
         <button class="menu-btn" @click="open = !open">Menu</button>
         <nav class="desktop-nav">${nav}</nav>
       </div>
@@ -332,10 +361,14 @@ function buildHomePage(input: LiteInput, navLinks: { href: string; label: string
     content: baseLayout({
       title: `${businessName} | Inicio`,
       businessName,
+      logoUrl: input.project?.logo_url,
       navLinks,
       body,
       primaryColor: input.design?.primary_color || "#1a365d",
+      secondaryColor: input.design?.secondary_color,
       accentColor: input.design?.accent_color || "#0ea5e9",
+      fontHeading: input.design?.font_heading,
+      fontBody: input.design?.font_body,
       themeClass: getIndustryThemeClass(industry),
     }),
   };
@@ -425,10 +458,14 @@ function buildLandingAnchorsPage(input: LiteInput) {
     content: baseLayout({
       title: `${businessName} | Landing`,
       businessName,
+      logoUrl: input.project?.logo_url,
       navLinks,
       body,
       primaryColor: input.design?.primary_color || "#1a365d",
+      secondaryColor: input.design?.secondary_color,
       accentColor: input.design?.accent_color || "#0ea5e9",
+      fontHeading: input.design?.font_heading,
+      fontBody: input.design?.font_body,
       themeClass,
     }),
   };
@@ -465,10 +502,14 @@ function buildInnerPage(
     content: baseLayout({
       title: `${businessName} | ${title}`,
       businessName,
+      logoUrl: input.project?.logo_url,
       navLinks,
       body,
       primaryColor: input.design?.primary_color || "#1a365d",
+      secondaryColor: input.design?.secondary_color,
       accentColor: input.design?.accent_color || "#0ea5e9",
+      fontHeading: input.design?.font_heading,
+      fontBody: input.design?.font_body,
       themeClass: getIndustryThemeClass(industry),
     }),
   };

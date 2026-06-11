@@ -42,6 +42,27 @@ export async function sendPasswordResetEmail(
   await sendEmail(to, "Restablecer contraseña — NL360", html);
 }
 
+export function sendBuildErrorReport(
+  errorMessage: string,
+  projectId?: string | number
+): void {
+  const subject = `[URGENTE] Error de generación de sitio${projectId ? ` — proyecto #${projectId}` : ""}`;
+  const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;background:#09090b;color:#e4e4e7;padding:32px;">
+<div style="max-width:600px;margin:0 auto;background:#18181b;border:1px solid rgba(239,68,68,0.4);border-radius:16px;padding:32px;">
+  <h2 style="color:#f87171;margin:0 0 16px;">Error crítico en generación de sitio</h2>
+  ${projectId ? `<p style="color:#a1a1aa;margin:0 0 8px;">Proyecto ID: <strong style="color:#e4e4e7;">${projectId}</strong></p>` : ""}
+  <p style="color:#a1a1aa;margin:0 0 16px;">Se intentó generar un sitio 2 veces y ambos intentos fallaron.</p>
+  <div style="background:#27272a;border-radius:8px;padding:16px;border-left:3px solid #f87171;">
+    <p style="margin:0 0 6px;font-size:12px;color:#71717a;font-family:monospace;">REPORTE TÉCNICO:</p>
+    <pre style="margin:0;font-size:12px;color:#fca5a5;white-space:pre-wrap;word-break:break-all;">${errorMessage.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>
+  </div>
+</div></body></html>`;
+
+  sendEmail("manuel@wpuruguay.com", subject, html).catch((err) => {
+    console.error("[email] sendBuildErrorReport failed:", err?.message);
+  });
+}
+
 export async function sendWelcomeEmail(
   to: string,
   username: string,

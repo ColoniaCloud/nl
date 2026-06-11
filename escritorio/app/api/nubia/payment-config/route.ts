@@ -29,6 +29,9 @@ export async function GET(req: NextRequest) {
     if (config.mercadopago_access_token) {
       (config as any).mercadopago_access_token = "***" + config.mercadopago_access_token.slice(-6);
     }
+    if (config.mercadopago_webhook_secret) {
+      (config as any).mercadopago_webhook_secret = "***" + config.mercadopago_webhook_secret.slice(-6);
+    }
     if (config.coinbase_api_key) {
       (config as any).coinbase_api_key = "***" + config.coinbase_api_key.slice(-6);
     }
@@ -51,7 +54,7 @@ export async function PATCH(req: NextRequest) {
 
   // Don't overwrite masked tokens — strip any masked or empty secret fields
   const safeData = { ...data };
-  for (const field of ["mercadopago_access_token", "coinbase_api_key", "coinbase_webhook_secret"] as const) {
+  for (const field of ["mercadopago_access_token", "mercadopago_webhook_secret", "coinbase_api_key", "coinbase_webhook_secret"] as const) {
     if (!safeData[field] || String(safeData[field]).startsWith("***")) delete safeData[field];
   }
 

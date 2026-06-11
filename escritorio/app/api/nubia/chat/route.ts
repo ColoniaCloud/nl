@@ -3,7 +3,7 @@ import { createLogger } from "@/lib/logger";
 
 const logger = createLogger("Nubia");
 import { cookies } from "next/headers";
-import { getUserId } from "@/app/api/nubia/projects/route";
+import { getUser } from "@/app/api/nubia/projects/route";
 import {
   getProjectById,
   createProject,
@@ -15,7 +15,8 @@ import {
 } from "@/lib/nubia/db-nubia";
 import { nubiaChat, parseNubiaReady, generateTagline } from "@/lib/nubia/nubia-ai";
 import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared-project";
-import { generateLogo } from "@/lib/logo-generator";
+import { generateLogo, downloadLogoLocally } from "@/lib/logo-generator";
+import { checkAgentAccess } from "@/lib/billing-access";
 import getPool from "@/lib/db-manu";
 
 export const runtime = "nodejs";
@@ -25,8 +26,16 @@ export async function POST(req: NextRequest) {
   const jar = await cookies();
   const token = jar.get(COOKIE_NAME)?.value;
   if (!token) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
-  const userId = await getUserId(token);
-  if (!userId) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+  const user = await getUser(token);
+  if (!user) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+
+  // C2: Verificar acceso al agente por plan
+  const agentCheck = checkAgentAccess(user.roles, "nubia");
+  if (!agentCheck.allowed) {
+    return NextResponse.json({ error: agentCheck.reason }, { status: 403 });
+  }
+
+  const userId = user.id;
 
   const { message, project_id, step } = await req.json();
   if (!message?.trim()) return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 });
@@ -132,6 +141,12 @@ export async function POST(req: NextRequest) {
       [sharedId, projectId]
     );
 
+    // M4: Link orphan chat history to the newly created project
+    await pool.execute(
+      "UPDATE nb_chat_history SET project_id = ? WHERE user_id = ? AND project_id IS NULL",
+      [projectId, userId]
+    );
+
     // Generate tagline and save design
     const tagline = await generateTagline(String(ready.name), String(ready.industry || "productos"));
     await upsertDesign(projectId, {
@@ -146,21 +161,24 @@ export async function POST(req: NextRequest) {
     // Persist tagline to shared brandbook
     if (tagline) await upsertBrandbook(userId, { tagline });
 
-    // Generate logo with Recraft
-    const logoResult = await generateLogo({
-      businessName: String(ready.name),
-      industry: String(ready.industry || ""),
-      primaryColor: colors.primary,
-      secondaryColor: colors.secondary,
-      accentColor: colors.accent,
-      style: "modern",
-    });
-    if (logoResult) {
-      await pool.execute(
-        "UPDATE nb_projects SET logo_url = ? WHERE id = ?",
-        [logoResult.url, projectId]
-      );
-      await upsertBrandbook(userId, { logo_url: logoResult.url });
+    // A2 + M1: Generate logo only if user requested it, non-blocking (fire-and-forget)
+    const logoRequested = (ready as any).logo_requested !== false;
+    if (logoRequested) {
+      generateLogo({
+        businessName: String(ready.name),
+        industry: String(ready.industry || ""),
+        primaryColor: colors.primary,
+        secondaryColor: colors.secondary,
+        accentColor: colors.accent,
+        style: "modern",
+      }).then(async (logoResult) => {
+        if (!logoResult) return;
+        // A2: Download SVG locally so the store can load it without CORS / URL expiry issues
+        const localUrl = await downloadLogoLocally(projectId, logoResult.url);
+        const finalUrl = localUrl ?? logoResult.url;
+        await pool.execute("UPDATE nb_projects SET logo_url = ? WHERE id = ?", [finalUrl, projectId]);
+        await upsertBrandbook(userId, { logo_url: finalUrl });
+      }).catch((err) => logger.error("Error generando logo para Nubia (background)", err));
     }
 
     const cleanReply = (cleanedReply.replace(/<NUBIA_READY>[\s\S]*?<\/NUBIA_READY>/, "").trim())
