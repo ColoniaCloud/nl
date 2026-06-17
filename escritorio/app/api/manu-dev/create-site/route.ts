@@ -986,7 +986,7 @@ export async function POST(req: NextRequest) {
       const keepAliveTimer = setInterval(() => sendKeepAlive(controller), 15_000);
       try {
         // Load project
-        send(controller, { status: "loading", message: "Cargando proyecto..." });
+        send(controller, { status: "loading", message: "Analizando proyecto..." });
 
         const [prows] = (await pool.execute(
           "SELECT * FROM md_projects WHERE id = ? AND user_id = ?",
@@ -1067,7 +1067,7 @@ export async function POST(req: NextRequest) {
         await prepareBuildInfra();
 
         // Fetch Unsplash photos — translate industry to English for better results
-        send(controller, { status: "images", message: "Buscando imagenes..." });
+        send(controller, { status: "images", message: "Descargando imágenes..." });
         const photoQuery = buildUnsplashQuery(project.industry || "", project.site_type || "");
         const photos = await fetchUnsplashPhotos(photoQuery, 8);
 
@@ -1088,7 +1088,7 @@ export async function POST(req: NextRequest) {
                   ? "Desplegando modo Lite..."
                   : retryAttempt > 0
                     ? `Reconstruyendo (intento ${retryAttempt + 1})...`
-                    : "Construyendo imagen Docker...",
+                    : "Compilando sitio...",
               });
             },
           });
@@ -1154,6 +1154,11 @@ export async function POST(req: NextRequest) {
             console.error("[create-site] Failed to persist pages:", pgErr);
           }
 
+          send(controller, {
+            status: "generating",
+            message: "Registrando en Traefik...",
+          });
+
           await markBuildSuccess(
             Number(project_id),
             containerId,
@@ -1162,7 +1167,7 @@ export async function POST(req: NextRequest) {
 
           send(controller, {
             status: "done",
-            message: "Sitio listo!",
+            message: "✓ Sitio listo",
             url: `https://${subdomain}.nl360.site`,
             subdomain,
             mode: activeMode,
@@ -1345,12 +1350,6 @@ export async function POST(req: NextRequest) {
               ) {
                 raw += event.delta.text;
                 charCount += event.delta.text.length;
-                if (charCount % 500 < event.delta.text.length) {
-                  send(controller, {
-                    status: "generating",
-                    message: `${label} (${Math.round(charCount / 1000)}kb)`,
-                  });
-                }
               }
             }
             return raw;
