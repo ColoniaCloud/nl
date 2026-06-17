@@ -13,6 +13,7 @@ import { AudienceSection } from '@/components/ui/audience-section';
 import { SitesShowcase, type ShowcaseSite } from '@/components/ui/sites-showcase';
 import { FaqAccordion } from '@/components/ui/faq-accordion';
 import { TestimonialsSection } from '@/components/ui/testimonials-section';
+import { InfiniteGrid } from '@/components/ui/infinite-grid';
 import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
 import getPool from '@/lib/db-manu';
 
@@ -317,9 +318,21 @@ export default async function HomePage() {
       </section>
 
       {/* ── SECCIÓN 3 — Planes + Logo ── */}
-      <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
+      <section
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)',
+          background: 'white',
+        }}
+      >
+        {/* Fondo: grid infinito + flashlight + esferas */}
+        <InfiniteGrid />
+
         <div
           style={{
+            position: 'relative',
+            zIndex: 1,
             maxWidth: '1200px',
             margin: '0 auto',
             display: 'grid',
