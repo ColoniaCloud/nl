@@ -33,7 +33,7 @@ export default function AgentesPage() {
               {/* Top row */}
               <div className="flex items-start justify-between mb-4">
                 <div className={`rounded-xl ${c.bgClass} p-2.5`}>
-                  <span className={`block h-5 w-5 ${c.dotClass} rounded-full`} />
+                  <c.icon className={`h-5 w-5 ${c.textClass}`} />
                 </div>
                 {agent.badge && (
                   <span className={`text-2xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${c.bgClass} ${c.textClass}`}>

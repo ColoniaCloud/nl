@@ -10,9 +10,13 @@ import {
   faBars,
   faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { Coins, ArrowUpRight, Wallet, Layers } from "lucide-react";
+import { ArrowUpRight, Wallet, Layers } from "lucide-react";
+import { AGENT_META } from "@/lib/agent-colors";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
+
+// Icono representativo de Forge (fuente unica: AGENT_META)
+const ForgeIcon = AGENT_META.forge.icon;
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import AgentInput from "@/components/chat/AgentInput";
 import VoiceMicButton from "@/components/chat/VoiceMicButton";
@@ -602,7 +606,7 @@ function ForgePageInner() {
                 </button>
               )}
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 text-xs">
-                <Coins className="w-4 h-4" />
+                <ForgeIcon className="w-4 h-4" />
               </div>
               <span className="text-sm font-semibold text-foreground truncate">Forge</span>
             </div>

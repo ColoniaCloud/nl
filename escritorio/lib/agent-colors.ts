@@ -1,3 +1,23 @@
+import {
+  Code2,
+  Megaphone,
+  Handshake,
+  GraduationCap,
+  ShoppingBag,
+  Hammer,
+  type LucideIcon,
+} from "lucide-react";
+
+export type AgentMeta = {
+  color: string;
+  textClass: string;
+  bgClass: string;
+  borderClass: string;
+  dotClass: string;
+  /** Icono representativo del agente (lucide-react) */
+  icon: LucideIcon;
+};
+
 export const AGENT_META = {
   "manu-dev": {
     color: "emerald",
@@ -5,6 +25,7 @@ export const AGENT_META = {
     bgClass: "bg-emerald-500/10",
     borderClass: "border-emerald-500/30",
     dotClass: "bg-emerald-400",
+    icon: Code2,
   },
   margarita: {
     color: "rose",
@@ -12,6 +33,7 @@ export const AGENT_META = {
     bgClass: "bg-rose-500/10",
     borderClass: "border-rose-500/30",
     dotClass: "bg-rose-400",
+    icon: Megaphone,
   },
   jordan: {
     color: "orange",
@@ -19,6 +41,7 @@ export const AGENT_META = {
     bgClass: "bg-orange-500/10",
     borderClass: "border-orange-500/30",
     dotClass: "bg-orange-400",
+    icon: Handshake,
   },
   mentoria: {
     color: "sky",
@@ -26,6 +49,7 @@ export const AGENT_META = {
     bgClass: "bg-sky-500/10",
     borderClass: "border-sky-500/30",
     dotClass: "bg-sky-400",
+    icon: GraduationCap,
   },
   nubia: {
     color: "violet",
@@ -33,6 +57,7 @@ export const AGENT_META = {
     bgClass: "bg-violet-500/10",
     borderClass: "border-violet-500/30",
     dotClass: "bg-violet-400",
+    icon: ShoppingBag,
   },
   forge: {
     color: "amber",
@@ -40,7 +65,8 @@ export const AGENT_META = {
     bgClass: "bg-amber-500/10",
     borderClass: "border-amber-500/30",
     dotClass: "bg-amber-400",
+    icon: Hammer,
   },
-} as const;
+} as const satisfies Record<string, AgentMeta>;
 
 export type AgentId = keyof typeof AGENT_META;

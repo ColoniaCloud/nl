@@ -24,8 +24,12 @@ import {
   Twitter,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AGENT_META } from "@/lib/agent-colors";
 import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
 import VoiceMicButton from "@/components/chat/VoiceMicButton";
+
+// Icono representativo de Margarita (fuente unica: AGENT_META)
+const MargaritaIcon = AGENT_META.margarita.icon;
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -360,7 +364,7 @@ export default function MargaritaPage() {
         <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-4 py-10">
           <div className="w-full max-w-2xl flex flex-col items-center text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/20 mb-5">
-              <Megaphone className="size-7 text-emerald-400" />
+              <MargaritaIcon className="size-7 text-emerald-400" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Margarita Mkt</h1>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-2 max-w-lg">

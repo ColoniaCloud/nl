@@ -4,7 +4,8 @@ import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Globe, ShoppingBag, Coins, Loader2, Check, ExternalLink, Wand2, ChevronRight, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
+import { Globe, Loader2, Check, ExternalLink, Wand2, ChevronRight, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
+import { AGENT_META } from "@/lib/agent-colors";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
 import VoiceMicButton from "@/components/chat/VoiceMicButton";
@@ -36,6 +37,7 @@ interface Message {
 }
 
 type Step =
+  | "pick_type"
   | "welcome"
   | "subdomain"
   | "identity"
@@ -56,7 +58,8 @@ type GenerationMode = "next" | "lite" | "lite_plus" | "auto";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STEP_LABELS: Record<Step, string> = {
-  welcome: "Inicio",
+  pick_type: "Tipo",
+  welcome: "Nombre",
   subdomain: "Direccion",
   identity: "Identidad",
   address: "Ubicacion",
@@ -64,14 +67,14 @@ const STEP_LABELS: Record<Step, string> = {
   colors: "Colores",
   fonts: "Tipografia",
   social: "Redes",
-  site_type: "Tipo",
+  site_type: "Estilo",
   building: "Construyendo",
   complete: "Listo",
   cms: "Administrar",
 };
 
 const STEPS_FLOW: Step[] = [
-  "welcome", "subdomain", "identity", "address", "logo",
+  "pick_type", "welcome", "subdomain", "identity", "address", "logo",
   "colors", "fonts", "social", "site_type", "building", "complete",
 ];
 
@@ -251,14 +254,14 @@ const SUBAGENTS = [
     href: "/services/nubia",
     label: "Nubia",
     desc: "Construi tu tienda online con productos y pagos",
-    icon: ShoppingBag,
+    icon: AGENT_META.nubia.icon,
     color: "text-violet-400 bg-violet-500/20",
   },
   {
     href: "/services/forge",
     label: "Forge",
     desc: "Tokeniza activos reales en blockchain",
-    icon: Coins,
+    icon: AGENT_META.forge.icon,
     color: "text-amber-400 bg-amber-500/20",
   },
 ];
@@ -313,8 +316,8 @@ function ManuDevHub({
 
   const agentIcon: Record<string, React.ElementType> = {
     "manu-dev": Globe,
-    nubia: ShoppingBag,
-    forge: Coins,
+    nubia: AGENT_META.nubia.icon,
+    forge: AGENT_META.forge.icon,
   };
 
   return (
@@ -420,7 +423,7 @@ function ManuDevPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<Step>("welcome");
+  const [step, setStep] = useState<Step>("pick_type");
   const [projectId, setProjectId] = useState<number | null>(null);
   const [siteUrl, setSiteUrl] = useState<string | null>(null);
   const [started, setStarted] = useState(false);
@@ -704,6 +707,7 @@ function ManuDevPage() {
             const newPid = parsed.project_id ?? projectId;
             if (parsed.step) setStep(newStep);
             if (parsed.project_id) setProjectId(parsed.project_id);
+            if (parsed.mode) setGenerationMode(parsed.mode as GenerationMode);
             setMessages((prev) => prev.map((m) =>
               m.id === assistantId
                 ? {
