@@ -16,6 +16,7 @@ const WP_BASE_URL = process.env.WP_BASE_URL!;
 const CHAT_MODEL = getAgent("manu-dev")!.model;
 
 type Step =
+  | "pick_type"
   | "welcome"
   | "subdomain"
   | "identity"
@@ -148,6 +149,35 @@ function getSystemPrompt(step: Step, projectData?: Record<string, any>, username
   const base = loadSystemPrompt("manu-dev").trim();
 
   const steps: Record<Step, string> = {
+    pick_type: `${base}
+
+PASO: Tipo de sitio (bienvenida inicial)
+El usuario acaba de escribir su primer mensaje. Saludalo brevemente (una frase) y presentale las 3 opciones:
+
+"Hola! Antes de empezar, dime que tipo de sitio necesitas:"
+<!--OPTIONS:["E-commerce (tienda online)","Web simple","Web profesional"]-->
+
+Explica cada opcion en pocas palabras:
+- **E-commerce**: Tienda con productos, carrito y pagos — te conectamos con Nubia, nuestro agente especializado.
+- **Web simple**: Sitio informativo, blog o landing — generacion rapida con IA.
+- **Web profesional**: Sitio Next.js completo, mas potente y personalizable (requiere plan Pro).
+
+Si el mensaje del usuario ya indica claramente e-commerce o tienda (palabras como "tienda", "vender", "ecommerce", "productos", "shop"), puedes seleccionar "E-commerce" automaticamente y emitir el marcador directamente sin esperar.
+
+Cuando el usuario elija "E-commerce (tienda online)":
+"Perfecto! Para tiendas con carrito y pagos usamos Nubia. Te redirijo ahora."
+<!--MANU:{"next":"redirect_nubia","data":{"site_type":"store_full"}}-->
+
+Cuando el usuario elija "Web simple":
+"Genial, vamos con el modo rapido. Como se llama tu negocio o proyecto?"
+<!--MANU:{"next":"welcome","data":{"mode":"lite_plus"}}-->
+
+Cuando el usuario elija "Web profesional":
+"Excelente, vamos con Next.js. Como se llama tu negocio o proyecto?"
+<!--MANU:{"next":"welcome","data":{"mode":"next"}}-->
+
+IMPORTANTE: Solo emite el marcador MANU cuando el usuario haya elegido una opcion. En el primer mensaje, muestra las opciones y espera.`,
+
     welcome: `${base}
 
 PASO: Bienvenida
@@ -292,8 +322,8 @@ Despues de las redes, pregunta SIEMPRE: "Tenes un email de contacto para el siti
 Si no tiene email, acepta y continua.
 
 Cuando tengas toda la info (redes + email o confirmacion de que no tiene):
-"Perfecto! Que tipo de sitio necesitas para ${name}?"
-<!--OPTIONS:["Tienda online","Blog","Web informativa"]-->
+"Perfecto! Que estilo de contenido va a tener ${name}?"
+<!--OPTIONS:["Tienda con catalogo (WhatsApp)","Blog","Web informativa"]-->
 <!--MANU:{"next":"site_type","data":{"social_links":[...]}}}-->
 
 En social_links, incluye TODAS las redes Y el email confirmados:
@@ -303,24 +333,15 @@ Si no tiene redes ni email, usa array vacio [].`,
 
     site_type: `${base}
 
-PASO: Tipo de sitio — Proyecto: ${name}
-El usuario esta eligiendo que tipo de sitio quiere entre las opciones presentadas.
+PASO: Estilo de contenido — Proyecto: ${name}
+El usuario esta eligiendo el tipo de contenido de su sitio (ya eligio el modo tecnico antes).
 
-Si el usuario elige "Tienda online", NO confirmes todavia. Pregunta que tipo de ecommerce quiere:
-"Que tipo de tienda necesitas?"
-<!--OPTIONS:["E-commerce simple (WhatsApp)","E-commerce completo (Nubia)"]-->
+Muestra las opciones si no estan visibles:
+<!--OPTIONS:["Tienda con catalogo (WhatsApp)","Blog","Web informativa"]-->
 
-Explica brevemente:
-- **E-commerce simple**: Catalogo con boton de compra por WhatsApp. Ideal para empezar rapido.
-- **E-commerce completo**: Carrito, pagos con MercadoPago/transferencia/cripto, gestion de productos. Usa nuestro agente especializado Nubia.
-
-Si elige "E-commerce simple (WhatsApp)" o indica que quiere algo simple:
-"Perfecto, vamos a construir ${name} como tienda con catalogo y WhatsApp. Arranco con la construccion ahora."
+Si elige "Tienda con catalogo (WhatsApp)":
+"Perfecto, vamos a construir ${name} como tienda con catalogo y boton de compra por WhatsApp. Arranco con la construccion ahora."
 <!--MANU:{"next":"building","data":{"site_type":"store"}}-->
-
-Si elige "E-commerce completo (Nubia)" o indica que quiere carrito/pagos/ecommerce completo:
-"Excelente eleccion! Para una tienda completa con carrito y pagos, Nubia es la mejor opcion. Te redirijo ahora..."
-<!--MANU:{"next":"redirect_nubia","data":{"site_type":"store_full"}}-->
 
 Si elige "Blog":
 "Perfecto, vamos a construir ${name} como blog. Arranco con la construccion ahora."
@@ -330,7 +351,7 @@ Si elige "Web informativa":
 "Perfecto, vamos a construir ${name} como web informativa. Arranco con la construccion ahora."
 <!--MANU:{"next":"building","data":{"site_type":"informational"}}-->
 
-REGLA: Siempre emiti el marcador MANU en este paso (excepto cuando recien preguntas el subtipo de tienda). No pidas mas informacion.`,
+REGLA: Siempre emiti el marcador MANU en este paso. No pidas mas informacion.`,
 
     building: `${base}
 
@@ -443,7 +464,7 @@ async function getCurrentStep(userId: number, projectId: number | null): Promise
     } AND role = "assistant" ORDER BY created_at DESC LIMIT 1`,
     projectId ? [userId, projectId] : [userId]
   )) as any;
-  return (rows[0]?.step as Step) || "welcome";
+  return (rows[0]?.step as Step) || "pick_type";
 }
 
 async function getHistory(userId: number, projectId: number | null) {
@@ -662,7 +683,7 @@ export async function POST(req: NextRequest) {
 
           const { cleanText, next: rawNext, data, options: parsedOptions, colors, fonts, upload, logoGenerate } = parseMessage(fullText);
           // Validate that the AI-emitted next step is a known step; reject invented steps
-          const VALID_STEPS: Set<string> = new Set(["welcome","subdomain","identity","address","logo","colors","fonts","social","site_type","building","complete","cms"]);
+          const VALID_STEPS: Set<string> = new Set(["pick_type","welcome","subdomain","identity","address","logo","colors","fonts","social","site_type","building","complete","cms","redirect_nubia"]);
           const next = (rawNext && VALID_STEPS.has(rawNext)) ? rawNext : undefined;
           if (rawNext && !VALID_STEPS.has(rawNext)) {
             console.warn(`[chat] AI emitted unknown step "${rawNext}", ignoring marker`);
@@ -671,6 +692,7 @@ export async function POST(req: NextRequest) {
           let nextStep: Step = (next as Step) || currentStep;
           let newProjectId = project_id;
           let logoPreview: string | undefined;
+          let modeToReturn: string | undefined;
 
           const { text: safeCleanText, sanitized } = sanitizeAssistantText(
             cleanText,
@@ -726,7 +748,25 @@ export async function POST(req: NextRequest) {
 
           // ── Data persistence per step transition ──
           if (next && data) {
-            if (next === "subdomain" && !project_id) {
+            if (next === "welcome" && currentStep === "pick_type" && !project_id) {
+              // pick_type -> welcome: User chose site type, store mode to return to frontend
+              modeToReturn = data.mode || "lite_plus";
+              if (!options || options.length === 0) {
+                // No options needed here — AI already asked for name
+              }
+
+            } else if (next === "redirect_nubia" && currentStep === "pick_type" && !project_id) {
+              // pick_type -> redirect_nubia: User chose e-commerce before any project was created
+              nextStep = "redirect_nubia" as Step;
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: null, cleanText: safeCleanText, handoffId: null })}\n\n`
+                )
+              );
+              controller.close();
+              return;
+
+            } else if (next === "subdomain" && !project_id) {
               // welcome -> subdomain: Create project
               await ensureProjectColumns();
               const tempSubdomain = `draft-${user.id}-${Date.now()}`;
@@ -820,7 +860,7 @@ export async function POST(req: NextRequest) {
                 );
               }
               if (!options || options.length === 0) {
-                options = ["Tienda online", "Blog", "Web informativa"];
+                options = ["Tienda con catalogo (WhatsApp)", "Blog", "Web informativa"];
               }
 
             } else if (next === "building" && project_id) {
@@ -920,6 +960,38 @@ export async function POST(req: NextRequest) {
               );
               controller.close();
               return;
+            }
+          }
+
+          // ── Programmatic fallback: pick_type → welcome or redirect_nubia ──
+          if (currentStep === "pick_type" && nextStep === "pick_type" && !project_id) {
+            const userLower = message.trim().toLowerCase();
+            const combined = (userLower + " " + (safeCleanText || "").toLowerCase());
+            if (
+              combined.includes("ecommerce") || combined.includes("e-commerce") ||
+              combined.includes("tienda") || combined.includes("store") ||
+              combined.includes("nubia")
+            ) {
+              console.log("[chat] Fallback pick_type: detected e-commerce, redirecting to Nubia");
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: null, cleanText: safeCleanText, handoffId: null })}\n\n`)
+              );
+              controller.close();
+              return;
+            } else if (
+              combined.includes("simple") || combined.includes("rapido") ||
+              combined.includes("basico") || combined.includes("lite")
+            ) {
+              console.log("[chat] Fallback pick_type: detected simple mode");
+              nextStep = "welcome" as Step;
+              modeToReturn = "lite_plus";
+            } else if (
+              combined.includes("profesional") || combined.includes("next") ||
+              combined.includes("avanzad") || combined.includes("premium")
+            ) {
+              console.log("[chat] Fallback pick_type: detected pro mode");
+              nextStep = "welcome" as Step;
+              modeToReturn = "next";
             }
           }
 
@@ -1027,6 +1099,7 @@ export async function POST(req: NextRequest) {
                 upload,
                 cleanText: safeCleanText,
                 logoPreview,
+                ...(modeToReturn ? { mode: modeToReturn } : {}),
               })}\n\n`
             )
           );
