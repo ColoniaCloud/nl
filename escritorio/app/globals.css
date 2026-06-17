@@ -657,3 +657,31 @@ button[class*="bg-zinc-7"][class*="rounded"]:active {
     --rac-invalid:     LinkText;
   }
 }
+
+/* ─── NL360 Global Typography ─── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 700;
+}
+
+body, p, span, a, li, label, input, textarea, button, select {
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+/* ─── Gradient text animation ─── */
+@keyframes gradientShift {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ─── Metallic logo shimmer ─── */
+@keyframes logoSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes metallicShimmer {
+  0%   { filter: grayscale(1) brightness(0.55); }
+  50%  { filter: grayscale(1) brightness(0.85); }
+  100% { filter: grayscale(1) brightness(0.55); }
+}
