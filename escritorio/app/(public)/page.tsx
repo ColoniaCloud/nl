@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers';
 import { Code2, Megaphone, MessageSquare, GraduationCap, ArrowRight } from 'lucide-react';
-import { InteractiveGradientBackground } from '@/components/ui/interactive-gradient-background';
+import { GradientDots } from '@/components/ui/gradient-dots';
 import { AgentCardTilt } from '@/components/ui/agent-card-tilt';
 import { LogoRotating } from '@/components/ui/logo-rotating';
 import { HeroLoginForm } from '@/components/ui/hero-login-form';
-import { AmericasGlobe } from '@/components/ui/americas-globe';
+import { IntroIllustration } from '@/components/ui/intro-illustration';
 import { PlansPricing } from '@/components/ui/plans-pricing';
 import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
 
@@ -142,17 +142,33 @@ export default async function HomePage() {
     >
 
       {/* ── HERO ── */}
-      <InteractiveGradientBackground intensity={1}>
-        <section
+      <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Fondo animado de puntos con gradiente */}
+        <GradientDots duration={20} />
+
+        {/* Velo sutil para legibilidad del texto */}
+        <div
+          aria-hidden="true"
           style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
             minHeight: '100vh',
             display: 'grid',
-            gridTemplateColumns: 'repeat(1, 1fr)',
             gap: '2rem',
             padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem)',
             alignItems: 'center',
           }}
-          className="lg:grid-cols-2"
+          className="grid-cols-1 lg:grid-cols-2"
         >
           {/* Col 1 */}
           <div style={{ color: 'white' }}>
@@ -161,7 +177,7 @@ export default async function HomePage() {
                 fontSize: 'clamp(2.5rem, 5.5vw, 4.5rem)',
                 lineHeight: 1.05,
                 fontFamily: 'var(--font-syne)',
-                fontWeight: 800,
+                fontWeight: 700,
                 margin: 0,
               }}
             >
@@ -171,7 +187,7 @@ export default async function HomePage() {
               style={{
                 fontSize: 'clamp(1rem, 2vw, 1.25rem)',
                 marginTop: '1.5rem',
-                opacity: 0.8,
+                opacity: 0.85,
                 lineHeight: 1.65,
                 maxWidth: '42ch',
               }}
@@ -184,8 +200,8 @@ export default async function HomePage() {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {isLoggedIn ? <AgentList /> : <HeroLoginForm />}
           </div>
-        </section>
-      </InteractiveGradientBackground>
+        </div>
+      </section>
 
       {/* ── SECCIÓN 1 — Cards de agentes ── */}
       <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
@@ -194,10 +210,9 @@ export default async function HomePage() {
             maxWidth: '1200px',
             margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(1, 1fr)',
             gap: '1.5rem',
           }}
-          className="sm:grid-cols-2 lg:grid-cols-4"
+          className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
         >
           {AGENTS.map((agent) => (
             <AgentCardTilt
@@ -218,11 +233,10 @@ export default async function HomePage() {
             maxWidth: '1200px',
             margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(1, 1fr)',
             gap: '3rem',
             alignItems: 'center',
           }}
-          className="lg:grid-cols-2"
+          className="grid-cols-1 lg:grid-cols-2"
         >
           {/* Col 1 — texto */}
           <div>
@@ -256,9 +270,9 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Col 2 — globo */}
+          {/* Col 2 — ilustración intro (floating + color por scroll) */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <AmericasGlobe />
+            <IntroIllustration />
           </div>
         </div>
       </section>
@@ -270,11 +284,10 @@ export default async function HomePage() {
             maxWidth: '1200px',
             margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(1, 1fr)',
             gap: '3rem',
             alignItems: 'center',
           }}
-          className="lg:grid-cols-2"
+          className="grid-cols-1 lg:grid-cols-2"
         >
           {/* Col 1 — Planes */}
           <PlansPricing plans={PLANS} />

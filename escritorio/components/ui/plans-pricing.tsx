@@ -10,8 +10,16 @@ type PlanItem = {
   annualUsd: number;
 };
 
+function discountPct(plan: PlanItem) {
+  const yearlyIfMonthly = plan.monthlyUsd * 12;
+  if (yearlyIfMonthly <= 0) return 0;
+  return Math.round((1 - plan.annualUsd / yearlyIfMonthly) * 100);
+}
+
 export function PlansPricing({ plans }: { plans: PlanItem[] }) {
   const [annual, setAnnual] = useState(false);
+
+  const maxDiscount = Math.max(0, ...plans.map(discountPct));
 
   return (
     <div>
@@ -69,6 +77,18 @@ export function PlansPricing({ plans }: { plans: PlanItem[] }) {
                 }}
               >
                 {cycle === 'annual' ? 'Anual' : 'Mensual'}
+                {cycle === 'annual' && maxDiscount > 0 && (
+                  <span
+                    style={{
+                      marginLeft: '0.4rem',
+                      fontSize: '0.65rem',
+                      fontWeight: 700,
+                      color: active ? '#86efac' : '#16a34a',
+                    }}
+                  >
+                    -{maxDiscount}%
+                  </span>
+                )}
               </button>
             );
           })}
@@ -80,9 +100,15 @@ export function PlansPricing({ plans }: { plans: PlanItem[] }) {
           const primary = annual
             ? `$${plan.annualUsd} / año`
             : `$${plan.monthlyUsd} / mes`;
-          const secondary = annual
-            ? `$${plan.monthlyUsd} / mes`
-            : `$${plan.annualUsd} / año`;
+          const pct = discountPct(plan);
+          const savings = plan.monthlyUsd * 12 - plan.annualUsd;
+          // En anual mostramos el ahorro; en mensual, el precio anual equivalente.
+          const secondary =
+            annual && pct > 0
+              ? `Ahorras $${savings}/año (-${pct}%)`
+              : annual
+                ? `$${plan.monthlyUsd} / mes`
+                : `$${plan.annualUsd} / año`;
           const showSecondary = plan.monthlyUsd > 0;
 
           return (
