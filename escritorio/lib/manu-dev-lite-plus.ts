@@ -39,7 +39,7 @@ export interface LitePlusResult {
 }
 
 const SONNET_MODEL = getAgent("manu-dev")!.model;
-const GENERATION_TIMEOUT_MS = 60_000;
+const GENERATION_TIMEOUT_MS = 120_000;
 
 function parseSocialLinks(raw: any): { platform: string; url: string }[] {
   try {
@@ -218,7 +218,7 @@ export async function generateLitePlusSite(
     return { success: false, files: [], pagesGenerated: 0, fallbackUsed: false, error: "ANTHROPIC_API_KEY no configurada" };
   }
 
-  const client = new Anthropic({ apiKey, timeout: 90_000, maxRetries: 1 });
+  const client = new Anthropic({ apiKey, timeout: 120_000, maxRetries: 0 });
   const maxPages = Math.min(input.pages.length, 6);
   const pagesToGenerate = input.pages.slice(0, maxPages);
 
@@ -240,7 +240,7 @@ export async function generateLitePlusSite(
       const response = await withTimeout(
         client.messages.create({
           model: SONNET_MODEL,
-          max_tokens: 8192,
+          max_tokens: 16000,
           messages: [{ role: "user", content: prompt }],
         }),
         GENERATION_TIMEOUT_MS,
@@ -254,9 +254,12 @@ export async function generateLitePlusSite(
 
       // Strip any markdown wrapping Claude might add
       let html = text.trim();
-      if (html.startsWith("```html")) html = html.slice(7);
-      if (html.startsWith("```")) html = html.slice(3);
-      if (html.endsWith("```")) html = html.slice(0, -3);
+      // Remove opening fence (```html, ```HTML, ``` alone)
+      html = html.replace(/^```[a-zA-Z]*\n?/, "");
+      // Remove closing fence
+      html = html.replace(/\n?```\s*$/, "");
+      // Remove any remaining ``` in case of double-wrapping
+      html = html.replace(/^```\s*/, "").replace(/\s*```$/, "");
       html = html.trim();
 
       if (validateHtml(html)) {
