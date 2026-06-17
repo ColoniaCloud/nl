@@ -5,6 +5,7 @@ import { AgentCardTilt } from '@/components/ui/agent-card-tilt';
 import { LogoRotating } from '@/components/ui/logo-rotating';
 import { HeroLoginForm } from '@/components/ui/hero-login-form';
 import { AmericasGlobe } from '@/components/ui/americas-globe';
+import { PlansPricing } from '@/components/ui/plans-pricing';
 import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
 
 // ─── Datos estáticos ─────────────────────────────────────────────────────────
@@ -41,25 +42,29 @@ const PLANS = [
     id: 'free',
     name: 'Free',
     description: 'Acceso básico a la plataforma',
-    price: `$${BILLING_PLANS.free.monthlyUsd} / mes`,
+    monthlyUsd: BILLING_PLANS.free.monthlyUsd,
+    annualUsd: BILLING_PLANS.free.annualUsd,
   },
   {
     id: 'basic',
     name: 'Basic',
     description: 'Herramientas esenciales para empezar',
-    price: `$${BILLING_PLANS.basic.monthlyUsd} / mes`,
+    monthlyUsd: BILLING_PLANS.basic.monthlyUsd,
+    annualUsd: BILLING_PLANS.basic.annualUsd,
   },
   {
     id: 'pro',
     name: 'Pro',
     description: 'Suite completa de agentes IA',
-    price: `$${BILLING_PLANS.pro.monthlyUsd} / mes`,
+    monthlyUsd: BILLING_PLANS.pro.monthlyUsd,
+    annualUsd: BILLING_PLANS.pro.annualUsd,
   },
   {
     id: 'elite',
     name: 'Elite',
     description: 'Acceso ilimitado a todos los módulos',
-    price: `$${BILLING_PLANS.elite.monthlyUsd} / mes`,
+    monthlyUsd: BILLING_PLANS.elite.monthlyUsd,
+    annualUsd: BILLING_PLANS.elite.annualUsd,
   },
 ];
 
@@ -123,7 +128,18 @@ export default async function HomePage() {
   const isLoggedIn = !!jwt?.value;
 
   return (
-    <main style={{ background: 'white', minHeight: '100vh' }}>
+    <main
+      style={{
+        background: 'white',
+        minHeight: '100vh',
+        // Full-bleed: rompe el contenedor max-w-5xl del layout (public)
+        // y cancela su pt-24 (6rem) para que el hero arranque arriba.
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
+        marginTop: '-6rem',
+        overflowX: 'hidden',
+      }}
+    >
 
       {/* ── HERO ── */}
       <InteractiveGradientBackground intensity={1}>
@@ -261,60 +277,7 @@ export default async function HomePage() {
           className="lg:grid-cols-2"
         >
           {/* Col 1 — Planes */}
-          <div>
-            <h3
-              style={{
-                fontFamily: 'var(--font-syne)',
-                fontWeight: 700,
-                fontSize: '1.75rem',
-                marginBottom: '2.5rem',
-                color: '#111',
-              }}
-            >
-              Nuestros planes
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-              {PLANS.map((plan, i) => (
-                <div
-                  key={plan.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    padding: '1.5rem 0',
-                    borderBottom: i < PLANS.length - 1 ? '1px solid #f0f0f0' : 'none',
-                  }}
-                >
-                  <div>
-                    <div style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, fontSize: '1.05rem', color: '#111' }}>
-                      {plan.name}
-                    </div>
-                    <div style={{ color: '#888', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                      {plan.description}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '1rem' }}>
-                    <div style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, fontSize: '1.1rem', color: '#111' }}>
-                      {plan.price}
-                    </div>
-                    <a
-                      href="/precio"
-                      style={{
-                        display: 'inline-block',
-                        marginTop: '0.5rem',
-                        fontSize: '0.8rem',
-                        color: '#111',
-                        textDecoration: 'underline',
-                        textUnderlineOffset: '3px',
-                      }}
-                    >
-                      Comprar
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <PlansPricing plans={PLANS} />
 
           {/* Col 2 — Logo */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
