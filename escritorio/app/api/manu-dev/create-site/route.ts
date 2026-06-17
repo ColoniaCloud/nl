@@ -339,7 +339,13 @@ CRITICO — IMAGENES: NUNCA uses "import Image from 'next/image'" ni el componen
 
 CRITICO — ICONOS: Importa iconos SIEMPRE desde './icons' en app/ o '../icons' en sub-paginas (ej: app/contacto/page.jsx). Ejemplo: import { Phone, Mail, Star, CheckCircle } from './icons'. NUNCA importes desde 'lucide-react' directamente. De 'react' solo importa hooks (camelCase): useState, useEffect, useRef, useCallback, useMemo, useContext, useReducer, memo, forwardRef, Fragment, Suspense, lazy, etc. NUNCA pongas un componente PascalCase en import from 'react'. NUNCA emojis como iconos. Iconos disponibles: Phone, Mail, MapPin, Clock, Star, CheckCircle, ArrowRight, ArrowLeft, ChevronDown, ChevronUp, ChevronRight, ChevronLeft, Menu, X, Search, Filter, ShoppingBag, ShoppingCart, Heart, Share2, Facebook, Instagram, Twitter, Youtube, Linkedin, MessageCircle, Send, Globe, ExternalLink, User, Users, Award, TrendingUp, BarChart2, PieChart, Home, Building2, Briefcase, Calendar, Image, Video, Play, Pause, Volume2, Music2, Camera, Eye, Zap, Shield, Lock, Key, Settings, Info, Plus, Minus, Edit2, Trash2, Upload, Download, Check, AlertTriangle, HelpCircle, Sparkles.
 
-DISENO: Mobile-first con breakpoints Tailwind (sm:, md:, lg:). Animaciones CSS (fadeInUp, hover transitions). Variables CSS custom en :root. Hero de pantalla completa (min-height:100vh) con imagen de fondo y overlay oscuro semitransparente.`;
+DISENO: Mobile-first con breakpoints Tailwind (sm:, md:, lg:).
+HERO: min-height:100vh, imagen de fondo, overlay calculado al brand. Titulo h1 con font-size var(--font-size-hero), font-weight:700, letter-spacing:-0.02em, color blanco con text-shadow para legibilidad.
+TIPOGRAFIA: Respetar escala definida en :root. h1→var(--font-size-hero)/700. h2→var(--font-size-h2)/600. body→var(--font-size-body)/1.7. var(--font-heading) SOLO en h1-h3, var(--font-body) en todo lo demas.
+PALETA: var(--color-accent) EXCLUSIVAMENTE en botones CTA, hovers, bordes de enfasis e iconos destacados — NUNCA como fondo de seccion. var(--color-primary) en header y footer. Alternar secciones entre var(--color-bg) y var(--color-muted) para ritmo visual.
+COMPONENTES: Cards: border-radius:var(--radius-card), box-shadow:var(--shadow-card), hover con translateY(-4px) + var(--shadow-card-hover) en var(--transition-hover). Botones CTA: padding:0.75rem 2rem, font-weight:600, border-radius:var(--radius-btn), background:var(--color-accent). Cada seccion: padding minimo var(--space-section) arriba y abajo.
+COPY: Contenido real y especifico del negocio. NUNCA placeholders ni Lorem ipsum. Precios coherentes con economia local.
+ANIMACIONES: fadeInUp en cards al hacer scroll. Transiciones hover 200ms. Sin animaciones en el hero.`;
 
 // Whitelist of REAL React exports — anything PascalCase in `from "react"` NOT in this set
 // is assumed to be a lucide-react icon and gets moved.
@@ -411,18 +417,42 @@ function buildUnsplashQuery(industry: string, siteType?: string): string {
 
 /** Industry-specific layout hints */
 function getIndustryHint(industry: string): string {
-  const ind = industry.toLowerCase();
-  if (ind.includes("restaurante") || ind.includes("comida") || ind.includes("gastro") || ind.includes("cafe") || ind.includes("bar"))
-    return "LAYOUT: Galería de fotos prominente, menú en grid con precios reales, horarios de atención visibles, botón de reserva/pedido.";
-  if (ind.includes("salud") || ind.includes("clinica") || ind.includes("medic") || ind.includes("dental") || ind.includes("psico"))
-    return "LAYOUT: Formulario de cita destacado, colores calmados (azul/verde), iconos médicos de lucide-react, sección de especialidades.";
-  if (ind.includes("tienda") || ind.includes("ecommerce") || ind.includes("venta") || ind.includes("shop"))
-    return "LAYOUT: Grid de productos destacados, botones 'Comprar' prominentes, sección de ofertas o novedades.";
-  if (ind.includes("portfolio") || ind.includes("fotograf") || ind.includes("diseno") || ind.includes("arte"))
-    return "LAYOUT: Galería de trabajos a pantalla completa, hover effects en proyectos, navegación minimalista.";
-  if (ind.includes("educacion") || ind.includes("academia") || ind.includes("escuela") || ind.includes("curso"))
-    return "LAYOUT: Secciones de cursos/programas, testimonials de alumnos, CTA de inscripcion prominente.";
-  return "";
+  const i = (industry || "").toLowerCase();
+
+  if (i.includes("zapato") || i.includes("calzado") || i.includes("moda") || i.includes("ropa") || i.includes("boutique") || i.includes("tienda") || i.includes("shop") || i.includes("ecommerce") || i.includes("venta"))
+    return "Layout: hero con modelo/producto a pantalla completa. Grid de productos 3 columnas con hover zoom. Seccion Coleccion con imagenes cuadradas. Paleta elegante con espacio en blanco generoso.";
+
+  if (i.includes("restaurante") || i.includes("comida") || i.includes("gastro") || i.includes("cafe") || i.includes("bar") || i.includes("cocina"))
+    return "Layout: hero con foto de plato o ambiente. Seccion menu con cards horizontales precio+descripcion. Galeria de fotos. CTA de reserva prominente. Horarios y ubicacion en footer.";
+
+  if (i.includes("salon") || i.includes("belleza") || i.includes("peluqueria") || i.includes("spa") || i.includes("estetica"))
+    return "Layout: hero suave con foto del salon. Grid de servicios con iconos y precios. Galeria antes/despues. Boton de turno/reserva sticky. Testimonios con fotos.";
+
+  if (i.includes("abogado") || i.includes("legal") || i.includes("juridico") || i.includes("estudio juridico"))
+    return "Layout: hero formal con foto profesional. Secciones: areas de practica, equipo, casos de exito. Paleta sobria navy/gris. CTA de consulta destacado. Sin precios visibles.";
+
+  if (i.includes("medico") || i.includes("clinica") || i.includes("salud") || i.includes("dentista") || i.includes("odontologo") || i.includes("dental") || i.includes("psico"))
+    return "Layout: hero con foto del consultorio o equipo medico. Especialidades en grid. Proceso de atencion paso a paso. Turnos online destacados. Seguros y obras sociales aceptadas.";
+
+  if (i.includes("gym") || i.includes("fitness") || i.includes("deporte") || i.includes("entrenamiento"))
+    return "Layout: hero energico con foto de accion. Planes de membresia comparados. Clases y horarios en grilla. Testimonios con fotos de transformacion. CTA prueba gratis.";
+
+  if (i.includes("inmobiliaria") || i.includes("propiedad") || i.includes("bienes raices") || i.includes("alquiler"))
+    return "Layout: buscador de propiedades prominente en hero. Grid de propiedades con foto+precio+m2. Filtros de busqueda. CTA de tasacion gratuita.";
+
+  if (i.includes("tecnologia") || i.includes("software") || i.includes("tech") || i.includes("startup") || i.includes("saas") || i.includes("app"))
+    return "Layout: hero con producto o demo. Features en grid de 3 con iconos. Pricing cards comparativas. Social proof logos de clientes. CTA de prueba gratuita prominente.";
+
+  if (i.includes("educacion") || i.includes("academia") || i.includes("curso") || i.includes("escuela") || i.includes("coaching"))
+    return "Layout: hero con propuesta de valor clara. Cursos en cards con duracion y precio. Testimonios de alumnos. Proceso de inscripcion paso a paso. Garantia visible.";
+
+  if (i.includes("construccion") || i.includes("arquitectura") || i.includes("reforma") || i.includes("obra"))
+    return "Layout: hero con proyecto destacado full-width. Portfolio en galeria. Servicios con iconos. Proceso de trabajo en pasos. CTA de presupuesto gratuito.";
+
+  if (i.includes("fotograf") || i.includes("portfolio") || i.includes("diseno") || i.includes("arte") || i.includes("creativ"))
+    return "Layout: hero con obra destacada full-bleed. Galeria masonry o grid asimetrico. Minimalismo tipografico. About personal con foto. CTA de contacto simple.";
+
+  return "Layout: hero impactante con propuesta de valor clara. Secciones: servicios, sobre nosotros, testimonios, contacto. CTA principal visible en hero y footer.";
 }
 
 /** Prompt 1 of 2: globals.css + layout.jsx */
@@ -438,6 +468,24 @@ GENERA ESTOS 2 ARCHIVOS (ambos OBLIGATORIOS y COMPLETOS):
 ===FILE:app/globals.css===
 [CSS COMPLETO con:
 - Variables :root: --color-primary (${design?.primary_color || "#1a1a2e"}), --color-secondary (${design?.secondary_color || "#16213e"}), --color-accent (${design?.accent_color || "#0f3460"}), --color-text (#1a1a1a), --color-bg (#ffffff), --color-muted (#f5f5f5)
+- Tokens adicionales en :root (definir EXACTAMENTE estos valores):
+  /* Escala tipográfica */
+  --font-size-hero: clamp(2.5rem, 5vw, 4rem);
+  --font-size-h1: clamp(2rem, 4vw, 3rem);
+  --font-size-h2: clamp(1.5rem, 3vw, 2.2rem);
+  --font-size-h3: 1.3rem;
+  --font-size-body: 1.05rem;
+  --font-size-small: 0.875rem;
+  /* Espaciado */
+  --space-section: 5rem;
+  --space-component: 2rem;
+  --space-item: 1rem;
+  /* Componentes */
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.15);
+  --transition-hover: all 200ms ease;
 - @import Google Fonts: "${design?.font_heading || "Inter"}" (titulos) y "${design?.font_body || "Inter"}" (cuerpo). Usa EXACTAMENTE estas fuentes, no elijas otras.
 - @keyframes fadeInUp (translateY 30px a 0, opacity 0 a 1, duration 0.6s), fadeIn, pulse
 - Clases .animate-fade-up { animation: fadeInUp 0.6s ease forwards }, .animate-fade-in
