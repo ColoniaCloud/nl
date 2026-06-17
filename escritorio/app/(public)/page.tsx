@@ -7,7 +7,14 @@ import { HeroLoginForm } from '@/components/ui/hero-login-form';
 import { IntroIllustration } from '@/components/ui/intro-illustration';
 import { PlansPricing } from '@/components/ui/plans-pricing';
 import { Reveal } from '@/components/ui/reveal';
+import { TechTicker } from '@/components/ui/tech-ticker';
+import { HowItWorks } from '@/components/ui/how-it-works';
+import { AudienceSection } from '@/components/ui/audience-section';
+import { SitesShowcase, type ShowcaseSite } from '@/components/ui/sites-showcase';
+import { FaqAccordion } from '@/components/ui/faq-accordion';
+import { TestimonialsSection } from '@/components/ui/testimonials-section';
 import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
+import getPool from '@/lib/db-manu';
 
 // ─── Datos estáticos ─────────────────────────────────────────────────────────
 
@@ -128,6 +135,24 @@ export default async function HomePage() {
   const jwt = cookieStore.get('nl360_jwt');
   const isLoggedIn = !!jwt?.value;
 
+  // Fetch de sitios para el showcase — solo sitios live (excluye error/building/draft).
+  let showcaseSites: ShowcaseSite[] = [];
+  let totalSites = 0;
+  try {
+    const [rows] = await getPool().query<any[]>(
+      `SELECT subdomain, status, created_at
+       FROM md_projects
+       WHERE status NOT IN ('error', 'building', 'draft')
+       ORDER BY created_at DESC`
+    );
+    totalSites = (rows as any[]).length;
+    showcaseSites = (rows as any[]).slice(0, 16);
+  } catch {
+    // Silently fail — SitesShowcase devuelve null si recibe array vacío.
+    showcaseSites = [];
+    totalSites = 0;
+  }
+
   return (
     <main
       style={{
@@ -204,6 +229,9 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── TECH TICKER ── */}
+      <TechTicker />
+
       {/* ── SECCIÓN 1 — Cards de agentes ── */}
       <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
         <div
@@ -227,6 +255,15 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ── CÓMO FUNCIONA ── */}
+      <HowItWorks />
+
+      {/* ── AUDIENCIA ── */}
+      <AudienceSection />
+
+      {/* ── SHOWCASE DE SITIOS ── */}
+      <SitesShowcase sites={showcaseSites} total={totalSites} />
 
       {/* ── SECCIÓN 2 — Globalización + Globe ── */}
       <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
@@ -301,6 +338,51 @@ export default async function HomePage() {
             <LogoRotating />
           </Reveal>
         </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <FaqAccordion />
+
+      {/* ── TESTIMONIOS ── */}
+      <TestimonialsSection />
+
+      {/* ── CTA FINAL ── */}
+      <section style={{
+        padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem)',
+        background: '#0a0a0a',
+        textAlign: 'center',
+      }}>
+        <h2 style={{
+          fontFamily: 'var(--font-syne)',
+          fontWeight: 800,
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          color: 'white',
+          margin: '0 0 1.5rem',
+          maxWidth: '18ch',
+          marginInline: 'auto',
+          lineHeight: 1.1,
+        }}>
+          ¿Listo para digitalizar tu negocio?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem', marginBottom: '2.5rem' }}>
+          Empezá gratis hoy. Sin tarjeta de crédito.
+        </p>
+        <a
+          href="/registro"
+          style={{
+            display: 'inline-block',
+            background: 'white',
+            color: '#0a0a0a',
+            fontFamily: 'var(--font-syne)',
+            fontWeight: 700,
+            fontSize: '1rem',
+            padding: '1rem 2.5rem',
+            borderRadius: '100px',
+            textDecoration: 'none',
+          }}
+        >
+          Crear cuenta gratis
+        </a>
       </section>
 
     </main>
