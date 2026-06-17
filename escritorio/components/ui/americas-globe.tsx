@@ -77,7 +77,7 @@ export function AmericasGlobe() {
 
     const globe = createGlobe(
       canvasRef.current!,
-      options as Parameters<typeof createGlobe>[1]
+      options as unknown as Parameters<typeof createGlobe>[1]
     );
 
     return () => {

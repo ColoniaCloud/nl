@@ -30,6 +30,7 @@
 		"@types/pdf-parse": "^1.1.5",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"cobe": "^2.0.1",
 		"ethers": "^6.16.0",
 		"framer-motion": "^12.38.0",
 		"gsap": "^3.14.2",
