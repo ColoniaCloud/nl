@@ -6,6 +6,7 @@ import { LogoRotating } from '@/components/ui/logo-rotating';
 import { HeroLoginForm } from '@/components/ui/hero-login-form';
 import { IntroIllustration } from '@/components/ui/intro-illustration';
 import { PlansPricing } from '@/components/ui/plans-pricing';
+import { Reveal } from '@/components/ui/reveal';
 import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
 
 // ─── Datos estáticos ─────────────────────────────────────────────────────────
@@ -171,7 +172,7 @@ export default async function HomePage() {
           className="grid-cols-1 lg:grid-cols-2"
         >
           {/* Col 1 */}
-          <div style={{ color: 'white' }}>
+          <Reveal style={{ color: 'white' }}>
             <h1
               style={{
                 fontSize: 'clamp(2.5rem, 5.5vw, 4.5rem)',
@@ -194,12 +195,12 @@ export default async function HomePage() {
             >
               Con nuestras herramientas de desarrollo, marketing y conocimiento
             </p>
-          </div>
+          </Reveal>
 
           {/* Col 2: condicional */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Reveal delay={0.15} style={{ display: 'flex', justifyContent: 'center' }}>
             {isLoggedIn ? <AgentList /> : <HeroLoginForm />}
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -214,14 +215,15 @@ export default async function HomePage() {
           }}
           className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {AGENTS.map((agent) => (
-            <AgentCardTilt
-              key={agent.href}
-              icon={agent.icon}
-              title={agent.title}
-              description={agent.description}
-              href={agent.href}
-            />
+          {AGENTS.map((agent, i) => (
+            <Reveal key={agent.href} delay={i * 0.1} style={{ height: '100%' }}>
+              <AgentCardTilt
+                icon={agent.icon}
+                title={agent.title}
+                description={agent.description}
+                href={agent.href}
+              />
+            </Reveal>
           ))}
         </div>
       </section>
@@ -239,12 +241,12 @@ export default async function HomePage() {
           className="grid-cols-1 lg:grid-cols-2"
         >
           {/* Col 1 — texto */}
-          <div>
+          <Reveal>
             <h2
               style={{
-                fontSize: 'clamp(2rem, 4vw, 3.5rem)',
+                fontSize: 'clamp(2rem, 4.2vw, 3.4rem)',
                 fontFamily: 'var(--font-syne)',
-                fontWeight: 800,
+                fontWeight: 700,
                 background: 'linear-gradient(135deg, #777 0%, #111 40%, #aaa 70%, #333 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -268,12 +270,12 @@ export default async function HomePage() {
               La suite de NL360 te provee de herramientas y conocimientos para que puedas
               poner en marcha la identidad digital de tu negocio.
             </p>
-          </div>
+          </Reveal>
 
           {/* Col 2 — ilustración intro (floating + color por scroll) */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Reveal delay={0.15} style={{ display: 'flex', justifyContent: 'center' }}>
             <IntroIllustration />
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -290,12 +292,14 @@ export default async function HomePage() {
           className="grid-cols-1 lg:grid-cols-2"
         >
           {/* Col 1 — Planes */}
-          <PlansPricing plans={PLANS} />
+          <Reveal>
+            <PlansPricing plans={PLANS} />
+          </Reveal>
 
           {/* Col 2 — Logo */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Reveal delay={0.15} style={{ display: 'flex', justifyContent: 'center' }}>
             <LogoRotating />
-          </div>
+          </Reveal>
         </div>
       </section>
 

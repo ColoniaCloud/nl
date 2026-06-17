@@ -37,7 +37,7 @@ export function PlansPricing({ plans }: { plans: PlanItem[] }) {
           style={{
             fontFamily: 'var(--font-syne)',
             fontWeight: 700,
-            fontSize: '1.75rem',
+            fontSize: 'clamp(1.6rem, 2.4vw, 2rem)',
             color: '#111',
             margin: 0,
           }}
