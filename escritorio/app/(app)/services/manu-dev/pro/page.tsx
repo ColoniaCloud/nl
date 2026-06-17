@@ -426,7 +426,7 @@ function ManuDevPage() {
   const [step, setStep] = useState<Step>("pick_type");
   const [projectId, setProjectId] = useState<number | null>(null);
   const [siteUrl, setSiteUrl] = useState<string | null>(null);
-  const [started, setStarted] = useState(false);
+  const [started, setStarted] = useState(true);
   const [showCms, setShowCms] = useState(false);
   const [buildLogs, setBuildLogs] = useState<string[]>([]);
   const [buildStatus, setBuildStatus] = useState<"running" | "done" | "error" | null>(null);
@@ -773,11 +773,10 @@ function ManuDevPage() {
     if (!text || loading) return;
     setInput("");
 
-    if (!started) {
+    if (messages.length === 0) {
       // First message — start conversation with auto mode (server resolves per plan)
       setEntryMode("auto");
       setGenerationMode("auto");
-      setStarted(true);
       await sendMessage(text, { newConversation: true, initialMode: "auto" });
     } else {
       await sendMessage(text);
