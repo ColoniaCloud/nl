@@ -685,3 +685,9 @@ body, p, span, a, li, label, input, textarea, button, select {
   50%  { filter: grayscale(1) brightness(0.85); }
   100% { filter: grayscale(1) brightness(0.55); }
 }
+
+/* ─── Ticker marquee ─── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
