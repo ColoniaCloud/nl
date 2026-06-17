@@ -35,13 +35,11 @@ export function AmericasGlobe() {
     window.addEventListener('resize', onResize);
     onResize();
 
+    // cobe espera cada arco como { from: [lat, lng], to: [lat, lng], color: [r,g,b] }
     const arcs = capitals.map((cap) => ({
-      startLat: BUENOS_AIRES.lat,
-      startLng: BUENOS_AIRES.lng,
-      endLat: cap.lat,
-      endLng: cap.lng,
-      arcAlt: 0.35,
-      color: [0.05, 0.9, 0.5, 0.7] as [number, number, number, number],
+      from: [BUENOS_AIRES.lat, BUENOS_AIRES.lng] as [number, number],
+      to: [cap.lat, cap.lng] as [number, number],
+      color: [0.05, 0.9, 0.5] as [number, number, number],
     }));
 
     const markers = [
