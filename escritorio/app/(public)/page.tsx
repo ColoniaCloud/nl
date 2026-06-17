@@ -354,7 +354,7 @@ export default async function HomePage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--font-syne)',
-          fontWeight: 800,
+          fontWeight: 700,
           fontSize: 'clamp(2rem, 5vw, 3.5rem)',
           color: 'white',
           margin: '0 0 1.5rem',

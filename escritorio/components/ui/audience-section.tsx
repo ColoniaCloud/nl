@@ -72,7 +72,7 @@ export function AudienceSection() {
           <h2
             style={{
               fontFamily: 'var(--font-syne)',
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               color: '#111',
               margin: 0,

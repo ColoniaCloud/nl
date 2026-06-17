@@ -75,7 +75,7 @@ export function TestimonialsSection() {
           <h2
             style={{
               fontFamily: 'var(--font-syne)',
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               color: 'white',
               margin: 0,
