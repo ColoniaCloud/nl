@@ -5,6 +5,7 @@ import { AgentCardTilt } from '@/components/ui/agent-card-tilt';
 import { LogoRotating } from '@/components/ui/logo-rotating';
 import { HeroLoginForm } from '@/components/ui/hero-login-form';
 import { AmericasGlobe } from '@/components/ui/americas-globe';
+import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
 
 // ─── Datos estáticos ─────────────────────────────────────────────────────────
 
@@ -40,25 +41,25 @@ const PLANS = [
     id: 'free',
     name: 'Free',
     description: 'Acceso básico a la plataforma',
-    price: '$0 / mes',
+    price: `$${BILLING_PLANS.free.monthlyUsd} / mes`,
   },
   {
     id: 'basic',
     name: 'Basic',
     description: 'Herramientas esenciales para empezar',
-    price: 'Ver precio',
+    price: `$${BILLING_PLANS.basic.monthlyUsd} / mes`,
   },
   {
     id: 'pro',
     name: 'Pro',
     description: 'Suite completa de agentes IA',
-    price: 'Ver precio',
+    price: `$${BILLING_PLANS.pro.monthlyUsd} / mes`,
   },
   {
     id: 'elite',
     name: 'Elite',
     description: 'Acceso ilimitado a todos los módulos',
-    price: 'Ver precio',
+    price: `$${BILLING_PLANS.elite.monthlyUsd} / mes`,
   },
 ];
 
