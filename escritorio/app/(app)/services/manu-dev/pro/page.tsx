@@ -430,6 +430,7 @@ function ManuDevPage() {
   const [showCms, setShowCms] = useState(false);
   const [buildLogs, setBuildLogs] = useState<string[]>([]);
   const [buildStatus, setBuildStatus] = useState<"running" | "done" | "error" | null>(null);
+  const [buildDegraded, setBuildDegraded] = useState(false);
   const [generationMode, setGenerationMode] = useState<GenerationMode>("auto");
   const [entryMode, setEntryMode] = useState<GenerationMode | null>(null);
   const [recommendedMode, setRecommendedMode] = useState<"next" | "lite" | null>(null);
@@ -580,10 +581,12 @@ function ManuDevPage() {
           if (parsed.mode && parsed.status !== "done") {
             setBuildLogs((prev) => [...prev, `Modo efectivo: ${parsed.mode}`]);
           }
+          if (parsed.status === "mode_degraded") setBuildDegraded(true);
           if (parsed.status === "done") {
             setSiteUrl(parsed.url);
             setStep("complete");
             setBuildStatus("done");
+            setBuildDegraded(false);
             setMessages((prev) => [...prev, {
               id: uid(), role: "assistant",
               content: `Tu sitio web esta listo!\n${parsed.url}`,
@@ -1003,6 +1006,23 @@ function ManuDevPage() {
                   startBuild(pendingBuildPid, modeId);
                 }}
               />
+            </div>
+          )}
+          {/* Mode degraded banner */}
+          {buildDegraded && (
+            <div className="flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 mb-3 text-sm">
+              <span className="text-amber-400 mt-0.5">⚠️</span>
+              <p className="text-amber-200 flex-1">
+                El modo <strong>PRO</strong> no estaba disponible.
+                Tu sitio se construyó con <strong>Lite+</strong>.
+              </p>
+              <button
+                onClick={() => setBuildDegraded(false)}
+                className="text-amber-400/60 hover:text-amber-400 transition-colors ml-2"
+                aria-label="Cerrar aviso"
+              >
+                ✕
+              </button>
             </div>
           )}
           {/* Build terminal */}

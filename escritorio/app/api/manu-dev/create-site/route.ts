@@ -1221,9 +1221,10 @@ export async function POST(req: NextRequest) {
 
           if (reason) {
             send(controller, {
-              status: "fallback",
+              status: "mode_degraded",
               mode: "lite_plus",
-              message: `Activando Lite+: ${reason}`,
+              message: `⚠️  Modo PRO no disponible (${reason}). Construyendo con Lite+ automáticamente.`,
+              originalMode: "next",
             });
           }
 
@@ -1319,7 +1320,7 @@ export async function POST(req: NextRequest) {
         const client = new Anthropic({
           apiKey: process.env.ANTHROPIC_API_KEY,
           timeout: 120_000,
-          maxRetries: 2,
+          maxRetries: 0,
         });
 
         /** Stream a generation prompt and return the accumulated raw text */
@@ -1414,7 +1415,7 @@ export async function POST(req: NextRequest) {
               console.error(`[create-site] Estructura intento ${attempt}/${MAX_ATTEMPTS} fallo:`, genErr?.message);
               if (!isTransientError(genErr) || attempt === MAX_ATTEMPTS) throw genErr;
               send(controller, { status: "generating", message: `Error de red, reintentando (${attempt + 1}/${MAX_ATTEMPTS})...` });
-              await delay(2000 * attempt);
+              await delay(1000 * Math.pow(2, attempt - 1));
             }
           }
           if (!structureFiles) throw new Error("No se pudo generar la estructura base.");
@@ -1441,7 +1442,7 @@ export async function POST(req: NextRequest) {
               console.error(`[create-site] Pagina principal intento ${attempt}/${MAX_ATTEMPTS} fallo:`, genErr?.message);
               if (!isTransientError(genErr) || attempt === MAX_ATTEMPTS) throw genErr;
               send(controller, { status: "generating", message: `Error de red, reintentando (${attempt + 1}/${MAX_ATTEMPTS})...` });
-              await delay(2000 * attempt);
+              await delay(1000 * Math.pow(2, attempt - 1));
             }
           }
           if (!pageFiles) throw new Error("No se pudo generar la pagina principal.");
@@ -1466,7 +1467,7 @@ export async function POST(req: NextRequest) {
                 console.error(`[create-site] Internas intento ${attempt}/${MAX_ATTEMPTS} fallo:`, genErr?.message);
                 if (!isTransientError(genErr) || attempt === MAX_ATTEMPTS) break; // non-fatal, just skip
                 send(controller, { status: "generating", message: `Error de red en internas, reintentando (${attempt + 1}/${MAX_ATTEMPTS})...` });
-                await delay(2000 * attempt);
+                await delay(1000 * Math.pow(2, attempt - 1));
               }
             }
           }
