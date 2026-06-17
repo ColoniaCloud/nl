@@ -59,7 +59,7 @@ type SubAgent = {
 const ManuDevIcon = AGENT_META["manu-dev"].icon;
 
 const MANU_DEV_SUBAGENTS: SubAgent[] = [
-  { href: "/services/manu-dev", label: "Dev", icon: Globe, projectsKey: "manuDev" },
+  { href: "/services/manu-dev/pro", label: "Dev", icon: Globe, projectsKey: "manuDev" },
   { href: "/services/nubia", label: "Nubia", icon: AGENT_META.nubia.icon, projectsKey: "nubia" },
   { href: "/services/forge", label: "Forge", icon: AGENT_META.forge.icon, projectsKey: "forge" },
 ];
