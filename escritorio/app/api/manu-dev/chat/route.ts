@@ -966,7 +966,7 @@ export async function POST(req: NextRequest) {
           // ── Programmatic fallback: pick_type → welcome or redirect_nubia ──
           if (currentStep === "pick_type" && nextStep === "pick_type" && !project_id) {
             const userLower = message.trim().toLowerCase();
-            const combined = (userLower + " " + (safeCleanText || "").toLowerCase());
+            const combined = userLower;
             if (
               combined.includes("ecommerce") || combined.includes("e-commerce") ||
               combined.includes("tienda") || combined.includes("store") ||
