@@ -252,20 +252,28 @@ export async function generateLitePlusSite(
         .map((b) => b.text)
         .join("");
 
-      // Strip any markdown wrapping Claude might add
+      // Extract the HTML document from anywhere in the response,
+      // ignoring surrounding prose or markdown fences.
       let html = text.trim();
-      // Remove opening fence (```html, ```HTML, ``` alone)
-      html = html.replace(/^```[a-zA-Z]*\n?/, "");
-      // Remove closing fence
-      html = html.replace(/\n?```\s*$/, "");
-      // Remove any remaining ``` in case of double-wrapping
-      html = html.replace(/^```\s*/, "").replace(/\s*```$/, "");
+      const lower = html.toLowerCase();
+      const startDoctype = lower.indexOf("<!doctype html");
+      const startHtml    = lower.indexOf("<html");
+      const start = startDoctype !== -1 ? startDoctype : startHtml;
+      const endIdx = lower.lastIndexOf("</html>");
+      if (start !== -1 && endIdx !== -1) {
+        html = html.slice(start, endIdx + "</html>".length);
+      } else {
+        // Fallback: strip markdown fences
+        html = html.replace(/^```[a-zA-Z]*\n?/, "");
+        html = html.replace(/\n?```\s*$/, "");
+        html = html.replace(/^```\s*/, "").replace(/\s*```$/, "");
+      }
       html = html.trim();
 
       if (validateHtml(html)) {
         htmlFiles.push({ path: slugToFile(page.slug), content: html });
       } else {
-        console.warn(`[lite-plus] Invalid HTML for ${label}, length=${html.length}`);
+        console.warn(`[lite-plus] Invalid HTML for ${label}, length=${html.length}, preview=${html.slice(0,200)}`);
         failCount++;
       }
     } catch (err: any) {
