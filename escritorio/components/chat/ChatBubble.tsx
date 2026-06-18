@@ -20,6 +20,8 @@ interface ChatBubbleProps {
   markdown?: boolean;
   /** Handler for option buttons */
   onOption?: (opt: string) => void;
+  /** Hide the text option buttons (e.g. when an agent-specific selector replaces them) */
+  hideOptions?: boolean;
   /** Agent-specific content rendered after main text (assistant only) */
   children?: ReactNode;
 }
@@ -37,7 +39,7 @@ const PROSE_CLASSES = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function ChatBubble({ msg, markdown = true, onOption, children }: ChatBubbleProps) {
+export function ChatBubble({ msg, markdown = true, onOption, hideOptions = false, children }: ChatBubbleProps) {
   const isUser = msg.role === "user";
 
   const renderedHtml = useMemo(() => {
@@ -72,7 +74,7 @@ export function ChatBubble({ msg, markdown = true, onOption, children }: ChatBub
         )}
 
         {/* Option buttons (shared pattern across agents) */}
-        {msg.options && msg.options.length > 0 && !msg.streaming && (
+        {!hideOptions && msg.options && msg.options.length > 0 && !msg.streaming && (
           <div className="mt-3 flex flex-wrap gap-2">
             {msg.options.map((opt) => (
               <button

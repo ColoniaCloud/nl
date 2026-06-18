@@ -4,15 +4,14 @@ import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Globe, Loader2, Check, ExternalLink, Wand2, ChevronRight, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
+import { Globe, Loader2, Check, ExternalLink, Wand2, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
 import { AGENT_META } from "@/lib/agent-colors";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
 import VoiceMicButton from "@/components/chat/VoiceMicButton";
 import CmsPanel from "@/components/manu-dev/CmsPanel";
-import { TemplateSelector, ModePicker } from "@/components/manu-dev/TemplateSelector";
+import { TemplateSelector } from "@/components/manu-dev/TemplateSelector";
 import type { LiteTemplateId } from "@/components/manu-dev/TemplateSelector";
-import type { ModeOption } from "@/components/manu-dev/TemplateSelector";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -139,7 +138,7 @@ function ColorSwatches({ colors }: { colors: ColorSwatch[] }) {
   );
 }
 
-function FontPreview({ fonts }: { fonts: { name: string }[] }) {
+function FontPreview({ fonts, onSelect }: { fonts: { name: string }[]; onSelect?: (fontName: string) => void }) {
   useEffect(() => {
     fonts.forEach((f) => {
       const id = `gf-${f.name.replace(/\s+/g, "-").toLowerCase()}`;
@@ -155,13 +154,16 @@ function FontPreview({ fonts }: { fonts: { name: string }[] }) {
   return (
     <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
       {fonts.map((font) => (
-        <div
+        <button
           key={font.name}
-          className="rounded-lg border border-border bg-muted/50 px-3 py-4 text-center"
+          type="button"
+          onClick={() => onSelect?.(font.name)}
+          disabled={!onSelect}
+          className="rounded-lg border border-border bg-muted/50 px-3 py-4 text-center transition-colors hover:border-emerald-500/50 hover:bg-emerald-500/10 disabled:cursor-default disabled:hover:border-border disabled:hover:bg-muted/50"
           style={{ fontFamily: `"${font.name}", sans-serif` }}
         >
           <span className="text-base font-semibold text-foreground">{font.name}</span>
-        </div>
+        </button>
       ))}
     </div>
   );
@@ -435,9 +437,8 @@ function ManuDevPage() {
   const [entryMode, setEntryMode] = useState<GenerationMode | null>(null);
   const [recommendedMode, setRecommendedMode] = useState<"next" | "lite" | null>(null);
   const [liteEligible, setLiteEligible] = useState<boolean | null>(null);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [modeSaving, setModeSaving] = useState(false);
   const [userRoles, setUserRoles] = useState<string[]>([]);
+  const [userName, setUserName] = useState("");
   const [pendingBuildPid, setPendingBuildPid] = useState<number | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<LiteTemplateId | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -458,6 +459,7 @@ function ManuDevPage() {
         if (d?.ok) {
           const roles = d.user?.roles || d.roles || [];
           setUserRoles(Array.isArray(roles) ? roles : []);
+          if (d.user?.displayName) setUserName(d.user.displayName);
         }
       })
       .catch(() => {});
@@ -467,17 +469,6 @@ function ManuDevPage() {
   const isFreeUser = userRoles.length === 0 || (userRoles.some((r) => r === "nl360_free") && !userRoles.some((r) => /^nl360_(basic|pro|elite)$/.test(r) || r === "nl_setters" || r === "administrator"));
   const isBasicUser = userRoles.some((r) => r === "nl360_basic");
   const hasNextAccess = userRoles.some((r) => /^nl360_(pro|elite)$/.test(r) || r === "nl_setters" || r === "administrator");
-
-  // Available modes for mode picker
-  const availableModes: ModeOption[] = (() => {
-    const modes: ModeOption[] = [
-      { id: "lite_plus", label: "Lite+", desc: "IA genera HTML unico" },
-    ];
-    if (hasNextAccess) {
-      modes.push({ id: "next", label: "Next.js", desc: "Sitio premium con React" });
-    }
-    return modes;
-  })();
 
   // Load project from URL param (?project=ID) — re-runs on param change
   useEffect(() => {
@@ -511,31 +502,6 @@ function ManuDevPage() {
       })
       .catch(() => {});
   }, [projectId]);
-
-  async function updateGenerationMode(mode: GenerationMode) {
-    setGenerationMode(mode);
-    if (!projectId || modeSaving) {
-      return;
-    }
-
-    setModeSaving(true);
-    try {
-      const res = await fetch("/api/manu-dev/generation-mode", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ project_id: projectId, mode }),
-      });
-      if (res.ok) {
-        setGenerationMode(mode);
-      } else {
-        setBuildLogs((prev) => [...prev, "No se pudo guardar el modo de generacion."]);
-      }
-    } catch {
-      setBuildLogs((prev) => [...prev, "Error de red al guardar el modo de generacion."]);
-    } finally {
-      setModeSaving(false);
-    }
-  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -758,8 +724,8 @@ function ManuDevPage() {
           // Free users only have lite_plus — start immediately, no picker needed
           startBuild(triggerBuildPid, "lite_plus");
         } else if (isBasicUser || hasNextAccess) {
-          // Paid users pick their generation mode (lite_plus or next)
-          setPendingBuildPid(triggerBuildPid);
+          // All sites are generated with lite_plus — start immediately, no picker
+          startBuild(triggerBuildPid, "lite_plus");
         } else {
           // Fallback: start immediately with lite_plus
           startBuild(triggerBuildPid, "lite_plus");
@@ -891,40 +857,6 @@ function ManuDevPage() {
             )}
           </div>
           <StepIndicator current={step} />
-          <div className="mt-2">
-            <button
-              onClick={() => setAdvancedOpen((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 text-xxs text-muted-foreground hover:bg-muted transition-colors"
-            >
-              <ChevronRight className={`size-3 transition-transform ${advancedOpen ? "rotate-90" : ""}`} />
-              Opciones avanzadas
-            </button>
-            {advancedOpen && (
-              <div className="mt-2 rounded-xl border border-border bg-muted/40 p-2.5 sm:p-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xxs text-muted-foreground">Modo de generacion:</span>
-                  {(hasNextAccess ? ["lite_plus", "next"] as GenerationMode[] : ["lite_plus"] as GenerationMode[]).map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => updateGenerationMode(m)}
-                      disabled={modeSaving || loading}
-                      className={[
-                        "rounded-full px-2.5 py-1 text-xxs font-medium border transition-colors",
-                        generationMode === m
-                          ? "bg-emerald-600 text-white border-emerald-600"
-                          : "border-border text-foreground hover:bg-emerald-500/10 hover:border-emerald-500/40",
-                      ].join(" ")}
-                    >
-                      {m}
-                    </button>
-                  ))}
-                </div>
-                <p className="mt-1.5 text-2xs text-muted-foreground">
-                  Modo activo: {generationMode === "auto" ? "lite_plus" : generationMode}
-                </p>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
@@ -932,11 +864,25 @@ function ManuDevPage() {
       <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <div className="pointer-events-none sticky top-0 z-10 h-10 bg-gradient-to-b from-background to-transparent" />
         <div className="mx-auto w-full max-w-3xl px-3 sm:px-4 pb-6 space-y-5 -mt-10 pt-4">
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12">
+              <div className="text-2xl font-semibold text-foreground mb-2">
+                {userName ? `Hola ${userName}` : "Hola"}
+              </div>
+              <p className="text-muted-foreground text-sm max-w-md">
+                Vamos a crear tu sitio web en pocos minutos. Solo respondé algunas preguntas y nos encargamos del resto.
+              </p>
+              <p className="text-muted-foreground text-sm mt-4 font-medium">
+                Como se llama tu proyecto?
+              </p>
+            </div>
+          )}
           {messages.map((msg) => (
             <ChatBubble
               key={msg.id}
               msg={msg}
               markdown={false}
+              hideOptions={!!(msg.fonts && msg.fonts.length > 0)}
               onOption={(opt) => {
                 if (!loading) {
                   setMessages((prev) => prev.map((m) =>
@@ -950,9 +896,19 @@ function ManuDevPage() {
               {msg.colors && msg.colors.length > 0 && !msg.streaming && (
                 <ColorSwatches colors={msg.colors} />
               )}
-              {/* Font preview */}
+              {/* Font preview — grid is the selector */}
               {msg.fonts && msg.fonts.length > 0 && !msg.streaming && (
-                <FontPreview fonts={msg.fonts} />
+                <FontPreview
+                  fonts={msg.fonts}
+                  onSelect={(fontName) => {
+                    if (!loading) {
+                      setMessages((prev) => prev.map((m) =>
+                        m.id === msg.id ? { ...m, options: [] } : m
+                      ));
+                      sendMessage(fontName);
+                    }
+                  }}
+                />
               )}
               {/* Logo generating skeleton */}
               {msg.logoGenerating && !msg.logoPreview && (
@@ -996,18 +952,6 @@ function ManuDevPage() {
               )}
             </ChatBubble>
           ))}
-          {/* Template / Mode picker before build */}
-          {pendingBuildPid && !buildStatus && (
-            <div className="rounded-xl border border-border bg-muted/40 p-4 space-y-3">
-              <ModePicker
-                modes={availableModes}
-                onSelect={(modeId) => {
-                  setGenerationMode(modeId as GenerationMode);
-                  startBuild(pendingBuildPid, modeId);
-                }}
-              />
-            </div>
-          )}
           {/* Mode degraded banner */}
           {buildDegraded && (
             <div className="flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 mb-3 text-sm">

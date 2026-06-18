@@ -372,47 +372,42 @@ const KNOWN_NON_ICON_COMPONENTS = new Set([
 ]);
 
 /** Map Spanish industry name to English Unsplash search terms */
-function buildUnsplashQuery(industry: string, siteType?: string): string {
-  const ind = (industry || "").toLowerCase();
-  if (ind.includes("restaurante") || ind.includes("comida") || ind.includes("gastro") || ind.includes("cafe") || ind.includes("bar"))
-    return "restaurant food dining ambiance";
-  if (ind.includes("salud") || ind.includes("clinica") || ind.includes("medic") || ind.includes("dental") || ind.includes("psico"))
-    return "healthcare clinic medical professional";
-  if (ind.includes("tecnolog") || ind.includes("software") || ind.includes("digital") || ind.includes("web") || ind.includes("app"))
-    return "technology software modern workspace";
-  if (ind.includes("moda") || ind.includes("ropa") || ind.includes("boutique") || ind.includes("tienda ropa"))
-    return "fashion clothing boutique retail";
-  if (ind.includes("belleza") || ind.includes("spa") || ind.includes("salon") || ind.includes("estetica") || ind.includes("cosmet"))
+function buildUnsplashQuery(industry: string, siteType?: string, description?: string): string {
+  const i = (industry || "").toLowerCase();
+
+  if (i.includes("zapato") || i.includes("calzado") || i.includes("moda") || i.includes("ropa"))
+    return "fashion shoes clothing boutique";
+  if (i.includes("restaurante") || i.includes("comida") || i.includes("gastro") || i.includes("cafe") || i.includes("bar"))
+    return "restaurant food gourmet cuisine";
+  if (i.includes("salon") || i.includes("belleza") || i.includes("peluqueria") || i.includes("spa") || i.includes("estetica"))
     return "beauty salon spa wellness";
-  if (ind.includes("fitness") || ind.includes("gym") || ind.includes("gimnasio") || ind.includes("deporte") || ind.includes("entrena"))
-    return "fitness gym workout training";
-  if (ind.includes("inmobili") || ind.includes("real estate") || ind.includes("propiedad") || ind.includes("bienes raices"))
-    return "real estate architecture modern home";
-  if (ind.includes("educacion") || ind.includes("academia") || ind.includes("escuela") || ind.includes("curso") || ind.includes("universidad"))
-    return "education learning study classroom";
-  if (ind.includes("fotograf"))
-    return "photography studio creative portrait";
-  if (ind.includes("diseño") || ind.includes("diseno") || ind.includes("arte") || ind.includes("creativ") || ind.includes("agencia"))
-    return "design creative studio modern";
-  if (ind.includes("construccion") || ind.includes("arquitect"))
-    return "construction architecture building";
-  if (ind.includes("abogad") || ind.includes("legal") || ind.includes("notari") || ind.includes("juridic"))
+  if (i.includes("abogado") || i.includes("legal") || i.includes("juridico"))
     return "law office professional business";
-  if (ind.includes("finanza") || ind.includes("contad") || ind.includes("inversion") || ind.includes("banco"))
-    return "finance business professional corporate";
-  if (ind.includes("hotel") || ind.includes("hosped") || ind.includes("turismo") || ind.includes("viaje") || ind.includes("resort"))
-    return "hotel travel hospitality luxury";
-  if (ind.includes("taller") || ind.includes("automotri") || ind.includes("mecanica") || ind.includes("auto"))
-    return "automotive workshop car garage";
-  if (ind.includes("jardin") || ind.includes("paisaj") || ind.includes("planta") || ind.includes("agricul"))
-    return "garden landscape nature green";
-  if (ind.includes("pet") || ind.includes("mascota") || ind.includes("veterinar"))
-    return "pet veterinary animals care";
-  if (ind.includes("logistic") || ind.includes("transport") || ind.includes("envio") || ind.includes("mensajer"))
-    return "logistics transport shipping delivery";
-  if (siteType === "store") return "retail shop products modern storefront";
-  if (siteType === "blog") return "workspace writing minimal desk";
-  return "professional business modern office";
+  if (i.includes("medico") || i.includes("clinica") || i.includes("salud") || i.includes("dentista"))
+    return "medical clinic healthcare professional";
+  if (i.includes("gym") || i.includes("fitness") || i.includes("deporte") || i.includes("entrenamiento"))
+    return "gym fitness workout training";
+  if (i.includes("inmobiliaria") || i.includes("propiedad") || i.includes("bienes raices"))
+    return "real estate property modern architecture";
+  if (i.includes("tecnologia") || i.includes("software") || i.includes("tech") || i.includes("startup"))
+    return "technology startup office modern";
+  if (i.includes("educacion") || i.includes("academia") || i.includes("curso") || i.includes("coach"))
+    return "education learning professional development";
+  if (i.includes("construccion") || i.includes("arquitectura") || i.includes("reforma"))
+    return "construction architecture building";
+  if (i.includes("fotograf") || i.includes("foto") || i.includes("imagen"))
+    return "photography studio professional camera";
+  if (i.includes("auto") || i.includes("vehiculo") || i.includes("taller") || i.includes("mecanica") || i.includes("pintura"))
+    return "automotive car workshop mechanic";
+  if (i.includes("turismo") || i.includes("viaje") || i.includes("hotel") || i.includes("hospedaje"))
+    return "travel tourism hotel destination";
+  if (i.includes("finanza") || i.includes("inversion") || i.includes("contab") || i.includes("banco"))
+    return "finance investment professional business";
+
+  const words = industry.trim().split(/\s+/).filter(w => w.length > 3);
+  if (words.length > 0) return `${words[0]} professional business`;
+
+  return "professional business office modern";
 }
 
 /** Industry-specific layout hints */

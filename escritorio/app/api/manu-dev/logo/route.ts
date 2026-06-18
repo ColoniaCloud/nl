@@ -67,11 +67,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Formato no soportado" }, { status: 400 });
     }
 
-    const publicDir = path.join(SITES_DIR, subdomain, "public");
-    await fs.mkdir(publicDir, { recursive: true });
+    const siteDir = path.join(SITES_DIR, subdomain);
+    await fs.mkdir(siteDir, { recursive: true });
 
     const logoFileName = `logo${ext}`;
-    const logoPath = path.join(publicDir, logoFileName);
+    const logoPath = path.join(siteDir, logoFileName);
     const bytes = await file.arrayBuffer();
     await fs.writeFile(logoPath, Buffer.from(bytes));
 
