@@ -276,6 +276,10 @@ REGLAS TECNICAS:
 - NO incluyas contenido de ninguna pagina especifica
 - Sin emojis como iconos
 - Animaciones CSS sutiles en nav (hover transitions)
+- CRITICO — layout flexbox en <style> dentro del <head>:
+    body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+    main { flex: 1; }
+  Esto garantiza que el footer siempre sea visible en todas las paginas.
 
 Responde SOLO con el HTML. Empieza directamente con <!doctype html>. Sin markdown, sin explicaciones.`;
 }
@@ -331,6 +335,8 @@ REGLAS CRITICAS:
 - Mobile-first responsive
 - Animaciones CSS sutiles (fadeIn, hover transitions)
 - Sin emojis como iconos
+- NO uses overflow:hidden en body ni en el elemento <main>
+- NO uses height:100vh en el elemento <main> directamente (si necesitas una seccion hero, aplica la altura en el hijo, no en <main>)
 
 Responde SOLO con el elemento <main>. Sin markdown, sin explicaciones.`;
 }
