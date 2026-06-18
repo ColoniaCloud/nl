@@ -36,16 +36,13 @@ interface Message {
 }
 
 type Step =
-  | "pick_type"
   | "welcome"
   | "subdomain"
-  | "identity"
   | "address"
   | "logo"
   | "colors"
   | "fonts"
   | "social"
-  | "site_type"
   | "building"
   | "complete"
   | "cms";
@@ -57,24 +54,21 @@ type GenerationMode = "next" | "lite" | "lite_plus" | "auto";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STEP_LABELS: Record<Step, string> = {
-  pick_type: "Tipo",
   welcome: "Nombre",
   subdomain: "Direccion",
-  identity: "Identidad",
   address: "Ubicacion",
   logo: "Logo",
   colors: "Colores",
   fonts: "Tipografia",
   social: "Redes",
-  site_type: "Estilo",
   building: "Construyendo",
   complete: "Listo",
   cms: "Administrar",
 };
 
 const STEPS_FLOW: Step[] = [
-  "pick_type", "welcome", "subdomain", "identity", "address", "logo",
-  "colors", "fonts", "social", "site_type", "building", "complete",
+  "welcome", "subdomain", "address", "logo",
+  "colors", "fonts", "social", "building", "complete",
 ];
 
 function uid() {
@@ -425,7 +419,7 @@ function ManuDevPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<Step>("pick_type");
+  const [step, setStep] = useState<Step>("welcome");
   const [projectId, setProjectId] = useState<number | null>(null);
   const [siteUrl, setSiteUrl] = useState<string | null>(null);
   const [started, setStarted] = useState(true);
@@ -628,7 +622,6 @@ function ManuDevPage() {
           project_id: effectivePid,
           generation_mode: opts.initialMode ?? generationMode,
           ...(opts.newConversation && { new_conversation: true }),
-          ...(opts.newConversation && { initial_site_type: "professional" }),
         }),
       });
 

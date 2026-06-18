@@ -16,16 +16,13 @@ const WP_BASE_URL = process.env.WP_BASE_URL!;
 const CHAT_MODEL = getAgent("manu-dev")!.model;
 
 type Step =
-  | "pick_type"
   | "welcome"
   | "subdomain"
-  | "identity"
   | "address"
   | "logo"
   | "colors"
   | "fonts"
   | "social"
-  | "site_type"
   | "content"
   | "building"
   | "complete"
@@ -150,35 +147,6 @@ function getSystemPrompt(step: Step, projectData?: Record<string, any>, username
   const base = loadSystemPrompt("manu-dev").trim();
 
   const steps: Record<Step, string> = {
-    pick_type: `${base}
-
-PASO: Tipo de sitio (bienvenida inicial)
-El usuario acaba de escribir su primer mensaje. Saludalo brevemente (una frase) y presentale las 3 opciones:
-
-"Hola! Antes de empezar, dime que tipo de sitio necesitas:"
-<!--OPTIONS:["E-commerce (tienda online)","Web simple","Web profesional"]-->
-
-Explica cada opcion en pocas palabras:
-- **E-commerce**: Tienda con productos, carrito y pagos — te conectamos con Nubia, nuestro agente especializado.
-- **Web simple**: Sitio informativo, blog o landing — generacion rapida con IA.
-- **Web profesional**: Sitio Next.js completo, mas potente y personalizable (requiere plan Pro).
-
-Si el mensaje del usuario ya indica claramente e-commerce o tienda (palabras como "tienda", "vender", "ecommerce", "productos", "shop"), puedes seleccionar "E-commerce" automaticamente y emitir el marcador directamente sin esperar.
-
-Cuando el usuario elija "E-commerce (tienda online)":
-"Perfecto! Para tiendas con carrito y pagos usamos Nubia. Te redirijo ahora."
-<!--MANU:{"next":"redirect_nubia","data":{"site_type":"store_full"}}-->
-
-Cuando el usuario elija "Web simple":
-"Genial, vamos con el modo rapido. Como se llama tu negocio o proyecto?"
-<!--MANU:{"next":"welcome","data":{"mode":"lite_plus"}}-->
-
-Cuando el usuario elija "Web profesional":
-"Excelente, vamos con Next.js. Como se llama tu negocio o proyecto?"
-<!--MANU:{"next":"welcome","data":{"mode":"next"}}-->
-
-IMPORTANTE: Solo emite el marcador MANU cuando el usuario haya elegido una opcion. En el primer mensaje, muestra las opciones y espera.`,
-
     welcome: `${base}
 
 PASO: Bienvenida — Usuario: ${displayUser}
@@ -198,29 +166,16 @@ OBLIGATORIO: Siempre emiti el marcador MANU en este paso. El nombre del proyecto
     subdomain: `${base}
 
 PASO: Subdominio — Proyecto: ${name}
-El sistema genero automaticamente opciones de subdominio que aparecen como botones. El usuario esta eligiendo o puede escribir uno propio.
+El sistema genero automaticamente opciones de subdominio que aparecen como botones. El usuario esta eligiendo o puede escribir uno propio. En este paso necesitas DOS datos: el subdominio y el rubro/industria del negocio.
 
-Cuando el usuario elija una opcion o escriba un subdominio:
-Confirmalo y pedi el rubro:
+Paso 1 — Cuando el usuario elija una opcion o escriba un subdominio, confirmalo y pedi el rubro. NO emitas marcador todavia:
 "Listo, tu sitio va a estar en [subdominio].nl360.site. A que se dedica ${name}?"
-<!--MANU:{"next":"identity","data":{"subdomain":"[el-elegido-sin-.nl360.site]"}}-->
 
-IMPORTANTE: En "data.subdomain" guarda SOLO el slug (por ejemplo "mi-negocio"), no la URL completa.`,
-
-    identity: `${base}
-
-PASO: Identidad — Proyecto: ${name}
-Necesitas 2 datos: rubro/industria y publico objetivo.
-Pide de a uno en orden segun lo que ya tienes en el historial. NO pidas los dos juntos.
-
-Primero pide el rubro/industria (si no lo tienes aun).
-Luego pide a quien le venden, quien es su publico objetivo (si no lo tienes aun).
-
-IMPORTANTE: Acepta la primera respuesta que de el usuario para cada dato. NO pidas que sea mas especifico ni hagas preguntas de seguimiento sobre el mismo dato.
-
-Cuando tengas los 2 datos, emite el marcador y pregunta la direccion:
+Paso 2 — Cuando el usuario responda el rubro, emite el marcador y pregunta la direccion:
 "Perfecto. Como es la direccion de tu negocio?"
-<!--MANU:{"next":"address","data":{"industry":"...","audience":"..."}}-->`,
+<!--MANU:{"next":"address","data":{"subdomain":"[el-elegido-sin-.nl360.site]","industry":"[rubro que indico el usuario]"}}-->
+
+IMPORTANTE: En "data.subdomain" guarda SOLO el slug (por ejemplo "mi-negocio"), no la URL completa. Acepta la primera respuesta del usuario para el rubro, no pidas que sea mas especifico.`,
 
     address: `${base}
 
@@ -340,37 +295,18 @@ Si dice que no tiene WhatsApp, pregunta igualmente por las otras redes.
 Despues de las redes, pregunta SIEMPRE: "Tenes un email de contacto para el sitio? (lo vamos a mostrar en el pie de pagina y los formularios)"
 Si no tiene email, acepta y continua.
 
-Cuando tengas toda la info (redes + email o confirmacion de que no tiene):
-"Perfecto! Que estilo de contenido va a tener ${name}?"
-<!--OPTIONS:["Tienda con catalogo (WhatsApp)","Blog","Web informativa"]-->
-<!--MANU:{"next":"site_type","data":{"social_links":[...]}}}-->
+Cuando tengas toda la info (redes + email o confirmacion de que no tiene), emite el marcador y hace las 3 preguntas de negocio:
+"Perfecto! Una ultima cosa antes de construir: necesito entender mejor tu negocio. Respondé estas 3 preguntas (podés ser breve):
+
+1. Que hace ${name} y que lo diferencia de la competencia?
+2. Quien es tu cliente ideal?
+3. Que querés que haga el visitante cuando entre al sitio? (ej: que te llame, que compre, que reserve un turno)"
+<!--MANU:{"next":"content","data":{"social_links":[...]}}}-->
 
 En social_links, incluye TODAS las redes Y el email confirmados:
 [{"platform":"whatsapp","value":"+5491234..."},{"platform":"instagram","value":"@usuario"},{"platform":"email","value":"info@negocio.com"}]
 Plataformas validas: whatsapp, instagram, facebook, tiktok, youtube, twitter, linkedin, pinterest, telegram, email.
 Si no tiene redes ni email, usa array vacio [].`,
-
-    site_type: `${base}
-
-PASO: Estilo de contenido — Proyecto: ${name}
-El usuario esta eligiendo el tipo de contenido de su sitio (ya eligio el modo tecnico antes).
-
-Muestra las opciones si no estan visibles:
-<!--OPTIONS:["Tienda con catalogo (WhatsApp)","Blog","Web informativa"]-->
-
-Si elige "Tienda con catalogo (WhatsApp)":
-"Perfecto, ${name} va a ser una tienda con catalogo y boton de compra por WhatsApp. Una ultima cosa antes de construir."
-<!--MANU:{"next":"content","data":{"site_type":"store"}}-->
-
-Si elige "Blog":
-"Perfecto, ${name} va a ser un blog. Una ultima cosa antes de construir."
-<!--MANU:{"next":"content","data":{"site_type":"blog"}}-->
-
-Si elige "Web informativa":
-"Perfecto, ${name} va a ser una web informativa. Una ultima cosa antes de construir."
-<!--MANU:{"next":"content","data":{"site_type":"informational"}}-->
-
-REGLA: Siempre emiti el marcador MANU en este paso. No pidas mas informacion.`,
 
     content: `${base}
 
@@ -502,7 +438,7 @@ async function getCurrentStep(userId: number, projectId: number | null): Promise
     } AND role = "assistant" ORDER BY created_at DESC LIMIT 1`,
     projectId ? [userId, projectId] : [userId]
   )) as any;
-  return (rows[0]?.step as Step) || "pick_type";
+  return (rows[0]?.step as Step) || "welcome";
 }
 
 async function getHistory(userId: number, projectId: number | null) {
@@ -578,7 +514,6 @@ export async function POST(req: NextRequest) {
     const project_id: number | null = body.project_id ?? null;
     const requestedMode: string = body.generation_mode ?? "next";
     const newConversation: boolean = body.new_conversation === true;
-    const initialSiteType: string | null = body.initial_site_type ?? null;
 
     if (!message.trim())
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 });
@@ -595,22 +530,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Declared in the outer scope so the /pro override below can set it and the
-    // stream callback can read it via closure (assigned/read inside start()).
+    // Declared in the outer scope so the stream callback can read it via closure
+    // (assigned/read inside start()).
     let modeToReturn: string | undefined;
 
-    let currentStep = await getCurrentStep(user.id, project_id);
+    const currentStep = await getCurrentStep(user.id, project_id);
     const history = await getHistory(user.id, project_id);
-
-    // Skip pick_type when arriving from /pro with a pre-selected site type
-    if (
-      currentStep === "pick_type" &&
-      !project_id &&
-      initialSiteType === "professional"
-    ) {
-      currentStep = "welcome";
-      modeToReturn = "lite_plus";
-    }
 
     let projectData: Record<string, any> | null = null;
     if (project_id) {
@@ -736,7 +661,7 @@ export async function POST(req: NextRequest) {
 
           const { cleanText, next: rawNext, data, options: parsedOptions, colors, fonts, upload, logoGenerate } = parseMessage(fullText);
           // Validate that the AI-emitted next step is a known step; reject invented steps
-          const VALID_STEPS: Set<string> = new Set(["pick_type","welcome","subdomain","identity","address","logo","colors","fonts","social","site_type","content","building","complete","cms","redirect_nubia"]);
+          const VALID_STEPS: Set<string> = new Set(["welcome","subdomain","address","logo","colors","fonts","social","content","building","complete","cms"]);
           const next = (rawNext && VALID_STEPS.has(rawNext)) ? rawNext : undefined;
           if (rawNext && !VALID_STEPS.has(rawNext)) {
             console.warn(`[chat] AI emitted unknown step "${rawNext}", ignoring marker`);
@@ -800,25 +725,7 @@ export async function POST(req: NextRequest) {
 
           // ── Data persistence per step transition ──
           if (next && data) {
-            if (next === "welcome" && currentStep === "pick_type" && !project_id) {
-              // pick_type -> welcome: User chose site type, store mode to return to frontend
-              modeToReturn = data.mode || "lite_plus";
-              if (!options || options.length === 0) {
-                // No options needed here — AI already asked for name
-              }
-
-            } else if (next === "redirect_nubia" && currentStep === "pick_type" && !project_id) {
-              // pick_type -> redirect_nubia: User chose e-commerce before any project was created
-              nextStep = "redirect_nubia" as Step;
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: null, cleanText: safeCleanText, handoffId: null })}\n\n`
-                )
-              );
-              controller.close();
-              return;
-
-            } else if (next === "subdomain" && !project_id) {
+            if (next === "subdomain" && !project_id) {
               // welcome -> subdomain: Create project
               await ensureProjectColumns();
               const tempSubdomain = `draft-${user.id}-${Date.now()}`;
@@ -842,20 +749,21 @@ export async function POST(req: NextRequest) {
               const subOptions = await generateSubdomainOptions(pool, data.name || "mi-sitio");
               options = subOptions;
 
-            } else if (next === "identity" && project_id && data.subdomain) {
-              // subdomain -> identity: Save subdomain
-              const sub = String(data.subdomain).replace(/\.nl360\.site$/i, "").trim();
-              await pool.execute(
-                "UPDATE md_projects SET subdomain = ?, site_url = ? WHERE id = ? AND user_id = ?",
-                [sub, `https://${sub}.nl360.site`, project_id, user.id]
-              );
-
             } else if (next === "address" && project_id) {
-              // identity -> address: Save industry + audience
-              await pool.execute(
-                "UPDATE md_projects SET industry = ?, audience = ? WHERE id = ? AND user_id = ?",
-                [data.industry || "", data.audience || "", project_id, user.id]
-              );
+              // subdomain -> address: Save subdomain + site_url + industry in one transition
+              // (the identity step was removed; audience is no longer captured).
+              if (data.subdomain) {
+                const sub = String(data.subdomain).replace(/\.nl360\.site$/i, "").trim();
+                await pool.execute(
+                  "UPDATE md_projects SET subdomain = ?, site_url = ?, industry = ? WHERE id = ? AND user_id = ?",
+                  [sub, `https://${sub}.nl360.site`, data.industry || "", project_id, user.id]
+                );
+              } else {
+                await pool.execute(
+                  "UPDATE md_projects SET industry = ? WHERE id = ? AND user_id = ?",
+                  [data.industry || "", project_id, user.id]
+                );
+              }
               if (!options || options.length === 0) {
                 options = ["Direccion especifica", "Zona regional de operacion"];
               }
@@ -903,24 +811,19 @@ export async function POST(req: NextRequest) {
                 });
               }
 
-            } else if (next === "site_type" && project_id) {
-              // social -> site_type: Save social links
+            } else if (next === "content" && project_id) {
+              // social -> content: Save social links and force site_type to 'informational'.
+              // The site_type step was removed, but the column still drives generation in
+              // create-site (prompt, default pages, Unsplash queries), so we hardcode it.
               if (data.social_links) {
                 await pool.execute(
-                  "UPDATE md_projects SET social_links = ? WHERE id = ? AND user_id = ?",
+                  "UPDATE md_projects SET social_links = ?, site_type = 'informational' WHERE id = ? AND user_id = ?",
                   [JSON.stringify(data.social_links), project_id, user.id]
                 );
-              }
-              if (!options || options.length === 0) {
-                options = ["Tienda con catalogo (WhatsApp)", "Blog", "Web informativa"];
-              }
-
-            } else if (next === "content" && project_id) {
-              // site_type -> content: Save site_type, then the AI asks the 3 business questions
-              if (data.site_type) {
+              } else {
                 await pool.execute(
-                  "UPDATE md_projects SET site_type = ? WHERE id = ? AND user_id = ?",
-                  [data.site_type, project_id, user.id]
+                  "UPDATE md_projects SET site_type = 'informational' WHERE id = ? AND user_id = ?",
+                  [project_id, user.id]
                 );
               }
 
@@ -951,181 +854,6 @@ export async function POST(req: NextRequest) {
                 console.error("[chat] Failed to populate extra_content from content step:", ecErr);
               }
 
-            } else if (next === "redirect_nubia" && project_id) {
-              // site_type -> redirect_nubia: User chose full e-commerce
-              // Collect project data to pass to Nubia
-              const [projRows] = await pool.execute(
-                "SELECT name, industry, subdomain, social_links FROM md_projects WHERE id = ? AND user_id = ?",
-                [project_id, user.id]
-              ) as any;
-              const projData = projRows[0] || {};
-              const [designRows] = await pool.execute(
-                "SELECT primary_color, secondary_color, accent_color, font_heading, font_body FROM md_design WHERE project_id = ?",
-                [project_id]
-              ) as any;
-              const designData = designRows[0] || {};
-              let socialLinks: any[] = [];
-              try { socialLinks = JSON.parse(projData.social_links || "[]"); } catch {}
-              const nubiaHandoff = {
-                name: projData.name || "",
-                industry: projData.industry || "",
-                subdomain: projData.subdomain || "",
-                colors: {
-                  primary: designData.primary_color || "",
-                  secondary: designData.secondary_color || "",
-                  accent: designData.accent_color || "",
-                },
-                fonts: {
-                  heading: designData.font_heading || "",
-                  body: designData.font_body || "",
-                },
-                email: socialLinks.find((s: any) => s.platform === "email")?.value || "",
-                phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-                whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-              };
-              // M2: Store handoff in DB and pass only the id — avoids URL length limits
-              let handoffId: number | null = null;
-              try {
-                const sp = await upsertBrandbook(user.id, {
-                  name: nubiaHandoff.name,
-                  industry: nubiaHandoff.industry,
-                  primary_color: nubiaHandoff.colors.primary || undefined,
-                  secondary_color: nubiaHandoff.colors.secondary || undefined,
-                  accent_color: nubiaHandoff.colors.accent || undefined,
-                  font_heading: nubiaHandoff.fonts.heading || undefined,
-                  font_body: nubiaHandoff.fonts.body || undefined,
-                  email: nubiaHandoff.email || undefined,
-                  whatsapp: nubiaHandoff.whatsapp || undefined,
-                });
-                const { recordHandoff } = await import("@/lib/shared-project");
-                handoffId = await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
-              } catch (hErr) {
-                logger.warn("No se pudo registrar handoff Manu Dev → Nubia");
-              }
-              // Pass redirect info in the response
-              nextStep = "redirect_nubia" as Step;
-              (options as any) = undefined;
-              (colors as any) = undefined;
-              (fonts as any) = undefined;
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    done: true,
-                    step: "redirect_nubia",
-                    project_id: newProjectId,
-                    cleanText: safeCleanText,
-                    handoffId,
-                  })}\n\n`
-                )
-              );
-              controller.close();
-              return;
-            }
-          }
-
-          // ── Programmatic fallback: pick_type → welcome or redirect_nubia ──
-          if (currentStep === "pick_type" && nextStep === "pick_type" && !project_id) {
-            const userLower = message.trim().toLowerCase();
-            const combined = userLower;
-            if (
-              combined.includes("ecommerce") || combined.includes("e-commerce") ||
-              combined.includes("tienda") || combined.includes("store") ||
-              combined.includes("nubia")
-            ) {
-              console.log("[chat] Fallback pick_type: detected e-commerce, redirecting to Nubia");
-              controller.enqueue(
-                encoder.encode(`data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: null, cleanText: safeCleanText, handoffId: null })}\n\n`)
-              );
-              controller.close();
-              return;
-            } else if (
-              combined.includes("simple") || combined.includes("rapido") ||
-              combined.includes("basico") || combined.includes("lite")
-            ) {
-              console.log("[chat] Fallback pick_type: detected simple mode");
-              nextStep = "welcome" as Step;
-              modeToReturn = "lite_plus";
-            } else if (
-              combined.includes("profesional") || combined.includes("next") ||
-              combined.includes("avanzad") || combined.includes("premium")
-            ) {
-              console.log("[chat] Fallback pick_type: detected pro mode");
-              nextStep = "welcome" as Step;
-              modeToReturn = "next";
-            }
-          }
-
-          // ── Programmatic fallback: site_type → building ──
-          // If Claude didn't emit the MANU marker when in site_type step, detect the
-          // user's choice and force the transition to building so it never gets stuck.
-          if (currentStep === "site_type" && nextStep === "site_type" && project_id) {
-            const userLower = message.trim().toLowerCase();
-            const combined = (userLower + " " + (safeCleanText || "").toLowerCase());
-            let detectedType: string | null = null;
-            let redirectNubia = false;
-
-            // Check for full e-commerce / Nubia redirect first
-            if (combined.includes("completo") || combined.includes("nubia") || combined.includes("carrito") || combined.includes("mercadopago") || combined.includes("pagos")) {
-              redirectNubia = true;
-            } else if (combined.includes("simple") || combined.includes("whatsapp") || combined.includes("catalogo")) {
-              detectedType = "store";
-            } else if (combined.includes("tienda") || combined.includes("store") || combined.includes("ecommerce") || combined.includes("e-commerce")) {
-              detectedType = "store";
-            } else if (combined.includes("blog")) {
-              detectedType = "blog";
-            } else if (combined.includes("informativ") || combined.includes("web") || combined.includes("landing") || combined.includes("corporativ") || combined.includes("institucional")) {
-              detectedType = "informational";
-            }
-
-            if (redirectNubia) {
-              console.log(`[chat] Fallback site_type: detected Nubia redirect from user message`);
-              // Collect project data for handoff
-              const [projRows] = await pool.execute(
-                "SELECT name, industry, subdomain, social_links FROM md_projects WHERE id = ? AND user_id = ?",
-                [project_id, user.id]
-              ) as any;
-              const projData = projRows[0] || {};
-              const [designRows] = await pool.execute(
-                "SELECT primary_color, secondary_color, accent_color, font_heading, font_body FROM md_design WHERE project_id = ?",
-                [project_id]
-              ) as any;
-              const designData = designRows[0] || {};
-              let socialLinks: any[] = [];
-              try { socialLinks = JSON.parse(projData.social_links || "[]"); } catch {}
-              const nubiaHandoff = {
-                name: projData.name || "",
-                industry: projData.industry || "",
-                subdomain: projData.subdomain || "",
-                colors: { primary: designData.primary_color || "", secondary: designData.secondary_color || "", accent: designData.accent_color || "" },
-                fonts: { heading: designData.font_heading || "", body: designData.font_body || "" },
-                email: socialLinks.find((s: any) => s.platform === "email")?.value || "",
-                phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-                whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-              };
-              // M2: Store handoff in DB (fallback path)
-              let fallbackHandoffId: number | null = null;
-              try {
-                const sp = await upsertBrandbook(user.id, {});
-                const { recordHandoff } = await import("@/lib/shared-project");
-                fallbackHandoffId = await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
-              } catch {}
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: project_id, cleanText: safeCleanText, handoffId: fallbackHandoffId })}\n\n`
-                )
-              );
-              controller.close();
-              return;
-            }
-
-            if (detectedType) {
-              console.log(`[chat] Fallback site_type: detected "${detectedType}" from user message, forcing content step`);
-              // Save site_type only; extra_content is populated later in the content -> building transition.
-              await pool.execute(
-                "UPDATE md_projects SET site_type = ? WHERE id = ? AND user_id = ?",
-                [detectedType, project_id, user.id]
-              );
-              nextStep = "content" as Step;
             }
           }
 
