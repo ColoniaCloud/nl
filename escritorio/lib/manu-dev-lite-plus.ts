@@ -168,8 +168,7 @@ function slugToFile(slug: string): string {
 function validateHtml(content: string): boolean {
   const trimmed = content.trim();
   if (!trimmed.toLowerCase().startsWith("<!doctype html") && !trimmed.toLowerCase().startsWith("<html")) return false;
-  if (!trimmed.includes("</html>")) return false;
-  if (trimmed.length < 500) return false;
+  if (trimmed.length < 1000) return false;
   return true;
 }
 
@@ -248,7 +247,7 @@ export async function generateLitePlusSite(
 
         const stream = client.messages.stream({
           model: SONNET_MODEL,
-          max_tokens: 8000,
+          max_tokens: 12000,
           messages: [{ role: "user", content: prompt }],
         });
 
