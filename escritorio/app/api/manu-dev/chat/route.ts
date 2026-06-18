@@ -540,6 +540,7 @@ export async function POST(req: NextRequest) {
     const project_id: number | null = body.project_id ?? null;
     const requestedMode: string = body.generation_mode ?? "next";
     const newConversation: boolean = body.new_conversation === true;
+    const initialSiteType: string | null = body.initial_site_type ?? null;
 
     if (!message.trim())
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 });
@@ -556,8 +557,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const currentStep = await getCurrentStep(user.id, project_id);
+    // Declared in the outer scope so the /pro override below can set it and the
+    // stream callback can read it via closure (assigned/read inside start()).
+    let modeToReturn: string | undefined;
+
+    let currentStep = await getCurrentStep(user.id, project_id);
     const history = await getHistory(user.id, project_id);
+
+    // Skip pick_type when arriving from /pro with a pre-selected site type
+    if (
+      currentStep === "pick_type" &&
+      !project_id &&
+      initialSiteType === "professional"
+    ) {
+      currentStep = "welcome";
+      modeToReturn = "lite_plus";
+    }
 
     let projectData: Record<string, any> | null = null;
     if (project_id) {
@@ -692,7 +707,6 @@ export async function POST(req: NextRequest) {
           let nextStep: Step = (next as Step) || currentStep;
           let newProjectId = project_id;
           let logoPreview: string | undefined;
-          let modeToReturn: string | undefined;
 
           const { text: safeCleanText, sanitized } = sanitizeAssistantText(
             cleanText,

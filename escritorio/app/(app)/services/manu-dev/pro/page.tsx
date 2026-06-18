@@ -662,6 +662,7 @@ function ManuDevPage() {
           project_id: effectivePid,
           generation_mode: opts.initialMode ?? generationMode,
           ...(opts.newConversation && { new_conversation: true }),
+          ...(opts.newConversation && { initial_site_type: "professional" }),
         }),
       });
 
