@@ -240,7 +240,7 @@ export async function generateLitePlusSite(
       const response = await withTimeout(
         client.messages.create({
           model: SONNET_MODEL,
-          max_tokens: 16000,
+          max_tokens: 8000,
           messages: [{ role: "user", content: prompt }],
         }),
         GENERATION_TIMEOUT_MS,

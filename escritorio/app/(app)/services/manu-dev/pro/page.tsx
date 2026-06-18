@@ -777,8 +777,8 @@ function ManuDevPage() {
     if (messages.length === 0) {
       // First message — start conversation with auto mode (server resolves per plan)
       setEntryMode("auto");
-      setGenerationMode("auto");
-      await sendMessage(text, { newConversation: true, initialMode: "auto" });
+      setGenerationMode("lite_plus");
+      await sendMessage(text, { newConversation: true, initialMode: "lite_plus" });
     } else {
       await sendMessage(text);
     }
@@ -837,7 +837,7 @@ function ManuDevPage() {
         setStarted(true);
         setTimeout(() => {
           setGenerationMode("auto");
-          sendMessage(text, { newConversation: true, initialMode: "auto" });
+          sendMessage(text, { newConversation: true, initialMode: "lite_plus" });
         }, 0);
       }}
     />;
