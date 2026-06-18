@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Globe, Loader2, Check, ExternalLink, Wand2, AlertTriangle, Maximize2, Minimize2, Upload, Menu } from "lucide-react";
+import { Globe, Loader2, Check, ExternalLink, Wand2, AlertTriangle, Maximize2, Minimize2, Upload, Menu, RotateCcw } from "lucide-react";
 import { AGENT_META } from "@/lib/agent-colors";
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import AgentInput, { type AgentInputHandle } from "@/components/chat/AgentInput";
@@ -972,6 +972,18 @@ function ManuDevPage() {
           {/* Build terminal */}
           {buildStatus && (
             <BuildTerminal logs={buildLogs} status={buildStatus} />
+          )}
+          {/* Retry build on error */}
+          {buildStatus === "error" && projectId && (
+            <div className="flex justify-center -mt-2 mb-2">
+              <button
+                onClick={() => startBuild(projectId, "lite_plus")}
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/50 text-emerald-400 px-5 py-2.5 text-sm font-semibold hover:bg-emerald-500/10 hover:border-emerald-500 transition-colors"
+              >
+                <RotateCcw className="size-4" />
+                Reintentar generacion
+              </button>
+            </div>
           )}
           {/* Thinking indicator */}
           {loading && messages.length > 0 && messages[messages.length - 1].role === "user" && (

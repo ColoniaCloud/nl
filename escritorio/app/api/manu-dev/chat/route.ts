@@ -26,6 +26,7 @@ type Step =
   | "fonts"
   | "social"
   | "site_type"
+  | "content"
   | "building"
   | "complete"
   | "cms";
@@ -180,11 +181,17 @@ IMPORTANTE: Solo emite el marcador MANU cuando el usuario haya elegido una opcio
 
     welcome: `${base}
 
-PASO: Bienvenida
-El usuario acaba de escribir el nombre de su proyecto o negocio. El mensaje del usuario ES el nombre.
-Tomalo tal cual como nombre del proyecto y avanza:
-"Genial, [nombre]! Ahora vamos a elegir tu direccion web en nl360.site."
-<!--MANU:{"next":"subdomain","data":{"name":"[nombre del proyecto]"}}-->
+PASO: Bienvenida — Usuario: ${displayUser}
+El usuario acaba de escribir el nombre de su proyecto o negocio. El mensaje del usuario ES el nombre del proyecto.
+Tomalo tal cual como nombre del proyecto.
+
+Genera un subdominio sugerido a partir del nombre del proyecto: pasalo a minusculas, reemplaza los espacios por guiones y elimina acentos y caracteres especiales (deja solo letras, numeros y guiones).
+
+Respondé EXACTAMENTE con este formato (reemplazando lo que esta entre corchetes, sin los corchetes):
+"Hola ${displayUser}! Vamos a crear el sitio web de [nombre del proyecto] en pocos minutos. Solo necesito que respondas algunas preguntas.
+
+Primero, que subdominio queres usar? Te sugiero [subdominio-sugerido].nl360.site — lo usamos o preferis otro nombre?"
+<!--MANU:{"next":"subdomain","data":{"name":"[nombre del proyecto]","suggested_subdomain":"[subdominio-sugerido]"}}-->
 
 OBLIGATORIO: Siempre emiti el marcador MANU en este paso. El nombre del proyecto es lo que el usuario escribio.`,
 
@@ -236,6 +243,18 @@ REGLA: Acepta la primera respuesta del usuario. NO pidas detalles adicionales.`,
 
 PASO: Logo — Proyecto: ${name}
 
+GUIA DE PALETAS POR RUBRO (rubro actual: ${industry}):
+En cualquier momento de este paso en que propongas una paleta, genera UNA paleta de 3 colores (primario, secundario, acento) ESPECIFICA para el rubro "${industry}". NO uses siempre los mismos colores. Basate en la psicologia del color para ese sector:
+- Moda / boutique / calzado / indumentaria: neutros elegantes (negro, blanco, dorado, beige).
+- Restaurante / gastronomia / cafe / comida: calidos (rojos, naranjas, marrones, crema).
+- Salud / clinica / consultorio / medico: frescos (azules, verdes, blancos).
+- Tecnologia / startup / software / app: modernos (azul electrico, gris oscuro, acento vibrante).
+- Construccion / arquitectura / inmobiliaria: solidos (gris, negro, naranja, blanco).
+- Fitness / gym / deporte: energeticos (negro, rojo, amarillo, naranja).
+- Legal / abogados / contable: sobrios (azul marino, gris, blanco, dorado).
+- Belleza / spa / estetica / peluqueria: suaves (rosa, lavanda, beige, dorado).
+- Otro rubro: una paleta profesional acorde al nombre y la industria, basada en la psicologia del color de ese sector.
+
 Si el usuario eligio "Generar logo con IA":
 Decile que vas a generar el logo:
 "Dale, genero el logo para ${name} ahora mismo."
@@ -243,7 +262,7 @@ Decile que vas a generar el logo:
 El sistema mostrara el resultado. No hagas nada mas — espera la respuesta del usuario.
 
 Si el usuario aprobo el logo ("me gusta", "usarlo", etc.):
-Emite el marcador y propone paleta de colores basada en el rubro (${industry}) y el logo generado.
+Emite el marcador y propone una paleta segun la GUIA DE PALETAS POR RUBRO de arriba (rubro ${industry}) y el logo generado.
 "Logo guardado. Para ${name} propongo esta paleta:
 - [Nombre1]: #XXXXXX
 - [Nombre2]: #XXXXXX
@@ -261,7 +280,7 @@ Si el usuario eligio "Tengo logo, lo subo":
 <!--OPTIONS:["Ya subi mi logo","Continuar sin logo"]-->
 
 Si el usuario confirmo upload:
-Propone paleta basada en el rubro (${industry}):
+Propone una paleta segun la GUIA DE PALETAS POR RUBRO de arriba (rubro ${industry}):
 "Logo recibido. Para ${name} propongo esta paleta:
 - [Nombre1]: #XXXXXX
 - [Nombre2]: #XXXXXX
@@ -271,7 +290,7 @@ Propone paleta basada en el rubro (${industry}):
 <!--MANU:{"next":"colors","data":{"logo_type":"uploaded","primary_color":"#XXXXXX","secondary_color":"#XXXXXX","accent_color":"#XXXXXX"}}-->
 
 Si el usuario eligio "Continuar sin logo":
-Propone paleta basada en el rubro (${industry}):
+Propone una paleta segun la GUIA DE PALETAS POR RUBRO de arriba (rubro ${industry}):
 "Sin problema, usamos el nombre como texto estilizado. Para ${name} propongo esta paleta:
 - [Nombre1]: #XXXXXX
 - [Nombre2]: #XXXXXX
@@ -340,18 +359,37 @@ Muestra las opciones si no estan visibles:
 <!--OPTIONS:["Tienda con catalogo (WhatsApp)","Blog","Web informativa"]-->
 
 Si elige "Tienda con catalogo (WhatsApp)":
-"Perfecto, vamos a construir ${name} como tienda con catalogo y boton de compra por WhatsApp. Arranco con la construccion ahora."
-<!--MANU:{"next":"building","data":{"site_type":"store"}}-->
+"Perfecto, ${name} va a ser una tienda con catalogo y boton de compra por WhatsApp. Una ultima cosa antes de construir."
+<!--MANU:{"next":"content","data":{"site_type":"store"}}-->
 
 Si elige "Blog":
-"Perfecto, vamos a construir ${name} como blog. Arranco con la construccion ahora."
-<!--MANU:{"next":"building","data":{"site_type":"blog"}}-->
+"Perfecto, ${name} va a ser un blog. Una ultima cosa antes de construir."
+<!--MANU:{"next":"content","data":{"site_type":"blog"}}-->
 
 Si elige "Web informativa":
-"Perfecto, vamos a construir ${name} como web informativa. Arranco con la construccion ahora."
-<!--MANU:{"next":"building","data":{"site_type":"informational"}}-->
+"Perfecto, ${name} va a ser una web informativa. Una ultima cosa antes de construir."
+<!--MANU:{"next":"content","data":{"site_type":"informational"}}-->
 
 REGLA: Siempre emiti el marcador MANU en este paso. No pidas mas informacion.`,
+
+    content: `${base}
+
+PASO: Contenido — Proyecto: ${name}
+Necesitas entender el negocio antes de construir. Hace EXACTAMENTE estas 3 preguntas en UN solo mensaje:
+
+"Antes de construir tu sitio, necesito entender mejor tu negocio. Respondé estas 3 preguntas (podés ser breve):
+
+1. Que hace ${name} y que lo diferencia de la competencia?
+2. Quien es tu cliente ideal?
+3. Que querés que haga el visitante cuando entre al sitio? (ej: que te llame, que compre, que reserve un turno)"
+
+No emitas ningun marcador en este primer mensaje — espera a que el usuario responda.
+
+Cuando el usuario responda (en uno o varios mensajes), agradece en una frase y arranca la construccion:
+"Listo, con esto ya puedo construir ${name}. Arranco con la construccion ahora."
+<!--MANU:{"next":"building","data":{}}-->
+
+REGLA: Acepta las respuestas del usuario tal cual, no pidas mas detalles. Emiti el marcador MANU solo una vez que el usuario ya respondio las preguntas.`,
 
     building: `${base}
 
@@ -698,7 +736,7 @@ export async function POST(req: NextRequest) {
 
           const { cleanText, next: rawNext, data, options: parsedOptions, colors, fonts, upload, logoGenerate } = parseMessage(fullText);
           // Validate that the AI-emitted next step is a known step; reject invented steps
-          const VALID_STEPS: Set<string> = new Set(["pick_type","welcome","subdomain","identity","address","logo","colors","fonts","social","site_type","building","complete","cms","redirect_nubia"]);
+          const VALID_STEPS: Set<string> = new Set(["pick_type","welcome","subdomain","identity","address","logo","colors","fonts","social","site_type","content","building","complete","cms","redirect_nubia"]);
           const next = (rawNext && VALID_STEPS.has(rawNext)) ? rawNext : undefined;
           if (rawNext && !VALID_STEPS.has(rawNext)) {
             console.warn(`[chat] AI emitted unknown step "${rawNext}", ignoring marker`);
@@ -877,32 +915,40 @@ export async function POST(req: NextRequest) {
                 options = ["Tienda con catalogo (WhatsApp)", "Blog", "Web informativa"];
               }
 
-            } else if (next === "building" && project_id) {
-              // site_type -> building: Save site_type
+            } else if (next === "content" && project_id) {
+              // site_type -> content: Save site_type, then the AI asks the 3 business questions
               if (data.site_type) {
                 await pool.execute(
-                  "UPDATE md_projects SET site_type = ?, status = 'building' WHERE id = ? AND user_id = ?",
+                  "UPDATE md_projects SET site_type = ? WHERE id = ? AND user_id = ?",
                   [data.site_type, project_id, user.id]
                 );
               }
-              // Populate extra_content from chat history so site generation uses it
+
+            } else if (next === "building" && project_id) {
+              // content -> building: Start the build and persist the user's answers to the
+              // 3 business questions into extra_content (replacing any previous value).
+              await pool.execute(
+                "UPDATE md_projects SET status = 'building' WHERE id = ? AND user_id = ?",
+                [project_id, user.id]
+              );
               try {
-                const [chatRows] = await pool.execute(
-                  "SELECT content FROM md_chat_history WHERE project_id = ? AND role = 'user' ORDER BY id ASC",
+                const projName = projectData?.name || "tu negocio";
+                const [answerRows] = await pool.execute(
+                  "SELECT content FROM md_chat_history WHERE project_id = ? AND role = 'user' AND step = 'content' ORDER BY id ASC",
                   [project_id]
                 ) as any;
-                if (chatRows.length > 0) {
-                  const extraContent = chatRows
-                    .map((r: any) => r.content)
-                    .join("\n")
-                    .slice(0, 3000);
-                  await pool.execute(
-                    "UPDATE md_projects SET extra_content = ? WHERE id = ? AND user_id = ?",
-                    [extraContent, project_id, user.id]
-                  );
-                }
+                const answers = (answerRows as any[]).map((r) => r.content).join("\n").trim();
+                const header =
+                  `1. Que hace ${projName} y que lo diferencia de la competencia?\n` +
+                  `2. Quien es el cliente ideal?\n` +
+                  `3. Que se espera que haga el visitante cuando entra al sitio?`;
+                const extraContent = `${header}\n\nRespuestas del cliente:\n${answers}`.slice(0, 3000);
+                await pool.execute(
+                  "UPDATE md_projects SET extra_content = ? WHERE id = ? AND user_id = ?",
+                  [extraContent, project_id, user.id]
+                );
               } catch (ecErr) {
-                console.error("[chat] Failed to populate extra_content:", ecErr);
+                console.error("[chat] Failed to populate extra_content from content step:", ecErr);
               }
 
             } else if (next === "redirect_nubia" && project_id) {
@@ -1073,31 +1119,13 @@ export async function POST(req: NextRequest) {
             }
 
             if (detectedType) {
-              console.log(`[chat] Fallback site_type: detected "${detectedType}" from user message, forcing building step`);
+              console.log(`[chat] Fallback site_type: detected "${detectedType}" from user message, forcing content step`);
+              // Save site_type only; extra_content is populated later in the content -> building transition.
               await pool.execute(
-                "UPDATE md_projects SET site_type = ?, status = 'building' WHERE id = ? AND user_id = ?",
+                "UPDATE md_projects SET site_type = ? WHERE id = ? AND user_id = ?",
                 [detectedType, project_id, user.id]
               );
-              // Populate extra_content from chat history
-              try {
-                const [chatRows] = await pool.execute(
-                  "SELECT content FROM md_chat_history WHERE project_id = ? AND role = 'user' ORDER BY id ASC",
-                  [project_id]
-                ) as any;
-                if (chatRows.length > 0) {
-                  const extraContent = chatRows
-                    .map((r: any) => r.content)
-                    .join("\n")
-                    .slice(0, 3000);
-                  await pool.execute(
-                    "UPDATE md_projects SET extra_content = ? WHERE id = ? AND user_id = ?",
-                    [extraContent, project_id, user.id]
-                  );
-                }
-              } catch (ecErr) {
-                console.error("[chat] Failed to populate extra_content (fallback):", ecErr);
-              }
-              nextStep = "building" as Step;
+              nextStep = "content" as Step;
             }
           }
 
