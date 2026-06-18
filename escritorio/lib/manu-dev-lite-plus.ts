@@ -39,7 +39,6 @@ export interface LitePlusResult {
 }
 
 const SONNET_MODEL = getAgent("manu-dev")!.model;
-const GENERATION_TIMEOUT_MS = 120_000;
 
 function parseSocialLinks(raw: any): { platform: string; url: string }[] {
   try {
@@ -161,13 +160,6 @@ REGLAS TECNICAS:
 Responde SOLO con el HTML. Empieza directamente con <!doctype html>. Sin markdown, sin explicaciones.`;
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`${label}: timeout ${Math.round(ms / 1000)}s`)), ms);
-    promise.then((v) => { clearTimeout(timer); resolve(v); }).catch((e) => { clearTimeout(timer); reject(e); });
-  });
-}
-
 function slugToFile(slug: string): string {
   if (!slug || slug === "home") return "index.html";
   return `${slug.replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase()}.html`;
@@ -237,20 +229,46 @@ export async function generateLitePlusSite(
     onProgress?.(`Generando ${label}...`);
 
     try {
-      const response = await withTimeout(
-        client.messages.create({
+      // Stream the response — reset idle timer with each chunk
+      // so long-running generations never timeout mid-stream.
+      const IDLE_TIMEOUT_MS = 30_000; // 30s without a chunk = abort
+      let accumulated = "";
+
+      await new Promise<void>((resolve, reject) => {
+        let idleTimer: ReturnType<typeof setTimeout>;
+
+        const resetIdle = () => {
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(() => {
+            reject(new Error(`Generacion ${label}: idle timeout 30s`));
+          }, IDLE_TIMEOUT_MS);
+        };
+
+        resetIdle(); // start the timer
+
+        const stream = client.messages.stream({
           model: SONNET_MODEL,
           max_tokens: 8000,
           messages: [{ role: "user", content: prompt }],
-        }),
-        GENERATION_TIMEOUT_MS,
-        `Generacion ${label}`,
-      );
+        });
 
-      const text = response.content
-        .filter((b): b is Anthropic.TextBlock => b.type === "text")
-        .map((b) => b.text)
-        .join("");
+        stream.on("text", (chunk) => {
+          accumulated += chunk;
+          resetIdle();
+        });
+
+        stream.on("error", (err) => {
+          clearTimeout(idleTimer);
+          reject(err);
+        });
+
+        stream.on("finalMessage", () => {
+          clearTimeout(idleTimer);
+          resolve();
+        });
+      });
+
+      const text = accumulated;
 
       // Extract the HTML document from anywhere in the response,
       // ignoring surrounding prose or markdown fences.
