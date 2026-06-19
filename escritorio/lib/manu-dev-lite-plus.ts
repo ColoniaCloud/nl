@@ -255,7 +255,7 @@ function buildLayoutPrompt(input: LitePlusInput): string {
       : "";
 
   const logoInstruction = project.logo_url
-    ? `Usa <img src="${project.logo_url}" alt="${project.name}" style="height:40px;width:auto;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.`
+    ? `Usa <img src="${project.logo_url}" alt="${project.name}" style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.`
     : `Muestra el nombre del negocio como texto en el header.`;
 
   return `Genera el layout base HTML compartido para el sitio web de ${project.name}.
@@ -280,8 +280,12 @@ INSTRUCCIONES:
   1. <header> con navegacion responsive y logo
   2. <!-- CONTENT_PLACEHOLDER --> (exactamente este texto, no lo modifiques)
   3. <footer> con nombre del negocio, anio y redes sociales
-- CRITICO: NO uses <main> en ninguna parte del layout. NO envuelvas el placeholder con <main>, <section>, <div> ni ningun otro elemento. El placeholder va como hijo directo de <body>, entre </header> y <footer>.
-- El <body> tiene exactamente 3 hijos directos: <header>, <!-- CONTENT_PLACEHOLDER -->, <footer>. Nada mas.
+- El <body> tiene EXACTAMENTE esta estructura en orden:
+  <header>...</header>
+  <div style="flex:1;min-height:0;"><!-- CONTENT_PLACEHOLDER --></div>
+  <footer>...</footer>
+- CRITICO: El placeholder DEBE estar dentro de ese <div style="flex:1;min-height:0;">. No uses <main> como wrapper del placeholder.
+- El <body> tiene exactamente 3 hijos directos: <header>, el <div wrapper>, <footer>. Nada mas.
 
 HEADER:
 - ${logoInstruction}
@@ -305,7 +309,7 @@ REGLAS TECNICAS:
 - Animaciones CSS sutiles en nav (hover transitions)
 - CRITICO — layout flexbox en <style> dentro del <head>:
     body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
-    main { flex: 1; }
+  El flex:1 ya está en el div wrapper del placeholder — NO agregues main{flex:1}.
   Esto garantiza que el footer siempre sea visible en todas las paginas.
 
 Responde SOLO con el HTML. Empieza directamente con <!doctype html>. Sin markdown, sin explicaciones.`;
@@ -415,7 +419,7 @@ REGLAS TECNICAS:
 - Usa Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
 - Configura Tailwind con los colores del negocio via script tailwind.config inline: primary="${input.design?.primary_color || "#1a1a2e"}", secondary="${input.design?.secondary_color || "#16213e"}", accent="${input.design?.accent_color || "#0f3460"}"
 - Google Fonts via <link rel="preconnect"> y <link rel="stylesheet">: "${input.design?.font_heading || "Inter"}" (titulos) y "${input.design?.font_body || "Inter"}" (cuerpo).
-- LOGO EN HEADER: ${input.project.logo_url ? `Usa <img src="${input.project.logo_url}" alt="${input.project.name}" style="height:40px;width:auto;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.` : `Muestra el nombre del negocio como texto en el header.`}
+- LOGO EN HEADER: ${input.project.logo_url ? `Usa <img src="${input.project.logo_url}" alt="${input.project.name}" style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.` : `Muestra el nombre del negocio como texto en el header.`}
 - Mobile-first responsive
 - Contenido en espanol, real y especifico para este negocio (no lorem ipsum)
 - Precios coherentes con la economia de "${input.project.location || "America Latina"}"
