@@ -301,7 +301,7 @@ Cuando tengas toda la info (redes + email o confirmacion de que no tiene), emite
 1. Que hace ${name} y que lo diferencia de la competencia?
 2. Quien es tu cliente ideal?
 3. Que querés que haga el visitante cuando entre al sitio? (ej: que te llame, que compre, que reserve un turno)"
-<!--MANU:{"next":"content","data":{"social_links":[...]}}}-->
+<!--MANU:{"next":"content","data":{"social_links":[...]}}-->
 
 En social_links, incluye TODAS las redes Y el email confirmados:
 [{"platform":"whatsapp","value":"+5491234..."},{"platform":"instagram","value":"@usuario"},{"platform":"email","value":"info@negocio.com"}]
@@ -372,15 +372,15 @@ function parseMessage(text: string): {
   let upload: string | undefined;
   let logoGenerate = false;
 
-  const manuMatch = cleanText.match(/<!--MANU:(\{[\s\S]*?\})-->/);
+  const manuMatch = cleanText.match(/<!--MANU:([\s\S]*?)-->/);
   if (manuMatch) {
+    cleanText = cleanText.replace(manuMatch[0], "").trim();
     try {
       const parsed = JSON.parse(manuMatch[1]);
-      cleanText = cleanText.replace(manuMatch[0], "");
       next = parsed.next;
       data = parsed.data;
     } catch (e) {
-      console.error("[chat] Failed to parse MANU marker:", manuMatch[1].slice(0, 200), e);
+      console.error("[chat] Failed to parse MANU marker:", e);
     }
   }
 
