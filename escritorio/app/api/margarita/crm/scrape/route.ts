@@ -48,42 +48,28 @@ const OVERPASS_MIRRORS = [
   "https://overpass.private.coffee/api/interpreter",
 ];
 
-// Diccionario rubro (es) → tag OSM. Claves sin acentos y en minúscula (ver normalize()).
+// Diccionario rubro (es) → tag OSM. Claves = categorías del select (ScrapePanel RUBROS),
+// sin acentos y en minúscula (ver normalize()). value puede ser regex multivalor (a|b|c).
 const RUBRO_TAGS: { match: string; key: string; value: string }[] = [
-  { match: "restaurante", key: "amenity", value: "restaurant" },
-  { match: "parrilla", key: "amenity", value: "restaurant" },
-  { match: "pizzeria", key: "amenity", value: "restaurant" },
-  { match: "bar", key: "amenity", value: "bar" },
-  { match: "cafeteria", key: "amenity", value: "cafe" },
-  { match: "cafe", key: "amenity", value: "cafe" },
-  { match: "panaderia", key: "shop", value: "bakery" },
-  { match: "peluqueria", key: "shop", value: "hairdresser" },
-  { match: "barberia", key: "shop", value: "hairdresser" },
-  { match: "farmacia", key: "amenity", value: "pharmacy" },
-  { match: "ferreteria", key: "shop", value: "hardware" },
-  { match: "gimnasio", key: "leisure", value: "fitness_centre" },
-  { match: "hotel", key: "tourism", value: "hotel" },
-  { match: "dentista", key: "amenity", value: "dentist" },
-  { match: "abogado", key: "office", value: "lawyer" },
-  { match: "inmobiliaria", key: "office", value: "estate_agent" },
-  { match: "supermercado", key: "shop", value: "supermarket" },
-  { match: "carniceria", key: "shop", value: "butcher" },
-  { match: "verduleria", key: "shop", value: "greengrocer" },
-  { match: "veterinaria", key: "amenity", value: "veterinary" },
-  { match: "clinica", key: "amenity", value: "clinic" },
-  { match: "mecanico", key: "shop", value: "car_repair" },
-  { match: "taller", key: "shop", value: "car_repair" },
-  { match: "indumentaria", key: "shop", value: "clothes" },
-  { match: "boutique", key: "shop", value: "clothes" },
-  { match: "ropa", key: "shop", value: "clothes" },
-  { match: "zapateria", key: "shop", value: "shoes" },
-  { match: "optica", key: "shop", value: "optician" },
-  { match: "floreria", key: "shop", value: "florist" },
-  { match: "libreria", key: "shop", value: "books" },
-  { match: "jugueteria", key: "shop", value: "toys" },
-  { match: "muebleria", key: "shop", value: "furniture" },
-  { match: "heladeria", key: "amenity", value: "ice_cream" },
-  { match: "kiosco", key: "shop", value: "convenience" },
+  { match: "gastronomia",           key: "amenity", value: "restaurant|cafe|bar|fast_food|ice_cream|pub|food_court" },
+  { match: "tecnologia",            key: "shop",    value: "computer|electronics|mobile_phone" },
+  { match: "salud y bienestar",     key: "amenity", value: "pharmacy|clinic|doctors|dentist|hospital|physiotherapist" },
+  { match: "moda y ropa",           key: "shop",    value: "clothes|shoes|boutique|fashion|accessories" },
+  { match: "construccion",          key: "shop",    value: "hardware|building_materials|doityourself" },
+  { match: "educacion",             key: "amenity", value: "school|college|university|language_school|driving_school" },
+  { match: "finanzas",              key: "amenity", value: "bank|bureau_de_change|atm" },
+  { match: "marketing y publicidad",key: "office",  value: "advertising_agency|marketing|media" },
+  { match: "turismo y hoteleria",   key: "tourism", value: "hotel|hostel|guest_house|motel|apartment" },
+  { match: "inmobiliaria",          key: "office",  value: "estate_agent" },
+  { match: "automotriz",            key: "shop",    value: "car|car_repair|car_parts|tyres|motorcycle" },
+  { match: "consultoria",           key: "office",  value: "consulting|company|it" },
+  { match: "logistica",             key: "shop",    value: "courier|logistics|storage" },
+  { match: "retail",                key: "shop",    value: "supermarket|convenience|department_store|mall" },
+  { match: "industria y manufactura",key: "industrial", value: "factory|warehouse" },
+  { match: "deporte y fitness",     key: "leisure", value: "fitness_centre|sports_centre|gym|swimming_pool" },
+  { match: "belleza y estetica",    key: "shop",    value: "hairdresser|beauty|cosmetics|perfumery|nail_salon" },
+  { match: "legal y juridico",      key: "office",  value: "lawyer|notary" },
+  { match: "arquitectura y diseno", key: "office",  value: "architect|designer" },
 ];
 
 function normalize(s: string): string {
@@ -148,7 +134,7 @@ async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
   // Con tag del diccionario → filtro por tag. Sin tag → fallback por nombre (amenity o shop).
   const safeRubro = rubro.replace(/["\\]/g, "");
   const selectors = tag
-    ? `  nwr["${tag.key}"="${tag.value}"]${bb};`
+    ? `  nwr["${tag.key}"~"${tag.value}"]${bb};`
     : `  nwr["name"~"${safeRubro}",i]["amenity"]${bb};\n` +
       `  nwr["name"~"${safeRubro}",i]["shop"]${bb};`;
 
