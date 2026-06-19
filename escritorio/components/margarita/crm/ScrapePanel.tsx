@@ -151,8 +151,14 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
           filterPlatforms,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al buscar");
+      const text = await res.text();
+      if (!res.ok) {
+        let msg = "Error al buscar";
+        try { msg = JSON.parse(text).error || msg; } catch { msg = `Error ${res.status} del servidor`; }
+        throw new Error(msg);
+      }
+      let data: any;
+      try { data = JSON.parse(text); } catch { throw new Error("Respuesta inválida del servidor"); }
       setResults(data.contacts || []);
       setSelected(new Set((data.contacts || []).map((_: any, i: number) => i)));
     } catch (err: any) {
