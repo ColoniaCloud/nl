@@ -8,7 +8,6 @@ export const runtime = "nodejs";
 
 const COOKIE_NAME = process.env.NL360_JWT_COOKIE_NAME || "nl360_jwt";
 const WP_BASE_URL = process.env.WP_BASE_URL!;
-const PLACES_KEY = process.env.GOOGLE_PLACES_API_KEY!;
 const SCRAPE_MODEL = getAgent("margarita")!.model;
 
 async function getUser(token: string): Promise<{ id: number; roles: string[] } | null> {
@@ -34,44 +33,167 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// ─── Google Places helpers ──────────────────────────────────────────────────
+// ─── OpenStreetMap helpers (Overpass + Nominatim, sin API key) ──────────────
 
-async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
-  const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
-  url.searchParams.set("query", query);
-  url.searchParams.set("key", PLACES_KEY);
-  url.searchParams.set("language", "es");
+// Caché de detalles por id de elemento OSM. searchPlaces la llena; getPlaceDetails la lee.
+// Segura ante requests concurrentes: la clave es el id OSM y el valor es determinístico por id.
+const osmDetailsCache = new Map<string, any>();
 
-  const all: any[] = [];
-  let nextPageToken: string | null = null;
+const NOMINATIM_UA = "NL360-Margarita/1.0 (comunicacion@colonia.cloud)";
 
-  do {
-    if (nextPageToken) {
-      await new Promise((r) => setTimeout(r, 2000)); // Places API requires delay for next_page_token
-      url.searchParams.set("pagetoken", nextPageToken);
-    } else {
-      url.searchParams.delete("pagetoken");
-    }
+// Espejos públicos de Overpass; se prueban en orden hasta que uno responda JSON.
+const OVERPASS_MIRRORS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+];
 
-    const res = await fetch(url.toString(), { cache: "no-store" });
-    const data = await res.json();
-    if (data.results) all.push(...data.results);
-    nextPageToken = data.next_page_token || null;
-  } while (nextPageToken && all.length < cantidad);
+// Diccionario rubro (es) → tag OSM. Claves sin acentos y en minúscula (ver normalize()).
+const RUBRO_TAGS: { match: string; key: string; value: string }[] = [
+  { match: "restaurante", key: "amenity", value: "restaurant" },
+  { match: "parrilla", key: "amenity", value: "restaurant" },
+  { match: "pizzeria", key: "amenity", value: "restaurant" },
+  { match: "bar", key: "amenity", value: "bar" },
+  { match: "cafeteria", key: "amenity", value: "cafe" },
+  { match: "cafe", key: "amenity", value: "cafe" },
+  { match: "panaderia", key: "shop", value: "bakery" },
+  { match: "peluqueria", key: "shop", value: "hairdresser" },
+  { match: "barberia", key: "shop", value: "hairdresser" },
+  { match: "farmacia", key: "amenity", value: "pharmacy" },
+  { match: "ferreteria", key: "shop", value: "hardware" },
+  { match: "gimnasio", key: "leisure", value: "fitness_centre" },
+  { match: "hotel", key: "tourism", value: "hotel" },
+  { match: "dentista", key: "amenity", value: "dentist" },
+  { match: "abogado", key: "office", value: "lawyer" },
+  { match: "inmobiliaria", key: "office", value: "estate_agent" },
+  { match: "supermercado", key: "shop", value: "supermarket" },
+  { match: "carniceria", key: "shop", value: "butcher" },
+  { match: "verduleria", key: "shop", value: "greengrocer" },
+  { match: "veterinaria", key: "amenity", value: "veterinary" },
+  { match: "clinica", key: "amenity", value: "clinic" },
+  { match: "mecanico", key: "shop", value: "car_repair" },
+  { match: "taller", key: "shop", value: "car_repair" },
+  { match: "indumentaria", key: "shop", value: "clothes" },
+  { match: "boutique", key: "shop", value: "clothes" },
+  { match: "ropa", key: "shop", value: "clothes" },
+  { match: "zapateria", key: "shop", value: "shoes" },
+  { match: "optica", key: "shop", value: "optician" },
+  { match: "floreria", key: "shop", value: "florist" },
+  { match: "libreria", key: "shop", value: "books" },
+  { match: "jugueteria", key: "shop", value: "toys" },
+  { match: "muebleria", key: "shop", value: "furniture" },
+  { match: "heladeria", key: "amenity", value: "ice_cream" },
+  { match: "kiosco", key: "shop", value: "convenience" },
+];
 
-  return all.slice(0, cantidad);
+function normalize(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
 }
 
-async function getPlaceDetails(placeId: string): Promise<any> {
-  const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
-  url.searchParams.set("place_id", placeId);
-  url.searchParams.set("fields", "name,formatted_phone_number,website,formatted_address,types,rating,user_ratings_total,business_status");
-  url.searchParams.set("key", PLACES_KEY);
-  url.searchParams.set("language", "es");
-
-  const res = await fetch(url.toString(), { cache: "no-store" });
+// Geocodifica una ubicación libre ("Buenos Aires, Argentina") a un bounding box OSM.
+// Devuelve [south, north, west, east] (formato boundingbox de Nominatim).
+async function geocodeArea(location: string): Promise<[string, string, string, string] | null> {
+  const url = new URL("https://nominatim.openstreetmap.org/search");
+  url.searchParams.set("q", location);
+  url.searchParams.set("format", "json");
+  url.searchParams.set("limit", "1");
+  const res = await fetch(url.toString(), {
+    headers: { "User-Agent": NOMINATIM_UA, "Accept-Language": "es" },
+    cache: "no-store",
+  });
+  if (!res.ok) return null;
   const data = await res.json();
-  return data.result || null;
+  const hit = Array.isArray(data) ? data[0] : null;
+  if (!hit?.boundingbox || hit.boundingbox.length !== 4) return null;
+  return hit.boundingbox;
+}
+
+// Construye el shape que espera el handler a partir de un elemento OSM de Overpass.
+// rating/user_ratings_total/business_status no existen en OSM → siempre null.
+function osmElementToPlace(el: any): any {
+  const t = el.tags || {};
+  const addr = [
+    [t["addr:street"], t["addr:housenumber"]].filter(Boolean).join(" "),
+    t["addr:city"] || t["addr:suburb"],
+    t["addr:state"],
+  ].filter(Boolean).join(", ");
+  return {
+    place_id: String(el.id),
+    name: t.name || "",
+    formatted_phone_number: t.phone || t["contact:phone"] || null,
+    website: t.website || t["contact:website"] || null,
+    formatted_address: addr || null,
+    types: [],
+    rating: null,
+    user_ratings_total: null,
+    business_status: null,
+  };
+}
+
+// Reemplaza Google Places Text Search con Overpass (OpenStreetMap).
+// `query` llega como "<rubro> en <location>" desde el handler; lo separamos por " en ".
+async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
+  const sep = query.indexOf(" en ");
+  const rubro = (sep >= 0 ? query.slice(0, sep) : query).trim();
+  const location = sep >= 0 ? query.slice(sep + 4).trim() : "";
+
+  const bbox = location ? await geocodeArea(location) : null;
+  if (!bbox) return [];
+  const [south, north, west, east] = bbox;
+  const bb = `(${south},${west},${north},${east})`; // Overpass: (south,west,north,east)
+
+  const norm = normalize(rubro);
+  const tag = RUBRO_TAGS.find((r) => norm.includes(r.match));
+
+  // Con tag del diccionario → filtro por tag. Sin tag → fallback por nombre (amenity o shop).
+  const safeRubro = rubro.replace(/["\\]/g, "");
+  const selectors = tag
+    ? `  nwr["${tag.key}"="${tag.value}"]${bb};`
+    : `  nwr["name"~"${safeRubro}",i]["amenity"]${bb};\n` +
+      `  nwr["name"~"${safeRubro}",i]["shop"]${bb};`;
+
+  const oql = `[out:json][timeout:25];\n(\n${selectors}\n);\nout center tags ${Math.min(cantidad, 200)};`;
+
+  // Probar mirrors en orden; el primero que responda JSON válido gana. Si todos fallan → [].
+  let elements: any[] = [];
+  for (const mirror of OVERPASS_MIRRORS) {
+    try {
+      const res = await fetch(mirror, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "data=" + encodeURIComponent(oql),
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        console.warn(`[Margarita Scrape] Overpass mirror ${mirror} → HTTP ${res.status}`);
+        continue;
+      }
+      const ct = res.headers.get("content-type") || "";
+      if (!ct.includes("json")) {
+        console.warn(`[Margarita Scrape] Overpass mirror ${mirror} → content-type no JSON: ${ct}`);
+        continue;
+      }
+      const data = await res.json();
+      elements = Array.isArray(data?.elements) ? data.elements : [];
+      break; // mirror funcionó, salir del loop
+    } catch (err: any) {
+      console.warn(`[Margarita Scrape] Overpass mirror ${mirror} → error: ${err.message}`);
+    }
+  }
+
+  const places = elements
+    .filter((el) => el.tags?.name) // descartar elementos sin nombre
+    .map(osmElementToPlace);
+
+  // Llenar la caché para getPlaceDetails (clave = id OSM, valor determinístico por id).
+  for (const p of places) osmDetailsCache.set(p.place_id, p);
+
+  return places.slice(0, cantidad);
+}
+
+// Con Overpass ya tenemos todos los datos en searchPlaces; aquí solo leemos la caché.
+async function getPlaceDetails(placeId: string): Promise<any> {
+  return osmDetailsCache.get(placeId) || null;
 }
 
 // ─── Website analysis via Claude ───────────────────────────────────────────
@@ -135,8 +257,7 @@ async function scoreLeadsWithAI(leads: any[]): Promise<any[]> {
     nombre: l.nombre,
     hasWebsite: !!l._website,
     website: l._website || null,
-    rating: l._rating ?? null,
-    totalReviews: l._totalReviews ?? null,
+    hasPhone: !!l.telefono,
     hasWhatsapp: l._hasWhatsapp ?? false,
     platforms: l._platforms ?? [],
   }));
@@ -147,15 +268,15 @@ que vende sitios web y presencia online a negocios locales latinoamericanos.
 Analizá estos negocios y asignale a cada uno un score de 0-100 según qué tan buen lead es
 para venderle servicios de presencia digital (sitio web, redes, etc).
 
-Criterios de scoring:
+Criterios de scoring (señales principales: tiene web o no, tiene teléfono o no, nombre del negocio):
 - Sin website en absoluto → score 75-95 (excelente lead, necesita presencia)
-- Sin website + muchas reseñas (50+) → score 90-100 (lead premium, negocio activo sin web)
+- Sin website + tiene teléfono de contacto → score 85-95 (lead premium, contactable y sin web)
 - Sin website + tiene WhatsApp business → score 80-90 (semi-digitalizado, receptivo)
+- Sin website pero sin teléfono → score 70-80 (buen lead, falta confirmar contacto)
 - Solo tiene redes sociales como plataforma → score 70-85
 - Website muy básico o desactualizado → score 40-65
 - Website presente pero sin evaluar → score 20-40
 - Website profesional y completo → score 5-20 (mal lead para nosotros)
-- business_status CLOSED_PERMANENTLY → score 0
 
 Devolvé ÚNICAMENTE un array JSON válido, sin markdown, sin texto extra.
 Formato exacto (un objeto por lead, mismo orden que el input):
@@ -165,7 +286,7 @@ Formato exacto (un objeto por lead, mismo orden que el input):
     "score": 85,
     "priority": "high",
     "website_quality": "none",
-    "reason": "Negocio activo con 120 reseñas pero sin sitio web propio. Lead premium."
+    "reason": "Negocio sin sitio web propio pero con teléfono de contacto. Lead premium."
   }
 ]
 
