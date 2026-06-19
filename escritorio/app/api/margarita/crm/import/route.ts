@@ -56,35 +56,67 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No hay contactos para importar" }, { status: 422 });
     }
 
-    const toImport = contacts.slice(0, 100); // max 100 por batch
+    const toImport = contacts.slice(0, 500); // max 500 por batch
     let imported = 0;
     let skipped = 0;
 
-    for (const c of toImport) {
-      if (!c.nombre?.trim()) { skipped++; continue; }
+    // Mapea un contacto a su fila de valores; null si no tiene nombre.
+    const toRow = (c: any, userId: number): any[] | null => {
+      if (!c.nombre?.trim()) return null;
+      return [
+        userId,
+        c.nombre.trim(),
+        c.empresa?.trim() || null,
+        c.email?.trim() || null,
+        c.telefono?.trim() || null,
+        c.optin ? 1 : 0,
+        c.fecha_contactado || null,
+        c.pais?.trim() || null,
+        c.ciudad?.trim() || null,
+        c.direccion?.trim() || null,
+        JSON.stringify(c.etiquetas || []),
+        c.notas?.trim() || null,
+        // NUEVOS CAMPOS
+        c._website || c.website || null,                    // website
+        c.score != null ? Math.min(100, Math.max(0, Math.round(c.score))) : null, // score
+        c.source || "scrape",                               // source
+        c.rubro?.trim() || null,                            // rubro
+        c.priority || null,                                 // priority
+        c.website_quality || null,                          // website_quality
+        c.reason ? JSON.stringify({ reason: c.reason, rating: c._rating, reviews: c._totalReviews }) : null, // ai_analysis
+      ];
+    };
+
+    const COLS = `(user_id, nombre, empresa, email, telefono, optin,
+      fecha_contactado, pais, ciudad, direccion, etiquetas, notas,
+      website, score, source, rubro, priority, website_quality, ai_analysis)`;
+    const PLACEHOLDERS = Array(19).fill("?").join(", ");
+
+    const validRows = toImport.map((c) => toRow(c, user.id)).filter((r): r is any[] => r !== null);
+    skipped += toImport.length - validRows.length;
+
+    if (validRows.length > 0) {
+      const placeholders = validRows.map(() => `(${PLACEHOLDERS})`).join(", ");
       try {
-        await pool.execute(
-          `INSERT INTO mm_contacts
-            (user_id, nombre, empresa, email, telefono, optin, fecha_contactado, pais, ciudad, direccion, etiquetas, notas)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            user.id,
-            c.nombre.trim(),
-            c.empresa || null,
-            c.email || null,
-            c.telefono || null,
-            c.optin ? 1 : 0,
-            c.fecha_contactado || null,
-            c.pais || null,
-            c.ciudad || null,
-            c.direccion || null,
-            c.etiquetas ? JSON.stringify(c.etiquetas) : null,
-            c.notas || null,
-          ]
+        // Bulk insert: un solo statement para todo el lote
+        const [res]: any = await pool.query(
+          `INSERT INTO mm_contacts ${COLS} VALUES ${placeholders}`,
+          validRows.flat()
         );
-        imported++;
+        imported += res?.affectedRows ?? validRows.length;
       } catch {
-        skipped++;
+        // Fallback fila-por-fila para no perder el lote completo por un registro
+        for (const row of validRows) {
+          try {
+            await pool.execute(
+              `INSERT INTO mm_contacts ${COLS} VALUES (${PLACEHOLDERS})`,
+              row
+            );
+            imported++;
+          } catch {
+            skipped++;
+          }
+        }
       }
     }
 
