@@ -153,18 +153,17 @@ function validateMainContent(content: string): boolean {
   if (!trimmed.toLowerCase().includes("<main")) return false;
   if (!trimmed.toLowerCase().includes("</main>")) return false;
   if (trimmed.length < 200) return false;
-  // Check div and section balance — unbalanced tags indicate truncation or LLM error
+  // Warn on unbalanced tags but do NOT reject — a slightly unbalanced page
+  // is better than no page at all (missing index.html breaks the build).
   const divOpens = (trimmed.toLowerCase().match(/<div[\s>]/g) || []).length;
   const divCloses = (trimmed.toLowerCase().match(/<\/div>/g) || []).length;
   if (divOpens !== divCloses) {
-    console.warn(`[lite-plus] validateMainContent: div desbalanceado (${divOpens} open / ${divCloses} close)`);
-    return false;
+    console.warn(`[lite-plus] validateMainContent: div desbalanceado (${divOpens} open / ${divCloses} close) — aceptando igual`);
   }
   const secOpens = (trimmed.toLowerCase().match(/<section[\s>]/g) || []).length;
   const secCloses = (trimmed.toLowerCase().match(/<\/section>/g) || []).length;
   if (secOpens !== secCloses) {
-    console.warn(`[lite-plus] validateMainContent: section desbalanceado (${secOpens} open / ${secCloses} close)`);
-    return false;
+    console.warn(`[lite-plus] validateMainContent: section desbalanceado (${secOpens} open / ${secCloses} close) — aceptando igual`);
   }
   return true;
 }
