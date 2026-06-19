@@ -167,12 +167,22 @@ function BuildTerminal({ logs, status }: {
   logs: string[];
   status: "running" | "done" | "error";
 }) {
+  const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [spinnerIdx, setSpinnerIdx] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
+
+  useEffect(() => {
+    if (status !== "running") return;
+    const interval = setInterval(() => {
+      setSpinnerIdx((i) => (i + 1) % SPINNER_FRAMES.length);
+    }, 80);
+    return () => clearInterval(interval);
+  }, [status]);
 
   return (
     <div className={`mb-4 rounded-lg sm:rounded-xl overflow-hidden border border-zinc-700 shadow-lg transition-all duration-200 ${expanded ? "fixed inset-2 sm:inset-4 z-50 flex flex-col" : ""}`}>
@@ -224,10 +234,9 @@ function BuildTerminal({ logs, status }: {
           </div>
         ))}
         {status === "running" && (
-          <div className="flex gap-2 mt-0.5">
-            <span className="text-zinc-600 select-none">&#9607;</span>
-            <span className="text-green-400 animate-pulse">_</span>
-          </div>
+          <span className="text-cyan-400 font-mono ml-1">
+            {SPINNER_FRAMES[spinnerIdx]}
+          </span>
         )}
         <div ref={bottomRef} />
       </div>
@@ -537,9 +546,6 @@ function ManuDevPage() {
 
           if (parsed.message) {
             setBuildLogs((prev) => [...prev, parsed.message]);
-          }
-          if (parsed.mode && parsed.status !== "done") {
-            setBuildLogs((prev) => [...prev, `Modo efectivo: ${parsed.mode}`]);
           }
           if (parsed.status === "mode_degraded") setBuildDegraded(true);
           if (parsed.status === "done") {
