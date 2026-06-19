@@ -139,6 +139,12 @@ function validateLayout(content: string): boolean {
     return false;
   if (trimmed.length < 500) return false;
   if (!/<!--\s*CONTENT_PLACEHOLDER\s*-->/i.test(trimmed)) return false;
+  // Reject layout if LLM wrapped placeholder in <main> (causes double <main> after assembly)
+  const mainCount = (trimmed.toLowerCase().match(/<main[\s>]/g) || []).length;
+  if (mainCount > 0) {
+    console.warn(`[lite-plus] Layout rechazado: contiene ${mainCount} <main> (debe ser 0). Usando modo legacy.`);
+    return false;
+  }
   return true;
 }
 
@@ -262,6 +268,8 @@ INSTRUCCIONES:
   1. <header> con navegacion responsive y logo
   2. <!-- CONTENT_PLACEHOLDER --> (exactamente este texto, no lo modifiques)
   3. <footer> con nombre del negocio, anio y redes sociales
+- CRITICO: NO uses <main> en ninguna parte del layout. NO envuelvas el placeholder con <main>, <section>, <div> ni ningun otro elemento. El placeholder va como hijo directo de <body>, entre </header> y <footer>.
+- El <body> tiene exactamente 3 hijos directos: <header>, <!-- CONTENT_PLACEHOLDER -->, <footer>. Nada mas.
 
 HEADER:
 - ${logoInstruction}
