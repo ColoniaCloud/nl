@@ -711,7 +711,7 @@ export async function POST(req: NextRequest) {
               const logoSubdomain = projectData?.subdomain as string | undefined;
               const localPath = await downloadLogoLocally(project_id, logoResult.url, logoSubdomain);
               const logoUrl = localPath ?? logoResult.url;
-              logoPreview = logoUrl;
+              logoPreview = logoResult.url;
               await pool.execute(
                 "UPDATE md_projects SET logo_url = ? WHERE id = ? AND user_id = ?",
                 [logoUrl, project_id, user.id]
