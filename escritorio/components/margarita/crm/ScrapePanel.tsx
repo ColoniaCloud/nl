@@ -24,6 +24,12 @@ type ScrapedContact = {
   _website?: string | null;
   _hasWhatsapp?: boolean;
   _platforms?: string[];
+  score?: number;
+  priority?: "high" | "medium" | "low";
+  website_quality?: "none" | "poor" | "decent" | "good";
+  reason?: string;
+  _rating?: number | null;
+  _totalReviews?: number | null;
 };
 
 type Props = {
@@ -385,6 +391,25 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-medium text-zinc-100">{c.nombre}</span>
+                        {/* Score badge */}
+                        {c.score != null && (
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
+                            c.score >= 70
+                              ? "bg-green-500/20 text-green-400"
+                              : c.score >= 40
+                                ? "bg-yellow-500/20 text-yellow-400"
+                                : "bg-red-500/20 text-red-400"
+                          }`}>
+                            Score {c.score}
+                            {c.priority === "high" && " · 🔥"}
+                          </span>
+                        )}
+                        {/* Rating de Google si existe */}
+                        {c._rating != null && (
+                          <span className="text-xs text-zinc-500">
+                            ⭐ {c._rating} ({c._totalReviews ?? 0} reseñas)
+                          </span>
+                        )}
                         {c._hasWhatsapp && (
                           <Badge variant="secondary" className="text-2xs px-1.5 py-0 bg-emerald-900/40 text-emerald-400 border-emerald-800/50 gap-1">
                             <MessageCircle className="size-2.5" /> WhatsApp
@@ -396,6 +421,10 @@ export function ScrapePanel({ open, onClose, onImport }: Props) {
                           </Badge>
                         ))}
                       </div>
+                      {/* Reason del scoring IA */}
+                      {c.reason && (
+                        <p className="text-xs text-zinc-500 mt-0.5 line-clamp-1">{c.reason}</p>
+                      )}
                       <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                         {c.telefono && <span className="text-xs text-zinc-400">{c.telefono}</span>}
                         {c._website && (
