@@ -153,6 +153,19 @@ function validateMainContent(content: string): boolean {
   if (!trimmed.toLowerCase().includes("<main")) return false;
   if (!trimmed.toLowerCase().includes("</main>")) return false;
   if (trimmed.length < 200) return false;
+  // Check div and section balance — unbalanced tags indicate truncation or LLM error
+  const divOpens = (trimmed.toLowerCase().match(/<div[\s>]/g) || []).length;
+  const divCloses = (trimmed.toLowerCase().match(/<\/div>/g) || []).length;
+  if (divOpens !== divCloses) {
+    console.warn(`[lite-plus] validateMainContent: div desbalanceado (${divOpens} open / ${divCloses} close)`);
+    return false;
+  }
+  const secOpens = (trimmed.toLowerCase().match(/<section[\s>]/g) || []).length;
+  const secCloses = (trimmed.toLowerCase().match(/<\/section>/g) || []).length;
+  if (secOpens !== secCloses) {
+    console.warn(`[lite-plus] validateMainContent: section desbalanceado (${secOpens} open / ${secCloses} close)`);
+    return false;
+  }
   return true;
 }
 
@@ -532,7 +545,7 @@ async function generateFullPages(
  *
  * Flow:
  *   1. Generate shared layout (header + footer, 1 call, 6000 tokens)
- *   2. Generate <main> content per page (N calls, 10000 tokens each)
+ *   2. Generate <main> content per page (N calls, 12000 tokens each)
  *   3. Assemble each page: layout + main
  *
  * If layout generation fails, falls back to legacy full-page generation.
@@ -598,7 +611,7 @@ export async function generateLitePlusSite(
 
     try {
       const prompt = buildMainContentPrompt(input, page, isHome);
-      const raw = await streamPrompt(client, prompt, label, 10000);
+      const raw = await streamPrompt(client, prompt, label, 12000);
       const mainContent = extractMainContent(raw);
 
       if (validateMainContent(mainContent)) {
