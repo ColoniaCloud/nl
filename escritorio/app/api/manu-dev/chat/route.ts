@@ -708,7 +708,8 @@ export async function POST(req: NextRequest) {
             });
             if (logoResult) {
               // Download SVG locally so generated site can use it without external dependency
-              const localPath = await downloadLogoLocally(project_id, logoResult.url);
+              const logoSubdomain = projectData?.subdomain as string | undefined;
+              const localPath = await downloadLogoLocally(project_id, logoResult.url, logoSubdomain);
               const logoUrl = localPath ?? logoResult.url;
               logoPreview = logoUrl;
               await pool.execute(
