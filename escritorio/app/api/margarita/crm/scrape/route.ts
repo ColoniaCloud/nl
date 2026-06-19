@@ -160,7 +160,11 @@ async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
     try {
       const res = await fetch(mirror, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": NOMINATIM_UA,   // evita 429 de los mirrors de Overpass
+          "Accept": "application/json",  // evita 406 de overpass-api.de
+        },
         body: "data=" + encodeURIComponent(oql),
         cache: "no-store",
       });
