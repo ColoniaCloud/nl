@@ -168,6 +168,8 @@ async function ensureTables() {
     "ALTER TABLE mm_contacts ADD COLUMN status VARCHAR(20) DEFAULT 'nuevo'",
     "ALTER TABLE mm_contacts ADD COLUMN ai_analysis JSON DEFAULT NULL",
     "ALTER TABLE mm_contacts ADD COLUMN source VARCHAR(100) DEFAULT NULL",
+    "ALTER TABLE mm_contacts ADD COLUMN priority ENUM('high','medium','low') DEFAULT 'medium'",
+    "ALTER TABLE mm_contacts ADD COLUMN website_quality ENUM('none','poor','decent','good') DEFAULT 'none'",
   ];
   for (const sql of extras) {
     try { await pool.execute(sql); } catch {}
