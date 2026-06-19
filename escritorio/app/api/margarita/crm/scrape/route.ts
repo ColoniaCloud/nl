@@ -65,7 +65,7 @@ async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
 async function getPlaceDetails(placeId: string): Promise<any> {
   const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
   url.searchParams.set("place_id", placeId);
-  url.searchParams.set("fields", "name,formatted_phone_number,website,formatted_address,types");
+  url.searchParams.set("fields", "name,formatted_phone_number,website,formatted_address,types,rating,user_ratings_total,business_status");
   url.searchParams.set("key", PLACES_KEY);
   url.searchParams.set("language", "es");
 
@@ -122,6 +122,98 @@ ${snippet}`,
     };
   } catch {
     return { hasWhatsapp: false, platform: null, platforms: [] };
+  }
+}
+
+// ─── AI batch scoring ──────────────────────────────────────────────────────
+
+async function scoreLeadsWithAI(leads: any[]): Promise<any[]> {
+  if (leads.length === 0) return leads;
+
+  const leadsForScoring = leads.map((l, i) => ({
+    index: i,
+    nombre: l.nombre,
+    hasWebsite: !!l._website,
+    website: l._website || null,
+    rating: l._rating ?? null,
+    totalReviews: l._totalReviews ?? null,
+    hasWhatsapp: l._hasWhatsapp ?? false,
+    platforms: l._platforms ?? [],
+  }));
+
+  const prompt = `Sos un experto en calificación de leads para una agencia de marketing digital
+que vende sitios web y presencia online a negocios locales latinoamericanos.
+
+Analizá estos negocios y asignale a cada uno un score de 0-100 según qué tan buen lead es
+para venderle servicios de presencia digital (sitio web, redes, etc).
+
+Criterios de scoring:
+- Sin website en absoluto → score 75-95 (excelente lead, necesita presencia)
+- Sin website + muchas reseñas (50+) → score 90-100 (lead premium, negocio activo sin web)
+- Sin website + tiene WhatsApp business → score 80-90 (semi-digitalizado, receptivo)
+- Solo tiene redes sociales como plataforma → score 70-85
+- Website muy básico o desactualizado → score 40-65
+- Website presente pero sin evaluar → score 20-40
+- Website profesional y completo → score 5-20 (mal lead para nosotros)
+- business_status CLOSED_PERMANENTLY → score 0
+
+Devolvé ÚNICAMENTE un array JSON válido, sin markdown, sin texto extra.
+Formato exacto (un objeto por lead, mismo orden que el input):
+[
+  {
+    "index": 0,
+    "score": 85,
+    "priority": "high",
+    "website_quality": "none",
+    "reason": "Negocio activo con 120 reseñas pero sin sitio web propio. Lead premium."
+  }
+]
+
+Reglas para priority:
+- score >= 70 → "high"
+- score 40-69 → "medium"
+- score < 40 → "low"
+
+Reglas para website_quality:
+- Sin website → "none"
+- Website básico/dudoso → "poor"
+- Website funcional → "decent"
+- Website profesional → "good"
+
+Leads a analizar:
+${JSON.stringify(leadsForScoring, null, 2)}`;
+
+  try {
+    const response = await anthropic.messages.create({
+      model: SCRAPE_MODEL,
+      max_tokens: 1024,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const raw = response.content
+      .filter((b: any) => b.type === "text")
+      .map((b: any) => b.text)
+      .join("");
+
+    const clean = raw.replace(/```json|```/g, "").trim();
+    const scores: any[] = JSON.parse(clean);
+
+    // Merge scores back into leads
+    return leads.map((lead, i) => {
+      const s = scores.find((x: any) => x.index === i);
+      if (!s) return lead;
+      return {
+        ...lead,
+        score: s.score,
+        priority: s.priority,
+        website_quality: s.website_quality,
+        reason: s.reason,
+      };
+    });
+  } catch (err) {
+    console.error("[Margarita Scrape] scoreLeadsWithAI error:", err);
+    // Si falla el scoring, devolver leads sin score (no romper el scrape)
+    return leads;
   }
 }
 
@@ -227,7 +319,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Trim to requested quantity and map to CRM contact format
-    const contacts = analyzed.slice(0, cantidad).map((p) => {
+    let contacts: any[] = analyzed.slice(0, cantidad).map((p) => {
       // Extract city/country from formatted_address
       const addressParts = (p.formatted_address || "").split(",").map((s: string) => s.trim());
       const inferredCity = ciudad || addressParts[1] || null;
@@ -248,8 +340,16 @@ export async function POST(req: NextRequest) {
         _website: p.website || null,
         _hasWhatsapp: p._analysis?.hasWhatsapp || false,
         _platforms: p._analysis?.platforms || [],
+        _rating: p.rating ?? null,
+        _totalReviews: p.user_ratings_total ?? null,
       };
     });
+
+    // 6. AI batch scoring (1 sola llamada para todos los leads)
+    contacts = await scoreLeadsWithAI(contacts);
+
+    // Ordenar por score descendente (los mejores leads primero)
+    contacts.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
     return NextResponse.json({ contacts, rubro, location, total: contacts.length });
   } catch (err: any) {
