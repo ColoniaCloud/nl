@@ -145,6 +145,7 @@ function validateLayout(content: string): boolean {
 function validateMainContent(content: string): boolean {
   const trimmed = content.trim();
   if (!trimmed.toLowerCase().includes("<main")) return false;
+  if (!trimmed.toLowerCase().includes("</main>")) return false;
   if (trimmed.length < 200) return false;
   return true;
 }
@@ -176,7 +177,13 @@ function extractMainContent(text: string): string {
   const start = lower.indexOf("<main");
   const end = lower.lastIndexOf("</main>");
   if (start !== -1 && end !== -1) {
+    // Both tags present — extract normally
     return content.slice(start, end + "</main>".length).trim();
+  }
+  if (start !== -1 && end === -1) {
+    // LLM opened <main> but forgot to close it — auto-close
+    console.warn("[lite-plus] extractMainContent: </main> missing, auto-closing");
+    return content.slice(start).trim() + "\n</main>";
   }
   return content;
 }
@@ -335,8 +342,11 @@ REGLAS CRITICAS:
 - Mobile-first responsive
 - Animaciones CSS sutiles (fadeIn, hover transitions)
 - Sin emojis como iconos
+- CRITICO: el elemento <main> DEBE cerrarse con </main> al final de tu respuesta
 - NO uses overflow:hidden en body ni en el elemento <main>
 - NO uses height:100vh en el elemento <main> directamente (si necesitas una seccion hero, aplica la altura en el hijo, no en <main>)
+- NO generes ninguna seccion de cierre con nombre del negocio, redes sociales, email, copyright o links de navegacion al final del <main> — eso ya existe en el footer compartido del layout
+- El ultimo elemento del <main> debe ser contenido de la pagina (CTA, formulario, mapa, etc.), nunca un bloque resumen del negocio
 
 Responde SOLO con el elemento <main>. Sin markdown, sin explicaciones.`;
 }
