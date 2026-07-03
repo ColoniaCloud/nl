@@ -37,7 +37,7 @@ function hexToRgb(hex: string): [number, number, number] | null {
 
 function buildPrompt(params: LogoParams): string {
   const styleDescriptions: Record<string, string> = {
-    minimalist: "ultra-minimalist, clean lines, simple geometric shapes, maximum whitespace",
+    minimalist: "ultra-minimalist, clean lines, simple geometric shapes",
     modern: "modern professional, balanced composition, strong visual hierarchy",
     bold: "bold impactful, strong contrast, powerful typography, commanding presence",
     elegant: "elegant sophisticated, refined details, premium luxury feel",
@@ -60,7 +60,8 @@ Design requirements:
 - Logomark (icon/symbol) combined with the business name as wordmark
 - Transparent background, flat design, no gradients, no shadows
 - Bold clean typography, fully legible at small sizes
-- Horizontal or square composition suitable for website header
+- Horizontal composition suitable for a website header (wider than tall, not square)
+- The logomark + wordmark group must fill the canvas edge-to-edge with minimal margin (no more than 5% padding on any side) — avoid centering a small composition inside a large empty canvas
 - Scalable vector shapes, no raster effects
 - Single cohesive visual concept that represents the brand
 - Do NOT include taglines, decorative borders, or complex textures`;

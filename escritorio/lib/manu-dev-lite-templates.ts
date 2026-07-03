@@ -63,7 +63,7 @@ button{cursor:pointer;font:inherit}`;
 
 const BASE_LAYOUT = `.container{max-width:1120px;margin:0 auto;padding:0 1.25rem}
 .site-header{position:sticky;top:0;z-index:30}
-.header-row{height:68px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.header-row{height:80px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .desktop-nav{display:none;gap:1.25rem}
 .menu-btn{border:none;background:transparent;font-size:1.5rem;line-height:1}
 .mobile-nav{display:flex;flex-direction:column;gap:.75rem;padding:0 1.25rem 1rem}
