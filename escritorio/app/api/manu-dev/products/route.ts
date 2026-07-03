@@ -58,13 +58,22 @@ export async function POST(req: NextRequest) {
   const pool = getPool();
   if (!await assertOwner(pool, project_id, userId)) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
+  let category_id = body.category_id ? Number(body.category_id) : null;
+  if (category_id) {
+    const [cat] = await pool.execute(
+      "SELECT id FROM md_product_categories WHERE id = ? AND project_id = ? LIMIT 1",
+      [category_id, project_id]
+    ) as any;
+    if (!cat.length) category_id = null;
+  }
+
   const images = Array.isArray(body.images) ? body.images.slice(0, 3) : [];
   const tags = Array.isArray(body.tags) ? body.tags : [];
 
   const [result] = await pool.execute(
     `INSERT INTO md_products (project_id, category_id, name, description, price, sale_price, images, tags, active)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)`,
-    [project_id, body.category_id || null, String(body.name || "").slice(0, 255),
+    [project_id, category_id, String(body.name || "").slice(0, 255),
      String(body.description || ""), body.price || null, body.sale_price || null,
      JSON.stringify(images), JSON.stringify(tags)]
   ) as any;
@@ -87,6 +96,14 @@ export async function PATCH(req: NextRequest) {
 
   const pool = getPool();
   if (!await assertOwner(pool, project_id, userId)) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+
+  if (body.category_id) {
+    const [cat] = await pool.execute(
+      "SELECT id FROM md_product_categories WHERE id = ? AND project_id = ? LIMIT 1",
+      [Number(body.category_id), project_id]
+    ) as any;
+    if (!cat.length) return NextResponse.json({ error: "Categoria invalida" }, { status: 400 });
+  }
 
   const fields = ["name", "description", "price", "sale_price", "category_id", "active"];
   const updates: string[] = [];
