@@ -744,14 +744,45 @@ export async function POST(req: NextRequest) {
           // ── Data persistence per step transition ──
           if (next && data) {
             if (next === "subdomain" && !project_id) {
-              // welcome -> subdomain: Create project
+              // welcome -> subdomain: Create project (or reuse an existing draft).
+              // Every wizard restart without ?project= lands here with project_id=null,
+              // so without reuse each restart leaves behind another orphaned
+              // draft-{uid}-{ts} row that nothing ever cleans up.
               await ensureProjectColumns();
-              const tempSubdomain = `draft-${user.id}-${Date.now()}`;
-              const [result] = (await pool.execute(
-                "INSERT INTO md_projects (user_id, subdomain, name, generation_mode, status) VALUES (?, ?, ?, ?, 'draft')",
-                [user.id, tempSubdomain, data.name || "Mi Proyecto", requestedMode]
+              const [existingDraftRows] = (await pool.execute(
+                "SELECT id FROM md_projects WHERE user_id = ? AND status = 'draft' ORDER BY created_at DESC LIMIT 1",
+                [user.id]
               )) as any;
-              newProjectId = result.insertId;
+              const existingDraftId = existingDraftRows[0]?.id as number | undefined;
+
+              if (existingDraftId) {
+                // Reset everything the wizard sets incrementally (logo_url is the one
+                // field nothing ever clears on the "sin logo" path) so a reused draft
+                // starts genuinely blank instead of leaking answers from whatever
+                // conversation abandoned it.
+                await pool.execute(
+                  `UPDATE md_projects
+                   SET name = ?, generation_mode = ?, logo_url = NULL,
+                       location = NULL, social_links = NULL, extra_content = NULL
+                   WHERE id = ?`,
+                  [data.name || "Mi Proyecto", requestedMode, existingDraftId]
+                );
+                // Clear leftover history from whatever conversation abandoned this
+                // draft — otherwise getHistory() would feed Claude a mix of the old
+                // and new conversations once messages start pointing at this id.
+                await pool.execute(
+                  "DELETE FROM md_chat_history WHERE project_id = ? AND user_id = ?",
+                  [existingDraftId, user.id]
+                );
+                newProjectId = existingDraftId;
+              } else {
+                const tempSubdomain = `draft-${user.id}-${Date.now()}`;
+                const [result] = (await pool.execute(
+                  "INSERT INTO md_projects (user_id, subdomain, name, generation_mode, status) VALUES (?, ?, ?, ?, 'draft')",
+                  [user.id, tempSubdomain, data.name || "Mi Proyecto", requestedMode]
+                )) as any;
+                newProjectId = result.insertId;
+              }
               await pool.execute(
                 "UPDATE md_chat_history SET project_id = ? WHERE user_id = ? AND project_id IS NULL",
                 [newProjectId, user.id]

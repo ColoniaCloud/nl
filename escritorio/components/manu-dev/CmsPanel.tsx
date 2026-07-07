@@ -1231,6 +1231,15 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
     closeModal();
   }
 
+  // Tienda y Blog son vistas de gestion con pestañas (activar, agregar producto/post,
+  // borrar, editar info) donde el usuario suele encadenar varias acciones seguidas.
+  // A diferencia de Layout/Redes (un solo formulario, "guardar" = terminar), activar
+  // el modulo o guardar un item ahi no debe cerrar el modal — solo marcar que el sitio
+  // necesita redesplegarse.
+  function handleManagementSaved() {
+    setPendingChanges(true);
+  }
+
   // Content edits (pages / AI fix) trigger their own auto-rebuild server-side
   // (see app/api/manu-dev/content/route.ts), so there's no need to flag
   // pendingChanges for a manual "Redesplegar" on top of it — but the preview
@@ -1430,7 +1439,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
           <StoreModal
             projectId={projectId}
             onClose={closeModal}
-            onSaved={handleSaved}
+            onSaved={handleManagementSaved}
           />
         )}
 
@@ -1438,7 +1447,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
           <BlogModal
             projectId={projectId}
             onClose={closeModal}
-            onSaved={handleSaved}
+            onSaved={handleManagementSaved}
           />
         )}
 
