@@ -9,6 +9,7 @@ import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared
 import { generateLogo, downloadLogoLocally } from "@/lib/logo-generator";
 import { getAgent, loadSystemPrompt } from "@/lib/agents";
 import { checkMaxSites } from "@/lib/billing-access";
+import { prepareBuildInfra } from "@/lib/manu-dev-build";
 
 export const runtime = "nodejs";
 
@@ -526,6 +527,12 @@ export async function POST(req: NextRequest) {
     // y su plan no le permite construir un sitio mas, avisamos antes del wizard
     // en vez de dejarlo responder 8 preguntas para recien enterarse en "building".
     if (!project_id) {
+      // Barre builds realmente colgados (crash, contenedor caido, etc.) antes de
+      // contar la cuota — si no, un build atascado en 'building' bloquearia al
+      // usuario para siempre aunque reconcileStuckBuilds() ya sepa resolverlo,
+      // porque create-site (que es quien normalmente la dispara) nunca llega a
+      // correr si el paywall/cuota lo frena aca primero.
+      await prepareBuildInfra();
       const quotaCheck = await checkMaxSites(user.id, user.roles);
       if (!quotaCheck.allowed) {
         return NextResponse.json(

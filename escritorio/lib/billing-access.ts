@@ -93,7 +93,9 @@ export function checkAgentAccess(roles: string[], agentSlug: string): AgentAcces
 
 /**
  * Checks whether a user can create more sites based on their plan's maxSites limit.
- * Counts active md_projects rows for the user (excludes 'draft' and 'deleted').
+ * Counts active md_projects rows for the user (excludes 'draft', 'deleted' and
+ * 'error' — a failed or reconciled-timeout build shouldn't permanently consume
+ * a paid site slot).
  * Pass `excludeProjectId` to omit the project being built right now from its own
  * quota count — chat/route.ts flips a project to 'building' before create-site
  * runs this check, so without the exclusion a project always counts against itself.
@@ -114,7 +116,7 @@ export async function checkMaxSites(
       const pool = getPool();
       const [rows] = await pool.execute<RowDataPacket[]>(
         `SELECT COUNT(*) AS cnt FROM md_projects
-         WHERE user_id = ? AND status NOT IN ('draft', 'deleted') AND id != ?`,
+         WHERE user_id = ? AND status NOT IN ('draft', 'deleted', 'error') AND id != ?`,
         [userId, excludeProjectId ?? 0]
       );
       const current = Number(rows[0]?.cnt ?? 0);
@@ -159,7 +161,7 @@ export async function checkMaxSites(
     const pool = getPool();
     const [rows] = await pool.execute<RowDataPacket[]>(
       `SELECT COUNT(*) AS cnt FROM md_projects
-       WHERE user_id = ? AND status NOT IN ('draft', 'deleted') AND id != ?`,
+       WHERE user_id = ? AND status NOT IN ('draft', 'deleted', 'error') AND id != ?`,
       [userId, excludeProjectId ?? 0]
     );
     const current = Number(rows[0]?.cnt ?? 0);

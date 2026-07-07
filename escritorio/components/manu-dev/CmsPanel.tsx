@@ -1354,8 +1354,6 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
             ].join(" ")}>
             {rebuilding
               ? <><FontAwesomeIcon icon={faSpinner} className="animate-spin" /> {rebuildMsg.slice(0, 25) || "Redesplegando..."}</>
-              : pendingChanges
-              ? <><FontAwesomeIcon icon={faRotateRight} /> Redesplegar</>
               : <><FontAwesomeIcon icon={faRotateRight} /> Redesplegar</>
             }
           </button>
