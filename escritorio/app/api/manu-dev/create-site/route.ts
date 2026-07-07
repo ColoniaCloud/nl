@@ -994,19 +994,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // F2: Verificar límite de sitios por plan
-  const maxSitesCheck = await checkMaxSites(user.id, user.roles);
+  const body = await req.json();
+  const { project_id } = body;
+  if (!project_id)
+    return NextResponse.json({ error: "project_id requerido" }, { status: 400 });
+
+  // F2: Verificar límite de sitios por plan (excluye el proyecto actual: chat/route.ts
+  // ya lo marcó como 'building' antes de llegar acá, y no debe contar contra su propia cuota)
+  const maxSitesCheck = await checkMaxSites(user.id, user.roles, project_id);
   if (!maxSitesCheck.allowed) {
     return Response.json(
       { ok: false, error: maxSitesCheck.reason },
       { status: 403 }
     );
   }
-
-  const body = await req.json();
-  const { project_id } = body;
-  if (!project_id)
-    return NextResponse.json({ error: "project_id requerido" }, { status: 400 });
 
   const pool = getPool();
   const encoder = new TextEncoder();

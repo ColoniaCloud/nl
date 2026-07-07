@@ -94,11 +94,15 @@ export function checkAgentAccess(roles: string[], agentSlug: string): AgentAcces
 /**
  * Checks whether a user can create more sites based on their plan's maxSites limit.
  * Counts active md_projects rows for the user (excludes 'draft' and 'deleted').
+ * Pass `excludeProjectId` to omit the project being built right now from its own
+ * quota count — chat/route.ts flips a project to 'building' before create-site
+ * runs this check, so without the exclusion a project always counts against itself.
  * Never throws — DB errors return { allowed: false, reason: "Error verificando límite de sitios." }.
  */
 export async function checkMaxSites(
   userId: number | string,
-  roles: string[]
+  roles: string[],
+  excludeProjectId?: number | string
 ): Promise<SiteCountResult> {
   if (roles.includes("administrator")) {
     return { allowed: true, current: 0, max: "unlimited" };
@@ -110,8 +114,8 @@ export async function checkMaxSites(
       const pool = getPool();
       const [rows] = await pool.execute<RowDataPacket[]>(
         `SELECT COUNT(*) AS cnt FROM md_projects
-         WHERE user_id = ? AND status NOT IN ('draft', 'deleted')`,
-        [userId]
+         WHERE user_id = ? AND status NOT IN ('draft', 'deleted') AND id != ?`,
+        [userId, excludeProjectId ?? 0]
       );
       const current = Number(rows[0]?.cnt ?? 0);
       if (current >= SETTER_MAX_SITES) {
@@ -155,8 +159,8 @@ export async function checkMaxSites(
     const pool = getPool();
     const [rows] = await pool.execute<RowDataPacket[]>(
       `SELECT COUNT(*) AS cnt FROM md_projects
-       WHERE user_id = ? AND status NOT IN ('draft', 'deleted')`,
-      [userId]
+       WHERE user_id = ? AND status NOT IN ('draft', 'deleted') AND id != ?`,
+      [userId, excludeProjectId ?? 0]
     );
     const current = Number(rows[0]?.cnt ?? 0);
 
