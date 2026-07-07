@@ -444,6 +444,7 @@ function ManuDevPage() {
   const [userName, setUserName] = useState("");
   const [pendingBuildPid, setPendingBuildPid] = useState<number | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<LiteTemplateId | null>(null);
+  const [paywall, setPaywall] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<AgentInputHandle>(null);
   const buildingRef = useRef(false);
@@ -633,6 +634,14 @@ function ManuDevPage() {
 
       if (!res.ok || !res.body) {
         const err = await res.json().catch(() => ({ error: "Error de red" }));
+        if (err.paywall) {
+          setMessages((prev) => prev.map((m) =>
+            m.id === assistantId ? { ...m, content: err.error, streaming: false } : m
+          ));
+          setPaywall(err.error);
+          setLoading(false);
+          return;
+        }
         setMessages((prev) => prev.map((m) =>
           m.id === assistantId ? { ...m, content: toUiErrorMessage(err.error, "Error al conectar"), streaming: false } : m
         ));
@@ -809,7 +818,7 @@ function ManuDevPage() {
   }
 
   // ── Chat view ─────────────────────────────────────────────────────────────
-  const isBlocked = loading || (step === "building" && !pendingBuildPid);
+  const isBlocked = loading || paywall !== null || (step === "building" && !pendingBuildPid);
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -992,6 +1001,20 @@ function ManuDevPage() {
                 <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-pulse [animation-delay:0.2s]" />
                 <span className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-pulse [animation-delay:0.4s]" />
               </div>
+            </div>
+          )}
+          {/* Paywall: el plan actual no permite construir mas sitios */}
+          {paywall && (
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-violet-500/40 bg-violet-500/10 px-5 py-4 mb-3 text-center">
+              <p className="text-sm text-foreground font-medium">{paywall}</p>
+              <a
+                href="https://nl360.site/niveles-de-membembresia/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-violet-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-violet-500 transition-colors"
+              >
+                Ver planes y mejorar membresia
+              </a>
             </div>
           )}
           {/* CTA after complete */}

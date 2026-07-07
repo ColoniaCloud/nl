@@ -8,6 +8,7 @@ import getPool from "@/lib/db-manu";
 import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared-project";
 import { generateLogo, downloadLogoLocally } from "@/lib/logo-generator";
 import { getAgent, loadSystemPrompt } from "@/lib/agents";
+import { checkMaxSites } from "@/lib/billing-access";
 
 export const runtime = "nodejs";
 
@@ -58,7 +59,7 @@ async function ensureProjectColumns() {
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
-async function getUser(token: string): Promise<{ id: number; name: string } | null> {
+async function getUser(token: string): Promise<{ id: number; name: string; roles: string[] } | null> {
   const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
@@ -66,7 +67,8 @@ async function getUser(token: string): Promise<{ id: number; name: string } | nu
   if (res.ok) {
     const data = await res.json();
     if (data.user?.id) {
-      return { id: data.user.id, name: data.user.display_name || data.user.name || "" };
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : (Array.isArray(data.user?.roles) ? data.user.roles : []);
+      return { id: data.user.id, name: data.user.display_name || data.user.name || "", roles };
     }
   }
   const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
@@ -75,7 +77,9 @@ async function getUser(token: string): Promise<{ id: number; name: string } | nu
   });
   if (!res2.ok) return null;
   const data2 = await res2.json();
-  return data2.id ? { id: data2.id, name: data2.name || "" } : null;
+  return data2.id
+    ? { id: data2.id, name: data2.name || "", roles: Array.isArray(data2.roles) ? data2.roles : [] }
+    : null;
 }
 
 // ─── Font helpers ────────────────────────────────────────────────────────────
@@ -517,6 +521,19 @@ export async function POST(req: NextRequest) {
 
     if (!message.trim())
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 });
+
+    // Paywall temprano: si el usuario arranca una conversacion nueva (sin project_id)
+    // y su plan no le permite construir un sitio mas, avisamos antes del wizard
+    // en vez de dejarlo responder 8 preguntas para recien enterarse en "building".
+    if (!project_id) {
+      const quotaCheck = await checkMaxSites(user.id, user.roles);
+      if (!quotaCheck.allowed) {
+        return NextResponse.json(
+          { error: quotaCheck.reason, paywall: true },
+          { status: 403 }
+        );
+      }
+    }
 
     const pool = getPool();
 

@@ -1231,10 +1231,33 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
     closeModal();
   }
 
-  // Content edits (pages / AI fix) trigger their own auto-rebuild server-side,
-  // so no need to flag pendingChanges for a manual "Redesplegar" on top of it.
+  // Content edits (pages / AI fix) trigger their own auto-rebuild server-side
+  // (see app/api/manu-dev/content/route.ts), so there's no need to flag
+  // pendingChanges for a manual "Redesplegar" on top of it — but the preview
+  // iframe still needs to be refreshed once that background rebuild finishes,
+  // otherwise the admin sees stale content with no sign the edit worked.
   function handleContentSaved() {
     closeModal();
+    waitForContentSync();
+  }
+
+  async function waitForContentSync() {
+    setRebuildMsg("Aplicando cambios...");
+    setRebuildDone(false);
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 2000));
+      try {
+        const d = await fetch(`/api/manu-dev/content?project_id=${projectId}`).then((r) => r.json());
+        if (d?.project?.status && d.project.status !== "building") {
+          setRebuildMsg("¡Cambios aplicados!");
+          setRebuildDone(true);
+          setIframeKey((k) => k + 1);
+          return;
+        }
+      } catch { /* keep polling */ }
+    }
+    // Se agoto el tiempo de espera: igual refrescamos por si termino justo despues del ultimo chequeo
+    setIframeKey((k) => k + 1);
   }
 
   async function rebuild() {
