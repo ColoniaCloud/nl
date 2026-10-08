@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hepta</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#37474F',
+            secondary: '#FF6F00',
+            accent:    '#FAFAFA',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Sticky-footer layout ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: #FAFAFA;
+      color: #37474F;
+    }
+    main { flex: 1; }
+
+    /* ── Nav hover transitions ── */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 2px;
+      background-color: #FF6F00;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover { color: #FF6F00; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Mobile menu transition ── */
+    #mobile-menu {
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* ── Hamburger lines ── */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #FAFAFA;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger-btn.open .line-1 { transform: translateY(8px) rotate(45deg); }
+    #hamburger-btn.open .line-2 { opacity: 0; transform: scaleX(0); }
+    #hamburger-btn.open .line-3 { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── Footer social links ── */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover { color: #FF6F00; }
+
+    /* ── Headings ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Space Grotesk", sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════
+     HEADER / NAVIGATION
+════════════════════════════════════ -->
+<header class="bg-primary shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="/index.html" class="flex-shrink-0 flex items-center" aria-label="Hepta — Inicio">
+        <img
+          src="/logo.png"
+          alt="Hepta"
+          style="height:40px; width:auto; object-fit:contain;"
+        />
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+        <a href="/index.html"     class="nav-link text-accent font-medium text-sm tracking-wide">Inicio</a>
+        <a href="/servicios.html" class="nav-link text-accent font-medium text-sm tracking-wide">Servicios</a>
+        <a href="/nosotros.html"  class="nav-link text-accent font-medium text-sm tracking-wide">Nosotros</a>
+        <a href="/contacto.html"  class="nav-link bg-secondary text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-25 tracking-wide" style="--tw-bg-opacity:1;">Contacto</a>
+      </nav>
+
+      <!-- Hamburger button (mobile) -->
+      <button
+        id="hamburger-btn"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="md:hidden flex flex-col justify-center items-center gap-[6px] p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+      >
+        <span class="hamburger-line line-1"></span>
+        <span class="hamburger-line line-2"></span>
+        <span class="hamburger-line line-3"></span>
+      </button>
+
+    </div><!-- /flex row -->
+  </div><!-- /container -->
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+    <nav class="flex flex-col gap-1 px-4 pb-4 pt-2 bg-primary border-t border-white border-opacity-10">
+      <a href="/index.html"     class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Inicio</a>
+      <a href="/servicios.html" class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Servicios</a>
+      <a href="/nosotros.html"  class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Nosotros</a>
+      <a href="/contacto.html"  class="nav-link text-accent font-medium text-base py-2">Contacto</a>
+    </nav>
+  </div>
+
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section
+    id="hero"
+    class="relative flex items-center justify-center"
+    style="min-height:100vh;"
+  >
+    <img
+      src="https://images.unsplash.com/photo-1444653614773-995cb1ef9efa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Helicóptero en mantenimiento"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0" style="background:rgba(55,71,79,0.78);"></div>
+    <div class="relative z-10 text-center px-6 max-w-3xl mx-auto" style="animation:fadeIn 1s ease both;">
+      <p
+        class="uppercase tracking-widest text-sm mb-4"
+        style="color:#FF6F00; font-family:'DM Sans', sans-serif;"
+      >
+        Uruguay · Servicio a domicilio
+      </p>
+      <h1
+        class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6"
+        style="font-family:'Space Grotesk', sans-serif; color:#FAFAFA;"
+      >
+        Reparamos tu helicóptero donde estés
+      </h1>
+      <p
+        class="text-lg md:text-xl mb-10 leading-relaxed"
+        style="font-family:'DM Sans', sans-serif; color:#e0e0e0;"
+      >
+        Hepta es el servicio especializado en reparación y mantenimiento de helicópteros a domicilio en Uruguay. Sin traslados complicados, sin tiempos muertos.
+      </p>
+      <a
+        href="tel:+59896969696"
+        class="inline-block px-10 py-4 rounded-md text-base font-semibold transition-all duration-300"
+        style="background:#FF6F00; color:#FAFAFA; font-family:'DM Sans', sans-serif; box-shadow:0 4px 18px rgba(255,111,0,0.35);"
+        onmouseover="this.style.background='#e65c00';"
+        onmouseout="this.style.background='#FF6F00';"
+      >
+        Llamanos ahora
+      </a>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1" style="animation:fadeIn 2s ease 0.5s both;">
+      <span style="font-family:'DM Sans',sans-serif; color:#FAFAFA; font-size:0.75rem; opacity:0.7; letter-spacing:0.08em;">SCROLLEAR</span>
+      <div class="w-px h-10" style="background:rgba(250,250,250,0.4);"></div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="py-20 px-6" style="background:#FAFAFA;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14" style="animation:fadeIn 0.8s ease both;">
+        <p
+          class="uppercase tracking-widest text-xs mb-3"
+          style="color:#FF6F00; font-family:'DM Sans', sans-serif;"
+        >
+          Lo que hacemos
+        </p>
+        <h2
+          class="text-3xl sm:text-4xl font-bold"
+          style="font-family:'Space Grotesk', sans-serif; color:#37474F;"
+        >
+          Servicios de reparación aeronáutica
+        </h2>
+        <p
+          class="mt-4 text-base max-w-xl mx-auto"
+          style="font-family:'DM Sans', sans-serif; color:#546e7a;"
+        >
+          Atendemos tu helicóptero en tu hangar, estancia o base de operaciones. Técnicos certificados, repuestos genuinos y tiempo de respuesta real.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
+        <!-- Card 1 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-4 transition-all duration-300 group cursor-default"
+          style="background:#fff; border:1.5px solid #eceff1; box-shadow:0 2px 12px rgba(55,71,79,0.07);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(255,111,0,0.13)'; this.style.borderColor='#FF6F00';"
+          onmouseout="this.style.boxShadow='0 2px 12px rgba(55,71,79,0.07)'; this.style.borderColor='#eceff1';"
+        >
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:#fff3e0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#FF6F00" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a7 7 0 100 14A7 7 0 0011 4z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Diagnóstico a domicilio</h3>
+          <p class="text-sm leading-relaxed" style="font-family:'DM Sans', sans-serif; color:#546e7a;">Evaluamos el estado de tu aeronave directamente en tu ubicación. Informe técnico detallado sin necesidad de trasladar el helicóptero.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-4 transition-all duration-300 cursor-default"
+          style="background:#fff; border:1.5px solid #eceff1; box-shadow:0 2px 12px rgba(55,71,79,0.07);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(255,111,0,0.13)'; this.style.borderColor='#FF6F00';"
+          onmouseout="this.style.boxShadow='0 2px 12px rgba(55,71,79,0.07)'; this.style.borderColor='#eceff1';"
+        >
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:#fff3e0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#FF6F00" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Reparación de motores y transmisión</h3>
+          <p class="text-sm leading-relaxed" style="font-family:'DM Sans', sans-serif; color:#546e7a;">Intervenimos motores turbina, pistón y sistemas de transmisión con repuestos homologados y técnicos de experiencia comprobada.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-4 transition-all duration-300 cursor-default"
+          style="background:#fff; border:1.5px solid #eceff1; box-shadow:0 2px 12px rgba(55,71,79,0.07);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(255,111,0,0.13)'; this.style.borderColor='#FF6F00';"
+          onmouseout="this.style.boxShadow='0 2px 12px rgba(55,71,79,0.07)'; this.style.borderColor='#eceff1';"
+        >
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:#fff3e0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#FF6F00" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Mantenimiento preventivo</h3>
+          <p class="text-sm leading-relaxed" style="font-family:'DM Sans', sans-serif; color:#546e7a;">Programas de mantenimiento periódico para mantener tu aeronave en condiciones óptimas de aeronavegabilidad y cumplir con la normativa DINACIA.</p>
+        </div>
+
+        <!-- Card 4 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-4 transition-all duration-300 cursor-default"
+          style="background:#fff; border:1.5px solid #eceff1; box-shadow:0 2px 12px rgba(55,71,79,0.07);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(255,111,0,0.13)'; this.style.borderColor='#FF6F00';"
+          onmouseout="this.style.boxShadow='0 2px 12px rgba(55,71,79,0.07)'; this.style.borderColor='#eceff1';"
+        >
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:#fff3e0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#FF6F00" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Servicio de urgencias</h3>
+          <p class="text-sm leading-relaxed" style="font-family:'DM Sans', sans-serif; color:#546e7a;">Respuesta rápida ante fallas imprevistas. Nos movilizamos a tu estancia, hangar o base en el menor tiempo posible, en todo el territorio uruguayo.</p>
+        </div>
+
+        <!-- Card 5 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-4 transition-all duration-300 cursor-default"
+          style="background:#fff; border:1.5px solid #eceff1; box-shadow:0 2px 12px rgba(55,71,79,0.07);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(255,111,0,0.13)'; this.style.borderColor='#FF6F00';"
+          onmouseout="this.style.boxShadow='0 2px 12px rgba(55,71,79,0.07)'; this.style.borderColor='#eceff1';"
+        >
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:#fff3e0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#FF6F00" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Gestión de documentación</h3>
+          <p class="text-sm leading-relaxed" style="font-family:'DM Sans', sans-serif; color:#546e7a;">Te asistimos con la documentación técnica, bitácoras y habilitaciones ante DINACIA para que tu aeronave esté siempre al día.</p>
+        </div>
+
+        <!-- Card 6 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-4 transition-all duration-300 cursor-default"
+          style="background:#fff; border:1.5px solid #eceff1; box-shadow:0 2px 12px rgba(55,71,79,0.07);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(255,111,0,0.13)'; this.style.borderColor='#FF6F00';"
+          onmouseout="this.style.boxShadow='0 2px 12px rgba(55,71,79,0.07)'; this.style.borderColor='#eceff1';"
+        >
+          <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:#fff3e0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#FF6F00" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Asesoría técnica especializada</h3>
+          <p class="text-sm leading-relaxed" style="font-family:'DM Sans', sans-serif; color:#546e7a;">Consultá con nuestros técnicos antes de comprar, operar o modificar tu aeronave. Conocimiento local, criterio aeronáutico internacional.</p>
+        </div>
+
+      </div>
+      <div class="text-center mt-12">
+        <a
+          href="/servicios"
+          class="inline-block px-8 py-3 rounded-md text-sm font-semibold border-2 transition-all duration-300"
+          style="border-color:#37474F; color:#37474F; font-family:'DM Sans', sans-serif;"
+          onmouseover="this.style.background='#37474F'; this.style.color='#FAFAFA';"
+          onmouseout="this.style.background='transparent'; this.style.color='#37474F';"
+        >
+          Ver todos los servicios
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT BRIEF -->
+  <section id="about-brief" class="py-20 px-6" style="background:#37474F;">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div class="relative rounded-2xl overflow-hidden" style="box-shadow:0 8px 40px rgba(0,0,0,0.28);">
+        <img
+          src="https://images.unsplash.com/photo-1659353590903-972270737d60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Técnico trabajando en helicóptero"
+          class="w-full object-cover"
+          style="min-height:320px; max-height:440px;"
+        />
+        <div class="absolute inset-0 rounded-2xl" style="background:linear-gradient(to top, rgba(55,71,79,0.5) 0%, transparent 60%);"></div>
+        <div class="absolute bottom-6 left-6 right-6">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-md" style="background:#FF6F00;">
+            <span style="font-family:'Space Grotesk', sans-serif; color:#FAFAFA; font-weight:700; font-size:1.5rem;">10+</span>
+            <span style="font-family:'DM Sans', sans-serif; color:#FAFAFA; font-size:0.85rem; line-height:1.2;">años en<br/>aviación</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p
+          class="uppercase tracking-widest text-xs mb-4"
+          style="color:#FF6F00; font-family:'DM Sans', sans-serif;"
+        >
+          Quiénes somos
+        </p>
+        <h2
+          class="text-3xl sm:text-4xl font-bold mb-6 leading-snug"
+          style="font-family:'Space Grotesk', sans-serif; color:#FAFAFA;"
+        >
+          La diferencia está en ir hasta donde estás vos
+        </h2>
+        <p
+          class="text-base leading-relaxed mb-5"
+          style="font-family:'DM Sans', sans-serif; color:#b0bec5;"
+        >
+          Hepta nació para resolver el problema más costoso de la aviación privada en Uruguay: tener que trasladar una aeronave para que la reparen. Nosotros vamos a vos.
+        </p>
+        <p
+          class="text-base leading-relaxed mb-8"
+          style="font-family:'DM Sans', sans-serif; color:#b0bec5;"
+        >
+          Trabajamos con propietarios privados, estancias y operadores aéreos en todo el país. Nuestro equipo técnico se desplaza con el equipamiento necesario para resolver la mayoría de las intervenciones directamente en el campo.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div>
+            <span class="block text-3xl font-bold" style="font-family:'Space Grotesk',sans-serif; color:#FF6F00;">100%</span>
+            <span class="text-sm" style="font-family:'DM Sans',sans-serif; color:#90a4ae;">Servicio a domicilio</span>
+          </div>
+          <div class="hidden sm:block w-px" style="background:rgba(250,250,250,0.12);"></div>
+          <div>
+            <span class="block text-3xl font-bold" style="font-family:'Space Grotesk',sans-serif; color:#FF6F00;">19</span>
+            <span class="text-sm" style="font-family:'DM Sans',sans-serif; color:#90a4ae;">Departamentos cubiertos</span>
+          </div>
+          <div class="hidden sm:block w-px" style="background:rgba(250,250,250,0.12);"></div>
+          <div>
+            <span class="block text-3xl font-bold" style="font-family:'Space Grotesk',sans-serif; color:#FF6F00;">+200</span>
+            <span class="text-sm" style="font-family:'DM Sans',sans-serif; color:#90a4ae;">Intervenciones realizadas</span>
+          </div>
+        </div>
+        <div class="mt-10">
+          <a
+            href="/nosotros"
+            class="inline-block px-8 py-3 rounded-md text-sm font-semibold transition-all duration-300"
+            style="background:#FF6F00; color:#FAFAFA; font-family:'DM Sans', sans-serif;"
+            onmouseover="this.style.background='#e65c00';"
+            onmouseout="this.style.background='#FF6F00';"
+          >
+            Conocé el equipo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="py-20 px-6" style="background:#ECEFF1;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <p
+          class="uppercase tracking-widest text-xs mb-3"
+          style="color:#FF6F00; font-family:'DM Sans', sans-serif;"
+        >
+          Lo que dicen nuestros clientes
+        </p>
+        <h2
+          class="text-3xl sm:text-4xl font-bold"
+          style="font-family:'Space Grotesk', sans-serif; color:#37474F;"
+        >
+          Confianza ganada en el campo
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Testimonio 1 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-5 transition-all duration-300"
+          style="background:#fff; box-shadow:0 2px 14px rgba(55,71,79,0.08);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(55,71,79,0.14)';"
+          onmouseout="this.style.boxShadow='0 2px 14px rgba(55,71,79,0.08)';"
+        >
+          <div class="flex gap-1">
+            <span style="color:#FF6F00; font-size:1.1rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          </div>
+          <p class="text-sm leading-relaxed flex-1" style="font-family:'DM Sans', sans-serif; color:#546e7a;">"Vino hasta mi estancia en Tacuarembó y resolvió el problema en el día. Nunca tuve que mover el helicóptero. Muy profesionales y directos."</p>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style="background:#37474F; color:#FAFAFA; font-family:'Space Grotesk', sans-serif;">JM</div>
+            <div>
+              <p class="text-sm font-semibold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Jorge M.</p>
+              <p class="text-xs" style="font-family:'DM Sans', sans-serif; color:#90a4ae;">Propietario privado · Tacuarembó</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 2 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-5 transition-all duration-300"
+          style="background:#37474F; box-shadow:0 2px 14px rgba(55,71,79,0.18);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(55,71,79,0.3)';"
+          onmouseout="this.style.boxShadow='0 2px 14px rgba(55,71,79,0.18)';"
+        >
+          <div class="flex gap-1">
+            <span style="color:#FF6F00; font-size:1.1rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          </div>
+          <p class="text-sm leading-relaxed flex-1" style="font-family:'DM Sans', sans-serif; color:#b0bec5;">"Tuve una falla de transmisión en plena temporada. Hepta llegó rápido, el diagnóstico fue claro y el presupuesto fue exactamente lo que me dijeron. Sin sorpresas."</p>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style="background:#FF6F00; color:#FAFAFA; font-family:'Space Grotesk', sans-serif;">RP</div>
+            <div>
+              <p class="text-sm font-semibold" style="font-family:'Space Grotesk', sans-serif; color:#FAFAFA;">Rodrigo P.</p>
+              <p class="text-xs" style="font-family:'DM Sans', sans-serif; color:#78909c;">Operador aéreo · Paysandú</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 3 -->
+        <div
+          class="rounded-xl p-8 flex flex-col gap-5 transition-all duration-300"
+          style="background:#fff; box-shadow:0 2px 14px rgba(55,71,79,0.08);"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(55,71,79,0.14)';"
+          onmouseout="this.style.boxShadow='0 2px 14px rgba(55,71,79,0.08)';"
+        >
+          <div class="flex gap-1">
+            <span style="color:#FF6F00; font-size:1.1rem;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          </div>
+          <p class="text-sm leading-relaxed flex-1" style="font-family:'DM Sans', sans-serif; color:#546e7a;">"El mantenimiento preventivo que hacen es muy completo. Desde que trabajo con Hepta tengo todo el papeleo al día y no perdí ni un día de vuelo por fallas evitables."</p>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm" style="background:#37474F; color:#FAFAFA; font-family:'Space Grotesk', sans-serif;">SV</div>
+            <div>
+              <p class="text-sm font-semibold" style="font-family:'Space Grotesk', sans-serif; color:#37474F;">Sandra V.</p>
+              <p class="text-xs" style="font-family:'DM Sans', sans-serif; color:#90a4ae;">Propietaria privada · Maldonado</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section id="cta" class="relative py-24 px-6 flex items-center justify-center" style="min-height:420px;">
+    <img
+      src="https://images.unsplash.com/photo-1659353589316-d4b2ed41ad2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Helicóptero en campo abierto Uruguay"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0" style="background:rgba(55,71,79,0.84);"></div>
+    <div class="relative z-10 text-center max-w-2xl mx-auto" style="animation:fadeIn 0.9s ease both;">
+      <p
+        class="uppercase tracking-widest text-xs mb-4"
+        style="color:#FF6F00; font-family:'DM Sans', sans-serif;"
+      >
+        ¿Necesitás asistencia?
+      </p>
+      <h2
+        class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-snug"
+        style="font-family:'Space Grotesk', sans-serif; color:#FAFAFA;"
+      >
+        Tu helicóptero no puede esperar. Nosotros tampoco.
+      </h2>
+      <p
+        class="text-base md:text-lg mb-10"
+        style="font-family:'DM Sans', sans-serif; color:#b0bec5;"
+      >
+        Llamanos y coordinamos la visita técnica a tu ubicación. Sin formularios interminables, sin burocracia. Directo al problema.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="tel:+59896969696"
+          class="inline-block px-10 py-4 rounded-md text-base font-semibold transition-all duration-300"
+          style="background:#FF6F00; color:#FAFAFA; font-family:'DM Sans', sans-serif; box-shadow:0 4px 18px rgba(255,111,0,0.35);"
+          onmouseover="this.style.background='#e65c00';"
+          onmouseout="this.style.background='#FF6F00';"
+        >
+          Llamar ahora
+        </a>
+        <a
+          href="https://wa.me/59896969696"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block px-10 py-4 rounded-md text-base font-semibold border-2 transition-all duration-300"
+          style="border-color:#FAFAFA; color:#FAFAFA; font-family:'DM Sans', sans-serif;"
+          onmouseover="this.style.background='#FAFAFA'; this.style.color='#37474F';"
+          onmouseout="this.style.background='transparent'; this.style.color='#FAFAFA';"
+        >
+          Escribir por WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</main>
+
+<!-- ════════════════════════════════════
+     FOOTER
+════════════════════════════════════ -->
+<footer class="bg-primary text-accent">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <!-- Brand -->
+      <div class="flex flex-col gap-3">
+        <a href="/index.html" aria-label="Hepta — Inicio">
+          <img
+            src="/logo.png"
+            alt="Hepta"
+            style="height:36px; width:auto; object-fit:contain; filter:brightness(0) invert(1);"
+          />
+        </a>
+        <p class="text-sm text-accent text-opacity-70 leading-relaxed max-w-xs" style="color:rgba(250,250,250,0.65);">
+          Soluciones que elevan tu negocio.
+        </p>
+      </div>
+
+      <!-- Navigation links -->
+      <div class="flex flex-col gap-3">
+        <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-secondary mb-1">Navegación</h3>
+        <a href="/index.html"     class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Inicio</a>
+        <a href="/servicios.html" class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Servicios</a>
+        <a href="/nosotros.html"  class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Nosotros</a>
+        <a href="/contacto.html"  class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Contacto</a>
+      </div>
+
+      <!-- Contact & Social -->
+      <div class="flex flex-col gap-3">
+        <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-secondary mb-1">Contacto</h3>
+
+        <!-- Email -->
+        <a
+          href="mailto:hepta@copteros.uy"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          hepta@copteros.uy
+        </a>
+
+        <!-- WhatsApp -->
+        <a
+          href="https://wa.me/59896969696"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          WhatsApp: +598 96 969 696
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://instagram.com/hepta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          Instagram: @hepta
+        </a>
+
+        <!-- Facebook -->
+        <a
+          href="https://facebook.com/hepta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          Facebook: facebook/hepta
+        </a>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Bottom bar -->
+    <div class="mt-10 pt-6 border-t border-white border-opacity-10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs" style="color:rgba(250,250,250,0.45);">
+      <span>&copy; 2026 Hepta. Todos los derechos reservados.</span>
+      <a href="mailto:hepta@copteros.uy" class="footer-link" style="color:rgba(250,250,250,0.45);">hepta@copteros.uy</a>
+    </div>
+
+  </div><!-- /container -->
+</footer>
+
+<!-- ════════════════════════════════════
+     JS — Mobile menu toggle
+════════════════════════════════════ -->
+<script>
+  (function () {
+    const btn  = document.getElementById('hamburger-btn');
+    const menu = document.getElementById('mobile-menu');
+
+    btn.addEventListener('click', function () {
+      const isOpen = menu.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+    });
+
+    // Close menu when a link is tapped
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+      });
+    });
+
+    // Close menu on outside click
+    document.addEventListener('click', function (e) {
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

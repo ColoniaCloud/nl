@@ -18,6 +18,7 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
   const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
   if (res.ok) {
     const data = await res.json();
@@ -29,6 +30,7 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
   const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
+    signal: AbortSignal.timeout(8000),
   });
   if (!res2.ok) return null;
   const data2 = await res2.json();

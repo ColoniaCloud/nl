@@ -1,0 +1,27 @@
+[
+  {
+    "platform": "whatsapp",
+    "name": "whatsapp",
+    "url": "+59896969696"
+  },
+  {
+    "platform": "facebook",
+    "name": "facebook",
+    "url": "facebook.com/hexa"
+  },
+  {
+    "platform": "instagram",
+    "name": "instagram",
+    "url": "instagram/hexa"
+  },
+  {
+    "platform": "tiktok",
+    "name": "tiktok",
+    "url": "tiktok/hexa"
+  },
+  {
+    "platform": "email",
+    "name": "email",
+    "url": "hexa@ambiente.com.uy"
+  }
+]

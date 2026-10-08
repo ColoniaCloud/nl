@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import Anthropic from "@anthropic-ai/sdk";
 import { getAgent } from "@/lib/agents";
 import { checkAgentAccess } from "@/lib/billing-access";
+import getPool from "@/lib/db-manu";
+import { ensureTables } from "@/app/api/margarita/projects/route";
 
 export const runtime = "nodejs";
 
@@ -33,11 +35,181 @@ async function getUser(token: string): Promise<{ id: number; roles: string[] } |
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// ─── OpenStreetMap helpers (Overpass + Nominatim, sin API key) ──────────────
+// ─── Caché de lugares (in-memory + persistente en mm_places_cache) ──────────
+// searchPlaces (Google u OSM) la llena; getPlaceDetails la lee. Evita re-pagar
+// a Google Places por el mismo negocio dentro de la ventana de expiración.
 
-// Caché de detalles por id de elemento OSM. searchPlaces la llena; getPlaceDetails la lee.
-// Segura ante requests concurrentes: la clave es el id OSM y el valor es determinístico por id.
-const osmDetailsCache = new Map<string, any>();
+const placesCache = new Map<string, any>();
+const PLACES_CACHE_TTL_DAYS = 30;
+
+async function getCachedPlace(placeId: string): Promise<any | null> {
+  if (placesCache.has(placeId)) return placesCache.get(placeId);
+  try {
+    await ensureTables();
+    const pool = getPool();
+    const [rows] = (await pool.execute(
+      `SELECT payload FROM mm_places_cache WHERE place_id = ? AND expires_at > NOW()`,
+      [placeId]
+    )) as any;
+    if (rows[0]) {
+      const payload = typeof rows[0].payload === "string" ? JSON.parse(rows[0].payload) : rows[0].payload;
+      placesCache.set(placeId, payload);
+      return payload;
+    }
+  } catch {}
+  return null;
+}
+
+async function setCachedPlace(placeId: string, payload: any, provider: "google" | "osm"): Promise<void> {
+  placesCache.set(placeId, payload);
+  try {
+    await ensureTables();
+    const pool = getPool();
+    await pool.execute(
+      `INSERT INTO mm_places_cache (place_id, provider, payload, expires_at)
+       VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ${PLACES_CACHE_TTL_DAYS} DAY))
+       ON DUPLICATE KEY UPDATE payload = VALUES(payload), provider = VALUES(provider),
+         fetched_at = NOW(), expires_at = VALUES(expires_at)`,
+      [placeId, provider, JSON.stringify(payload)]
+    );
+  } catch {}
+}
+
+// ─── Google Places API (New) ────────────────────────────────────────────────
+
+const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+
+// Diccionario rubro (es) → includedType de Google Places (Table A). Opcional:
+// si no hay match, la búsqueda se apoya solo en textQuery (rubro + ubicación).
+const RUBRO_INCLUDED_TYPE: { match: string; type: string }[] = [
+  { match: "gastronomia", type: "restaurant" },
+  { match: "tecnologia", type: "electronics_store" },
+  { match: "salud y bienestar", type: "pharmacy" },
+  { match: "moda y ropa", type: "clothing_store" },
+  { match: "construccion", type: "hardware_store" },
+  { match: "educacion", type: "school" },
+  { match: "finanzas", type: "bank" },
+  { match: "turismo y hoteleria", type: "lodging" },
+  { match: "inmobiliaria", type: "real_estate_agency" },
+  { match: "automotriz", type: "car_repair" },
+  { match: "consultoria", type: "consultant" },
+  { match: "logistica", type: "moving_company" },
+  { match: "retail", type: "store" },
+  { match: "deporte y fitness", type: "gym" },
+  { match: "belleza y estetica", type: "beauty_salon" },
+  { match: "legal y juridico", type: "lawyer" },
+  { match: "arquitectura y diseno", type: "architect" },
+];
+
+function googlePlaceToPlace(p: any): any {
+  return {
+    place_id: p.id,
+    name: p.displayName?.text || "",
+    formatted_phone_number: p.internationalPhoneNumber || null,
+    website: p.websiteUri || null,
+    formatted_address: p.formattedAddress || null,
+    types: p.types || [],
+    primary_type: p.primaryType || p.types?.[0] || null,
+    rating: p.rating ?? null,
+    user_ratings_total: p.userRatingCount ?? null,
+    business_status: p.businessStatus || null,
+    lat: p.location?.latitude ?? null,
+    lng: p.location?.longitude ?? null,
+  };
+}
+
+const GOOGLE_FIELD_MASK = [
+  "places.id", "places.displayName", "places.formattedAddress", "places.location",
+  "places.internationalPhoneNumber", "places.websiteUri",
+  "places.rating", "places.userRatingCount", "places.businessStatus",
+  "places.types", "places.primaryType", "nextPageToken",
+].join(",");
+
+type Geo = { lat: number; lng: number; radiusKm: number };
+
+// Distancia haversine en km entre dos puntos.
+function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+  const R = 6371;
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
+
+// Text Search (New) devuelve hasta 20 resultados por página, con todos los
+// campos del fieldMask ya incluidos (no hace falta una llamada Details aparte).
+// Se limitan las páginas a 2 (máx. 40 resultados) para controlar el costo/latencia.
+async function searchPlacesGoogle(rubro: string, location: string, cantidad: number, geo?: Geo): Promise<any[]> {
+  if (!GOOGLE_PLACES_API_KEY) return [];
+
+  const norm = normalize(rubro);
+  const includedType = RUBRO_INCLUDED_TYPE.find((r) => norm.includes(r.match))?.type;
+
+  const places: any[] = [];
+  let pageToken: string | undefined;
+  const maxPages = 2;
+
+  for (let page = 0; page < maxPages && places.length < cantidad; page++) {
+    const body: any = {
+      textQuery: geo ? rubro : `${rubro} en ${location}`,
+      languageCode: "es",
+      maxResultCount: 20,
+    };
+    if (geo) {
+      // Text Search (New) solo admite circle en locationBias (sesgo), no en locationRestriction
+      // (esa combinación devuelve 400 INVALID_ARGUMENT). El radio exacto se aplica después
+      // filtrando por distancia real, ya que el bias es una sugerencia, no un límite duro.
+      body.locationBias = {
+        circle: {
+          center: { latitude: geo.lat, longitude: geo.lng },
+          radius: Math.min(geo.radiusKm * 1000, 50000),
+        },
+      };
+    }
+    if (includedType) body.includedType = includedType;
+    if (pageToken) body.pageToken = pageToken;
+
+    const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_PLACES_API_KEY,
+        "X-Goog-FieldMask": GOOGLE_FIELD_MASK,
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "");
+      console.warn(`[Margarita Scrape] Google Places searchText → HTTP ${res.status}: ${errText.slice(0, 300)}`);
+      break;
+    }
+
+    const data = await res.json();
+    let batch = (data.places || []).filter((p: any) => p.displayName?.text).map(googlePlaceToPlace);
+    if (geo) {
+      // locationBias es una sugerencia; se descarta lo que caiga fuera del radio real dibujado.
+      batch = batch.filter((p: any) =>
+        p.lat == null || p.lng == null || distanceKm(geo, { lat: p.lat, lng: p.lng }) <= geo.radiusKm
+      );
+    }
+    places.push(...batch);
+    await Promise.all(batch.map((p: any) => setCachedPlace(p.place_id, p, "google")));
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) break;
+    // El nextPageToken de Places API (New) tarda unos segundos en activarse.
+    await new Promise((r) => setTimeout(r, 2000));
+  }
+
+  return places.slice(0, cantidad);
+}
+
+// ─── OpenStreetMap helpers (Overpass + Nominatim, sin API key) ──────────────
+// Fallback gratuito cuando no hay GOOGLE_PLACES_API_KEY o Google Places falla.
 
 const NOMINATIM_UA = "NL360-Margarita/1.0 (comunicacion@colonia.cloud)";
 
@@ -116,14 +288,20 @@ function osmElementToPlace(el: any): any {
   };
 }
 
-// Reemplaza Google Places Text Search con Overpass (OpenStreetMap).
-// `query` llega como "<rubro> en <location>" desde el handler; lo separamos por " en ".
-async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
-  const sep = query.indexOf(" en ");
-  const rubro = (sep >= 0 ? query.slice(0, sep) : query).trim();
-  const location = sep >= 0 ? query.slice(sep + 4).trim() : "";
+// Bounding box [south, north, west, east] a partir de un centro + radio en km
+// (aproximación esférica, suficiente para el uso de Overpass).
+function bboxFromGeo(geo: Geo): [string, string, string, string] {
+  const dLat = geo.radiusKm / 111;
+  const dLng = geo.radiusKm / (111 * Math.cos((geo.lat * Math.PI) / 180));
+  return [
+    String(geo.lat - dLat), String(geo.lat + dLat),
+    String(geo.lng - dLng), String(geo.lng + dLng),
+  ];
+}
 
-  const bbox = location ? await geocodeArea(location) : null;
+// Fallback OSM: busca vía Overpass cuando no hay Google Places API key o falló.
+async function searchPlacesOSM(rubro: string, location: string, cantidad: number, geo?: Geo): Promise<any[]> {
+  const bbox = geo ? bboxFromGeo(geo) : (location ? await geocodeArea(location) : null);
   if (!bbox) return [];
   const [south, north, west, east] = bbox;
   const bb = `(${south},${west},${north},${east})`; // Overpass: (south,west,north,east)
@@ -176,14 +354,34 @@ async function searchPlaces(query: string, cantidad: number): Promise<any[]> {
     .map(osmElementToPlace);
 
   // Llenar la caché para getPlaceDetails (clave = id OSM, valor determinístico por id).
-  for (const p of places) osmDetailsCache.set(p.place_id, p);
+  await Promise.all(places.map((p) => setCachedPlace(p.place_id, p, "osm")));
 
   return places.slice(0, cantidad);
 }
 
-// Con Overpass ya tenemos todos los datos en searchPlaces; aquí solo leemos la caché.
+// Google Places primero (si hay API key); si falla o no trae resultados, OSM.
+// `query` llega como "<rubro> en <location>" desde el handler. `geo` (centro+radio del
+// mapa) tiene prioridad sobre `location` como criterio de área para ambos proveedores.
+async function searchPlaces(query: string, cantidad: number, geo?: Geo): Promise<any[]> {
+  const sep = query.indexOf(" en ");
+  const rubro = (sep >= 0 ? query.slice(0, sep) : query).trim();
+  const location = sep >= 0 ? query.slice(sep + 4).trim() : "";
+
+  if (GOOGLE_PLACES_API_KEY) {
+    try {
+      const results = await searchPlacesGoogle(rubro, location, cantidad, geo);
+      if (results.length > 0) return results;
+    } catch (err: any) {
+      console.warn("[Margarita Scrape] Google Places falló, fallback a OSM:", err.message);
+    }
+  }
+
+  return searchPlacesOSM(rubro, location, cantidad, geo);
+}
+
+// Ambos proveedores ya devuelven todos los datos en searchPlaces; aquí solo leemos la caché.
 async function getPlaceDetails(placeId: string): Promise<any> {
-  return osmDetailsCache.get(placeId) || null;
+  return getCachedPlace(placeId);
 }
 
 // ─── Website analysis via Claude ───────────────────────────────────────────
@@ -237,6 +435,59 @@ ${snippet}`,
   }
 }
 
+// ─── TEMP: detección de duplicados entre usuarios (borrar en unos días) ────
+// Marca cada lead scrapeado si el teléfono ya existe en mm_contacts de OTRO
+// usuario (_dupAdded) y si ese contacto ya fue contactado por WA o email por
+// ese otro usuario (_dupContacted). Solo afecta la respuesta del scrape, no
+// se persiste en mm_contacts.
+
+function normalizePhone(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const digits = v.replace(/\D/g, "");
+  return digits.length >= 6 ? digits : null;
+}
+
+async function checkDuplicates(contacts: any[], currentUserId: number): Promise<void> {
+  const phones = Array.from(
+    new Set(contacts.map((c) => normalizePhone(c.telefono)).filter(Boolean))
+  ) as string[];
+  if (!phones.length) return;
+
+  try {
+    await ensureTables();
+    const pool = getPool();
+    const [rows] = (await pool.execute(
+      `SELECT mc.id, mc.telefono,
+              (SELECT COUNT(*) FROM mm_campaign_recipients r
+                 WHERE r.contact_id = mc.id AND r.status IN ('sent','delivered','read')) AS wa_sent,
+              (SELECT COUNT(*) FROM mm_email_campaign_recipients r
+                 WHERE r.contact_id = mc.id AND r.status IN ('sent','opened')) AS email_sent
+       FROM mm_contacts mc
+       WHERE mc.user_id != ? AND mc.telefono IS NOT NULL`,
+      [currentUserId]
+    )) as any;
+
+    const addedPhones = new Set<string>();
+    const contactedPhones = new Set<string>();
+    const phoneSet = new Set(phones);
+
+    for (const row of rows) {
+      const p = normalizePhone(row.telefono);
+      if (!p || !phoneSet.has(p)) continue;
+      addedPhones.add(p);
+      if (row.wa_sent > 0 || row.email_sent > 0) contactedPhones.add(p);
+    }
+
+    for (const c of contacts) {
+      const p = normalizePhone(c.telefono);
+      c._dupAdded = !!(p && addedPhones.has(p));
+      c._dupContacted = !!(p && contactedPhones.has(p));
+    }
+  } catch (err) {
+    console.error("[Margarita Scrape] checkDuplicates error:", err);
+  }
+}
+
 // ─── AI batch scoring ──────────────────────────────────────────────────────
 
 async function scoreLeadsWithAI(leads: any[]): Promise<any[]> {
@@ -250,6 +501,9 @@ async function scoreLeadsWithAI(leads: any[]): Promise<any[]> {
     hasPhone: !!l.telefono,
     hasWhatsapp: l._hasWhatsapp ?? false,
     platforms: l._platforms ?? [],
+    rating: l._rating ?? null,
+    totalReviews: l._totalReviews ?? null,
+    category: l._primaryType ?? null,
   }));
 
   const prompt = `Sos un experto en calificación de leads para una agencia de marketing digital
@@ -267,6 +521,14 @@ Criterios de scoring (señales principales: tiene web o no, tiene teléfono o no
 - Website muy básico o desactualizado → score 40-65
 - Website presente pero sin evaluar → score 20-40
 - Website profesional y completo → score 5-20 (mal lead para nosotros)
+
+Señales adicionales de Google Maps (rating/totalReviews), cuando NO son null, afinan el score:
+- Rating alto (>=4.3) con muchas reviews (>=50) y sin website → score 90-98 (negocio activo y con
+  reputación comprobada que aún no invirtió en presencia digital: lead premium).
+- Rating bajo (<3.5) o muy pocas reviews (<5) → restar 5-15 puntos (negocio posiblemente poco activo
+  o de baja calidad, priorizarlo menos aunque no tenga web).
+- Si rating/totalReviews son null (proveedor sin esos datos), ignorá esta sección y usá solo las
+  señales base de arriba.
 
 Devolvé ÚNICAMENTE un array JSON válido, sin markdown, sin texto extra.
 Formato exacto (un objeto por lead, mismo orden que el input):
@@ -351,6 +613,9 @@ export async function POST(req: NextRequest) {
       estado,
       ciudad,
       cantidad = 15,
+      lat,        // number | undefined — centro elegido en el mapa
+      lng,        // number | undefined
+      radiusKm,   // number | undefined — radio del círculo del mapa
       // Filtros
       filterHasWebsite,      // "yes" | "no" | null
       filterHasWhatsapp,     // "yes" | "no" | null  (requiere website)
@@ -361,13 +626,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "rubro y pais son requeridos" }, { status: 422 });
     }
 
+    const geo: Geo | undefined =
+      typeof lat === "number" && typeof lng === "number" && typeof radiusKm === "number"
+        ? { lat, lng, radiusKm }
+        : undefined;
+
     // Build Places query
     const location = [ciudad, estado, pais].filter(Boolean).join(", ");
     const query = `${rubro} en ${location}`;
 
     // 1. Fetch from Google Places (fetch more to compensate for filtering)
     const fetchQty = Math.min(60, cantidad * 3);
-    const rawPlaces = await searchPlaces(query, fetchQty);
+    const rawPlaces = await searchPlaces(query, fetchQty, geo);
 
     // 2. Get details for each (parallel, max 10 at a time)
     const needsWebsiteAnalysis =
@@ -382,8 +652,8 @@ export async function POST(req: NextRequest) {
       detailed.push(...results.filter(Boolean));
     }
 
-    // 3. Apply filter: has_website
-    let filtered = detailed;
+    // 3. Apply filter: has_website (descarta también negocios cerrados permanentemente, si el dato existe)
+    let filtered = detailed.filter((p) => p.business_status !== "CLOSED_PERMANENTLY");
 
     if (filterHasWebsite === "yes") {
       filtered = filtered.filter((p) => !!p.website);
@@ -453,8 +723,12 @@ export async function POST(req: NextRequest) {
         _platforms: p._analysis?.platforms || [],
         _rating: p.rating ?? null,
         _totalReviews: p.user_ratings_total ?? null,
+        _primaryType: p.primary_type ?? null,
       };
     });
+
+    // 5b. TEMP: marcar duplicados entre usuarios (teléfono ya agregado/contactado)
+    await checkDuplicates(contacts, user.id);
 
     // 6. AI batch scoring (1 sola llamada para todos los leads)
     contacts = await scoreLeadsWithAI(contacts);

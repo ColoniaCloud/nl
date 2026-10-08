@@ -1,0 +1,22 @@
+[
+  {
+    "platform": "whatsapp",
+    "name": "whatsapp",
+    "url": "+59896969696"
+  },
+  {
+    "platform": "facebook",
+    "name": "facebook",
+    "url": "facebook.com/triangle"
+  },
+  {
+    "platform": "instagram",
+    "name": "instagram",
+    "url": "instagram.com/triangle"
+  },
+  {
+    "platform": "email",
+    "name": "email",
+    "url": "manuel@tyriangle.com"
+  }
+]

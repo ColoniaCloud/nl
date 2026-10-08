@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Margarita MKT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C3CE1',
+            secondary: '#1E1E2E',
+            accent: '#00D4FF',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #1E1E2E;
+      color: #f1f1f1;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #00D4FF;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #00D4FF;
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #f1f1f1;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 320px;
+      opacity: 1;
+    }
+
+    #hamburger-btn.open .line-top {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    #hamburger-btn.open .line-mid {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    #hamburger-btn.open .line-bot {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+
+    .footer-link:hover {
+      color: #00D4FF;
+    }
+
+    .social-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(108, 60, 225, 0.5);
+      background-color: rgba(108, 60, 225, 0.15);
+      transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .social-icon-btn:hover {
+      background-color: rgba(0, 212, 255, 0.2);
+      border-color: #00D4FF;
+      transform: translateY(-2px);
+    }
+
+    .social-icon-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: #f1f1f1;
+      transition: fill 0.25s ease;
+    }
+
+    .social-icon-btn:hover svg {
+      fill: #00D4FF;
+    }
+
+    .header-gradient {
+      background: linear-gradient(135deg, #1E1E2E 0%, #2a1f4e 100%);
+      border-bottom: 1px solid rgba(108, 60, 225, 0.3);
+    }
+
+    .footer-gradient {
+      background: linear-gradient(135deg, #161622 0%, #1E1E2E 100%);
+      border-top: 1px solid rgba(108, 60, 225, 0.3);
+    }
+
+    .mobile-nav-link {
+      transition: color 0.25s ease, background-color 0.25s ease, padding-left 0.25s ease;
+    }
+
+    .mobile-nav-link:hover {
+      color: #00D4FF;
+      background-color: rgba(108, 60, 225, 0.15);
+      padding-left: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header-gradient sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0" aria-label="Margarita MKT - Inicio">
+          <img
+            src="/logo-ia.svg"
+            alt="Margarita MKT"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-gray-200 font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-gray-200 font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-gray-200 font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html"
+            class="ml-2 px-5 py-2 rounded-full text-sm font-medium font-body text-white tracking-wide"
+            style="background: linear-gradient(135deg, #6C3CE1, #8a5cf6); border: 1px solid rgba(108,60,225,0.6); transition: box-shadow 0.25s ease, transform 0.2s ease;"
+            onmouseover="this.style.boxShadow='0 0 18px rgba(108,60,225,0.6)';this.style.transform='translateY(-1px)'"
+            onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'"
+          >Contacto</a>
+        </nav>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú de navegación"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-secondary"
+        >
+          <span class="hamburger-line line-top"></span>
+          <span class="hamburger-line line-mid"></span>
+          <span class="hamburger-line line-bot"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="max-w-6xl mx-auto px-4 pb-4 pt-1 flex flex-col gap-1" style="border-top: 1px solid rgba(108,60,225,0.2);">
+        <a href="index.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Inicio</a>
+        <a href="servicios.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Servicios</a>
+        <a href="nosotros.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Nosotros</a>
+        <a href="contacto.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTENT WRAPPER ===== -->
+  <div style="flex:1;min-height:0;"><main style="font-family: 'DM Sans', sans-serif; background-color: #1E1E2E; color: #f0f0f0;">
+
+  <!-- Banner Superior -->
+  <section style="position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80" alt="Servicios de marketing digital" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(108,60,225,0.85) 0%, rgba(30,30,46,0.92) 100%);"></div>
+    <div style="position: relative; z-index: 10; text-align: center; padding: 2rem 1.5rem; max-width: 800px; margin: 0 auto; animation: fadeInDown 0.8s ease both;">
+      <p style="font-family: 'Space Grotesk', sans-serif; color: #00D4FF; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1rem;">Lo que hacemos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 1.25rem;">Nuestros Servicios</h1>
+      <p style="font-size: 1.1rem; color: rgba(255,255,255,0.8); max-width: 580px; margin: 0 auto; line-height: 1.7;">Marketing digital con tecnología propia e inteligencia artificial para resultados más rápidos, personalizados y medibles.</p>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(108,60,225,0.3);
+      border-color: #6C3CE1 !important;
+    }
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(108,60,225,0.35);
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary { list-style: none; cursor: pointer; }
+    .faq-item[open] summary .faq-icon { transform: rotate(45deg); }
+    .faq-icon { transition: transform 0.3s ease; display: inline-block; color: #6C3CE1; font-weight: 700; font-size: 1.4rem; line-height: 1; }
+    .cta-btn:hover { background: #5a2fd4; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(108,60,225,0.5); }
+    .cta-btn-outline:hover { background: rgba(108,60,225,0.15); transform: translateY(-2px); }
+    .wa-btn:hover { background: #1da851; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.4); }
+    .tag-badge { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(0,212,255,0.12); color: #00D4FF; border: 1px solid rgba(0,212,255,0.3); margin-bottom: 1rem; }
+  </style>
+
+  <!-- SERVICE DETAIL -->
+  <section id="service-detail" style="padding: 6rem 1.5rem; max-width: 1200px; margin: 0 auto; animation: fadeInUp 0.7s ease 0.2s both;">
+
+    <div style="text-align: center; margin-bottom: 4rem;">
+      <span class="tag-badge">Soluciones completas</span>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; color: #ffffff; margin-bottom: 1rem;">Todo lo que tu negocio necesita para crecer online</h2>
+      <p style="color: rgba(255,255,255,0.65); font-size: 1.05rem; max-width: 620px; margin: 0 auto; line-height: 1.75;">Combinamos creatividad, estrategia y tecnología de IA para que tu marca destaque. Sin vueltas, sin demoras.</p>
+    </div>
+
+    <!-- Servicio 1 -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 3rem;">
+
+      <div class="service-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; display: grid; grid-template-columns: 1fr; transition: all 0.35s ease;">
+        <div style="display: flex; flex-direction: column; gap: 0; ">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80" alt="Sitios web en 24 horas" style="width: 100%; height: 240px; object-fit: cover;" />
+          <div style="padding: 2.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+              <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #6C3CE1, #00D4FF); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              </div>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #fff; margin: 0;">Sitios Web en 24 hs</h3>
+            </div>
+            <p style="color: rgba(255,255,255,0.7); line-height: 1.75; margin-bottom: 1.5rem;">Desarrollamos tu sitio web profesional en tan solo 24 horas. Diseño moderno, adaptado a mobile, con formularios de contacto, optimizado para SEO y listo para convertir visitantes en clientes. Tecnología de punta, entrega veloz.</p>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem;">
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.8); font-size: 0.95rem;"><span style="width: 18px; height: 18px; background: #6C3CE1; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Diseño responsive mobile-first</li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.8); font-size: 0.95rem;"><span style="width: 18px; height: 18px; background: #6C3CE1; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Optimización SEO básica incluida</li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.8); font-size: 0.95rem;"><span style="width: 18px; height: 18px; background: #6C3CE1; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Integración con WhatsApp e Instagram</li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.8); font-size: 0.95rem;"><span style="width: 18px; height: 18px; background: #6C3CE1; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Entrega garantizada en 24 horas</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Grid de servicios -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem;">
+
+      <!-- Ads -->
+      <div class="service-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; transition: all 0.35s ease;">
+        <img src="https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=700&q=80" alt="Publicidad digital" style="width: 100%; height: 200px; object-fit: cover;" />
+        <div style="padding: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #6C3CE1, #00D4FF); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">Publicidad Digital (Ads)</h3>
+          </div>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.95rem;">Campañas en Meta Ads (Facebook e Instagram) y Google Ads optimizadas con IA para maximizar tu inversión y llegar a tu cliente ideal en Argentina y el mundo.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Meta Ads y Google Ads</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Segmentación avanzada con IA</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Reportes semanales claros</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Gestión y optimización continua</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Redes Sociales -->
+      <div class="service-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; transition: all 0.35s ease;">
+        <img src="https://images.unsplash.com/photo-1562577309-4932fdd64cd1?w=700&q=80" alt="Gestión de redes sociales" style="width: 100%; height: 200px; object-fit: cover;" />
+        <div style="padding: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #6C3CE1, #00D4FF); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2H7a5 5 0 0 0-5 5v10a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5z"/><circle cx="12" cy="12" r="3"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">Gestión de Redes Sociales</h3>
+          </div>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.95rem;">Nos encargamos de tu presencia en Instagram, Facebook y TikTok. Contenido creativo generado con IA, calendarios editoriales y comunidad activa.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Diseño de posts y stories</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Copywriting con IA personalizado</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Calendario editorial mensual</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Respuesta de comentarios y DMs</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Identidad y Creativos -->
+      <div class="service-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; transition: all 0.35s ease;">
+        <img src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=700&q=80" alt="Diseño y creativos" style="width: 100%; height: 200px; object-fit: cover;" />
+        <div style="padding: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #6C3CE1, #00D4FF); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17.5 10A5.5 5.5 0 0 1 12 15.5h-1L7 21l-4-4 6-4.5V12a5.5 5.5 0 0 1 5.5-5.5"/><path d="M2 20l2-2"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">Identidad Visual y Creativos</h3>
+          </div>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.95rem;">Creamos o renovamos tu identidad de marca: logo, paleta de colores, tipografías y piezas gráficas. Todo coherente, profesional y adaptado a tu rubro.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Diseño de logo e isotipo</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Manual de identidad de marca</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Banners, flyers y piezas digitales</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Proceso acelerado con IA generativa</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SEO y Contenido -->
+      <div class="service-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; transition: all 0.35s ease;">
+        <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=700&q=80" alt="SEO y contenido" style="width: 100%; height: 200px; object-fit: cover;" />
+        <div style="padding: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #6C3CE1, #00D4FF); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">SEO y Posicionamiento</h3>
+          </div>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.95rem;">Aparecer en Google es clave. Optimizamos tu sitio técnica y estratégicamente para que tu negocio llegue a quienes te están buscando en Argentina.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Auditoría SEO inicial</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Optimización técnica on-page</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Contenido optimizado con IA</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Google My Business incluido</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Digitalización PYME -->
+      <div class="service-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; transition: all 0.35s ease;">
+        <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=700&q=80" alt="Digitalización pyme" style="width: 100%; height: 200px; object-fit: cover;" />
+        <div style="padding: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #6C3CE1, #00D4FF); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">Digitalización de PYMES</h3>
+          </div>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.95rem;">Acompañamos negocios tradicionales en su transición al mundo digital: presencia online, automatizaciones, catálogos digitales y más, sin complicaciones.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Diagnóstico digital inicial gratuito</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Catálogo digital interactivo</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Automatización de WhatsApp</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Capacitación del equipo</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Estrategia Integral -->
+      <div class="service-card" style="background: linear-gradient(135deg, rgba(108,60,225,0.2), rgba(0,212,255,0.08)); border: 1px solid rgba(108,60,225,0.4); border-radius: 20px; overflow: hidden; transition: all 0.35s ease;">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=700&q=80" alt="Estrategia de marketing integral" style="width: 100%; height: 200px; object-fit: cover;" />
+        <div style="padding: 2rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #00D4FF, #6C3CE1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">Estrategia 360° con IA</h3>
+          </div>
+          <div style="display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.7rem; border-radius: 999px; background: rgba(0,212,255,0.15); color: #00D4FF; border: 1px solid rgba(0,212,255,0.35); margin-bottom: 1rem;">Más popular</div>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.25rem; font-size: 0.95rem;">La solución completa para negocios que quieren crecer de verdad. Combinamos todos nuestros servicios en una estrategia unificada, con tecnología de IA propia para resultados superiores.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Todos los servicios incluidos</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Consultor dedicado exclusivo</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Dashboard de métricas en tiempo real</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; color: rgba(255,255,255,0.75); font-size: 0.9rem;"><span style="color: #00D4FF; font-weight: 700;">+</span>Reunión estratégica mensual</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Diferenciador IA -->
+    <div style="margin-top: 4rem; background: linear-gradient(135deg, rgba(108,60,225,0.15), rgba(0,212,255,0.08)); border: 1px solid rgba(108,60,225,0.3); border-radius: 24px; padding: 3rem 2rem; display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center;">
+      <div>
+        <span class="tag-badge">Tecnología propia</span>
+        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: #fff; margin-bottom: 1rem;">Desarrollamos nuestra propia IA para trabajar mejor</h3>
+        <p style="color: rgba(255,255,255,0.7); line-height: 1.75; margin-bottom: 1.5rem;">A diferencia de otras agencias, Margarita MKT cuenta con tecnología de inteligencia artificial desarrollada internamente. Esto nos permite entregar proyectos más rápido, personalizar cada campaña a fondo y optimizar resultados de forma continua, sin que pagues de más.</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem;">
+          <div style="text-align: center; padding: 1.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 800; color: #6C3CE1; margin-bottom: 0.25rem;">24 hs</div>
+            <div style="color: rgba(255,255,255,0.65); font-size: 0.88rem;">Entrega de sitio web</div>
+          </div>
+          <div style="text-align: center; padding: 1.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 800; color: #00D4FF; margin-bottom: 0.25rem;">3x</div>
+            <div style="color: rgba(255,255,255,0.65); font-size: 0.88rem;">Más velocidad de producción</div>
+          </div>
+          <div style="text-align: center; padding: 1.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 800; color: #6C3CE1; margin-bottom: 0.25rem;">100%</div>
+            <div style="color: rgba(255,255,255,0.65); font-size: 0.88rem;">Personalizado a tu negocio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" style="padding: 6rem 1.5rem; background: rgba(0,0,0,0.2);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+
+      <div style="text-align: center; margin-bottom: 4rem;">
+        <span class="tag-badge">Planes y precios</span>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; color: #ffffff; margin-bottom: 1rem;">Planes claros, sin letras chicas</h2>
+        <p style="color: rgba(255,255,255,0.65); font-size: 1.05rem; max-width: 580px; margin: 0 auto; line-height: 1.75;">Precios en pesos argentinos. Todos los planes incluyen soporte, informes y acceso a nuestra tecnología de IA. ¿No encontrás lo que buscás? Te armamos un plan a medida.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 2rem; align-items: start;">
+
+        <!-- Plan Starter -->
+        <div class="pricing-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 2.5rem 2rem; transition: all 0.35s ease;">
+          <div style="margin-bottom: 2rem;">
+            <div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.75rem;">Starter</div>
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 0.4rem;">$150.000<span style="font-size: 1rem; font-weight: 400; color: rgba(255,255,255,0.5);">/mes</span></div>
+            <div style="color: rgba(255,255,255,0.5); font-size: 0.88rem;">+ Pago único configuración $80.000</div>
+          </div>
+          <p style="color: rgba(255,255,255,0.65); font-size: 0.95rem; line-height: 1.65; margin-bottom: 2rem;">Ideal para negocios que recién empiezan a dar sus primeros pasos en el mundo digital.</p>
+          <ul style="list-style: none; padding: 0; margin: 0 0 2rem 0; display: flex; flex-direction: column; gap: 0.75rem;">
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.8); font-size: 0.92rem;"><span style="width: 20px; height: 20px; background: rgba(108,60,225,0.3); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6C3CE1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Sitio web 1 página (landing)</li>
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.8); font-size: 0.92rem;"><span style="width: 20px; height: 20px; background: rgba(108,60,225,0.3); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6C3CE1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Gestión de Instagram (12 posts/mes)</li>
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.8); font-size: 0.92rem;"><span style="width: 20px; height: 20px; background: rgba(108,60,225,0.3); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6C3CE1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Reporte mensual de métricas</li>
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.8); font-size: 0.92rem;"><span style="width: 20px; height: 20px; background: rgba(108,60,225,0.3); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6C3CE1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Soporte por WhatsApp</li>
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.35); font-size: 0.92rem;"><span style="width: 20px; height: 20px; background: rgba(255,255,255,0.05); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>Ads en Meta/Google</li>
+            <li style="display: flex; align-items: center; gap: 0.75rem; color: rgba(255,255,255,0.35); font-size: 0.92rem;"><span style="width: 20px; height: 20px; background: rgba(255,255,255,0.05); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>Consultor dedicado</li>
+          </ul>
+          <a href="https://wa.me/5491162504624?text=Hola%20Margarita%20MKT!%20Me%20interesa%20el%20plan%20Starter" target="_blank" rel="noopener" class="cta-btn-outline" style="display: block; text-align: center; padding: 0.9rem 1.5rem; border: 2px solid rgba(108,60,225,0.6); color: #fff; border-radius: 12px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s ease;">Consultar por Starter</a>
+        </div>
+
+        <!-- Plan Pro (Destacado) -->
+        <div class="pricing-card" style="background: linear-gradient(160deg, #6C3CE1, #4a22b0); border: 1px solid rgba(108,60,225,0.8); border-radius: 24px; padding: 2.5rem 2rem; transition: all 0.35s ease; position: relative;">
+          <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #00D4FF; color: #1E1E2E; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 1.2
+</main></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer-gradient">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+
+      <!-- Top row -->
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-3">
+          <a href="index.html" aria-label="Margarita MKT - Inicio">
+            <img
+              src="/logo-ia.svg"
+              alt="Margarita MKT"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;opacity:0.92;"
+            />
+          </a>
+          <p class="text-gray-400 text-sm font-body max-w-xs leading-relaxed">
+            Estrategia y marketing digital para marcas que quieren crecer.
+          </p>
+          <!-- Social icons -->
+          <div class="flex items-center gap-3 mt-1">
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Margarita MKT" class="social-icon-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a href="https://instagram.com/margaritamkt" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Margarita MKT" class="social-icon-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:nicogdublanc@gmail.com" aria-label="Email de Margarita MKT" class="social-icon-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Nav links -->
+        <div class="flex flex-col gap-2">
+          <p class="text-xs font-heading font-semibold tracking-widest uppercase text-primary mb-1">Navegación</p>
+          <a href="index.html" class="footer-link text-gray-400 text-sm font-body">Inicio</a>
+          <a href="servicios.html" class="footer-link text-gray-400 text-sm font-body">Servicios</a>
+          <a href="nosotros.html" class="footer-link text-gray-400 text-sm font-body">Nosotros</a>
+          <a href="contacto.html" class="footer-link text-gray-400 text-sm font-body">Contacto</a>
+        </div>
+
+        <!-- Contact info -->
+        <div class="flex flex-col gap-2">
+          <p class="text-xs font-heading font-semibold tracking-widest uppercase text-primary mb-1">Contacto</p>
+          <a href="mailto:nicogdublanc@gmail.com" class="footer-link text-gray-400 text-sm font-body break-all">nicogdublanc@gmail.com</a>
+          <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" class="footer-link text-gray-400 text-sm font-body">+54 9 11 6250-4624</a>
+          <a href="https://instagram.com/margaritamkt" target="_blank" rel="noopener noreferrer" class="footer-link text-gray-400 text-sm font-body">@margaritamkt</a>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(108,60,225,0.4),transparent);margin-top:2.5rem;margin-bottom:1.5rem;"></div>
+
+      <!-- Bottom row -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p class="text-gray-500 text-xs font-body text-center sm:text-left">
+          &copy; 2026 Margarita MKT. Todos los derechos reservados.
+        </p>
+        <p class="text-gray-600 text-xs font-body">
+          Hecho con <span style="color:#6C3CE1;">&#9829;</span> en Argentina
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
+        btn.setAttribute('aria-label', isOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú de navegación');
+        }
+      });
+
+      // Close menu on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú de navegación');
+        }
+      });
+
+      // Highlight active nav link
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      const allLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+      allLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+          link.classList.add('active');
+          link.style.color = '#00D4FF';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

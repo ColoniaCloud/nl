@@ -87,11 +87,19 @@ export async function POST(req: NextRequest) {
     )) as any;
 
     if (!cuRows[0]?.access_token) {
+      await pool.execute(
+        "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'assistant', 'Para crear el calendario necesitas conectar tu cuenta de ClickUp.', 'calendar_create')",
+        [strategy.brandbook_id, user.id]
+      );
       return NextResponse.json({ needs_clickup_connect: true });
     }
 
     const clickupToken = decryptToken(cuRows[0].access_token);
     if (!clickupToken) {
+      await pool.execute(
+        "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'assistant', 'Para crear el calendario necesitas conectar tu cuenta de ClickUp.', 'calendar_create')",
+        [strategy.brandbook_id, user.id]
+      );
       return NextResponse.json({ needs_clickup_connect: true });
     }
 
@@ -141,11 +149,18 @@ export async function POST(req: NextRequest) {
       [listId, url, strategy_id]
     );
 
+    const chatMessage = `Calendario creado en ClickUp con ${created} tareas.${url ? ` Accede aqui: ${url}` : ""}`;
+    await pool.execute(
+      "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'assistant', ?, 'complete')",
+      [strategy.brandbook_id, user.id, chatMessage]
+    );
+
     return NextResponse.json({
       calendar_url: url,
       clickup_list_id: listId,
       tasks_created: created,
       tasks_failed: failed,
+      chat_message: chatMessage,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Error interno" }, { status: 500 });

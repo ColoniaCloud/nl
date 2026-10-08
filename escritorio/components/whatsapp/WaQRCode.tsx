@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Loader2, RefreshCw, AlertCircle } from "lucide-react";
 
-type WaStatus = "loading" | "qr_pending" | "connected" | "disconnected" | "error";
+type WaStatus = "loading" | "qr_pending" | "reconnecting" | "connected" | "disconnected" | "error";
 
 interface WaQRCodeProps {
   onConnected: () => void;
@@ -12,38 +12,70 @@ interface WaQRCodeProps {
 export function WaQRCode({ onConnected }: WaQRCodeProps) {
   const [qr, setQr] = useState<string | null>(null);
   const [status, setStatus] = useState<WaStatus>("loading");
-  const [starting, setStarting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const onConnectedRef = useRef(onConnected);
+  onConnectedRef.current = onConnected;
 
   async function startSession() {
-    setStarting(true);
+    setErrorMessage(null);
     try {
-      await fetch("/api/whatsapp/qr");
-    } catch {}
-    setStarting(false);
+      const res = await fetch("/api/whatsapp/qr");
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setErrorMessage(data?.error ?? `Error al iniciar sesión (${res.status})`);
+      }
+    } catch {
+      setErrorMessage("No se pudo contactar al servidor. Reintentando...");
+    }
   }
 
-  // Kick off session on mount
+  const [retryKey, setRetryKey] = useState(0);
+
   useEffect(() => {
     startSession();
-  }, []);
 
-  // Poll status every 2s
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch("/api/whatsapp/status");
-        const data = await res.json();
-        const s: WaStatus = data?.status ?? "disconnected";
-        setStatus(s);
-        if (data?.qr_code) setQr(data.qr_code);
-        if (s === "connected") {
-          clearInterval(interval);
-          onConnected();
-        }
-      } catch {}
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [onConnected]);
+    const es = new EventSource("/api/whatsapp/events");
+
+    es.addEventListener("QR_UPDATE", (e) => {
+      const data = JSON.parse((e as MessageEvent).data);
+      setErrorMessage(null);
+      setQr(data.qrBase64);
+      setStatus("qr_pending");
+    });
+
+    es.addEventListener("RECONNECTING", () => {
+      setStatus("reconnecting");
+    });
+
+    es.addEventListener("CONNECTED", () => {
+      setStatus("connected");
+      setQr(null);
+      es.close();
+      onConnectedRef.current();
+    });
+
+    es.addEventListener("DISCONNECTED", () => {
+      setStatus((prev) => (prev === "connected" ? prev : "reconnecting"));
+    });
+
+    es.addEventListener("ERROR", () => {
+      setErrorMessage("No se pudo vincular WhatsApp. Probá de nuevo.");
+    });
+
+    es.onerror = () => {
+      setErrorMessage((prev) => prev ?? "Conexión perdida con el servidor. Reintentando...");
+    };
+
+    return () => es.close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [retryKey]);
+
+  function handleRetry() {
+    setErrorMessage(null);
+    setQr(null);
+    setStatus("loading");
+    setRetryKey((k) => k + 1);
+  }
 
   return (
     <div className="flex flex-col items-center gap-5 p-8 max-w-xs mx-auto">
@@ -56,7 +88,7 @@ export function WaQRCode({ onConnected }: WaQRCodeProps) {
 
       {/* QR area */}
       <div className="relative">
-        {qr ? (
+        {qr && !errorMessage && status !== "reconnecting" ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={qr}
@@ -66,13 +98,27 @@ export function WaQRCode({ onConnected }: WaQRCodeProps) {
             className="rounded-xl border border-border"
           />
         ) : (
-          <div className="w-[220px] h-[220px] rounded-xl border border-border bg-muted flex items-center justify-center">
-            {starting || status === "loading" ? (
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+          <div className="w-[220px] h-[220px] rounded-xl border border-border bg-muted flex flex-col items-center justify-center gap-2 p-4">
+            {errorMessage ? (
+              <>
+                <AlertCircle className="size-6 text-red-400" />
+                <p className="text-xs text-red-400 text-center">{errorMessage}</p>
+                <button
+                  onClick={handleRetry}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-1"
+                >
+                  <RefreshCw className="size-3" /> Reintentar
+                </button>
+              </>
+            ) : status === "reconnecting" ? (
+              <>
+                <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                <p className="text-xs text-muted-foreground text-center">
+                  Regenerando código...
+                </p>
+              </>
             ) : (
-              <p className="text-xs text-muted-foreground text-center px-4">
-                Generando QR...
-              </p>
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
             )}
           </div>
         )}
@@ -85,9 +131,9 @@ export function WaQRCode({ onConnected }: WaQRCodeProps) {
         <li>4. Escaneá este QR</li>
       </ol>
 
-      {qr && (
+      {qr && !errorMessage && (
         <button
-          onClick={startSession}
+          onClick={handleRetry}
           className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <RefreshCw className="size-3" /> Regenerar QR
@@ -95,7 +141,7 @@ export function WaQRCode({ onConnected }: WaQRCodeProps) {
       )}
 
       <p className="text-2xs text-muted-foreground/60 text-center">
-        El QR expira en 60 segundos y se regenera automáticamente
+        El QR se regenera automáticamente si expira
       </p>
     </div>
   );

@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Margarita MKT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C3CE1',
+            secondary: '#1E1E2E',
+            accent: '#00D4FF',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #1E1E2E;
+      color: #f1f1f1;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #00D4FF;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #00D4FF;
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #f1f1f1;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 320px;
+      opacity: 1;
+    }
+
+    #hamburger-btn.open .line-top {
+      transform: translateY(6px) rotate(45deg);
+    }
+
+    #hamburger-btn.open .line-mid {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    #hamburger-btn.open .line-bot {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+
+    .footer-link:hover {
+      color: #00D4FF;
+    }
+
+    .social-icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(108, 60, 225, 0.5);
+      background-color: rgba(108, 60, 225, 0.15);
+      transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .social-icon-btn:hover {
+      background-color: rgba(0, 212, 255, 0.2);
+      border-color: #00D4FF;
+      transform: translateY(-2px);
+    }
+
+    .social-icon-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: #f1f1f1;
+      transition: fill 0.25s ease;
+    }
+
+    .social-icon-btn:hover svg {
+      fill: #00D4FF;
+    }
+
+    .header-gradient {
+      background: linear-gradient(135deg, #1E1E2E 0%, #2a1f4e 100%);
+      border-bottom: 1px solid rgba(108, 60, 225, 0.3);
+    }
+
+    .footer-gradient {
+      background: linear-gradient(135deg, #161622 0%, #1E1E2E 100%);
+      border-top: 1px solid rgba(108, 60, 225, 0.3);
+    }
+
+    .mobile-nav-link {
+      transition: color 0.25s ease, background-color 0.25s ease, padding-left 0.25s ease;
+    }
+
+    .mobile-nav-link:hover {
+      color: #00D4FF;
+      background-color: rgba(108, 60, 225, 0.15);
+      padding-left: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header-gradient sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0" aria-label="Margarita MKT - Inicio">
+          <img
+            src="/logo-ia.svg"
+            alt="Margarita MKT"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-gray-200 font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-gray-200 font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-gray-200 font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html"
+            class="ml-2 px-5 py-2 rounded-full text-sm font-medium font-body text-white tracking-wide"
+            style="background: linear-gradient(135deg, #6C3CE1, #8a5cf6); border: 1px solid rgba(108,60,225,0.6); transition: box-shadow 0.25s ease, transform 0.2s ease;"
+            onmouseover="this.style.boxShadow='0 0 18px rgba(108,60,225,0.6)';this.style.transform='translateY(-1px)'"
+            onmouseout="this.style.boxShadow='none';this.style.transform='translateY(0)'"
+          >Contacto</a>
+        </nav>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú de navegación"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-secondary"
+        >
+          <span class="hamburger-line line-top"></span>
+          <span class="hamburger-line line-mid"></span>
+          <span class="hamburger-line line-bot"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="max-w-6xl mx-auto px-4 pb-4 pt-1 flex flex-col gap-1" style="border-top: 1px solid rgba(108,60,225,0.2);">
+        <a href="index.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Inicio</a>
+        <a href="servicios.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Servicios</a>
+        <a href="nosotros.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Nosotros</a>
+        <a href="contacto.html" class="mobile-nav-link block px-4 py-3 rounded-lg text-gray-200 font-body font-medium text-sm tracking-wide">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTENT WRAPPER ===== -->
+  <div style="flex:1;min-height:0;"><main class="font-['DM_Sans'] text-white" style="background-color:#1E1E2E">
+
+  <!-- HERO -->
+  <section class="relative flex items-center justify-center" style="min-height:100vh">
+    <img
+      src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1600&q=80"
+      alt="Equipo trabajando en marketing digital"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(108,60,225,0.75) 0%,rgba(30,30,46,0.90) 100%)"></div>
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto" style="animation:fadeInUp 0.9s ease both">
+      <span class="inline-block text-xs font-semibold tracking-widest uppercase mb-4 px-4 py-1 rounded-full border" style="border-color:#00D4FF;color:#00D4FF">Agencia de Marketing Digital — Argentina</span>
+      <h1 class="font-['Space_Grotesk'] font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight mb-6">
+        Tu negocio crece.<br/>
+        <span style="color:#00D4FF">Nosotros lo hacemos</span><br/>
+        posible.
+      </h1>
+      <p class="text-lg sm:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed">
+        En Margarita MKT combinamos estrategia, creatividad e inteligencia artificial propia para llevar tu negocio al mundo digital. Sitios web en 24&nbsp;hs, campañas de ads y más.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a
+          href="https://wa.me/5491162504624?text=Hola%20Margarita%20MKT%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 font-semibold text-base px-8 py-4 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          style="background:#6C3CE1;color:#fff;box-shadow:0 0 24px rgba(108,60,225,0.45)"
+        >
+          Hablá con nosotros por WhatsApp
+        </a>
+        <a
+          href="/servicios"
+          class="inline-flex items-center gap-2 font-semibold text-base px-8 py-4 rounded-full border transition-all duration-300 hover:scale-105"
+          style="border-color:#00D4FF;color:#00D4FF"
+        >
+          Ver servicios
+        </a>
+      </div>
+      <div class="mt-14 flex flex-wrap justify-center gap-8 text-sm text-gray-300">
+        <div class="flex flex-col items-center gap-1">
+          <span class="font-['Space_Grotesk'] font-bold text-3xl" style="color:#00D4FF">+100</span>
+          <span>Proyectos entregados</span>
+        </div>
+        <div class="w-px bg-gray-600 hidden sm:block"></div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="font-['Space_Grotesk'] font-bold text-3xl" style="color:#00D4FF">24&nbsp;hs</span>
+          <span>Sitios web listos</span>
+        </div>
+        <div class="w-px bg-gray-600 hidden sm:block"></div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="font-['Space_Grotesk'] font-bold text-3xl" style="color:#00D4FF">IA</span>
+          <span>Tecnología propia</span>
+        </div>
+      </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 opacity-60">
+      <span class="text-xs tracking-widest uppercase text-gray-300">Descubrí más</span>
+      <span class="w-px h-10 block" style="background:linear-gradient(to bottom,#6C3CE1,transparent)"></span>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="servicios" class="py-24 px-6" style="background:#1E1E2E">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Lo que hacemos</span>
+        <h2 class="font-['Space_Grotesk'] font-bold text-3xl sm:text-4xl md:text-5xl mt-3 mb-5">
+          Servicios diseñados para<br/><span style="color:#6C3CE1">pymes y negocios reales</span>
+        </h2>
+        <p class="text-gray-400 max-w-xl mx-auto text-base leading-relaxed">
+          Cada servicio está optimizado con nuestra tecnología de IA para darte resultados más rápidos, personalizados y a un precio accesible.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="group rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-default" style="background:rgba(108,60,225,0.08);border-color:rgba(108,60,225,0.25)">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(108,60,225,0.25)">
+            <svg class="w-6 h-6" fill="none" stroke="#6C3CE1" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3 class="font-['Space_Grotesk'] font-bold text-xl mb-3">Sitios Web en 24&nbsp;hs</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Diseñamos y lanzamos tu sitio web profesional en un día. Ideal para negocios que necesitan presencia online ya.</p>
+          <div class="mt-5 pt-5 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Entrega express</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="group rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-default" style="background:rgba(108,60,225,0.08);border-color:rgba(108,60,225,0.25)">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(0,212,255,0.15)">
+            <svg class="w-6 h-6" fill="none" stroke="#00D4FF" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </div>
+          <h3 class="font-['Space_Grotesk'] font-bold text-xl mb-3">Campañas de Ads</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Google Ads, Meta Ads y TikTok Ads gestionados con estrategia real. Invertís donde hay resultados.</p>
+          <div class="mt-5 pt-5 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">ROI medible</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="group rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-default" style="background:rgba(108,60,225,0.08);border-color:rgba(108,60,225,0.25)">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(108,60,225,0.25)">
+            <svg class="w-6 h-6" fill="none" stroke="#6C3CE1" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+          </div>
+          <h3 class="font-['Space_Grotesk'] font-bold text-xl mb-3">Creativos & Contenido</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Diseño gráfico, piezas para redes, videos cortos y copywriting adaptado a tu voz de marca.</p>
+          <div class="mt-5 pt-5 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Identidad sólida</span>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="group rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-default" style="background:rgba(108,60,225,0.08);border-color:rgba(108,60,225,0.25)">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(0,212,255,0.15)">
+            <svg class="w-6 h-6" fill="none" stroke="#00D4FF" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-['Space_Grotesk'] font-bold text-xl mb-3">Marketing con IA</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Nuestra tecnología propia automatiza análisis, segmentación y reportes para que tu estrategia sea más eficiente.</p>
+          <div class="mt-5 pt-5 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Tecnología exclusiva</span>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="group rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-default" style="background:rgba(108,60,225,0.08);border-color:rgba(108,60,225,0.25)">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(108,60,225,0.25)">
+            <svg class="w-6 h-6" fill="none" stroke="#6C3CE1" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-['Space_Grotesk'] font-bold text-xl mb-3">Gestión de Redes Sociales</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Nos encargamos de tu Instagram, Facebook y más. Publicaciones, historias y respuestas en tiempo real.</p>
+          <div class="mt-5 pt-5 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Comunidad activa</span>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="group rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl cursor-default" style="background:rgba(108,60,225,0.08);border-color:rgba(108,60,225,0.25)">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(0,212,255,0.15)">
+            <svg class="w-6 h-6" fill="none" stroke="#00D4FF" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="font-['Space_Grotesk'] font-bold text-xl mb-3">Digitalización de Negocios</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">Transformamos negocios tradicionales al entorno digital: catálogos online, automatizaciones, presencia integral.</p>
+          <div class="mt-5 pt-5 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Transformación real</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="text-center mt-12">
+        <a
+          href="/servicios"
+          class="inline-flex items-center gap-2 font-semibold text-sm px-8 py-3 rounded-full border transition-all duration-300 hover:scale-105"
+          style="border-color:#6C3CE1;color:#6C3CE1"
+        >
+          Ver todos los servicios y precios
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT BRIEF -->
+  <section id="nosotros-brief" class="py-24 px-6" style="background:linear-gradient(135deg,rgba(108,60,225,0.10) 0%,rgba(30,30,46,1) 60%)">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+        <div class="relative">
+          <div class="rounded-2xl overflow-hidden shadow-2xl" style="box-shadow:0 0 60px rgba(108,60,225,0.25)">
+            <img
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80"
+              alt="Equipo Margarita MKT"
+              class="w-full h-80 sm:h-96 object-cover"
+            />
+          </div>
+          <div class="absolute -bottom-6 -right-4 rounded-2xl p-5 shadow-xl hidden sm:block" style="background:#6C3CE1;min-width:160px">
+            <p class="font-['Space_Grotesk'] font-bold text-3xl text-white">+3 años</p>
+            <p class="text-purple-200 text-sm mt-1">haciendo crecer pymes</p>
+          </div>
+          <div class="absolute -top-4 -left-4 w-20 h-20 rounded-full border-4 opacity-30 hidden sm:block" style="border-color:#00D4FF"></div>
+        </div>
+        <div>
+          <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Por qué elegirnos</span>
+          <h2 class="font-['Space_Grotesk'] font-bold text-3xl sm:text-4xl mt-3 mb-6 leading-snug">
+            No somos una agencia más.<br/><span style="color:#6C3CE1">Somos tu equipo digital.</span>
+          </h2>
+          <p class="text-gray-400 leading-relaxed mb-6">
+            En Margarita MKT desarrollamos nuestra propia tecnología basada en inteligencia artificial para que cada proyecto sea más rápido, más preciso y más rentable para vos. No tercerizamos lo esencial: todo lo hacemos internamente con foco en tus resultados.
+          </p>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:rgba(0,212,255,0.2)">
+                <svg class="w-3 h-3" fill="none" stroke="#00D4FF" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-300 text-sm leading-relaxed">IA propia para entregas más rápidas y personalizadas que la competencia.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:rgba(0,212,255,0.2)">
+                <svg class="w-3 h-3" fill="none" stroke="#00D4FF" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-300 text-sm leading-relaxed">Sitios web profesionales entregados en 24 horas desde el inicio.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:rgba(0,212,255,0.2)">
+                <svg class="w-3 h-3" fill="none" stroke="#00D4FF" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-300 text-sm leading-relaxed">Precios pensados para la realidad de las pymes argentinas.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center" style="background:rgba(0,212,255,0.2)">
+                <svg class="w-3 h-3" fill="none" stroke="#00D4FF" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-300 text-sm leading-relaxed">Comunicación directa, sin intermediarios, con seguimiento constante.</span>
+            </li>
+          </ul>
+          <a
+            href="/nosotros"
+            class="inline-flex items-center gap-2 font-semibold text-sm transition-all duration-300 hover:gap-3"
+            style="color:#00D4FF"
+          >
+            Conocé más sobre nosotros
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonios" class="py-24 px-6" style="background:#1E1E2E">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Testimonios</span>
+        <h2 class="font-['Space_Grotesk'] font-bold text-3xl sm:text-4xl md:text-5xl mt-3 mb-5">
+          Lo que dicen nuestros<br/><span style="color:#6C3CE1">clientes</span>
+        </h2>
+        <p class="text-gray-400 max-w-lg mx-auto text-base">
+          Negocios reales que dieron el salto digital con Margarita MKT.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Testimonio 1 -->
+        <div class="rounded-2xl p-7 border flex flex-col gap-5 transition-all duration-300 hover:-translate-y-1" style="background:rgba(108,60,225,0.07);border-color:rgba(108,60,225,0.2)">
+          <div class="flex gap-1">
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed italic flex-grow">
+            "Tenía una ferretería de toda la vida y no sabía cómo arrancar en internet. En menos de dos días ya tenía mi sitio y mis primeras campañas corriendo. Los resultados se vieron en el primer mes."
+          </p>
+          <div class="flex items-center gap-3 pt-3 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&q=80"
+              alt="Martín R."
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold text-sm text-white">Martín R.</p>
+              <p class="text-xs text-gray-500">Ferretería El Tornillo — Buenos Aires</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 2 -->
+        <div class="rounded-2xl p-7 border flex flex-col gap-5 transition-all duration-300 hover:-translate-y-1" style="background:rgba(108,60,225,0.07);border-color:rgba(108,60,225,0.2)">
+          <div class="flex gap-1">
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed italic flex-grow">
+            "Contraté la gestión de redes y los ads para mi local de ropa. En 60 días triplicamos las consultas por Instagram. El equipo es muy profesional y siempre responde rápido."
+          </p>
+          <div class="flex items-center gap-3 pt-3 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <img
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&q=80"
+              alt="Valeria M."
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold text-sm text-white">Valeria M.</p>
+              <p class="text-xs text-gray-500">Indumentaria Valu — Córdoba</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 3 -->
+        <div class="rounded-2xl p-7 border flex flex-col gap-5 transition-all duration-300 hover:-translate-y-1" style="background:rgba(108,60,225,0.07);border-color:rgba(108,60,225,0.2)">
+          <div class="flex gap-1">
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4" fill="#6C3CE1" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed italic flex-grow">
+            "Nunca imaginé que podría tener una web tan profesional en tan poco tiempo y a ese precio. La uso para mostrar mi trabajo y conseguí tres clientes nuevos en el primer mes."
+          </p>
+          <div class="flex items-center gap-3 pt-3 border-t" style="border-color:rgba(108,60,225,0.2)">
+            <img
+              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=60&q=80"
+              alt="Diego P."
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold text-sm text-white">Diego P.</p>
+              <p class="text-xs text-gray-500">Plomería & Construcción — Rosario</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section id="cta" class="py-28 px-6 relative" style="background:linear-gradient(135deg,#6C3CE1 0%,#1E1E2E 100%)">
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 70% 50%,rgba(0,212,255,0.10) 0%,transparent 70%)"></div>
+    <div class="max-w-3xl mx-auto text-center relative z-10">
+      <span class="text-xs font-semibold tracking-widest uppercase" style="color:#00D4FF">Empezá hoy</span>
+      <h2 class="font-['Space_Grotesk'] font-bold text-3xl sm:text-4xl md:text-5xl mt-4 mb-6 leading-snug">
+        Tu negocio merece estar<br/>en el mundo digital.
+      </h2>
+      <p class="text-purple-200 text-base sm:text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+        Escribinos por WhatsApp ahora mismo y en minutos te contamos
+</main></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer-gradient">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+
+      <!-- Top row -->
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-3">
+          <a href="index.html" aria-label="Margarita MKT - Inicio">
+            <img
+              src="/logo-ia.svg"
+              alt="Margarita MKT"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;opacity:0.92;"
+            />
+          </a>
+          <p class="text-gray-400 text-sm font-body max-w-xs leading-relaxed">
+            Estrategia y marketing digital para marcas que quieren crecer.
+          </p>
+          <!-- Social icons -->
+          <div class="flex items-center gap-3 mt-1">
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de Margarita MKT" class="social-icon-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a href="https://instagram.com/margaritamkt" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Margarita MKT" class="social-icon-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:nicogdublanc@gmail.com" aria-label="Email de Margarita MKT" class="social-icon-btn">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Nav links -->
+        <div class="flex flex-col gap-2">
+          <p class="text-xs font-heading font-semibold tracking-widest uppercase text-primary mb-1">Navegación</p>
+          <a href="index.html" class="footer-link text-gray-400 text-sm font-body">Inicio</a>
+          <a href="servicios.html" class="footer-link text-gray-400 text-sm font-body">Servicios</a>
+          <a href="nosotros.html" class="footer-link text-gray-400 text-sm font-body">Nosotros</a>
+          <a href="contacto.html" class="footer-link text-gray-400 text-sm font-body">Contacto</a>
+        </div>
+
+        <!-- Contact info -->
+        <div class="flex flex-col gap-2">
+          <p class="text-xs font-heading font-semibold tracking-widest uppercase text-primary mb-1">Contacto</p>
+          <a href="mailto:nicogdublanc@gmail.com" class="footer-link text-gray-400 text-sm font-body break-all">nicogdublanc@gmail.com</a>
+          <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" class="footer-link text-gray-400 text-sm font-body">+54 9 11 6250-4624</a>
+          <a href="https://instagram.com/margaritamkt" target="_blank" rel="noopener noreferrer" class="footer-link text-gray-400 text-sm font-body">@margaritamkt</a>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(108,60,225,0.4),transparent);margin-top:2.5rem;margin-bottom:1.5rem;"></div>
+
+      <!-- Bottom row -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p class="text-gray-500 text-xs font-body text-center sm:text-left">
+          &copy; 2026 Margarita MKT. Todos los derechos reservados.
+        </p>
+        <p class="text-gray-600 text-xs font-body">
+          Hecho con <span style="color:#6C3CE1;">&#9829;</span> en Argentina
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
+        btn.setAttribute('aria-label', isOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú de navegación');
+        }
+      });
+
+      // Close menu on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú de navegación');
+        }
+      });
+
+      // Highlight active nav link
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      const allLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+      allLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+          link.classList.add('active');
+          link.style.color = '#00D4FF';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fusion Traders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0A1628',
+            secondary: '#C9A84C',
+            accent: '#00D09C',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #0A1628;
+      color: #ffffff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover transitions */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger icon transition */
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* Footer social link hover */
+    .footer-social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+
+    .footer-social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+
+    /* Footer email link */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+
+    .footer-link:hover {
+      color: #C9A84C;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-primary border-b border-secondary/20 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0 flex items-center">
+          <img
+            src="/logo-ia.svg"
+            alt="Fusion Traders"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          >
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="index.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Contacto</a>
+          <a
+            href="contacto.html"
+            class="ml-4 px-5 py-2 rounded-md bg-secondary text-primary font-heading font-600 text-sm tracking-wide transition-all duration-250 hover:bg-secondary/80 hover:shadow-md hover:shadow-secondary/20 active:scale-95"
+            style="font-weight:600;"
+          >
+            Comenzar
+          </a>
+        </nav>
+
+        <!-- Mobile Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-colors duration-200 hover:bg-white/5"
+        >
+          <span id="ham-line-1" class="hamburger-line block w-6 h-0.5 bg-white mb-1.5 rounded-full"></span>
+          <span id="ham-line-2" class="hamburger-line block w-6 h-0.5 bg-white mb-1.5 rounded-full"></span>
+          <span id="ham-line-3" class="hamburger-line block w-6 h-0.5 bg-white rounded-full"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 pt-2 border-t border-secondary/10 flex flex-col space-y-1">
+        <a href="index.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Inicio</a>
+        <a href="servicios.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Servicios</a>
+        <a href="nosotros.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Nosotros</a>
+        <a href="contacto.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Contacto</a>
+        <div class="pt-2">
+          <a
+            href="contacto.html"
+            class="block w-full text-center px-5 py-2.5 rounded-md bg-secondary text-primary font-heading text-sm tracking-wide transition-all duration-250 hover:bg-secondary/80 active:scale-95"
+            style="font-weight:600;"
+          >
+            Comenzar
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT PLACEHOLDER -->
+  <div style="flex:1;min-height:0;"><main class="bg-[#0A1628] text-white" style="font-family: 'DM Sans', sans-serif;">
+
+  <!-- Banner Superior -->
+  <section class="relative flex items-center justify-center" style="min-height: 60vh;">
+    <img
+      src="https://images.unsplash.com/photo-1758270705031-ebd46917a454?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI3ODA3NjN8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Fusion Traders Nosotros"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+      style="z-index:0;"
+    />
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(10,22,40,0.92) 60%, rgba(10,22,40,0.70) 100%); z-index:1;"></div>
+    <div class="relative z-10 text-center px-4 py-20 max-w-2xl mx-auto" style="animation: fadeInDown 0.9s ease both;">
+      <span class="inline-block text-xs font-semibold tracking-widest uppercase mb-4 px-4 py-1 rounded-full border" style="color:#C9A84C; border-color:#C9A84C; font-family:'DM Sans',sans-serif;">Quiénes Somos</span>
+      <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4" style="font-family:'Space Grotesk',sans-serif; color:#fff;">
+        Conocé a <span style="color:#C9A84C;">Fusion Traders</span>
+      </h1>
+      <p class="text-lg md:text-xl" style="color:rgba(255,255,255,0.75);">
+        Una comunidad construida por traders reales, con resultados reales, para quienes quieren aprender de verdad.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN ABOUT -->
+  <section id="about" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div style="animation: fadeInLeft 0.8s ease both;">
+          <span class="inline-block text-xs font-semibold tracking-widest uppercase mb-3 px-3 py-1 rounded-full" style="color:#00D09C; background:rgba(0,208,156,0.10); font-family:'DM Sans',sans-serif;">Nuestra Historia</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6" style="font-family:'Space Grotesk',sans-serif; color:#fff;">
+            Nacimos para cambiar cómo se aprende a invertir en Argentina
+          </h2>
+          <p class="mb-5 text-base leading-relaxed" style="color:rgba(255,255,255,0.72);">
+            Fusion Traders nació de la frustración de ver cómo la educación financiera en Argentina estaba llena de promesas vacías y "gurús" sin resultados demostrables. Decidimos crear algo diferente: una comunidad liderada por educadores que operan los mercados todos los días y tienen resultados concretos que respaldan cada concepto que enseñan.
+          </p>
+          <p class="mb-5 text-base leading-relaxed" style="color:rgba(255,255,255,0.72);">
+            Desde nuestros inicios, nos enfocamos en llevar el trading de básico a avanzado de manera estructurada y honesta, acompañando a cada alumno en su camino hacia la independencia financiera. No vendemos sueños: enseñamos herramientas reales para operar en los mercados financieros globales.
+          </p>
+          <p class="text-base leading-relaxed" style="color:rgba(255,255,255,0.72);">
+            Hoy somos una comunidad en crecimiento constante, con alumnos en toda Argentina que ya están generando sus primeros ingresos extras gracias al trading.
+          </p>
+        </div>
+        <div class="relative" style="animation: fadeInRight 0.8s ease both;">
+          <img
+            src="https://images.unsplash.com/photo-1758687126146-ff7ed4bbdb57?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI3ODA3NjN8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Sobre Fusion Traders"
+            class="rounded-2xl w-full object-cover shadow-2xl"
+            style="max-height:420px;"
+          />
+          <div class="absolute -bottom-6 -left-6 rounded-2xl px-6 py-5 shadow-xl hidden md:block" style="background:#C9A84C;">
+            <p class="text-2xl font-bold" style="font-family:'Space Grotesk',sans-serif; color:#0A1628;">+500</p>
+            <p class="text-sm font-semibold" style="color:#0A1628;">Alumnos formados</p>
+          </div>
+          <div class="absolute -top-6 -right-6 rounded-2xl px-6 py-5 shadow-xl hidden md:block" style="background:rgba(0,208,156,0.15); border:1px solid #00D09C;">
+            <p class="text-2xl font-bold" style="font-family:'Space Grotesk',sans-serif; color:#00D09C;">100%</p>
+            <p class="text-sm font-semibold" style="color:#fff;">Educadores con resultados</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
+        <div class="rounded-2xl p-6 text-center transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.20);">
+          <p class="text-4xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#C9A84C;">+500</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.65);">Alumnos activos</p>
+        </div>
+        <div class="rounded-2xl p-6 text-center transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.04); border:1px solid rgba(0,208,156,0.20);">
+          <p class="text-4xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#00D09C;">3+</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.65);">Años en el mercado</p>
+        </div>
+        <div class="rounded-2xl p-6 text-center transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.20);">
+          <p class="text-4xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#C9A84C;">4+</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.65);">Mercados enseñados</p>
+        </div>
+        <div class="rounded-2xl p-6 text-center transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.04); border:1px solid rgba(0,208,156,0.20);">
+          <p class="text-4xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#00D09C;">100%</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.65);">Resultados verificables</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN TEAM -->
+  <section id="team" class="py-20 px-4" style="background:rgba(255,255,255,0.025);">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-widest uppercase mb-3 px-3 py-1 rounded-full" style="color:#00D09C; background:rgba(0,208,156,0.10); font-family:'DM Sans',sans-serif;">El Equipo</span>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:'Space Grotesk',sans-serif; color:#fff;">
+          Aprende de quienes <span style="color:#C9A84C;">ya lo hacen</span>
+        </h2>
+        <p class="max-w-xl mx-auto text-base" style="color:rgba(255,255,255,0.65);">
+          Nuestros educadores no solo enseñan: operan activamente en los mercados. Eso es lo que nos diferencia.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Card 1 -->
+        <div class="rounded-2xl overflow-hidden group transition-transform duration-300 hover:-translate-y-2" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.15);">
+          <div class="relative overflow-hidden" style="height:280px;">
+            <img
+              src="https://images.unsplash.com/photo-1778877032520-3a119278ba66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI3ODA3NjN8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Enzo Acosta - Fundador Fusion Traders"
+              class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(10,22,40,0.85) 30%, transparent 70%);"></div>
+            <div class="absolute bottom-4 left-4">
+              <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#C9A84C; color:#0A1628;">Fundador</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Enzo Acosta</h3>
+            <p class="text-sm mb-3" style="color:#C9A84C;">Head Trader & Educador Principal</p>
+            <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+              Trader con más de 3 años operando Forex y mercados internacionales. Fundó Fusion Traders para llevar educación financiera real a jóvenes argentinos que buscan su independencia económica.
+            </p>
+            <div class="mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,0.08);">
+              <a
+                href="https://www.instagram.com/enzoacosta.fx"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200"
+                style="color:#00D09C;"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
+                @enzoacosta.fx
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="rounded-2xl overflow-hidden group transition-transform duration-300 hover:-translate-y-2" style="background:rgba(255,255,255,0.04); border:1px solid rgba(0,208,156,0.15);">
+          <div class="relative overflow-hidden" style="height:280px;">
+            <img
+              src="https://images.unsplash.com/photo-1778877036628-01bdd28cf5b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI3ODA3NjN8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Educador Fusion Traders"
+              class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(10,22,40,0.85) 30%, transparent 70%);"></div>
+            <div class="absolute bottom-4 left-4">
+              <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#00D09C; color:#0A1628;">Educador</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Matias Rojas</h3>
+            <p class="text-sm mb-3" style="color:#00D09C;">Especialista en Análisis Técnico</p>
+            <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+              Especializado en análisis técnico y gestión de riesgo. Enseña a los alumnos cómo identificar oportunidades en el mercado con metodología probada y resultados constantes.
+            </p>
+            <div class="mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,0.08);">
+              <a
+                href="https://wa.me/5493885430011"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200"
+                style="color:#C9A84C;"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+                Consultá por WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="rounded-2xl overflow-hidden group transition-transform duration-300 hover:-translate-y-2" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.15);">
+          <div class="relative overflow-hidden" style="height:280px;">
+            <img
+              src="https://images.unsplash.com/photo-1774092137702-2abdbf38e683?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI3ODA3NjN8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Educador Fusion Traders"
+              class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+            />
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(10,22,40,0.85) 30%, transparent 70%);"></div>
+            <div class="absolute bottom-4 left-4">
+              <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:#C9A84C; color:#0A1628;">Educador</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-1" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Camila Torres</h3>
+            <p class="text-sm mb-3" style="color:#C9A84C;">Mentora y Psicología del Trading</p>
+            <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+              Experta en la parte mental del trading. Ayuda a los alumnos a manejar las emociones, mantener la disciplina y desarrollar la mentalidad necesaria para operar con consistencia.
+            </p>
+            <div class="mt-4 pt-4" style="border-top:1px solid rgba(255,255,255,0.08);">
+              <a
+                href="https://wa.me/5493885430011"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200"
+                style="color:#00D09C;"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+                Consultá por WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN VALUES -->
+  <section id="values" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="inline-block text-xs font-semibold tracking-widest uppercase mb-3 px-3 py-1 rounded-full" style="color:#C9A84C; background:rgba(201,168,76,0.10); font-family:'DM Sans',sans-serif;">Nuestros Valores</span>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:'Space Grotesk',sans-serif; color:#fff;">
+          Los pilares que nos <span style="color:#00D09C;">definen</span>
+        </h2>
+        <p class="max-w-xl mx-auto text-base" style="color:rgba(255,255,255,0.65);">
+          Todo lo que hacemos en Fusion Traders está guiado por principios claros que garantizan una experiencia de aprendizaje genuina.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+
+        <div class="rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background:rgba(255,255,255,0.04); border:1px solid rgba(0,208,156,0.20);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(0,208,156,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#00D09C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Resultados comprobables</h3>
+          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+            No enseñamos teoría sin sustento. Todos nuestros educadores tienen historial de operaciones real. Lo que enseñamos, lo practicamos todos los días en los mercados.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.20);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,168,76,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Educación de calidad</h3>
+          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+            Desde los conceptos más básicos hasta estrategias avanzadas, nuestra metodología está diseñada para que cualquier persona, sin experiencia previa, pueda aprender a operar.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background:rgba(255,255,255,0.04); border:1px solid rgba(0,208,156,0.20);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(0,208,156,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#00D09C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Comunidad real</h3>
+          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+            No estás solo. Al unirte a Fusion Traders, entras a una comunidad activa de traders argentinos que comparten análisis, dudas y logros en tiempo real.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.20);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,168,76,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Acción desde el día uno</h3>
+          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+            Creemos en aprender haciendo. Desde la primera clase, trabajamos con gráficos reales, ejercicios prácticos y simulaciones para que el conocimiento se traduzca en habilidad.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background:rgba(255,255,255,0.04); border:1px solid rgba(0,208,156,0.20);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(0,208,156,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#00D09C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Gestión del riesgo</h3>
+          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+            Proteger el capital es tan importante como hacerlo crecer. Enseñamos a gestionar el riesgo correctamente, porque un trader consistente es uno que sabe cuándo no operar.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" style="background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.20);">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(201,168,76,0.12);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1m15.07-5.66l-.71.71M6.3 17.66l-.71.71m0-12.02l.71.71m11.36 11.36l.71.71M12 7a5 5 0 100 10A5 5 0 0012 7z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family:'Space Grotesk',sans-serif; color:#fff;">Transparencia total</h3>
+          <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,0.65);">
+            El trading tiene riesgos y nosotros lo decimos desde el principio. Nuestra honestidad es lo que genera confianza: no prometemos ganancias fáciles, prometemos formación sólida.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- CTA Final de la sección -->
+      <div class="rounded-2xl p-10 md:p-14 text-center relative overflow-hidden" style="background: linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(0,208,156,0.10) 100%); border:1px solid rgba(201,168,76,0.25);">
+        <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at center, rgba(0,208,156,0.07) 0%, transparent 70%);"></div>
+        <div class="relative z-10">
+          <h2 class="text-2xl md:text-3xl font-bold mb-4" style="font-family:'Space Grotesk',sans-serif; color:#fff;">
+            ¿Listo para ser parte de <span style="color:#C9A84C;">Fusion Traders</span>?
+          </h2>
+          <p class="text-base mb-8 max-w-lg mx-auto" style="color:rgba(255,255,255,0.70);">
+            Si tenés entre 18 y 25 años y querés aprender a generar un ingreso extra desde Argentina, estás en el lugar correcto. Hablanos por WhatsApp y te contamos cómo empezar.
+          </p>
+          <a
+            href="https://wa.me/5493885430011"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-bold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            style="background:#C9A84C; color:#0A1628; font-family:'Space Grotesk',sans-serif;"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+            Quiero empezar ahora
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+  </style>
+
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary border-t border-secondary/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+
+        <!-- Brand Column -->
+        <div class="flex flex-col items-start space-y-4">
+          <a href="index.html" class="inline-flex">
+            <img
+              src="/logo-ia.svg"
+              alt="Fusion Traders"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;"
+            >
+          </a>
+          <p class="text-white/50 text-sm font-body leading-relaxed max-w-xs">
+            Trading profesional con estrategia, disciplina y resultados consistentes.
+          </p>
+        </div>
+
+        <!-- Navigation Column -->
+        <div class="flex flex-col space-y-3">
+          <h3 class="font-heading font-semibold text-secondary text-sm uppercase tracking-widest mb-1">Navegación</h3>
+          <a href="index.html" class="footer-link text-white/70 font-body text-sm">Inicio</a>
+          <a href="servicios.html" class="footer-link text-white/70 font-body text-sm">Servicios</a>
+          <a href="nosotros.html" class="footer-link text-white/70 font-body text-sm">Nosotros</a>
+          <a href="contacto.html" class="footer-link text-white/70 font-body text-sm">Contacto</a>
+        </div>
+
+        <!-- Contact & Social Column -->
+        <div class="flex flex-col space-y-4">
+          <h3 class="font-heading font-semibold text-secondary text-sm uppercase tracking-widest mb-1">Contacto</h3>
+
+          <!-- Email -->
+          <a
+            href="mailto:fusiontradersfx@gmail.com"
+            class="footer-social-link text-white/70 font-body text-sm flex items-center gap-2 group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 group-hover:stroke-secondary transition-colors duration-200">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            fusiontradersfx@gmail.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/5493885430011"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-social-link text-white/70 font-body text-sm flex items-center gap-2 group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="flex-shrink-0 group-hover:fill-secondary transition-colors duration-200">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+            </svg>
+            +54 9 388 543-0011
+          </a>
+
+          <!-- Instagram -->
+          <a
+            href="https://www.instagram.com/enzoacosta.fx"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-social-link text-white/70 font-body text-sm flex items-center gap-2 group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 group-hover:stroke-secondary transition-colors duration-200">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+            </svg>
+            @enzoacosta.fx
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="mt-10 pt-6 border-t border-secondary/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-white/30 font-body text-xs text-center sm:text-left">
+          &copy; 2026 Fusion Traders. Todos los derechos reservados.
+        </p>
+        <p class="text-white/20 font-body text-xs text-center sm:text-right">
+          Diseñado para traders profesionales.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Mobile Menu JS -->
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+      const line1 = document.getElementById('ham-line-1');
+      const line2 = document.getElementById('ham-line-2');
+      const line3 = document.getElementById('ham-line-3');
+      let isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        // Animate to X
+        line1.style.transform = 'translateY(8px) rotate(45deg)';
+        line2.style.opacity = '0';
+        line3.style.transform = 'translateY(-8px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        // Animate back to hamburger
+        line1.style.transform = '';
+        line2.style.opacity = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) {
+          closeMenu();
+          btn.focus();
+        }
+      });
+
+      // Close menu and highlight active nav link on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+
+      // Highlight active nav link based on current page
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+          link.classList.add('active');
+          link.style.color = '#C9A84C';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

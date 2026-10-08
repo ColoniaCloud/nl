@@ -25,9 +25,8 @@ log "========== BACKUP STARTED =========="
 log "MySQL dump in progress..."
 mkdir -p "$BACKUP_ROOT/daily"
 
-docker compose -f /opt/docker-apps/infrastructure/docker-compose.yml exec -T mysql \
-  mysqldump -u root -p"${MYSQL_ROOT_PASSWORD}" \
-  --all-databases --single-transaction --quick --lock-tables=false \
+docker compose --env-file /opt/docker-apps/.env -f /opt/docker-apps/docker-compose.yml exec -T mysql \
+  sh -c 'mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" --all-databases --single-transaction --quick --lock-tables=false' \
   > "$BACKUP_ROOT/daily/mysql_$DATE.sql" 2>/dev/null
 
 if [ $? -eq 0 ]; then

@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tucson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1E3A5F",
+            secondary: "#E8471A",
+            accent: "#B0BEC5"
+          },
+          fontFamily: {
+            heading: ["Oswald", "sans-serif"],
+            body: ["Roboto", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+    }
+    main {
+      flex: 1;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Oswald", sans-serif;
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #E8471A;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #E8471A;
+    }
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+    .hamburger-bar {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger-btn.active .bar1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    #hamburger-btn.active .bar2 {
+      opacity: 0;
+    }
+    #hamburger-btn.active .bar3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+    .social-link {
+      transition: color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #E8471A;
+      transform: translateY(-2px);
+    }
+    .footer-link {
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover {
+      color: #E8471A;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 font-body">
+
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="/logo-ia.svg" alt="Tucson" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="index.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Contacto</a>
+        </nav>
+
+        <button
+          id="hamburger-btn"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-bar bar1"></span>
+          <span class="hamburger-bar bar2"></span>
+          <span class="hamburger-bar bar3"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="md:hidden bg-primary border-t border-white/10" role="navigation" aria-label="Menú móvil">
+      <div class="px-4 py-4 flex flex-col space-y-1">
+        <a href="index.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Inicio</a>
+        <a href="servicios.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Servicios</a>
+        <a href="nosotros.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Nosotros</a>
+        <a href="contacto.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+<main style="font-family: 'Roboto', sans-serif;">
+
+  <!-- Banner Superior -->
+  <section
+    style="background-image: url('https://images.unsplash.com/photo-1597986346617-94096d3eb5c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NjkxNTd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80'); background-size: cover; background-position: center;"
+    class="relative">
+    <div style="background-color: rgba(30,58,95,0.82);" class="w-full">
+      <div class="max-w-5xl mx-auto px-6 py-24 flex flex-col items-center justify-center text-center">
+        <h1
+          style="font-family: 'Oswald', sans-serif; color: #fff; letter-spacing: 0.06em;"
+          class="text-4xl md:text-6xl font-bold uppercase mb-4 animate-fade-in">
+          Nosotros
+        </h1>
+        <p style="color: #B0BEC5;" class="text-lg md:text-xl max-w-2xl">
+          Conocé quiénes somos, cómo trabajamos y por qué somos el taller de referencia para los dueños de Hyundai Tucson en Montevideo.
+        </p>
+        <div style="background-color: #E8471A; height: 4px; width: 64px;" class="mt-6 rounded"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN: About -->
+  <section id="about" class="py-16 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row gap-12 items-center">
+        <div class="w-full md:w-1/2">
+          <img
+            src="https://images.unsplash.com/photo-1602932365975-18086e1491b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NjkxNTd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Taller Tucson Montevideo"
+            class="rounded-2xl shadow-lg w-full object-cover"
+            style="max-height: 420px; transition: transform 0.3s ease;"
+            onmouseover="this.style.transform='scale(1.02)'"
+            onmouseout="this.style.transform='scale(1)'"
+          />
+        </div>
+        <div class="w-full md:w-1/2">
+          <span style="color: #E8471A; font-family: 'Oswald', sans-serif; letter-spacing: 0.12em;" class="text-sm font-semibold uppercase tracking-widest">Quiénes somos</span>
+          <h2
+            style="font-family: 'Oswald', sans-serif; color: #1E3A5F;"
+            class="text-3xl md:text-4xl font-bold mt-2 mb-5 uppercase">
+            Especialistas en Hyundai Tucson
+          </h2>
+          <p style="color: #374151;" class="text-base leading-relaxed mb-4">
+            Tucson es un taller mecánico ubicado en Montevideo, creado exclusivamente para atender a los dueños de la camioneta Hyundai Tucson. No somos un taller generalista: todo nuestro equipamiento, herramientas y formación están orientados a este modelo en particular.
+          </p>
+          <p style="color: #374151;" class="text-base leading-relaxed mb-4">
+            Eso nos permite diagnosticar con precisión, resolver cada problema de raíz y garantizar un trabajo de calidad que otros talleres simplemente no pueden ofrecer. Sabemos cómo funciona tu Tucson mejor que nadie.
+          </p>
+          <p style="color: #374151;" class="text-base leading-relaxed">
+            Nuestro compromiso es claro: que tu camioneta salga del taller en perfectas condiciones y que vos como cliente entiendas exactamente qué se hizo y por qué. Transparencia y profesionalismo en cada servicio.
+          </p>
+          <div class="mt-8">
+            <a
+              href="tel:+598969696"
+              style="background-color: #E8471A; color: #fff; font-family: 'Oswald', sans-serif; letter-spacing: 0.08em; transition: background-color 0.2s ease;"
+              class="inline-block px-8 py-3 rounded-lg text-lg font-semibold uppercase shadow hover:opacity-90"
+              onmouseover="this.style.backgroundColor='#1E3A5F'"
+              onmouseout="this.style.backgroundColor='#E8471A'"
+            >
+              Llamanos ahora
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN: Team -->
+  <section id="team" style="background-color: #f3f6fa;" class="py-16 md:py-24">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span style="color: #E8471A; font-family: 'Oswald', sans-serif; letter-spacing: 0.12em;" class="text-sm font-semibold uppercase tracking-widest">El equipo</span>
+        <h2
+          style="font-family: 'Oswald', sans-serif; color: #1E3A5F;"
+          class="text-3xl md:text-4xl font-bold mt-2 uppercase">
+          Las personas detrás de Tucson
+        </h2>
+        <p style="color: #6B7280;" class="mt-4 max-w-2xl mx-auto text-base">
+          Nuestro equipo está formado por mecánicos con experiencia específica en la plataforma Hyundai, capacitados para intervenir desde el motor hasta la electrónica de tu Tucson.
+        </p>
+        <div style="background-color: #E8471A; height: 4px; width: 56px;" class="mt-5 mx-auto rounded"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Miembro 1 -->
+        <div
+          style="background: #fff; border-radius: 16px; transition: box-shadow 0.3s ease, transform 0.3s ease;"
+          class="overflow-hidden shadow-md flex flex-col"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(30,58,95,0.15)'; this.style.transform='translateY(-4px)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='translateY(0)'"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1613214150333-53afb7561e6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NjkxNTd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Mecánico especialista"
+            class="w-full object-cover"
+            style="height: 240px;"
+          />
+          <div class="p-6 flex flex-col flex-1">
+            <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-1">Manuel García</h3>
+            <span style="color: #E8471A; font-size: 0.85rem;" class="font-semibold mb-3">Fundador y Jefe de Taller</span>
+            <p style="color: #6B7280;" class="text-sm leading-relaxed">
+              Más de 12 años de experiencia en mecánica automotriz, con especialización en vehículos Hyundai. Manuel conoce cada detalle técnico del Tucson y lidera cada intervención de alta complejidad.
+            </p>
+          </div>
+        </div>
+
+        <!-- Miembro 2 -->
+        <div
+          style="background: #fff; border-radius: 16px; transition: box-shadow 0.3s ease, transform 0.3s ease;"
+          class="overflow-hidden shadow-md flex flex-col"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(30,58,95,0.15)'; this.style.transform='translateY(-4px)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='translateY(0)'"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1621657176455-8ffd5136c97d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NjkxNTd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Técnico electrónico"
+            class="w-full object-cover"
+            style="height: 240px;"
+          />
+          <div class="p-6 flex flex-col flex-1">
+            <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-1">Rodrigo Pereira</h3>
+            <span style="color: #E8471A; font-size: 0.85rem;" class="font-semibold mb-3">Técnico en Electrónica Automotriz</span>
+            <p style="color: #6B7280;" class="text-sm leading-relaxed">
+              Especialista en diagnóstico electrónico y sistemas de gestión del motor. Rodrigo trabaja con equipos de última generación para identificar fallas que otros talleres no detectan.
+            </p>
+          </div>
+        </div>
+
+        <!-- Miembro 3 -->
+        <div
+          style="background: #fff; border-radius: 16px; transition: box-shadow 0.3s ease, transform 0.3s ease;"
+          class="overflow-hidden shadow-md flex flex-col"
+          onmouseover="this.style.boxShadow='0 8px 32px rgba(30,58,95,0.15)'; this.style.transform='translateY(-4px)'"
+          onmouseout="this.style.boxShadow=''; this.style.transform='translateY(0)'"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1631972241361-330c704b90f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NjkxNTd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Mecánico de mantenimiento"
+            class="w-full object-cover"
+            style="height: 240px;"
+          />
+          <div class="p-6 flex flex-col flex-1">
+            <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-1">Sebastián Díaz</h3>
+            <span style="color: #E8471A; font-size: 0.85rem;" class="font-semibold mb-3">Mecánico de Servicio y Mantenimiento</span>
+            <p style="color: #6B7280;" class="text-sm leading-relaxed">
+              Responsable de los servicios de mantenimiento preventivo, cambio de fluidos y revisiones periódicas. Sebastián asegura que tu Tucson esté siempre en óptimas condiciones.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN: Values -->
+  <section id="values" class="py-16 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <span style="color: #E8471A; font-family: 'Oswald', sans-serif; letter-spacing: 0.12em;" class="text-sm font-semibold uppercase tracking-widest">Nuestros valores</span>
+        <h2
+          style="font-family: 'Oswald', sans-serif; color: #1E3A5F;"
+          class="text-3xl md:text-4xl font-bold mt-2 uppercase">
+          Lo que nos guía cada día
+        </h2>
+        <div style="background-color: #E8471A; height: 4px; width: 56px;" class="mt-5 mx-auto rounded"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+
+        <div
+          style="border-left: 4px solid #E8471A; background-color: #f9fafb; border-radius: 12px; transition: box-shadow 0.3s ease;"
+          class="p-8 shadow-sm"
+          onmouseover="this.style.boxShadow='0 6px 24px rgba(30,58,95,0.12)'"
+          onmouseout="this.style.boxShadow=''"
+        >
+          <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-3">Especialización real</h3>
+          <p style="color: #6B7280;" class="text-sm leading-relaxed">
+            No atendemos cualquier vehículo. Nos dedicamos exclusivamente al Hyundai Tucson porque creemos que la especialización es la única forma de garantizar un servicio de excelencia. Eso nos diferencia de cualquier taller general.
+          </p>
+        </div>
+
+        <div
+          style="border-left: 4px solid #1E3A5F; background-color: #f9fafb; border-radius: 12px; transition: box-shadow 0.3s ease;"
+          class="p-8 shadow-sm"
+          onmouseover="this.style.boxShadow='0 6px 24px rgba(30,58,95,0.12)'"
+          onmouseout="this.style.boxShadow=''"
+        >
+          <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-3">Transparencia total</h3>
+          <p style="color: #6B7280;" class="text-sm leading-relaxed">
+            Antes de tocar tu camioneta, te explicamos qué tiene, qué hay que hacer y cuánto cuesta. Sin sorpresas en la factura. Queremos que confíes en nosotros no por obligación, sino porque te lo ganamos.
+          </p>
+        </div>
+
+        <div
+          style="border-left: 4px solid #1E3A5F; background-color: #f9fafb; border-radius: 12px; transition: box-shadow 0.3s ease;"
+          class="p-8 shadow-sm"
+          onmouseover="this.style.boxShadow='0 6px 24px rgba(30,58,95,0.12)'"
+          onmouseout="this.style.boxShadow=''"
+        >
+          <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-3">Calidad garantizada</h3>
+          <p style="color: #6B7280;" class="text-sm leading-relaxed">
+            Usamos repuestos originales y de primera calidad. Cada trabajo tiene garantía escrita. Si algo no quedó bien, volvemos a trabajarlo sin costo adicional. Tu satisfacción no es una opción, es nuestro estándar.
+          </p>
+        </div>
+
+        <div
+          style="border-left: 4px solid #E8471A; background-color: #f9fafb; border-radius: 12px; transition: box-shadow 0.3s ease;"
+          class="p-8 shadow-sm"
+          onmouseover="this.style.boxShadow='0 6px 24px rgba(30,58,95,0.12)'"
+          onmouseout="this.style.boxShadow=''"
+        >
+          <h3 style="font-family: 'Oswald', sans-serif; color: #1E3A5F;" class="text-xl font-bold uppercase mb-3">Atención personalizada</h3>
+          <p style="color: #6B7280;" class="text-sm leading-relaxed">
+            No sos un número de orden. Conocemos la historia de tu vehículo, recordamos qué servicios se hicieron y te asesoramos de forma proactiva para evitar problemas futuros. Esa es la diferencia de un taller que realmente se preocupa.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- CTA final -->
+      <div
+        style="background-color: #1E3A5F; border-radius: 16px;"
+        class="flex flex-col md:flex-row items-center justify-between gap-8 px-8 py-10 shadow-lg"
+      >
+        <div>
+          <h3
+            style="font-family: 'Oswald', sans-serif; color: #fff;"
+            class="text-2xl md:text-3xl font-bold uppercase mb-2">
+            ¿Tenés un Hyundai Tucson?
+          </h3>
+          <p style="color: #B0BEC5;" class="text-base">
+            Somos el taller que estabas buscando. Llamanos y coordinamos tu turno hoy mismo.
+          </p>
+        </div>
+        <a
+          href="tel:+598969696"
+          style="background-color: #E8471A; color: #fff; font-family: 'Oswald', sans-serif; letter-spacing: 0.08em; white-space: nowrap; transition: background-color 0.2s ease;"
+          class="inline-block px-10 py-4 rounded-xl text-lg font-semibold uppercase shadow-md"
+          onmouseover="this.style.backgroundColor='#fff'; this.style.color='#E8471A';"
+          onmouseout="this.style.backgroundColor='#E8471A'; this.style.color='#fff';"
+        >
+          Llamanos ahora
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+  <footer class="bg-primary text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <span class="font-heading text-2xl font-semibold tracking-wide text-white">Tucson</span>
+          <p class="text-accent text-sm font-body">&copy; 2026 Tucson. Todos los derechos reservados.</p>
+          <a href="mailto:manu@tucson.com" class="footer-link text-accent text-sm font-body hover:text-secondary mt-1">manu@tucson.com</a>
+        </div>
+
+        <div class="flex flex-col items-center md:items-end gap-4">
+          <p class="font-heading text-sm font-medium tracking-widest text-accent uppercase">Seguinos</p>
+          <div class="flex items-center gap-6">
+
+            
+
+            
+
+            
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-white/10 text-center">
+        <p class="text-accent text-xs font-body">Diseñado con dedicación para Tucson</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.contains("open");
+
+        if (isOpen) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        } else {
+          menu.classList.add("open");
+          btn.classList.add("active");
+          btn.setAttribute("aria-expanded", "true");
+          btn.setAttribute("aria-label", "Cerrar menú");
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        }
+      });
+
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 768) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

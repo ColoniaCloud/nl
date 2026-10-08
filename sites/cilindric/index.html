@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cilindric</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1A5F7A",
+              secondary: "#C9A84C",
+              accent: "#E8F4F8",
+            },
+            fontFamily: {
+              heading: ["Raleway", "sans-serif"],
+              body: ["Nunito", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        font-family: "Nunito", sans-serif;
+      }
+      main {
+        flex: 1;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Raleway", sans-serif;
+      }
+      .nav-link {
+        position: relative;
+        transition: color 0.3s ease;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #c9a84c;
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .nav-link:hover {
+        color: #c9a84c;
+      }
+      .hamburger-line {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background-color: #ffffff;
+        transition: all 0.3s ease;
+        transform-origin: center;
+      }
+      .hamburger-open .hamburger-line:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+      }
+      .hamburger-open .hamburger-line:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      .hamburger-open .hamburger-line:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+      }
+      .mobile-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+        opacity: 0;
+      }
+      .mobile-menu.open {
+        max-height: 400px;
+        opacity: 1;
+      }
+      .mobile-nav-link {
+        transition: color 0.3s ease, background-color 0.3s ease,
+          padding-left 0.3s ease;
+      }
+      .mobile-nav-link:hover {
+        color: #c9a84c;
+        background-color: rgba(255, 255, 255, 0.08);
+        padding-left: 1.5rem;
+      }
+      .social-link {
+        transition: color 0.3s ease, transform 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .social-link:hover {
+        color: #c9a84c;
+        transform: translateY(-3px);
+      }
+      .footer-nav-link {
+        transition: color 0.3s ease;
+      }
+      .footer-nav-link:hover {
+        color: #c9a84c;
+      }
+    </style>
+  </head>
+  <body class="bg-accent font-body text-gray-800">
+    <header class="bg-primary shadow-md sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="index.html" class="flex items-center flex-shrink-0">
+            <img
+              src="/logo.png"
+              alt="Cilindric"
+              style="height: 40px; width: auto; object-fit: contain"
+            />
+          </a>
+
+          <nav class="hidden md:flex items-center space-x-8">
+            <a
+              href="index.html"
+              class="nav-link text-white font-body font-semibold text-sm tracking-wide pb-1"
+              >Inicio</a
+            >
+            <a
+              href="servicios.html"
+              class="nav-link text-white font-body font-semibold text-sm tracking-wide pb-1"
+              >Servicios</a
+            >
+            <a
+              href="nosotros.html"
+              class="nav-link text-white font-body font-semibold text-sm tracking-wide pb-1"
+              >Nosotros</a
+            >
+            <a
+              href="contacto.html"
+              class="nav-link font-body font-semibold text-sm tracking-wide pb-1 bg-secondary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all duration-300 hover:shadow-lg"
+              style="color: white"
+              >Contacto</a
+            >
+          </nav>
+
+          <button
+            id="hamburger-btn"
+            class="md:hidden flex flex-col items-center justify-center gap-1.5 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+          >
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="mobile-menu"
+        class="mobile-menu md:hidden bg-primary border-t border-white border-opacity-10"
+      >
+        <nav class="flex flex-col px-4 py-2 space-y-1 pb-4">
+          <a
+            href="index.html"
+            class="mobile-nav-link text-white font-body font-semibold text-sm tracking-wide px-3 py-3 rounded-md"
+            >Inicio</a
+          >
+          <a
+            href="servicios.html"
+            class="mobile-nav-link text-white font-body font-semibold text-sm tracking-wide px-3 py-3 rounded-md"
+            >Servicios</a
+          >
+          <a
+            href="nosotros.html"
+            class="mobile-nav-link text-white font-body font-semibold text-sm tracking-wide px-3 py-3 rounded-md"
+            >Nosotros</a
+          >
+          <a
+            href="contacto.html"
+            class="mobile-nav-link text-white font-body font-semibold text-sm tracking-wide px-3 py-3 rounded-md"
+            >Contacto</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fadeInUp {
+    animation: fadeInUp 0.8s ease forwards;
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1s ease forwards;
+  }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-600 { animation-delay: 0.6s; }
+  .hero-section {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(26, 95, 122, 0.15);
+  }
+  .service-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .testimonial-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(26, 95, 122, 0.12);
+  }
+  .btn-primary {
+    background-color: #C9A84C;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-primary:hover {
+    background-color: #b8953f;
+    transform: translateY(-2px);
+  }
+  .btn-outline {
+    border: 2px solid #C9A84C;
+    color: #C9A84C;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-outline:hover {
+    background-color: #C9A84C;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+</style>
+
+<!-- HERO -->
+<section class="hero-section" id="hero">
+  <div class="absolute inset-0 w-full h-full">
+    <img
+      src="https://images.unsplash.com/photo-1760572292883-1e7a8fff387c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU1OTl8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Paseo en barco por Colonia del Sacramento"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(26,95,122,0.82) 0%, rgba(10,40,55,0.75) 100%);"></div>
+  </div>
+  <div class="relative z-10 text-center px-4 max-w-4xl mx-auto animate-fadeInUp">
+    <p class="text-sm font-semibold uppercase tracking-widest mb-4 animate-fadeIn delay-200" style="color: #C9A84C; font-family: 'Nunito', sans-serif;">Colonia del Sacramento</p>
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight mb-6 animate-fadeInUp delay-200" style="font-family: 'Raleway', sans-serif;">
+      Descubrí el Río de la Plata<br class="hidden sm:block" /> desde el agua
+    </h1>
+    <p class="text-lg sm:text-xl text-white/85 mb-10 max-w-2xl mx-auto animate-fadeInUp delay-400" style="font-family: 'Nunito', sans-serif;">
+      Paseos en barco profesionales y seguros para turistas que quieren vivir Colonia del Sacramento de una manera única e inolvidable.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp delay-600">
+      <a href="contacto.html" class="btn-primary px-8 py-4 rounded-full font-bold text-lg" style="font-family: 'Raleway', sans-serif;">
+        Reservar mi turno
+      </a>
+      <a href="servicios.html" class="btn-outline px-8 py-4 rounded-full font-bold text-lg" style="font-family: 'Raleway', sans-serif;">
+        Ver servicios
+      </a>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-fadeIn delay-600">
+    <svg class="w-6 h-6 text-white/60 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="py-20 px-4" style="background-color: #fff;">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <p class="text-sm font-semibold uppercase tracking-widest mb-2" style="color: #C9A84C; font-family: 'Nunito', sans-serif;">Nuestros servicios</p>
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">Todo lo que ofrecemos para vos</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto text-lg" style="font-family: 'Nunito', sans-serif;">
+        Diseñamos cada paseo para que sea una experiencia cómoda, segura y llena de momentos únicos sobre el agua.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Card 1 -->
+      <div class="service-card rounded-2xl overflow-hidden bg-white border border-gray-100" style="box-shadow: 0 4px 20px rgba(26,95,122,0.08);">
+        <div class="h-52 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1762160964273-732e5f846913?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU1OTl8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Paseo panorámico"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-bold mb-2" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">Paseo Panorámico</h3>
+          <p class="text-gray-600 mb-4 text-base" style="font-family: 'Nunito', sans-serif;">
+            Recorrido de 45 minutos por la costa histórica de Colonia con vistas únicas al casco antiguo desde el río.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold" style="color: #C9A84C; font-family: 'Raleway', sans-serif;">$600 UYU</span>
+            <span class="text-sm text-gray-400" style="font-family: 'Nunito', sans-serif;">por persona</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="service-card rounded-2xl overflow-hidden bg-white border border-gray-100" style="box-shadow: 0 4px 20px rgba(26,95,122,0.08);">
+        <div class="h-52 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1762571929599-d1bf54216c87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU1OTl8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Paseo al atardecer"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-bold mb-2" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">Paseo al Atardecer</h3>
+          <p class="text-gray-600 mb-4 text-base" style="font-family: 'Nunito', sans-serif;">
+            La experiencia más romántica: navegá mientras el sol se pone sobre el Río de la Plata en un ambiente íntimo y relajado.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold" style="color: #C9A84C; font-family: 'Raleway', sans-serif;">$900 UYU</span>
+            <span class="text-sm text-gray-400" style="font-family: 'Nunito', sans-serif;">por persona</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="service-card rounded-2xl overflow-hidden bg-white border border-gray-100" style="box-shadow: 0 4px 20px rgba(26,95,122,0.08);">
+        <div class="h-52 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1764023875193-df6c24899f81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU1OTl8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Charter privado"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-bold mb-2" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">Charter Privado</h3>
+          <p class="text-gray-600 mb-4 text-base" style="font-family: 'Nunito', sans-serif;">
+            Alquilá el barco para tu grupo: ideal para familias, celebraciones o empresas. Ruta y duración a medida.
+          </p>
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold" style="color: #C9A84C; font-family: 'Raleway', sans-serif;">$5.000 UYU</span>
+            <span class="text-sm text-gray-400" style="font-family: 'Nunito', sans-serif;">grupo hasta 8</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="text-center mt-12">
+      <a href="servicios.html" class="btn-primary inline-block px-10 py-4 rounded-full font-bold text-base" style="font-family: 'Raleway', sans-serif;">
+        Ver todos los servicios
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT BRIEF -->
+<section id="about-brief" class="py-20 px-4" style="background-color: #E8F4F8;">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col lg:flex-row items-center gap-12">
+      <div class="w-full lg:w-1/2">
+        <div class="relative rounded-2xl overflow-hidden" style="box-shadow: 0 20px 50px rgba(26,95,122,0.18);">
+          <img
+            src="https://images.unsplash.com/photo-1776763255486-d6847adecf87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU1OTl8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Equipo Cilindric en Colonia del Sacramento"
+            class="w-full h-80 sm:h-96 object-cover"
+          />
+          <div class="absolute bottom-0 left-0 right-0 p-6" style="background: linear-gradient(to top, rgba(26,95,122,0.85), transparent);">
+            <p class="text-white font-bold text-lg" style="font-family: 'Raleway', sans-serif;">Colonia del Sacramento, Uruguay</p>
+          </div>
+        </div>
+      </div>
+      <div class="w-full lg:w-1/2">
+        <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color: #C9A84C; font-family: 'Nunito', sans-serif;">Quiénes somos</p>
+        <h2 class="text-3xl sm:text-4xl font-bold mb-6 leading-snug" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">
+          Navegamos con pasión desde Colonia del Sacramento
+        </h2>
+        <p class="text-gray-700 text-lg mb-5 leading-relaxed" style="font-family: 'Nunito', sans-serif;">
+          En Cilindric somos apasionados del río. Ofrecemos paseos en barco a turistas que visitan Colonia del Sacramento, brindando una perspectiva del destino que no se puede ver desde tierra.
+        </p>
+        <p class="text-gray-700 text-lg mb-8 leading-relaxed" style="font-family: 'Nunito', sans-serif;">
+          Nuestro equipo profesional garantiza seguridad, comodidad y una atención personalizada en cada salida. Trabajamos con embarcaciones homologadas y guías con amplia experiencia en las aguas del Río de la Plata.
+        </p>
+        <div class="grid grid-cols-2 gap-6 mb-8">
+          <div class="text-center p-4 bg-white rounded-xl" style="box-shadow: 0 4px 12px rgba(26,95,122,0.08);">
+            <p class="text-3xl font-bold mb-1" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">+500</p>
+            <p class="text-gray-500 text-sm" style="font-family: 'Nunito', sans-serif;">Turistas felices</p>
+          </div>
+          <div class="text-center p-4 bg-white rounded-xl" style="box-shadow: 0 4px 12px rgba(26,95,122,0.08);">
+            <p class="text-3xl font-bold mb-1" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">3</p>
+            <p class="text-gray-500 text-sm" style="font-family: 'Nunito', sans-serif;">Rutas disponibles</p>
+          </div>
+        </div>
+        <a href="nosotros.html" class="btn-outline inline-block px-8 py-3 rounded-full font-bold text-base" style="font-family: 'Raleway', sans-serif;">
+          Conocé más sobre nosotros
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-20 px-4" style="background-color: #fff;">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <p class="text-sm font-semibold uppercase tracking-widest mb-2" style="color: #C9A84C; font-family: 'Nunito', sans-serif;">Lo que dicen nuestros pasajeros</p>
+      <h2 class="text-3xl sm:text-4xl font-bold" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">Experiencias reales</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card bg-white rounded-2xl p-8 border border-gray-100" style="box-shadow: 0 4px 20px rgba(26,95,122,0.07);">
+        <div class="flex mb-4">
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="text-gray-700 mb-6 text-base leading-relaxed" style="font-family: 'Nunito', sans-serif;">
+          "Fue lo mejor de todo nuestro viaje a Colonia. Ver el casco histórico desde el agua es algo que no se puede perder. El guía fue muy amable y conocedor."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background-color: #1A5F7A; font-family: 'Raleway', sans-serif;">MA</div>
+          <div>
+            <p class="font-bold text-sm" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">María A.</p>
+            <p class="text-xs text-gray-400" style="font-family: 'Nunito', sans-serif;">Buenos Aires, Argentina</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card bg-white rounded-2xl p-8 border border-gray-100" style="box-shadow: 0 4px 20px rgba(26,95,122,0.07);">
+        <div class="flex mb-4">
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="text-gray-700 mb-6 text-base leading-relaxed" style="font-family: 'Nunito', sans-serif;">
+          "Hicimos el paseo al atardecer con mi pareja y fue mágico. El servicio es muy profesional, el barco estaba impecable y el precio es muy razonable."
+        </p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background-color: #1A5F7A; font-family: 'Raleway', sans-serif;">RC</div>
+          <div>
+            <p class="font-bold text-sm" style="color: #1A5F7A; font-family: 'Raleway', sans-serif;">Roberto C.</p>
+            <p class="text-xs text-gray-400" style="font-family: 'Nunito', sans-serif;">Montevideo, Uruguay</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card bg-white rounded-2xl p-8 border border-gray-100" style="box-shadow: 0 4px 20px rgba(26,95,122,0.07);">
+        <div class="flex mb-4">
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #C9A84C;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="text-gray-700 mb-6 text-base leading-relaxed" style="font-family: 'Nunito', sans-serif;">
+          "Alquilamos el charter para el cumpleaños de mi mamá. La atención fue excelente de principio
+</main>
+
+    <footer class="bg-primary text-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start pb-8 border-b border-white border-opacity-15"
+        >
+          <div class="flex flex-col items-start">
+            <a href="index.html" class="inline-block mb-3">
+              <img
+                src="/logo.png"
+                alt="Cilindric"
+                style="height: 36px; width: auto; object-fit: contain"
+              />
+            </a>
+            <p class="text-sm text-white text-opacity-70 font-body leading-relaxed">
+              Cilindric &mdash; Calidad y compromiso en cada proyecto.
+            </p>
+          </div>
+
+          <div>
+            <h3
+              class="font-heading font-700 text-secondary text-sm uppercase tracking-widest mb-4"
+            >
+              Navegación
+            </h3>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="index.html"
+                  class="footer-nav-link text-white text-opacity-80 text-sm font-body hover:text-secondary"
+                  >Inicio</a
+                >
+              </li>
+              <li>
+                <a
+                  href="servicios.html"
+                  class="footer-nav-link text-white text-opacity-80 text-sm font-body hover:text-secondary"
+                  >Servicios</a
+                >
+              </li>
+              <li>
+                <a
+                  href="nosotros.html"
+                  class="footer-nav-link text-white text-opacity-80 text-sm font-body hover:text-secondary"
+                  >Nosotros</a
+                >
+              </li>
+              <li>
+                <a
+                  href="contacto.html"
+                  class="footer-nav-link text-white text-opacity-80 text-sm font-body hover:text-secondary"
+                  >Contacto</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3
+              class="font-heading font-700 text-secondary text-sm uppercase tracking-widest mb-4"
+            >
+              Contacto
+            </h3>
+            <ul class="space-y-3 mb-5">
+              <li>
+                <a
+                  href="mailto:manu@manu.com"
+                  class="footer-nav-link text-white text-opacity-80 text-sm font-body flex items-center gap-2 hover:text-secondary"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  manu@manu.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/59896969696"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="footer-nav-link text-white text-opacity-80 text-sm font-body flex items-center gap-2 hover:text-secondary"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+                    />
+                  </svg>
+                  +598 96 969696
+                </a>
+              </li>
+            </ul>
+
+            <div class="flex items-center gap-4">
+              <a
+                href="https://facebook.com/cilindric"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link text-white text-opacity-70"
+                aria-label="Facebook de Cilindric"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                  />
+                </svg>
+              </a>
+
+              <a
+                href="https://wa.me/59896969696"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link text-white text-opacity-70"
+                aria-label="WhatsApp de Cilindric"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+                  />
+                </svg>
+              </a>
+
+              <a
+                href="mailto:manu@manu.com"
+                class="social-link text-white text-opacity-70"
+                aria-label="Email de Cilindric"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-2"
+        >
+          <p class="text-white text-opacity-50 text-xs font-body">
+            &copy; 2026 Cilindric. Todos los derechos reservados.
+          </p>
+          <p class="text-white text-opacity-30 text-xs font-body">
+            Hecho con dedicaci&oacute;n.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        const btn = document.getElementById("hamburger-btn");
+        const menu = document.getElementById("mobile-menu");
+
+        if (!btn || !menu) return;
+
+        btn.addEventListener("click", function () {
+          const isOpen = menu.classList.contains("open");
+
+          if (isOpen) {
+            menu.classList.remove("open");
+            btn.classList.remove("hamburger-open");
+            btn.setAttribute("aria-expanded", "false");
+            btn.setAttribute("aria-label", "Abrir menú");
+          } else {
+            menu.classList.add("open");
+            btn.classList.add("hamburger-open");
+            btn.setAttribute("aria-expanded", "true");
+            btn.setAttribute("aria-label", "Cerrar menú");
+          }
+        });
+
+        const mobileLinks = menu.querySelectorAll("a");
+        mobileLinks.forEach(function (link) {
+          link.addEventListener("click", function () {
+            menu.classList.remove("open");
+            btn.classList.remove("hamburger-open");
+            btn.setAttribute("aria-expanded", "false");
+            btn.setAttribute("aria-label", "Abrir menú");
+          });
+        });
+
+        document.addEventListener("click", function (e) {
+          const header = document.querySelector("header");
+          if (header && !header.contains(e.target)) {
+            menu.classList.remove("open");
+            btn.classList.remove("hamburger-open");
+            btn.setAttribute("aria-expanded", "false");
+            btn.setAttribute("aria-label", "Abrir menú");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -411,7 +411,7 @@ export default function AppSidebar() {
                               href={sub.href}
                               title="Nuevo"
                               data-no-relief
-                              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-emerald-400 hover:bg-white/[0.08] hover:text-emerald-300 transition-colors"
+                              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-violet-400 hover:bg-white/[0.08] hover:text-violet-300 transition-colors"
                             >
                               <Plus className="size-3" />
                             </Link>
@@ -539,7 +539,7 @@ export default function AppSidebar() {
                       data-no-relief
                       className={cn(
                         "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
-                        "text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.05]"
+                        "text-violet-400 hover:text-violet-300 hover:bg-white/[0.05]"
                       )}
                     >
                       <Plus className="size-3 flex-shrink-0" />

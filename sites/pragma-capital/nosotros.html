@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pragma Capital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0A1628',
+            secondary: '#C9A84C',
+            accent: '#2E5FA3',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #ffffff;
+      color: #0A1628;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover underline animation */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger animation */
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* Social icon hover */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header style="background-color: #0A1628;" class="sticky top-0 z-50 w-full shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0" aria-label="Pragma Capital - Inicio">
+          <img
+            src="/logo-ia.svg"
+            alt="Pragma Capital"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-sm font-semibold tracking-wide py-2 px-5 rounded-sm border transition-all duration-250" style="font-family: 'DM Sans', sans-serif; color: #C9A84C; border-color: #C9A84C; background-color: transparent;" onmouseover="this.style.backgroundColor='#C9A84C';this.style.color='#0A1628';" onmouseout="this.style.backgroundColor='transparent';this.style.color='#C9A84C';">Contacto</a>
+        </nav>
+
+        <!-- Mobile Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+          style="background: transparent; border: none; cursor: pointer;"
+        >
+          <span id="ham-line-1" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+          <span id="ham-line-2" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+          <span id="ham-line-3" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil" style="background-color: #0d1e35; border-top: 1px solid rgba(201,168,76,0.2);">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 pt-3 flex flex-col gap-1">
+        <a href="index.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Inicio</a>
+        <a href="servicios.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Servicios</a>
+        <a href="nosotros.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Nosotros</a>
+        <a href="contacto.html" class="block text-base font-semibold py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5" style="font-family: 'DM Sans', sans-serif; color: #C9A84C;">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTENT PLACEHOLDER ===== -->
+  <div style="flex:1;min-height:0;"><main class="bg-white">
+
+  <!-- Banner superior -->
+  <section class="relative flex items-center justify-center" style="min-height:420px;">
+    <img
+      src="https://images.unsplash.com/photo-1523287562758-66c7fc58967f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Pragma Capital - Nosotros"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(10,22,40,0.88) 60%,rgba(46,95,163,0.55) 100%);"></div>
+    <div class="relative z-10 text-center px-6 py-20 max-w-3xl mx-auto">
+      <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Quiénes somos</p>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight" style="font-family:'Space Grotesk',sans-serif;">
+        Finanzas con criterio.<br/>Resultados con propósito.
+      </h1>
+      <p class="mt-5 text-lg text-gray-200 max-w-xl mx-auto" style="font-family:'DM Sans',sans-serif;">
+        Acompañamos a las PyMEs en crecimiento con soluciones financieras diseñadas a medida, combinando experiencia de mercado con un trato verdaderamente personalizado.
+      </p>
+    </div>
+  </section>
+
+  <!-- Sección: About -->
+  <section id="about" class="py-20 px-6" style="background:#f8f9fb;">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="order-2 md:order-1">
+          <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Nuestra historia</p>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6 leading-snug" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">
+            Pragma Capital:<br/>donde la estrategia financiera se vuelve acción
+          </h2>
+          <div class="space-y-4" style="font-family:'DM Sans',sans-serif;color:#374151;font-size:1rem;line-height:1.8;">
+            <p>
+              Pragma Capital nació con una convicción clara: las PyMEs argentinas en etapa de crecimiento merecen acceso a las mismas herramientas financieras que las grandes corporaciones, pero con el acompañamiento personalizado que su escala requiere.
+            </p>
+            <p>
+              Somos una consultora especializada en <strong style="color:#0A1628;">finanzas corporativas y mercados de capitales</strong>, con tres unidades de negocio que trabajan de forma integrada: financiamiento bancario y bursátil, inversiones a través de convenios con cinco ALyCs líderes, y consultoría estratégica de finanzas corporativas.
+            </p>
+            <p>
+              Lo que nos distingue no es solo el conocimiento técnico — es la forma en que lo aplicamos. Cada cliente recibe una solución diseñada específicamente para su situación, su sector y sus objetivos. Nada genérico, nada estandarizado.
+            </p>
+          </div>
+          <div class="mt-8 flex flex-wrap gap-8">
+            <div>
+              <p class="text-4xl font-bold" style="color:#2E5FA3;font-family:'Space Grotesk',sans-serif;">5</p>
+              <p class="text-sm mt-1" style="color:#6B7280;font-family:'DM Sans',sans-serif;">ALyCs asociadas</p>
+            </div>
+            <div>
+              <p class="text-4xl font-bold" style="color:#2E5FA3;font-family:'Space Grotesk',sans-serif;">3</p>
+              <p class="text-sm mt-1" style="color:#6B7280;font-family:'DM Sans',sans-serif;">Unidades de negocio</p>
+            </div>
+            <div>
+              <p class="text-4xl font-bold" style="color:#2E5FA3;font-family:'Space Grotesk',sans-serif;">100%</p>
+              <p class="text-sm mt-1" style="color:#6B7280;font-family:'DM Sans',sans-serif;">Servicio customizado</p>
+            </div>
+          </div>
+        </div>
+        <div class="order-1 md:order-2 relative">
+          <img
+            src="https://images.unsplash.com/photo-1618602500188-876e52298659?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Equipo Pragma Capital"
+            class="rounded-2xl shadow-xl w-full object-cover"
+            style="max-height:480px;"
+          />
+          <div class="absolute -bottom-5 -left-5 rounded-xl px-6 py-4 shadow-lg hidden md:block" style="background:#0A1628;">
+            <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Sede</p>
+            <p class="text-white text-sm font-medium" style="font-family:'DM Sans',sans-serif;">La Pampa 1369, 5to B<br/>Buenos Aires, Argentina</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: Quién es nuestro cliente ideal -->
+  <section class="py-20 px-6" style="background:#0A1628;">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">A quién acompañamos</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" style="font-family:'Space Grotesk',sans-serif;">
+        Diseñados para la PyME que ya creció — y quiere seguir haciéndolo
+      </h2>
+      <p class="text-gray-300 text-lg max-w-2xl mx-auto mb-12" style="font-family:'DM Sans',sans-serif;line-height:1.8;">
+        Nuestro cliente ideal es la empresa mediana con estructura consolidada que necesita dar el siguiente paso: acceder a financiamiento más sofisticado, optimizar su tesorería o estructurar una estrategia financiera de largo plazo.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+        <div class="rounded-xl p-6 transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(46,95,163,0.25);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2" style="font-family:'Space Grotesk',sans-serif;">PyMEs en expansión</h3>
+          <p class="text-gray-400 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.7;">Empresas con facturación consolidada que buscan escalar operaciones, abrir nuevas líneas de negocio o expandirse geográficamente.</p>
+        </div>
+        <div class="rounded-xl p-6 transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(46,95,163,0.25);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2" style="font-family:'Space Grotesk',sans-serif;">Empresas que buscan financiamiento</h3>
+          <p class="text-gray-400 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.7;">Organizaciones que necesitan estructurar créditos bancarios o acceder al mercado de capitales para financiar proyectos de inversión o capital de trabajo.</p>
+        </div>
+        <div class="rounded-xl p-6 transition-transform duration-300 hover:-translate-y-1" style="background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:rgba(46,95,163,0.25);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2" style="font-family:'Space Grotesk',sans-serif;">Dirección con visión financiera</h3>
+          <p class="text-gray-400 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.7;">Gerentes y directores que entienden que una estrategia financiera sólida es el pilar del crecimiento sostenible y buscan un asesor de confianza a largo plazo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: Team -->
+  <section id="team" class="py-20 px-6" style="background:#ffffff;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">El equipo</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">
+          Profesionales con experiencia real en mercados
+        </h2>
+        <p class="text-gray-500 max-w-2xl mx-auto text-lg" style="font-family:'DM Sans',sans-serif;line-height:1.8;">
+          Detrás de cada solución hay personas comprometidas con el resultado de su cliente. Nuestro equipo combina trayectoria en banca, mercados de capitales y consultoría estratégica.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Miembro 1 -->
+        <div class="rounded-2xl shadow-md transition-shadow duration-300 hover:shadow-xl" style="border:1px solid #e5e7eb;">
+          <div class="relative overflow-hidden rounded-t-2xl" style="height:280px;">
+            <img
+              src="https://images.unsplash.com/photo-1672870153618-b369bcc8c55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Director de Financiamiento"
+              class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold mb-1" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Director de Financiamiento</h3>
+            <p class="text-sm font-medium mb-3" style="color:#2E5FA3;font-family:'DM Sans',sans-serif;">Mercado Bancario y Bursátil</p>
+            <p class="text-sm text-gray-500" style="font-family:'DM Sans',sans-serif;line-height:1.7;">Especialista en estructuración de créditos corporativos y acceso al mercado de capitales para empresas medianas. Más de 12 años de experiencia en banca corporativa.</p>
+          </div>
+        </div>
+
+        <!-- Miembro 2 -->
+        <div class="rounded-2xl shadow-md transition-shadow duration-300 hover:shadow-xl" style="border:1px solid #e5e7eb;">
+          <div class="relative overflow-hidden rounded-t-2xl" style="height:280px;">
+            <img
+              src="https://images.unsplash.com/photo-1714974528692-31aff2c54a62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Directora de Inversiones"
+              class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold mb-1" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Directora de Inversiones</h3>
+            <p class="text-sm font-medium mb-3" style="color:#2E5FA3;font-family:'DM Sans',sans-serif;">Gestión con ALyCs</p>
+            <p class="text-sm text-gray-500" style="font-family:'DM Sans',sans-serif;line-height:1.7;">Responsable de la red de cinco ALyCs asociadas y del diseño de carteras de inversión para excedentes financieros corporativos. Licenciada en Economía, UBA.</p>
+          </div>
+        </div>
+
+        <!-- Miembro 3 -->
+        <div class="rounded-2xl shadow-md transition-shadow duration-300 hover:shadow-xl" style="border:1px solid #e5e7eb;">
+          <div class="relative overflow-hidden rounded-t-2xl" style="height:280px;">
+            <img
+              src="https://images.unsplash.com/photo-1720135885458-0af8193c4a0f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Consultor de Finanzas Corporativas"
+              class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="text-lg font-bold mb-1" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Consultor Senior</h3>
+            <p class="text-sm font-medium mb-3" style="color:#2E5FA3;font-family:'DM Sans',sans-serif;">Finanzas Corporativas PyME</p>
+            <p class="text-sm text-gray-500" style="font-family:'DM Sans',sans-serif;line-height:1.7;">Especializado en diagnóstico financiero, planificación estratégica y reestructuración de pasivos para empresas en etapa de crecimiento acelerado.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: Values -->
+  <section id="values" class="py-20 px-6" style="background:#f8f9fb;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Lo que nos guía</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">
+          Valores que definen cada decisión
+        </h2>
+        <p class="text-gray-500 max-w-xl mx-auto text-lg" style="font-family:'DM Sans',sans-serif;line-height:1.8;">
+          No son palabras en una pared. Son los principios que aplicamos en cada reunión, cada estructura y cada recomendación.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+
+        <!-- Valor 1 -->
+        <div class="flex gap-5 p-7 rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-md" style="border-left:4px solid #C9A84C;">
+          <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:#0A1628;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Integridad ante todo</h3>
+            <p class="text-gray-500 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.8;">Actuamos siempre en el mejor interés de nuestros clientes. Si una solución no es la adecuada para su situación, lo decimos. La confianza se construye con honestidad, no con promesas vacías.</p>
+          </div>
+        </div>
+
+        <!-- Valor 2 -->
+        <div class="flex gap-5 p-7 rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-md" style="border-left:4px solid #2E5FA3;">
+          <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:#0A1628;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Soluciones a medida</h3>
+            <p class="text-gray-500 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.8;">No creemos en los modelos genéricos. Cada empresa tiene su historia, su contexto y sus objetivos. Diseñamos cada estrategia financiera desde cero, pensada exclusivamente para quien la va a usar.</p>
+          </div>
+        </div>
+
+        <!-- Valor 3 -->
+        <div class="flex gap-5 p-7 rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-md" style="border-left:4px solid #C9A84C;">
+          <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:#0A1628;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Agilidad y ejecución</h3>
+            <p class="text-gray-500 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.8;">En los mercados financieros, el tiempo importa. Nos organizamos para responder con rapidez, sin sacrificar el rigor técnico que cada operación requiere.</p>
+          </div>
+        </div>
+
+        <!-- Valor 4 -->
+        <div class="flex gap-5 p-7 rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-md" style="border-left:4px solid #2E5FA3;">
+          <div class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style="background:#0A1628;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-2" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Relaciones de largo plazo</h3>
+            <p class="text-gray-500 text-sm" style="font-family:'DM Sans',sans-serif;line-height:1.8;">No buscamos cerrar operaciones puntuales. Buscamos convertirnos en el socio financiero estratégico de nuestros clientes, acompañándolos en cada etapa de su evolución.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Imagen con cita -->
+      <div class="relative rounded-2xl overflow-hidden" style="min-height:320px;">
+        <img
+          src="https://images.unsplash.com/photo-1734942718935-4f08020d70c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Pragma Capital - Compromiso"
+          class="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(10,22,40,0.92) 45%,rgba(10,22,40,0.4) 100%);"></div>
+        <div class="relative z-10 flex items-center h-full px-10 py-16 max-w-2xl">
+          <div>
+            <div class="w-10 h-1 mb-6 rounded" style="background:#C9A84C;"></div>
+            <p class="text-xl md:text-2xl font-semibold text-white leading-relaxed mb-6" style="font-family:'Space Grotesk',sans-serif;">
+              "En Pragma Capital creemos que el asesoramiento financiero de calidad no debería ser un privilegio de las grandes corporaciones. Cada PyME con ambición merece un equipo que piense estratégicamente junto a ella."
+            </p>
+            <p class="text-sm font-medium" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">— Equipo Pragma Capital</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="py-20 px-6" style="background:#0A1628;">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">¿Listo para dar el siguiente paso?</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-5" style="font-family:'Space Grotesk',sans-serif;">
+        Hablemos sobre el futuro financiero de tu empresa
+      </h2>
+      <p class="text-gray-300 text-lg mb-10 max-w-xl mx-auto" style="font-family:'DM Sans',sans-serif;line-height:1.8;">
+        Sin compromisos ni formularios complejos. Iniciá una conversación por WhatsApp y despejaremos todas tus dudas en tiempo real.
+      </p>
+      <a
+        href="https://wa.me/5491164977121?text=Hola%20Pragma%20Capital%2C%20quisiera%20conocer%20m%C3%A1s%20sobre%20sus%20servicios."
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-3 font-semibold px-8 py-4 rounded-xl text-base transition-all duration-300 hover:opacity-90 hover:-translate-y-0.5 shadow-lg"
+        style="background:#C9A84C;color:#0A1628;font-family:'DM Sans',sans-serif;"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.862L.057 23.885a.5.5 0 00.611.611l6.056-1.475A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.807 9.807 0 01-5.032-1.386l-.361-.214-3.733.909.935-3.625-.236-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+        Consultá por WhatsApp
+      </a>
+    </div>
+  </section>
+
+</main></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="background-color: #0A1628; border-top: 1px solid rgba(201,168,76,0.25);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+
+        <!-- Brand column -->
+        <div class="flex flex-col gap-4">
+          <a href="index.html" aria-label="Pragma Capital - Inicio">
+            <img
+              src="/logo-ia.svg"
+              alt="Pragma Capital"
+              style="height:clamp(28px,4vw,44px);width:auto;max-width:160px;object-fit:contain;filter:brightness(1);"
+            />
+          </a>
+          <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.6; max-width: 260px;">
+            Soluciones financieras con visión estratégica y enfoque pragmático.
+          </p>
+        </div>
+
+        <!-- Navigation column -->
+        <div class="flex flex-col gap-3">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; color: #C9A84C; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Navegación</h3>
+          <a href="index.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Inicio</a>
+          <a href="servicios.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Servicios</a>
+          <a href="nosotros.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Nosotros</a>
+          <a href="contacto.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Contacto</a>
+        </div>
+
+        <!-- Contact & Social column -->
+        <div class="flex flex-col gap-3">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; color: #C9A84C; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Contacto</h3>
+
+          <!-- Email -->
+          <a href="mailto:info@pragmacapital.com" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            info@pragmacapital.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a href="https://wa.me/5491164977121" target="_blank" rel="noopener noreferrer" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.37a16 16 0 0 0 6 6l1.27-.85a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +54 9 11 6497 7121
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com/company/pragma-capital" target="_blank" rel="noopener noreferrer" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; text-align: center;">
+        <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.35); font-size: 0.8rem; margin: 0;">
+          &copy; 2026 Pragma Capital. Todos los derechos reservados.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+      const line1 = document.getElementById('ham-line-1');
+      const line2 = document.getElementById('ham-line-2');
+      const line3 = document.getElementById('ham-line-3');
+      let isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        // Animate to X
+        line1.style.transform = 'translateY(8px) rotate(45deg)';
+        line2.style.opacity = '0';
+        line2.style.transform = 'scaleX(0)';
+        line3.style.transform = 'translateY(-8px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        // Animate back to hamburger
+        line1.style.transform = '';
+        line2.style.opacity = '1';
+        line2.style.transform = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Close menu when a link is clicked
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          closeMenu();
+        });
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+
+      // Active nav link detection
+      var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('header .nav-link').forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

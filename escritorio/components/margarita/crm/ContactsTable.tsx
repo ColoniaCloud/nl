@@ -83,9 +83,9 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto">
-        <div className="min-w-[640px]">
+        <div className="min-w-[720px]">
       {/* Header */}
-      <div className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1.5rem_auto] gap-3 px-4 py-2 text-xxs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+      <div className="grid grid-cols-[2.2fr_2fr_1.4fr_0.8fr_1.3fr_2.5rem_auto] gap-3 px-4 py-2 text-xxs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
         <span>Lead</span>
         <span>Contacto</span>
         <span>Rubro / Estado</span>
@@ -106,7 +106,7 @@ export function ContactsTable({ contacts, total, page, limit, onEdit, onDelete, 
         return (
           <div
             key={c.id}
-            className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1.5rem_auto] gap-3 px-4 py-3 items-center border-b border-border/50 hover:bg-white/[0.02] transition-colors group"
+            className="grid grid-cols-[2.2fr_2fr_1.4fr_0.8fr_1.3fr_2.5rem_auto] gap-3 px-4 py-3 items-center border-b border-border/50 hover:bg-white/[0.02] transition-colors group"
           >
             {/* Nombre + empresa */}
             <div className="min-w-0">

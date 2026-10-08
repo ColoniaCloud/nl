@@ -9,7 +9,7 @@ services:
     environment:
       - DOCKER_CLIENT_API_VERSION=1.44
     command:
-      - "--api.insecure=true"
+      - "--api.insecure=false"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
 
@@ -121,28 +121,6 @@ services:
       - "traefik.http.routers.wp-login-rl.tls.certresolver=myresolver"
       - "traefik.http.routers.wp-login-rl.priority=90"
 
-  # --- PHPMYADMIN ---
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: phpmyadmin
-    restart: always
-    depends_on:
-      - mysql
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      PMA_ABSOLUTE_URI: https://db.nl360.site/
-    networks:
-      - app-network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.phpmyadmin.rule=Host(`db.nl360.site`)"
-      - "traefik.http.routers.phpmyadmin.entrypoints=websecure"
-      - "traefik.http.routers.phpmyadmin.tls.certresolver=myresolver"
-      - "traefik.http.services.phpmyadmin.loadbalancer.server.port=80"
-      - "traefik.http.routers.phpmyadmin.priority=20"
-
   # --- N8N ---
   n8n:
     image: n8nio/n8n:latest
@@ -217,6 +195,7 @@ services:
       dockerfile: Dockerfile
       args:
         - NEXT_PUBLIC_VOICE_FALLBACK=1
+        - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
     container_name: escritorio
     restart: always
     environment:

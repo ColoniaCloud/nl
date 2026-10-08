@@ -22,24 +22,28 @@ import getPool from '@/lib/db-manu';
 const AGENTS = [
   {
     icon: <Code2 size={36} />,
+    image: '/agentes/avatares/cards/ManuDev.svg',
     title: 'Manu Dev',
     description: 'Creá tu sitio web con IA en minutos',
     href: '/services/manu-dev',
   },
   {
     icon: <Megaphone size={36} />,
+    image: '/agentes/avatares/cards/Margarita.svg',
     title: 'Margarita',
     description: 'Estrategia y contenido para redes sociales',
     href: '/services/margarita',
   },
   {
     icon: <MessageSquare size={36} />,
+    image: '/agentes/avatares/cards/Jordan.svg',
     title: 'Jordan',
     description: 'Tu asistente conversacional inteligente',
     href: '/services/grant',
   },
   {
     icon: <GraduationCap size={36} />,
+    image: '/agentes/avatares/cards/Mentoria.svg',
     title: 'MentorIA',
     description: 'Coaching y conocimiento a tu ritmo',
     href: '/services/mentoria',
@@ -192,6 +196,8 @@ export default async function HomePage() {
             minHeight: '100vh',
             display: 'grid',
             gap: '2rem',
+            maxWidth: '1200px',
+            margin: '0 auto',
             padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem)',
             alignItems: 'center',
           }}
@@ -235,6 +241,55 @@ export default async function HomePage() {
 
       {/* ── SECCIÓN 1 — Cards de agentes ── */}
       <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
+        <Reveal
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto 3rem',
+            display: 'grid',
+            gap: '2.5rem',
+            alignItems: 'center',
+          }}
+          className="grid-cols-1 lg:grid-cols-2"
+        >
+          {/* Col 1 — Imagen */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/agentes/manuymargarita.svg"
+              alt="Manu y Margarita"
+              style={{ maxWidth: '100%', height: 'auto' }}
+            />
+          </div>
+
+          {/* Col 2 — Título + texto */}
+          <div>
+            <h2
+              style={{
+                fontSize: 'clamp(1.6rem, 3.2vw, 2.6rem)',
+                lineHeight: 1.1,
+                fontFamily: 'var(--font-syne)',
+                fontWeight: 700,
+                color: '#0a0a0a',
+                margin: 0,
+                maxWidth: '20ch',
+              }}
+            >
+              Cuatro agentes trabajando para tu proyecto
+            </h2>
+            <p
+              style={{
+                marginTop: '1.5rem',
+                color: '#555',
+                lineHeight: 1.75,
+                fontSize: '1.1rem',
+                maxWidth: '60ch',
+              }}
+            >
+              Nuestros agentes integran software cloud, inteligencia artificial y conexión a
+              internet para hacer todo el trabajo digital que la gestión de tu proyecto necesita.
+            </p>
+          </div>
+        </Reveal>
         <div
           style={{
             maxWidth: '1200px',
@@ -247,7 +302,7 @@ export default async function HomePage() {
           {AGENTS.map((agent, i) => (
             <Reveal key={agent.href} delay={i * 0.1} style={{ height: '100%' }}>
               <AgentCardTilt
-                icon={agent.icon}
+                image={agent.image}
                 title={agent.title}
                 description={agent.description}
                 href={agent.href}

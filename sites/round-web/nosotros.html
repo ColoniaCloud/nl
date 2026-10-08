@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#2D2D2D',
+            secondary: '#E85D04',
+            accent:    '#FFB703',
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body:    ['Open Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Layout flexbox crítico */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Nav hover transitions */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFB703;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #FFB703;
+    }
+
+    /* Hamburger lines */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Mobile nav link */
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .mobile-nav-link:hover {
+      color: #FFB703;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Footer link transitions */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover {
+      color: #FFB703;
+    }
+  </style>
+</head>
+<body class="bg-white text-primary font-body">
+
+  <!-- ===== HEADER ===== -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0">
+          <img src="/logo.png" alt="Round" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <!-- Desktop Nav -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="inline-block bg-secondary hover:bg-accent text-white hover:text-primary text-sm font-heading font-700 tracking-wide uppercase px-5 py-2 rounded transition-colors duration-250">
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line" id="hline1"></span>
+          <span class="hamburger-line" id="hline2"></span>
+          <span class="hamburger-line" id="hline3"></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col pb-4 gap-1">
+          <li>
+            <a href="index.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+  </header>
+
+  <main style="font-family: 'Open Sans', sans-serif; background-color: #f9f9f9;">
+
+  <!-- Banner Superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1610259998914-d1b9afe0dc55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Taller Round"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;"
+    />
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(45,45,45,0.88) 0%, rgba(45,45,45,0.65) 100%);"></div>
+    <div style="position: relative; z-index: 10; text-align: center; padding: 3rem 1.5rem;">
+      <span style="display: inline-block; background-color: #E85D04; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 2px; margin-bottom: 1rem; animation: fadeInDown 0.6s ease both;">Taller Mecánico</span>
+      <h1 style="font-family: 'Montserrat', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; color: #fff; margin: 0 0 1rem; line-height: 1.1; animation: fadeInUp 0.7s ease 0.1s both;">
+        Quiénes Somos
+      </h1>
+      <p style="color: #FFB703; font-size: 1.1rem; font-weight: 600; font-family: 'Montserrat', sans-serif; animation: fadeInUp 0.7s ease 0.2s both;">
+        Round — Barrio Dos Avenidas, Colonia del Sacramento
+      </p>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .round-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(45,45,45,0.15) !important;
+    }
+    .round-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .round-value-icon {
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .round-value-card:hover .round-value-icon {
+      background-color: #E85D04;
+      transform: scale(1.08);
+    }
+    .round-btn-primary:hover {
+      background-color: #E85D04 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(232,93,4,0.35) !important;
+    }
+    .round-btn-primary {
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .team-img-wrap img {
+      transition: transform 0.4s ease;
+    }
+    .team-img-wrap:hover img {
+      transform: scale(1.05);
+    }
+  </style>
+
+  <!-- ======================== ABOUT ======================== -->
+  <section id="about" style="padding: 5rem 1.5rem; background-color: #fff; animation: fadeIn 0.8s ease both;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+
+        <!-- Texto -->
+        <div style="order: 2;">
+          <span style="display: inline-block; color: #E85D04; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem;">Nuestra Historia</span>
+          <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; color: #2D2D2D; margin: 0 0 1.25rem; line-height: 1.2;">
+            Un taller que nació del amor por los autos
+          </h2>
+          <div style="width: 56px; height: 4px; background-color: #FFB703; border-radius: 2px; margin-bottom: 1.5rem;"></div>
+          <p style="color: #555; font-size: 1rem; line-height: 1.8; margin-bottom: 1.25rem;">
+            Round nació en el Barrio Dos Avenidas de Colonia del Sacramento con una idea simple: ofrecer a los vecinos un taller mecánico serio, transparente y accesible. Sabemos lo frustrante que es tener el auto parado sin saber cuánto te va a costar ni cuándo va a quedar listo. Por eso en Round trabajamos distinto.
+          </p>
+          <p style="color: #555; font-size: 1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+            Cada trabajo empieza con un diagnóstico honesto. Te explicamos qué tiene tu vehículo, qué hace falta arreglar y cuánto va a salir —antes de empezar. Sin sorpresas al final. Con respeto por tu tiempo y tu bolsillo.
+          </p>
+          <p style="color: #555; font-size: 1rem; line-height: 1.8;">
+            Desde reparaciones del día a día hasta mejoras de rendimiento, atendemos todo tipo de vehículos con herramientas profesionales y el cuidado que tu auto merece.
+          </p>
+          <div style="margin-top: 2rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+            <div style="text-align: center;">
+              <p style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #E85D04; margin: 0;">+10</p>
+              <p style="font-size: 0.85rem; color: #777; margin: 0.25rem 0 0; font-weight: 600;">Años de experiencia</p>
+            </div>
+            <div style="text-align: center;">
+              <p style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #E85D04; margin: 0;">+500</p>
+              <p style="font-size: 0.85rem; color: #777; margin: 0.25rem 0 0; font-weight: 600;">Vehículos atendidos</p>
+            </div>
+            <div style="text-align: center;">
+              <p style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #E85D04; margin: 0;">100%</p>
+              <p style="font-size: 0.85rem; color: #777; margin: 0.25rem 0 0; font-weight: 600;">Presupuesto sin cargo</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Imagen -->
+        <div style="order: 1; border-radius: 8px; overflow: hidden; box-shadow: 0 12px 40px rgba(45,45,45,0.12);" class="team-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1635352124261-b9a1fea40de3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Interior del taller Round"
+            style="width: 100%; height: 320px; object-fit: cover; display: block;"
+          />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Media query via Tailwind no disponible inline; usamos un estilo embebido -->
+    <style>
+      @media (min-width: 768px) {
+        #about .about-grid {
+          grid-template-columns: 1fr 1fr !important;
+        }
+        #about .about-grid .order-1-md {
+          order: 1 !important;
+        }
+        #about .about-grid .order-2-md {
+          order: 2 !important;
+        }
+      }
+    </style>
+  </section>
+
+  <!-- Separador naranja -->
+  <div style="height: 5px; background: linear-gradient(90deg, #E85D04 0%, #FFB703 100%);"></div>
+
+  <!-- ======================== TEAM ======================== -->
+  <section id="team" style="padding: 5rem 1.5rem; background-color: #2D2D2D; animation: fadeIn 0.8s ease both;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <span style="display: inline-block; color: #FFB703; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem;">Las personas detrás del taller</span>
+        <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; color: #fff; margin: 0 0 1rem; line-height: 1.2;">
+          Nuestro Equipo
+        </h2>
+        <div style="width: 56px; height: 4px; background-color: #E85D04; border-radius: 2px; margin: 0 auto 1.25rem;"></div>
+        <p style="color: #bbb; font-size: 1rem; line-height: 1.8; max-width: 580px; margin: 0 auto;">
+          En Round somos mecánicos apasionados por lo que hacemos. Cada miembro del equipo se capacita de forma continua para mantenerse al día con las nuevas tecnologías automotrices.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+        <!-- Miembro 1 -->
+        <div class="round-card" style="background-color: #3a3a3a; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.25);">
+          <div class="team-img-wrap" style="overflow: hidden; height: 260px;">
+            <img
+              src="https://images.unsplash.com/photo-1664870546503-b6f134986baa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Manuel - Mecánico jefe en Round"
+              style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;"
+            />
+          </div>
+          <div style="padding: 1.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">Manuel Rodríguez</h3>
+              <span style="background-color: #E85D04; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;">Fundador</span>
+            </div>
+            <p style="color: #FFB703; font-size: 0.85rem; font-weight: 600; font-family: 'Montserrat', sans-serif; margin: 0 0 1rem;">Mecánico General & Diagnóstico</p>
+            <p style="color: #aaa; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+              Con más de 10 años trabajando en talleres de Colonia, Manu fundó Round con la convicción de que el cliente merece honestidad y calidad en cada trabajo. Especializado en motores a nafta y diésel, es la cara visible del taller.
+            </p>
+          </div>
+        </div>
+
+        <!-- Miembro 2 -->
+        <div class="round-card" style="background-color: #3a3a3a; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.25);">
+          <div class="team-img-wrap" style="overflow: hidden; height: 260px;">
+            <img
+              src="https://images.unsplash.com/photo-1698998881125-b7b8f05a504b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Técnico en Round"
+              style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;"
+            />
+          </div>
+          <div style="padding: 1.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">Sebastián Méndez</h3>
+              <span style="background-color: #FFB703; color: #2D2D2D; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;">Técnico</span>
+            </div>
+            <p style="color: #FFB703; font-size: 0.85rem; font-weight: 600; font-family: 'Montserrat', sans-serif; margin: 0 0 1rem;">Electricidad & Sistemas Modernos</p>
+            <p style="color: #aaa; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+              Sebas se encarga de todo lo electrónico y eléctrico del taller. Desde fallas en sensores hasta sistemas de inyección, su manejo del scanner de diagnóstico permite identificar problemas que a simple vista serían imposibles de detectar.
+            </p>
+          </div>
+        </div>
+
+        <!-- Miembro 3 -->
+        <div class="round-card" style="background-color: #3a3a3a; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.25);">
+          <div class="team-img-wrap" style="overflow: hidden; height: 260px;">
+            <img
+              src="https://images.unsplash.com/photo-1711135421701-950f3abc3ee1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Mecánico Round"
+              style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block;"
+            />
+          </div>
+          <div style="padding: 1.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin: 0;">Diego Fernández</h3>
+              <span style="background-color: #FFB703; color: #2D2D2D; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;">Técnico</span>
+            </div>
+            <p style="color: #FFB703; font-size: 0.85rem; font-weight: 600; font-family: 'Montserrat', sans-serif; margin: 0 0 1rem;">Frenos, Suspensión & Transmisión</p>
+            <p style="color: #aaa; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+              Diego tiene una habilidad especial para detectar ruidos, vibraciones y anomalías en la parte mecánica. Su experiencia en sistemas de frenos y suspensión lo convierte en una pieza clave del equipo, especialmente cuando el cliente llega con un auto que "suena raro".
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <style>
+      @media (min-width: 640px) {
+        #team .team-grid {
+          grid-template-columns: 1fr 1fr !important;
+        }
+      }
+      @media (min-width: 1024px) {
+        #team .team-grid {
+          grid-template-columns: 1fr 1fr 1fr !important;
+        }
+      }
+    </style>
+  </section>
+
+  <!-- ======================== VALUES ======================== -->
+  <section id="values" style="padding: 5rem 1.5rem; background-color: #f5f5f5; animation: fadeIn 0.8s ease both;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <span style="display: inline-block; color: #E85D04; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.75rem;">Lo que nos guía</span>
+        <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800; color: #2D2D2D; margin: 0 0 1rem; line-height: 1.2;">
+          Nuestros Valores
+        </h2>
+        <div style="width: 56px; height: 4px; background-color: #FFB703; border-radius: 2px; margin: 0 auto 1.25rem;"></div>
+        <p style="color: #666; font-size: 1rem; line-height: 1.8; max-width: 580px; margin: 0 auto;">
+          En Round creemos que un buen trabajo mecánico va mucho más allá de la llave y el gato. Se construye sobre la confianza y el respeto al cliente.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+        <!-- Valor 1 -->
+        <div class="round-card round-value-card" style="background-color: #fff; border-radius: 10px; padding: 2rem; box-shadow: 0 4px 16px rgba(45,45,45,0.08); display: flex; gap: 1.5rem; align-items: flex-start;">
+          <div class="round-value-icon" style="flex-shrink: 0; width: 56px; height: 56px; background-color: #FFB703; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.5rem;">Honestidad ante todo</h3>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7; margin: 0;">Te decimos la verdad sobre lo que tiene tu auto, aunque no sea lo que querés escuchar. Nunca inventamos fallas ni inflamos presupuestos. Si algo no necesita arreglarse hoy, te lo decimos igual.</p>
+          </div>
+        </div>
+
+        <!-- Valor 2 -->
+        <div class="round-card round-value-card" style="background-color: #fff; border-radius: 10px; padding: 2rem; box-shadow: 0 4px 16px rgba(45,45,45,0.08); display: flex; gap: 1.5rem; align-items: flex-start;">
+          <div class="round-value-icon" style="flex-shrink: 0; width: 56px; height: 56px; background-color: #FFB703; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.5rem;">Respeto por tu tiempo</h3>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7; margin: 0;">Trabajamos con turnos para que no pierdas el día esperando. Te avisamos cuando tu auto está listo y cumplimos los plazos que prometemos. Tu tiempo vale tanto como el nuestro.</p>
+          </div>
+        </div>
+
+        <!-- Valor 3 -->
+        <div class="round-card round-value-card" style="background-color: #fff; border-radius: 10px; padding: 2rem; box-shadow: 0 4px 16px rgba(45,45,45,0.08); display: flex; gap: 1.5rem; align-items: flex-start;">
+          <div class="round-value-icon" style="flex-shrink: 0; width: 56px; height: 56px; background-color: #FFB703; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 11.08 22 12 12 22 2 12 2 11.08 12.09 2.17 22 11.08"/><path d="M7 12l3 3 7-7"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.5rem;">Calidad en cada trabajo</h3>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7; margin: 0;">Usamos repuestos de calidad comprobada y seguimos los procedimientos técnicos correctos. No cortamos caminos. Cada auto que sale de Round lo hace en condiciones óptimas y con garantía de trabajo.</p>
+          </div>
+        </div>
+
+        <!-- Valor 4 -->
+        <div class="round-card round-value-card" style="background-color: #fff; border-radius: 10px; padding: 2rem; box-shadow: 0 4px 16px rgba(45,45,45,0.08); display: flex; gap: 1.5rem; align-items: flex-start;">
+          <div class="round-value-icon" style="flex-shrink: 0; width: 56px; height: 56px; background-color: #FFB703; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.5rem;">Comprometidos con el barrio</h3>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7; margin: 0;">Round es un negocio de Colonia del Sacramento y nos importa lo que pasa en nuestra comunidad. Muchos de nuestros clientes son vecinos que ya son amigos. Esa relación nos exige dar siempre lo mejor.</p>
+          </div>
+        </div>
+
+        <!-- Valor 5 -->
+        <div class="round-card round-value-card" style="background-color: #fff; border-radius: 10px; padding: 2rem; box-shadow: 0 4px 16px rgba(45,45,45,0.08); display: flex; gap: 1.5rem; align-items: flex-start;">
+          <div class="round-value-icon" style="flex-shrink: 0; width: 56px; height: 56px; background-color: #FFB703; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.15rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.5rem;">Precios accesibles y claros</h3>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7; margin: 0;">Entendemos que la reparación del auto muchas veces viene en el peor momento. Por eso ofrecemos presupuesto sin cargo, precios transparentes y la posibilidad de priorizar lo urgente cuando el presupuesto aprieta.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <style>
+      @media (min-width: 768px) {
+        #values .values-grid {
+          grid-template-columns: 1fr 1fr !important;
+        }
+      }
+    </style>
+  </section>
+
+  <!-- ======================== CTA Final ======================== -->
+  <section style="padding: 4.5rem 1.5rem; background: linear-gradient(135deg, #2D2D2D 0%, #1a1a1a 100%); text-align: center;">
+    <div style="max-width: 680px; margin: 0 auto;">
+      <div style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
+        <img
+          src="https://images.unsplash.com/photo-1767339736233-f4b02c41ee4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Taller Round en acción"
+          style="width: 100%; max-width: 480px; height: 200px; object-fit: cover; border-radius: 8px; display: block; margin: 0 auto; opacity: 0.75;"
+        />
+        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(45,45,45,0.7) 0%, transparent 60%); border-radius: 8px;"></div>
+      </div>
+      <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 800; color: #fff; margin: 0 0 1rem; line-height: 1.2;">
+        ¿Tu auto necesita atención?
+      </h2>
+      <p style="color: #bbb; font-size: 1rem; line-height: 1.8; margin: 0 0 2rem;">
+        Reservá tu turno hoy mismo. Diagnóstico sin cargo, presupuesto claro y trabajo garantizado. En Round tu auto está en buenas manos.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; justify-content: center;">
+        <a
+          href="https://wa.me/59896969696?text=Hola%20Round!%20Quiero%20reservar%20un%20turno."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="round-btn-primary"
+          style="display: inline-flex; align-items: center; gap: 0.6rem; background-color: #FFB703; color: #2D2D2D; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; padding: 0.9rem 2.2rem; border-radius: 6px; text-decoration: none; box-shadow: 0 4px 16px rgba(255,183,3,0.3);"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          Reservar turno por WhatsApp
+        </a>
+        <a
+          href="mailto:manu@otto.com"
+          class="round-btn-primary"
+          style="display: inline-flex; align-items: center; gap: 0.6rem; background-color: transparent; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 2rem; border-radius: 6px; text-decoration: none; border: 2px solid #fff;"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Escribirnos por email
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-800 text-xl tracking-wide text-white">Round</span>
+          <p class="text-sm text-gray-400 font-body">
+            &copy; 2026 Round. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Navegación</span>
+          <a href="index.html"     class="footer-link text-sm text-gray-300">Inicio</a>
+          <a href="servicios.html" class="footer-link text-sm text-gray-300">Servicios</a>
+          <a href="nosotros.html"  class="footer-link text-sm text-gray-300">Nosotros</a>
+          <a href="contacto.html"  class="footer-link text-sm text-gray-300">Contacto</a>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Contacto</span>
+
+          <!-- Email -->
+          <a
+            href="mailto:manu@otto.com"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            manu@otto.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/59896969696"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.52 3.48A11.77 11.77 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.57A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52zM12 21.88a9.83 9.83 0 01-5.03-1.38l-.36-.21-3.69.93.98-3.58-.23-.37A9.86 9.86 0 012.13 12C2.13 6.54 6.54 2.13 12 2.13S21.87 6.54 21.87 12 17.46 21.88 12 21.88zm5.42-7.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07a8.14 8.14 0 01-2.39-1.48 8.98 8.98 0 01-1.65-2.06c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51H6.8c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.19-.57-.34z"/>
+            </svg>
+            +598 96 969 696
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="text-xs text-gray-500 font-body">Hecho con dedicación &mdash; Round 2026</p>
+        <a href="mailto:manu@otto.com" class="footer-link text-xs text-gray-500 font-body">manu@otto.com</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== JS: Hamburger Menu ===== -->
+  <script>
+    (function () {
+      var btn    = document.getElementById('hamburger-btn');
+      var menu   = document.getElementById('mobile-menu');
+      var line1  = document.getElementById('hline1');
+      var line2  = document.getElementById('hline2');
+      var line3  = document.getElementById('hline3');
+      var isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        line1.style.transform = 'translateY(7px) rotate(45deg)';
+        line2.style.opacity   = '0';
+        line3.style.transform = 'translateY(-7px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        line1.style.transform = '';
+        line2.style.opacity   = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) { closeMenu(); } else { openMenu(); }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

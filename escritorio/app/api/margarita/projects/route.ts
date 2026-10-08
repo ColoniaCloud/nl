@@ -116,6 +116,15 @@ async function ensureTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 
+    `CREATE TABLE IF NOT EXISTS mm_places_cache (
+      place_id VARCHAR(255) PRIMARY KEY,
+      provider VARCHAR(20) NOT NULL,
+      payload JSON NOT NULL,
+      fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      expires_at TIMESTAMP NOT NULL,
+      INDEX idx_mpc_expires (expires_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+
     `CREATE TABLE IF NOT EXISTS mm_contacts (
       id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT NOT NULL,
@@ -157,6 +166,126 @@ async function ensureTables() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `).catch(() => {});
 
+  // mm_campaigns: envíos masivos de WhatsApp segmentados por etiquetas
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_campaigns (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      name VARCHAR(150) NOT NULL,
+      tag_names JSON,
+      status ENUM('draft','sending','completed','cancelled','failed') NOT NULL DEFAULT 'sending',
+      total_recipients INT NOT NULL DEFAULT 0,
+      sent_count INT NOT NULL DEFAULT 0,
+      failed_count INT NOT NULL DEFAULT 0,
+      delivered_count INT NOT NULL DEFAULT 0,
+      read_count INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      started_at TIMESTAMP NULL,
+      completed_at TIMESTAMP NULL,
+      INDEX idx_mcam_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_campaign_messages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      campaign_id INT NOT NULL,
+      variant TINYINT NOT NULL,
+      body TEXT NOT NULL,
+      UNIQUE KEY uq_mcm_campaign_variant (campaign_id, variant),
+      INDEX idx_mcm_campaign (campaign_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_campaign_recipients (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      campaign_id INT NOT NULL,
+      contact_id INT NOT NULL,
+      jid VARCHAR(64) NOT NULL,
+      name_snapshot VARCHAR(255),
+      phone_snapshot VARCHAR(50),
+      variant_used TINYINT NULL,
+      status ENUM('pending','sent','delivered','read','failed') NOT NULL DEFAULT 'pending',
+      wa_message_id VARCHAR(64) NULL,
+      error TEXT NULL,
+      sent_at TIMESTAMP NULL,
+      delivered_at TIMESTAMP NULL,
+      read_at TIMESTAMP NULL,
+      INDEX idx_mcr_campaign (campaign_id),
+      INDEX idx_mcr_wa_message (wa_message_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
+  // mm_email_accounts: conexión SMTP de salida del usuario
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_email_accounts (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL UNIQUE,
+      provider VARCHAR(50) NOT NULL,
+      smtp_host VARCHAR(255) NOT NULL,
+      smtp_port INT NOT NULL,
+      smtp_secure TINYINT(1) NOT NULL DEFAULT 0,
+      smtp_user VARCHAR(255) NOT NULL,
+      smtp_password_enc TEXT NOT NULL,
+      from_name VARCHAR(255),
+      from_email VARCHAR(255) NOT NULL,
+      status ENUM('disconnected','connected','error') NOT NULL DEFAULT 'disconnected',
+      last_error TEXT,
+      connected_at TIMESTAMP NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
+  // mm_email_campaigns: envíos masivos de email segmentados (misma forma que mm_campaigns)
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_email_campaigns (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      name VARCHAR(150) NOT NULL,
+      tag_names JSON,
+      segment_type ENUM('tags','manual') NOT NULL DEFAULT 'tags',
+      status ENUM('draft','sending','completed','cancelled','failed') NOT NULL DEFAULT 'sending',
+      total_recipients INT NOT NULL DEFAULT 0,
+      sent_count INT NOT NULL DEFAULT 0,
+      failed_count INT NOT NULL DEFAULT 0,
+      opened_count INT NOT NULL DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      started_at TIMESTAMP NULL,
+      completed_at TIMESTAMP NULL,
+      INDEX idx_mecam_user (user_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_email_campaign_messages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      campaign_id INT NOT NULL,
+      variant TINYINT NOT NULL,
+      subject VARCHAR(255) NOT NULL,
+      body_html MEDIUMTEXT NOT NULL,
+      UNIQUE KEY uq_mecm_campaign_variant (campaign_id, variant),
+      INDEX idx_mecm_campaign (campaign_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS mm_email_campaign_recipients (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      campaign_id INT NOT NULL,
+      contact_id INT NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      name_snapshot VARCHAR(255),
+      variant_used TINYINT NULL,
+      status ENUM('pending','sent','failed','opened') NOT NULL DEFAULT 'pending',
+      error TEXT NULL,
+      sent_at TIMESTAMP NULL,
+      opened_at TIMESTAMP NULL,
+      INDEX idx_mecr_campaign (campaign_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(() => {});
+
   const extras = [
     "ALTER TABLE mm_strategies ADD COLUMN clickup_list_id VARCHAR(100) DEFAULT NULL",
     "ALTER TABLE mm_strategies ADD COLUMN calendar_url VARCHAR(512) DEFAULT NULL",
@@ -170,6 +299,13 @@ async function ensureTables() {
     "ALTER TABLE mm_contacts ADD COLUMN source VARCHAR(100) DEFAULT NULL",
     "ALTER TABLE mm_contacts ADD COLUMN priority ENUM('high','medium','low') DEFAULT 'medium'",
     "ALTER TABLE mm_contacts ADD COLUMN website_quality ENUM('none','poor','decent','good') DEFAULT 'none'",
+    // mm_campaigns: modo de segmentación (etiquetas vs selección manual de contactos)
+    "ALTER TABLE mm_campaigns ADD COLUMN segment_type ENUM('tags','manual') NOT NULL DEFAULT 'tags'",
+    // mm_campaigns: imagen opcional adjunta a toda la campaña
+    "ALTER TABLE mm_campaigns ADD COLUMN image_url VARCHAR(512) DEFAULT NULL",
+    // mm_chat_history: session_id para no mezclar intentos de onboarding abandonados (brandbook_id IS NULL)
+    "ALTER TABLE mm_chat_history ADD COLUMN session_id VARCHAR(36) DEFAULT NULL",
+    "ALTER TABLE mm_chat_history ADD INDEX idx_mch_session (user_id, session_id)",
   ];
   for (const sql of extras) {
     try { await pool.execute(sql); } catch {}

@@ -25,7 +25,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 export function HeroLoginForm() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -38,12 +38,12 @@ export function HeroLoginForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // El endpoint espera `username` (acepta email o usuario)
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ username, password }),
       });
-      if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.ok !== false) {
         window.location.href = '/workspace';
       } else {
-        const data = await res.json();
         setError(data.error || 'Credenciales incorrectas');
       }
     } catch {
@@ -67,10 +67,10 @@ export function HeroLoginForm() {
       >
         <input
           className="hlf-input"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Usuario o email"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           autoComplete="username"
           style={inputStyle}
         />

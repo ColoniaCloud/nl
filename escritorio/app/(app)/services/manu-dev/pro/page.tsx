@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Globe, Loader2, Check, ExternalLink, Wand2, AlertTriangle, Maximize2, Minimize2, Upload, Menu, RotateCcw } from "lucide-react";
@@ -423,7 +423,6 @@ function ManuDevHub({
 function ManuDevPage() {
   const { isMobile, setOpenMobile } = useSidebar();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const projectParam = searchParams.get("project");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -705,15 +704,6 @@ function ManuDevPage() {
             if (newStep === "building" && newPid && !buildingRef.current) {
               buildingRef.current = true;
               triggerBuildPid = newPid;
-            }
-            if (parsed.step === "redirect_nubia") {
-              // M2: Pass the DB-stored handoff id instead of the full JSON in the URL
-              const params = new URLSearchParams();
-              if (parsed.handoffId) {
-                params.set("handoff_id", String(parsed.handoffId));
-              }
-              router.push(`/services/nubia?${params.toString()}`);
-              return;
             }
           }
         }

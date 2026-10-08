@@ -117,12 +117,18 @@ function getPhaseIndex(step: Step): number {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
+const BRANDBOOK_ID_KEY = "margarita_brandbook_id";
+const SESSION_ID_KEY = "margarita_session_id";
+
 export default function MargaritaPage() {
   const { open, isMobile, setOpenMobile } = useSidebar();
 
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState<Step>("welcome");
   const [brandbookId, setBrandbookId] = useState<number | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : localStorage.getItem(SESSION_ID_KEY)
+  );
   const [strategyId, setStrategyId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -139,10 +145,75 @@ export default function MargaritaPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<AgentInputHandle>(null);
+  // Refs mirroring brandbookId/sessionId so sendMessage always reads the latest value,
+  // even when called synchronously right after ensureSessionId() sets it (state updates are async).
+  const brandbookIdRef = useRef<number | null>(null);
+  const sessionIdRef = useRef<string | null>(sessionId);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    brandbookIdRef.current = brandbookId;
+    if (typeof window !== "undefined" && brandbookId) {
+      localStorage.setItem(BRANDBOOK_ID_KEY, String(brandbookId));
+    }
+  }, [brandbookId]);
+
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+    if (typeof window !== "undefined" && sessionId) {
+      localStorage.setItem(SESSION_ID_KEY, sessionId);
+    }
+  }, [sessionId]);
+
+  function ensureSessionId(): string {
+    if (sessionIdRef.current) return sessionIdRef.current;
+    const sid = crypto.randomUUID();
+    sessionIdRef.current = sid;
+    setSessionId(sid);
+    return sid;
+  }
+
+  // Rehydrate the conversation on mount (e.g. after a page refresh) from whatever
+  // brandbook_id / session_id we have persisted locally, so the chat doesn't appear to "forget" everything.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedBrandbookId = localStorage.getItem(BRANDBOOK_ID_KEY);
+    const storedSessionId = localStorage.getItem(SESSION_ID_KEY);
+    if (!storedBrandbookId && !storedSessionId) return;
+
+    (async () => {
+      try {
+        const qs = new URLSearchParams();
+        if (storedBrandbookId) qs.set("brandbook_id", storedBrandbookId);
+        if (storedSessionId) qs.set("session_id", storedSessionId);
+        const res = await fetch(`/api/margarita/chat?${qs.toString()}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.messages || data.messages.length === 0) return;
+
+        setMessages(
+          data.messages.map((m: any, i: number) => ({
+            id: `hist-${i}`,
+            role: m.role,
+            content: m.content,
+          }))
+        );
+        setStep((data.step as Step) || "welcome");
+        if (data.brandbook_id) setBrandbookId(data.brandbook_id);
+        if (data.strategy) {
+          setStrategy(data.strategy);
+          setStrategyId(data.strategy.id);
+        }
+        if (data.posts?.length) setPosts(data.posts);
+        if (data.calendar_url) setCalendarUrl(data.calendar_url);
+        setStarted(true);
+      } catch {}
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Check URL params for OAuth callbacks
   useEffect(() => {
@@ -185,7 +256,11 @@ export default function MargaritaPage() {
         const res = await fetch("/api/margarita/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text, brandbook_id: brandbookId }),
+          body: JSON.stringify({
+            message: text,
+            brandbook_id: brandbookIdRef.current,
+            session_id: sessionIdRef.current,
+          }),
         });
 
         if (!res.ok || !res.body) {
@@ -224,14 +299,17 @@ export default function MargaritaPage() {
                 if (data.step) setStep(data.step as Step);
                 if (data.brandbook_id) setBrandbookId(data.brandbook_id);
 
-                // Trigger automatic actions based on step transition
+                // Trigger automatic actions based on step transition.
+                // NOTA: la generacion de contenido debe dispararse al ENTRAR a "strategy_confirm"
+                // (que es cuando el backend ya asume que el contenido se esta generando/genero),
+                // no al llegar a "content_generate" (ese paso es para REVISAR contenido ya generado).
                 const newStep = data.step as Step;
-                const newBrandbookId = data.brandbook_id ?? brandbookId;
+                const newBrandbookId = data.brandbook_id ?? brandbookIdRef.current;
                 const newStrategyId = strategyId;
 
                 if (newStep === "strategy" && newBrandbookId) {
                   setTimeout(() => triggerStrategyGeneration(newBrandbookId), 500);
-                } else if (newStep === "content_generate" && newStrategyId) {
+                } else if (newStep === "strategy_confirm" && newStrategyId) {
                   setTimeout(() => triggerContentGeneration(newStrategyId), 500);
                 } else if (newStep === "calendar_create" && newStrategyId) {
                   setTimeout(() => triggerCalendarCreation(newStrategyId), 500);
@@ -251,7 +329,7 @@ export default function MargaritaPage() {
         inputRef.current?.focus();
       }
     },
-    [sending, brandbookId, strategyId]
+    [sending, strategyId]
   );
 
   async function triggerStrategyGeneration(bbId: number) {
@@ -267,8 +345,9 @@ export default function MargaritaPage() {
         setStrategyId(data.strategy_id);
         setStrategy(data.strategy);
         setActivePanel("strategy");
-        // Inform user via chat
-        addMessage("assistant", "La estrategia esta lista. Revisa el panel de estrategia a la derecha.", {
+        // El texto viene del backend, que ya lo persistio en mm_chat_history — asi el modelo
+        // ve exactamente lo mismo que el usuario, sin huecos en el historial.
+        addMessage("assistant", data.chat_message || "La estrategia esta lista. Revisa el panel de estrategia a la derecha.", {
           options: ["Apruebo la estrategia", "Quiero ajustar algo"],
         });
         setStep("strategy");
@@ -289,7 +368,7 @@ export default function MargaritaPage() {
         const data = await res.json();
         setPosts(data.posts || []);
         setActivePanel("content");
-        addMessage("assistant", `Genere ${data.generated} posts para 2 semanas de contenido. Revisa el panel de contenido.`, {
+        addMessage("assistant", data.chat_message || `Genere ${data.generated} posts para 2 semanas de contenido. Revisa el panel de contenido.`, {
           options: ["Crear calendario en ClickUp", "Revisar los posts primero"],
         });
         setStep("strategy_confirm");
@@ -324,7 +403,7 @@ export default function MargaritaPage() {
           addMessage("assistant", "Para crear el calendario necesitas conectar tu cuenta de ClickUp.", {});
         } else {
           setCalendarUrl(data.calendar_url || null);
-          addMessage("assistant", `Calendario creado en ClickUp con ${data.tasks_created || 0} tareas.${data.calendar_url ? ` Accede aqui: ${data.calendar_url}` : ""}`, {});
+          addMessage("assistant", data.chat_message || `Calendario creado en ClickUp con ${data.tasks_created || 0} tareas.${data.calendar_url ? ` Accede aqui: ${data.calendar_url}` : ""}`, {});
           setStep("complete");
         }
       }
@@ -333,6 +412,7 @@ export default function MargaritaPage() {
   }
 
   function startConversation() {
+    ensureSessionId();
     setStarted(true);
     sendMessage("Hola Margarita, quiero crear mi estrategia de marketing en redes sociales.");
   }
@@ -401,6 +481,7 @@ export default function MargaritaPage() {
               onChange={setInput}
               onSend={() => {
                 if (!input.trim()) return;
+                ensureSessionId();
                 setStarted(true);
                 sendMessage(input);
               }}

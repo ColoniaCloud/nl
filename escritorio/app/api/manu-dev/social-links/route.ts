@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 import fs from "fs/promises";
 import path from "path";
 import getPool from "@/lib/db-manu";
-import { normalizeGenerationMode } from "@/lib/manu-dev-lite-site";
+import { normalizeGenerationMode, isStaticMode } from "@/lib/manu-dev-lite-site";
+import { applyFooterSocialLinks } from "@/lib/manu-dev-static-render";
 
 export const runtime = "nodejs";
 
@@ -137,19 +138,20 @@ export async function POST(req: NextRequest) {
     value: l.value,
   }));
 
-  // Write app/social-links.js for Next projects
-  const fileContent = `// Redes sociales — administradas desde el panel de control\nexport const socialLinks = ${JSON.stringify(enrichedLinks, null, 2)};\n`;
-
   const socialLinksPath = path.join(SITES_DIR, subdomain, "app", "social-links.js");
   const liteSocialPath = path.join(SITES_DIR, subdomain, "assets", "social-links.json");
   try {
-    await fs.mkdir(path.dirname(socialLinksPath), { recursive: true });
-    await fs.writeFile(socialLinksPath, fileContent, "utf8");
-
-    // For Lite landing, also write JSON consumed by assets/app.js
-    if (mode === "lite") {
+    if (isStaticMode(mode)) {
+      // Static (lite/lite_plus): persist the JSON asset and update the footer links
+      // baked into every .html page so the change is reflected on the live site.
       await fs.mkdir(path.dirname(liteSocialPath), { recursive: true });
       await fs.writeFile(liteSocialPath, `${JSON.stringify(enrichedLinks, null, 2)}\n`, "utf8");
+      await applyFooterSocialLinks(subdomain, enrichedLinks);
+    } else {
+      // Next projects: write the module consumed by the React layout.
+      const fileContent = `// Redes sociales — administradas desde el panel de control\nexport const socialLinks = ${JSON.stringify(enrichedLinks, null, 2)};\n`;
+      await fs.mkdir(path.dirname(socialLinksPath), { recursive: true });
+      await fs.writeFile(socialLinksPath, fileContent, "utf8");
     }
   } catch (err: any) {
     return NextResponse.json(

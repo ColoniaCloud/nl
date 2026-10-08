@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface AgentCardTiltProps {
-  icon: React.ReactNode;
+  image: string;
   title: string;
   description: string;
   href: string;
@@ -17,7 +18,7 @@ const BASE_SHADOW = `
   0 2px 8px rgba(0,0,0,0.06)
 `;
 
-export function AgentCardTilt({ icon, title, description, href }: AgentCardTiltProps) {
+export function AgentCardTilt({ image, title, description, href }: AgentCardTiltProps) {
   const [transform, setTransform] = useState(
     'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)'
   );
@@ -61,28 +62,39 @@ export function AgentCardTilt({ icon, title, description, href }: AgentCardTiltP
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <div style={{ color: '#111', marginBottom: '1rem', fontSize: '36px', lineHeight: 1 }}>
-          {icon}
-        </div>
-        <div
-          style={{
-            fontFamily: 'var(--font-syne)',
-            fontWeight: 700,
-            fontSize: '1.125rem',
-            color: '#111',
-          }}
-        >
-          {title}
-        </div>
-        <div
-          style={{
-            fontSize: '0.875rem',
-            color: '#666',
-            marginTop: '0.5rem',
-            lineHeight: 1.5,
-          }}
-        >
-          {description}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <motion.div
+            initial={{ opacity: 0, filter: 'blur(8px)', rotate: -30, scale: 0.75 }}
+            whileInView={{ opacity: 1, filter: 'blur(0px)', rotate: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            style={{ width: '64px', height: '64px', flexShrink: 0 }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={image} alt="" width={64} height={64} style={{ objectFit: 'contain' }} />
+          </motion.div>
+          <div>
+            <div
+              style={{
+                fontFamily: 'var(--font-syne)',
+                fontWeight: 700,
+                fontSize: '1.125rem',
+                color: '#111',
+              }}
+            >
+              {title}
+            </div>
+            <div
+              style={{
+                fontSize: '0.875rem',
+                color: '#666',
+                marginTop: '0.375rem',
+                lineHeight: 1.5,
+              }}
+            >
+              {description}
+            </div>
+          </div>
         </div>
       </div>
     </a>

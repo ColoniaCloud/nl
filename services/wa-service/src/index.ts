@@ -9,6 +9,8 @@ import contactsRouter from "./routes/contacts";
 import historyRouter  from "./routes/history";
 import logoutRouter   from "./routes/logout";
 import resetRouter    from "./routes/reset";
+import eventsRouter   from "./routes/events";
+import campaignRouter from "./routes/campaign";
 
 // 🔒 Validación de variables de entorno en arranque
 function validateEnvironment() {
@@ -60,6 +62,8 @@ app.use("/sessions", contactsRouter);
 app.use("/sessions", historyRouter);
 app.use("/sessions", logoutRouter);
 app.use("/sessions", resetRouter);
+app.use("/sessions", eventsRouter);
+app.use("/sessions", campaignRouter);
 
 setEventCallback(async (userId, event, data) => {
   const maxRetries = 3;

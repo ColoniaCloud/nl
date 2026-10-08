@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triangle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#2D2D2D",
+            secondary: "#E85D04",
+            accent: "#FFB703"
+          },
+          fontFamily: {
+            heading: ["Raleway", "sans-serif"],
+            body: ["Nunito", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; font-family: "Nunito", sans-serif; }
+    main { flex: 1; }
+    h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFB703;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #FFB703;
+    }
+
+    .mobile-nav-link {
+      transition: background-color 0.3s ease, color 0.3s ease, padding-left 0.3s ease;
+    }
+    .mobile-nav-link:hover {
+      background-color: rgba(232, 93, 4, 0.15);
+      color: #FFB703;
+      padding-left: 1.5rem;
+    }
+
+    #mobile-menu {
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #fff;
+      margin: 5px 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .social-link {
+      transition: color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #FFB703;
+      transform: translateY(-3px);
+    }
+
+    .footer-link {
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover {
+      color: #FFB703;
+    }
+  </style>
+</head>
+<body class="bg-white text-primary font-body">
+
+  <!-- HEADER -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img
+            src="https://nl360.site/logos/logo-101.svg"
+            alt="Triangle"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-white font-heading font-600 text-sm uppercase tracking-wide">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-white font-heading font-600 text-sm uppercase tracking-wide">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-white font-heading font-600 text-sm uppercase tracking-wide">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="bg-secondary hover:bg-accent text-white hover:text-primary font-heading font-700 text-sm uppercase tracking-wide px-5 py-2 rounded-full transition-all duration-300 ease-in-out">
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center items-center w-10 h-10 focus:outline-none"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="md:hidden">
+        <ul class="flex flex-col pb-4 pt-2 border-t border-white border-opacity-10">
+          <li>
+            <a href="index.html" class="mobile-nav-link block text-white font-heading font-600 text-sm uppercase tracking-wide px-4 py-3">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="mobile-nav-link block text-white font-heading font-600 text-sm uppercase tracking-wide px-4 py-3">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="mobile-nav-link block text-white font-heading font-600 text-sm uppercase tracking-wide px-4 py-3">
+              Nosotros
+            </a>
+          </li>
+          <li class="px-4 pt-2 pb-1">
+            <a href="contacto.html" class="block text-center bg-secondary hover:bg-accent text-white hover:text-primary font-heading font-700 text-sm uppercase tracking-wide px-5 py-3 rounded-full transition-all duration-300 ease-in-out">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main style="font-family: 'Nunito', sans-serif; background-color: #f9f9f9;">
+
+  <!-- Banner superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1600&q=80" alt="Electricista trabajando" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+    <div style="position: absolute; inset: 0; background: rgba(45,45,45,0.78);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 2rem 1rem;">
+      <h1 style="font-family: 'Raleway', sans-serif; color: #FFB703; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; margin-bottom: 0.75rem; letter-spacing: 0.02em; animation: fadeInDown 0.8s ease both;">Nosotros</h1>
+      <p style="color: #f0f0f0; font-size: clamp(1rem, 2.5vw, 1.2rem); max-width: 540px; margin: 0 auto; animation: fadeInUp 0.9s ease both;">Conocé al equipo de Triangle y los valores que nos mueven cada día.</p>
+    </div>
+  </section>
+
+  <!-- Sección About -->
+  <section id="about" style="padding: 5rem 1.5rem; background: #ffffff;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+
+      <div style="animation: fadeIn 1s ease both;">
+        <span style="display: inline-block; background: #FFB703; color: #2D2D2D; font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 2rem; margin-bottom: 1.2rem;">Quiénes somos</span>
+        <h2 style="font-family: 'Raleway', sans-serif; color: #2D2D2D; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; line-height: 1.2; margin-bottom: 1.2rem;">Triangle: electricistas profesionales en Uruguay</h2>
+        <p style="color: #555; font-size: 1.05rem; line-height: 1.8; margin-bottom: 1rem;">Triangle nació con una misión clara: brindar servicios eléctricos de calidad a precios justos, sin vueltas y con resultados que duran. Trabajamos con hogares, comercios y empresas en todo Uruguay, ofreciendo instalaciones, reparaciones y asesoramiento eléctrico con la eficiencia que cada cliente merece.</p>
+        <p style="color: #555; font-size: 1.05rem; line-height: 1.8; margin-bottom: 1rem;">Lo que nos diferencia es simple: combinamos precio competitivo con trabajo prolijo y puntualidad real. No hacemos presupuestos inflados ni dejamos trabajos a medias. Cada proyecto, chico o grande, lo abordamos con la misma dedicación y responsabilidad.</p>
+        <p style="color: #555; font-size: 1.05rem; line-height: 1.8;">Estamos habilitados por UTE y operamos con todos los materiales homologados, garantizando seguridad para vos y tu familia.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;">
+        <div style="border-radius: 1rem; overflow: hidden; box-shadow: 0 6px 24px rgba(45,45,45,0.13); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+          <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80" alt="Trabajo eléctrico" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+        </div>
+        <div style="border-radius: 1rem; overflow: hidden; box-shadow: 0 6px 24px rgba(45,45,45,0.13); transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Panel eléctrico" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+        </div>
+        <div style="border-radius: 1rem; overflow: hidden; box-shadow: 0 6px 24px rgba(45,45,45,0.13); grid-column: 1 / -1; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+          <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=900&q=80" alt="Instalación eléctrica" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Sección Team -->
+  <section id="team" style="padding: 5rem 1.5rem; background: #f4f4f4;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <span style="display: inline-block; background: #FFB703; color: #2D2D2D; font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 2rem; margin-bottom: 1.2rem;">El equipo</span>
+        <h2 style="font-family: 'Raleway', sans-serif; color: #2D2D2D; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 0.8rem;">Las personas detrás de Triangle</h2>
+        <p style="color: #666; font-size: 1.05rem; max-width: 560px; margin: 0 auto; line-height: 1.7;">Un equipo técnico comprometido, con experiencia real y ganas de hacer bien el trabajo.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 2rem;">
+
+        <!-- Miembro 1 -->
+        <div style="background: #ffffff; border-radius: 1.2rem; overflow: hidden; box-shadow: 0 4px 20px rgba(45,45,45,0.10); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 10px 32px rgba(45,45,45,0.18)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(45,45,45,0.10)'">
+          <div style="position: relative; overflow: hidden; height: 260px;">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" alt="Manuel González" style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.4s ease;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, rgba(45,45,45,0.5));"></div>
+          </div>
+          <div style="padding: 1.5rem;">
+            <h3 style="font-family: 'Raleway', sans-serif; color: #2D2D2D; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.3rem;">Manuel González</h3>
+            <span style="display: inline-block; color: #E85D04; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.8rem;">Fundador & Técnico Principal</span>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7;">Electricista habilitado con más de 12 años de experiencia. Especializado en instalaciones residenciales y tableros eléctricos. El motor del equipo Triangle.</p>
+          </div>
+        </div>
+
+        <!-- Miembro 2 -->
+        <div style="background: #ffffff; border-radius: 1.2rem; overflow: hidden; box-shadow: 0 4px 20px rgba(45,45,45,0.10); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 10px 32px rgba(45,45,45,0.18)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(45,45,45,0.10)'">
+          <div style="position: relative; overflow: hidden; height: 260px;">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=80" alt="Rodrigo Acosta" style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.4s ease;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, rgba(45,45,45,0.5));"></div>
+          </div>
+          <div style="padding: 1.5rem;">
+            <h3 style="font-family: 'Raleway', sans-serif; color: #2D2D2D; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.3rem;">Rodrigo Acosta</h3>
+            <span style="display: inline-block; color: #E85D04; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.8rem;">Técnico Electricista</span>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7;">8 años en el rubro eléctrico, especializado en instalaciones comerciales y sistemas de iluminación LED. Puntual, prolijo y con ojo para los detalles.</p>
+          </div>
+        </div>
+
+        <!-- Miembro 3 -->
+        <div style="background: #ffffff; border-radius: 1.2rem; overflow: hidden; box-shadow: 0 4px 20px rgba(45,45,45,0.10); transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 10px 32px rgba(45,45,45,0.18)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(45,45,45,0.10)'">
+          <div style="position: relative; overflow: hidden; height: 260px;">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&q=80" alt="Valentina Ríos" style="width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform 0.4s ease;" />
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, rgba(45,45,45,0.5));"></div>
+          </div>
+          <div style="padding: 1.5rem;">
+            <h3 style="font-family: 'Raleway', sans-serif; color: #2D2D2D; font-size: 1.2rem; font-weight: 800; margin-bottom: 0.3rem;">Valentina Ríos</h3>
+            <span style="display: inline-block; color: #E85D04; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.8rem;">Coordinación & Atención al Cliente</span>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.7;">La persona que te atiende cuando escribís por WhatsApp o al mail. Se encarga de que tu reserva sea rápida, clara y sin complicaciones.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Values -->
+  <section id="values" style="padding: 5rem 1.5rem; background: #2D2D2D;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <span style="display: inline-block; background: #FFB703; color: #2D2D2D; font-family: 'Raleway', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 2rem; margin-bottom: 1.2rem;">Nuestros valores</span>
+        <h2 style="font-family: 'Raleway', sans-serif; color: #ffffff; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 0.8rem;">Lo que nos define como empresa</h2>
+        <p style="color: #ccc; font-size: 1.05rem; max-width: 540px; margin: 0 auto; line-height: 1.7;">Cada trabajo que hacemos refleja los principios que fundaron Triangle desde el primer día.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem;">
+
+        <!-- Valor 1 -->
+        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,183,3,0.25); border-radius: 1.2rem; padding: 2rem; text-align: center; transition: background 0.3s ease, transform 0.3s ease;" onmouseover="this.style.background='rgba(255,183,3,0.10)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.transform='translateY(0)'">
+          <div style="width: 56px; height: 56px; background: #FFB703; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem;">
+            <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+          </div>
+          <h3 style="font-family: 'Raleway', sans-serif; color: #FFB703; font-size: 1.15rem; font-weight: 800; margin-bottom: 0.7rem;">Calidad sin compromiso</h3>
+          <p style="color: #bbb; font-size: 0.97rem; line-height: 1.7;">Usamos materiales homologados y técnicas correctas en cada trabajo. No cortamos caminos que pongan en riesgo tu instalación.</p>
+        </div>
+
+        <!-- Valor 2 -->
+        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,183,3,0.25); border-radius: 1.2rem; padding: 2rem; text-align: center; transition: background 0.3s ease, transform 0.3s ease;" onmouseover="this.style.background='rgba(255,183,3,0.10)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.transform='translateY(0)'">
+          <div style="width: 56px; height: 56px; background: #FFB703; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem;">
+            <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 style="font-family: 'Raleway', sans-serif; color: #FFB703; font-size: 1.15rem; font-weight: 800; margin-bottom: 0.7rem;">Puntualidad real</h3>
+          <p style="color: #bbb; font-size: 0.97rem; line-height: 1.7;">Cuando acordamos un horario, lo cumplimos. Sabemos que tu tiempo vale, y lo respetamos como si fuera el nuestro.</p>
+        </div>
+
+        <!-- Valor 3 -->
+        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,183,3,0.25); border-radius: 1.2rem; padding: 2rem; text-align: center; transition: background 0.3s ease, transform 0.3s ease;" onmouseover="this.style.background='rgba(255,183,3,0.10)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.transform='translateY(0)'">
+          <div style="width: 56px; height: 56px; background: #FFB703; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem;">
+            <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <h3 style="font-family: 'Raleway', sans-serif; color: #FFB703; font-size: 1.15rem; font-weight: 800; margin-bottom: 0.7rem;">Precios transparentes</h3>
+          <p style="color: #bbb; font-size: 0.97rem; line-height: 1.7;">Presupuesto claro antes de empezar. Sin sorpresas al final del trabajo. Precios justos para que cualquiera pueda acceder a un servicio eléctrico profesional.</p>
+        </div>
+
+        <!-- Valor 4 -->
+        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,183,3,0.25); border-radius: 1.2rem; padding: 2rem; text-align: center; transition: background 0.3s ease, transform 0.3s ease;" onmouseover="this.style.background='rgba(255,183,3,0.10)';this.style.transform='translateY(-4px)'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.transform='translateY(0)'">
+          <div style="width: 56px; height: 56px; background: #FFB703; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem;">
+            <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 style="font-family: 'Raleway', sans-serif; color: #FFB703; font-size: 1.15rem; font-weight: 800; margin-bottom: 0.7rem;">Para todo el mundo</h3>
+          <p style="color: #bbb; font-size: 0.97rem; line-height: 1.7;">Desde un cambio de tomacorriente hasta una instalación completa. Atendemos particulares, comercios y empresas con el mismo profesionalismo.</p>
+        </div>
+
+      </div>
+
+      <!-- CTA final -->
+      <div style="margin-top: 4rem; text-align: center; background: rgba(255,183,3,0.08); border: 1px solid rgba(255,183,3,0.3); border-radius: 1.5rem; padding: 3rem 2rem;">
+        <h3 style="font-family: 'Raleway', sans-serif; color: #ffffff; font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 800; margin-bottom: 0.8rem;">¿Listo para reservar tu servicio eléctrico?</h3>
+        <p style="color: #ccc; font-size: 1rem; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.7;">Contactanos hoy y coordinamos una visita. Sin compromiso, con presupuesto claro y al mejor precio del mercado.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+          <a href="https://wa.me/59896969696" style="display: inline-flex; align-items: center; gap: 0.6rem; background: #FFB703; color: #2D2D2D; font-family: 'Raleway', sans-serif; font-weight: 800; font-size: 1rem; padding: 0.9rem 2rem; border-radius: 0.75rem; text-decoration: none; transition: background 0.2s ease, transform 0.2s ease;" onmouseover="this.style.background='#e6a502';this.style.transform='scale(1.04)'" onmouseout="this.style.background='#FFB703';this.style.transform='scale(1)'">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Reservar por WhatsApp
+          </a>
+          <a href="/contacto" style="display: inline-flex; align-items: center; gap: 0.6rem; background: transparent; color: #FFB703; border: 2px solid #FFB703; font-family: 'Raleway', sans-serif; font-weight: 800; font-size: 1rem; padding: 0.9rem 2rem; border-radius: 0.75rem; text-decoration: none; transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;" onmouseover="this.style.background='#FFB703';this.style.color='#2D2D2D';this.style.transform='scale(1.04)'" onmouseout="this.style.background='transparent';this.style.color='#FFB703';this.style.transform='scale(1)'">
+            Ir al formulario de contacto
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</main>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+
+        <!-- Columna 1: Marca -->
+        <div class="flex flex-col items-start gap-4">
+          <a href="index.html">
+            <img
+              src="https://nl360.site/logos/logo-101.svg"
+              alt="Triangle"
+              style="height:36px;width:auto;object-fit:contain;"
+            />
+          </a>
+          <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+            Soluciones creativas y profesionales para hacer crecer tu negocio.
+          </p>
+        </div>
+
+        <!-- Columna 2: Navegación -->
+        <div>
+          <h4 class="font-heading font-700 text-accent uppercase text-xs tracking-widest mb-5">
+            Navegación
+          </h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="index.html" class="footer-link text-gray-300 text-sm">Inicio</a>
+            </li>
+            <li>
+              <a href="servicios.html" class="footer-link text-gray-300 text-sm">Servicios</a>
+            </li>
+            <li>
+              <a href="nosotros.html" class="footer-link text-gray-300 text-sm">Nosotros</a>
+            </li>
+            <li>
+              <a href="contacto.html" class="footer-link text-gray-300 text-sm">Contacto</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: Contacto y redes -->
+        <div>
+          <h4 class="font-heading font-700 text-accent uppercase text-xs tracking-widest mb-5">
+            Contacto
+          </h4>
+          <ul class="flex flex-col gap-3 mb-6">
+            <li>
+              <a href="mailto:manuel@tyriangle.com" class="footer-link text-gray-300 text-sm break-all">
+                manuel@tyriangle.com
+              </a>
+            </li>
+            <li>
+              <a href="https://wa.me/59896969696" target="_blank" rel="noopener noreferrer" class="footer-link text-gray-300 text-sm">
+                +598 96 969 696
+              </a>
+            </li>
+          </ul>
+
+          <h4 class="font-heading font-700 text-accent uppercase text-xs tracking-widest mb-4">
+            Redes Sociales
+          </h4>
+          <div class="flex items-center gap-5">
+            <!-- WhatsApp -->
+            <a
+              href="https://wa.me/59896969696"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-300"
+              aria-label="WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </a>
+
+            <!-- Facebook -->
+            <a
+              href="https://facebook.com/triangle"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-300"
+              aria-label="Facebook"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a
+              href="https://instagram.com/triangle"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-300"
+              aria-label="Instagram"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a
+              href="mailto:manuel@tyriangle.com"
+              class="social-link text-gray-300"
+              aria-label="Email"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="border-t border-white border-opacity-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-gray-500 text-xs text-center sm:text-left">
+          &copy; 2026 Triangle. Todos los derechos reservados.
+        </p>
+        <p class="text-gray-600 text-xs">
+          Diseñado con pasión
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const hamburgerBtn = document.getElementById("hamburger-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    hamburgerBtn.addEventListener("click", function () {
+      const isOpen = mobileMenu.classList.contains("open");
+
+      if (isOpen) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("active");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      } else {
+        mobileMenu.classList.add("open");
+        hamburgerBtn.classList.add("active");
+        hamburgerBtn.setAttribute("aria-expanded", "true");
+      }
+    });
+
+    // Close mobile menu when a link is clicked
+    const mobileLinks = mobileMenu.querySelectorAll("a");
+    mobileLinks.forEach(function (link) {
+      link.addEventListener("click", function () {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("active");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    // Close mobile menu on resize to desktop
+    window.addEventListener("resize", function () {
+      if (window.innerWidth >= 768) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("active");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+  </script>
+
+</body>
+</html>

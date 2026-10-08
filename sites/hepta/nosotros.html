@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hepta</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#37474F',
+            secondary: '#FF6F00',
+            accent:    '#FAFAFA',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Sticky-footer layout ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: #FAFAFA;
+      color: #37474F;
+    }
+    main { flex: 1; }
+
+    /* ── Nav hover transitions ── */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 2px;
+      background-color: #FF6F00;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover { color: #FF6F00; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Mobile menu transition ── */
+    #mobile-menu {
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* ── Hamburger lines ── */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #FAFAFA;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger-btn.open .line-1 { transform: translateY(8px) rotate(45deg); }
+    #hamburger-btn.open .line-2 { opacity: 0; transform: scaleX(0); }
+    #hamburger-btn.open .line-3 { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── Footer social links ── */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover { color: #FF6F00; }
+
+    /* ── Headings ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Space Grotesk", sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════
+     HEADER / NAVIGATION
+════════════════════════════════════ -->
+<header class="bg-primary shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="/index.html" class="flex-shrink-0 flex items-center" aria-label="Hepta — Inicio">
+        <img
+          src="/logo.png"
+          alt="Hepta"
+          style="height:40px; width:auto; object-fit:contain;"
+        />
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+        <a href="/index.html"     class="nav-link text-accent font-medium text-sm tracking-wide">Inicio</a>
+        <a href="/servicios.html" class="nav-link text-accent font-medium text-sm tracking-wide">Servicios</a>
+        <a href="/nosotros.html"  class="nav-link text-accent font-medium text-sm tracking-wide">Nosotros</a>
+        <a href="/contacto.html"  class="nav-link bg-secondary text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-25 tracking-wide" style="--tw-bg-opacity:1;">Contacto</a>
+      </nav>
+
+      <!-- Hamburger button (mobile) -->
+      <button
+        id="hamburger-btn"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="md:hidden flex flex-col justify-center items-center gap-[6px] p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+      >
+        <span class="hamburger-line line-1"></span>
+        <span class="hamburger-line line-2"></span>
+        <span class="hamburger-line line-3"></span>
+      </button>
+
+    </div><!-- /flex row -->
+  </div><!-- /container -->
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+    <nav class="flex flex-col gap-1 px-4 pb-4 pt-2 bg-primary border-t border-white border-opacity-10">
+      <a href="/index.html"     class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Inicio</a>
+      <a href="/servicios.html" class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Servicios</a>
+      <a href="/nosotros.html"  class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Nosotros</a>
+      <a href="/contacto.html"  class="nav-link text-accent font-medium text-base py-2">Contacto</a>
+    </nav>
+  </div>
+
+</header>
+
+<main style="font-family: 'DM Sans', sans-serif; background-color: #FAFAFA; color: #37474F;">
+
+  <!-- Banner superior -->
+  <section style="position: relative; height: 420px; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1444653614773-995cb1ef9efa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Helicoptero en mantenimiento"
+      style="width: 100%; height: 100%; object-fit: cover; object-position: center;"
+    />
+    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(55,71,79,0.72) 0%, rgba(55,71,79,0.55) 100%);"></div>
+    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem;">
+      <p style="font-family: 'Space Grotesk', sans-serif; color: #FF6F00; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; animation: fadeInDown 0.7s ease both;">Hepta · Uruguay</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; color: #FAFAFA; font-size: clamp(2.2rem, 6vw, 3.8rem); font-weight: 700; line-height: 1.1; animation: fadeInDown 0.9s ease both;">Quiénes Somos</h1>
+      <p style="color: rgba(250,250,250,0.82); font-size: clamp(1rem, 2.5vw, 1.2rem); margin-top: 1rem; max-width: 560px; animation: fadeInDown 1.1s ease both;">El equipo de referencia en reparación de helicópteros a domicilio en Uruguay.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN: About -->
+  <section id="about" style="padding: 5rem 1.5rem; background: #FAFAFA;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+      <div style="animation: fadeIn 1s ease both;">
+        <p style="font-family: 'Space Grotesk', sans-serif; color: #FF6F00; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem;">Nuestra historia</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; line-height: 1.2; margin-bottom: 1.5rem; color: #37474F;">Reparamos helicópteros donde estén</h2>
+        <p style="font-size: 1.05rem; line-height: 1.8; color: #546E7A; margin-bottom: 1.25rem;">Hepta nació con una premisa simple pero poderosa: <strong style="color: #37474F;">los helicópteros no siempre pueden llegar al taller, pero nuestros técnicos sí pueden llegar hasta ellos.</strong> Somos el único servicio en Uruguay que ofrece reparación y mantenimiento de helicópteros directamente en el lugar donde se encuentra la aeronave.</p>
+        <p style="font-size: 1.05rem; line-height: 1.8; color: #546E7A; margin-bottom: 1.25rem;">Operamos desde Montevideo y atendemos todo el territorio uruguayo. Nuestro equipo de técnicos certificados cuenta con años de experiencia en aeronaves de rotores, y trabaja con herramientas de diagnóstico de última generación para garantizar reparaciones precisas y seguras.</p>
+        <p style="font-size: 1.05rem; line-height: 1.8; color: #546E7A;">Lo que nos diferencia no es solo ir hasta vos: es la combinación de rapidez, rigor técnico y trato directo que hacen de cada intervención una experiencia sin complicaciones.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <img
+          src="https://images.unsplash.com/photo-1659353590903-972270737d60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Técnico trabajando en helicóptero"
+          style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; transition: transform 0.4s ease; cursor: default;"
+          onmouseover="this.style.transform='scale(1.03)'"
+          onmouseout="this.style.transform='scale(1)'"
+        />
+        <img
+          src="https://images.unsplash.com/photo-1659353589316-d4b2ed41ad2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Helicóptero en campo"
+          style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; margin-top: 1.5rem; transition: transform 0.4s ease; cursor: default;"
+          onmouseover="this.style.transform='scale(1.03)'"
+          onmouseout="this.style.transform='scale(1)'"
+        />
+        <img
+          src="https://images.unsplash.com/photo-1659353588970-9d6540ebe586?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Herramientas de mantenimiento aeronáutico"
+          style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; transition: transform 0.4s ease; cursor: default;"
+          onmouseover="this.style.transform='scale(1.03)'"
+          onmouseout="this.style.transform='scale(1)'"
+        />
+        <img
+          src="https://images.unsplash.com/photo-1625148230889-8195e85aae6b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Helicóptero en vuelo"
+          style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; margin-top: 1.5rem; transition: transform 0.4s ease; cursor: default;"
+          onmouseover="this.style.transform='scale(1.03)'"
+          onmouseout="this.style.transform='scale(1)'"
+        />
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="max-width: 1100px; margin: 4rem auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; text-align: center;">
+      <div style="background: #37474F; border-radius: 16px; padding: 2rem 1rem;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; color: #FF6F00; margin: 0;">+200</p>
+        <p style="color: #FAFAFA; font-size: 0.95rem; margin-top: 0.5rem;">Reparaciones realizadas</p>
+      </div>
+      <div style="background: #37474F; border-radius: 16px; padding: 2rem 1rem;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; color: #FF6F00; margin: 0;">100%</p>
+        <p style="color: #FAFAFA; font-size: 0.95rem; margin-top: 0.5rem;">Servicio a domicilio</p>
+      </div>
+      <div style="background: #37474F; border-radius: 16px; padding: 2rem 1rem;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; color: #FF6F00; margin: 0;">19</p>
+        <p style="color: #FAFAFA; font-size: 0.95rem; margin-top: 0.5rem;">Departamentos atendidos</p>
+      </div>
+      <div style="background: #37474F; border-radius: 16px; padding: 2rem 1rem;">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.8rem; font-weight: 700; color: #FF6F00; margin: 0;">24h</p>
+        <p style="color: #FAFAFA; font-size: 0.95rem; margin-top: 0.5rem;">Respuesta de urgencia</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN: Team -->
+  <section id="team" style="padding: 5rem 1.5rem; background: #ECEFF1;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <p style="font-family: 'Space Grotesk', sans-serif; color: #FF6F00; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem;">Las personas detrás de Hepta</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; color: #37474F; margin-bottom: 1rem;">Nuestro equipo</h2>
+        <p style="color: #546E7A; font-size: 1.05rem; max-width: 580px; margin: 0 auto; line-height: 1.7;">Técnicos certificados, apasionados por la aviación y comprometidos con que cada helicóptero vuelva a volar en las mejores condiciones.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+
+        <!-- Miembro 1 -->
+        <div style="background: #FAFAFA; border-radius: 16px; overflow: hidden; transition: transform 0.35s ease, box-shadow 0.35s ease;"
+          onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 40px rgba(55,71,79,0.15)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1684696269227-68e26e5a8e1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Técnico jefe Hepta"
+            style="width: 100%; height: 260px; object-fit: cover; object-position: top;"
+          />
+          <div style="padding: 1.5rem;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; color: #37474F; margin-bottom: 0.25rem;">Andrés Medina</h3>
+            <p style="color: #FF6F00; font-size: 0.88rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.9rem;">Técnico Jefe · Fundador</p>
+            <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.7;">Más de 15 años de experiencia en mantenimiento de aeronaves de rotor. Certificado por DINACIA y formado en Brasil y Argentina. Fue quien ideó el modelo de servicio a domicilio que hoy define a Hepta.</p>
+          </div>
+        </div>
+
+        <!-- Miembro 2 -->
+        <div style="background: #FAFAFA; border-radius: 16px; overflow: hidden; transition: transform 0.35s ease, box-shadow 0.35s ease;"
+          onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 40px rgba(55,71,79,0.15)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1737332439478-4fe9721a2f3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Técnico de campo Hepta"
+            style="width: 100%; height: 260px; object-fit: cover; object-position: top;"
+          />
+          <div style="padding: 1.5rem;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; color: #37474F; margin-bottom: 0.25rem;">Sebastián Torres</h3>
+            <p style="color: #FF6F00; font-size: 0.88rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.9rem;">Técnico de Campo</p>
+            <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.7;">Especializado en sistemas de transmisión y rotor de cola. Atiende intervenciones en el interior del país y es el responsable de los operativos de emergencia en menos de 24 horas.</p>
+          </div>
+        </div>
+
+        <!-- Miembro 3 -->
+        <div style="background: #FAFAFA; border-radius: 16px; overflow: hidden; transition: transform 0.35s ease, box-shadow 0.35s ease;"
+          onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 40px rgba(55,71,79,0.15)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1758519288178-b381ba43b9e1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Técnico de aviónica Hepta"
+            style="width: 100%; height: 260px; object-fit: cover; object-position: top;"
+          />
+          <div style="padding: 1.5rem;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; color: #37474F; margin-bottom: 0.25rem;">Carolina Vázquez</h3>
+            <p style="color: #FF6F00; font-size: 0.88rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.9rem;">Especialista en Aviónica</p>
+            <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.7;">Ingeniera electrónica con especialización en sistemas de navegación y aviónica aeronáutica. Se encarga de los diagnósticos electrónicos y de la actualización de equipos de abordo.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN: Values -->
+  <section id="values" style="padding: 5rem 1.5rem; background: #FAFAFA;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <p style="font-family: 'Space Grotesk', sans-serif; color: #FF6F00; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem;">Lo que nos guía</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; color: #37474F; margin-bottom: 1rem;">Nuestros valores</h2>
+        <p style="color: #546E7A; font-size: 1.05rem; max-width: 560px; margin: 0 auto; line-height: 1.7;">Cada decisión que tomamos en Hepta está respaldada por un conjunto de principios que no negociamos.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem;">
+
+        <div style="border-left: 4px solid #FF6F00; background: #F5F7F8; border-radius: 0 12px 12px 0; padding: 2rem 1.5rem; transition: background 0.3s ease;"
+          onmouseover="this.style.background='#ECEFF1'"
+          onmouseout="this.style.background='#F5F7F8'"
+        >
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #37474F; margin-bottom: 0.75rem;">Seguridad ante todo</h3>
+          <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.75;">En aviación no hay lugar para los atajos. Cada reparación sigue protocolos certificados y es documentada exhaustivamente antes de que la aeronave vuelva a operar.</p>
+        </div>
+
+        <div style="border-left: 4px solid #FF6F00; background: #F5F7F8; border-radius: 0 12px 12px 0; padding: 2rem 1.5rem; transition: background 0.3s ease;"
+          onmouseover="this.style.background='#ECEFF1'"
+          onmouseout="this.style.background='#F5F7F8'"
+        >
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #37474F; margin-bottom: 0.75rem;">Comodidad para el cliente</h3>
+          <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.75;">Ir hasta donde está la aeronave no es un extra: es nuestra propuesta central. Eliminamos la logística complicada y los traslados de riesgo para que vos te preocupes solo por volar.</p>
+        </div>
+
+        <div style="border-left: 4px solid #FF6F00; background: #F5F7F8; border-radius: 0 12px 12px 0; padding: 2rem 1.5rem; transition: background 0.3s ease;"
+          onmouseover="this.style.background='#ECEFF1'"
+          onmouseout="this.style.background='#F5F7F8'"
+        >
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #37474F; margin-bottom: 0.75rem;">Transparencia total</h3>
+          <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.75;">Diagnóstico claro, presupuesto detallado y sin sorpresas al final. El cliente sabe exactamente qué se hizo, con qué piezas y por qué.</p>
+        </div>
+
+        <div style="border-left: 4px solid #FF6F00; background: #F5F7F8; border-radius: 0 12px 12px 0; padding: 2rem 1.5rem; transition: background 0.3s ease;"
+          onmouseover="this.style.background='#ECEFF1'"
+          onmouseout="this.style.background='#F5F7F8'"
+        >
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #37474F; margin-bottom: 0.75rem;">Respuesta rápida</h3>
+          <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.75;">Sabemos que una aeronave en tierra significa tiempo y dinero perdidos. Por eso garantizamos tiempos de respuesta competitivos y atención de urgencia para situaciones críticas.</p>
+        </div>
+
+        <div style="border-left: 4px solid #FF6F00; background: #F5F7F8; border-radius: 0 12px 12px 0; padding: 2rem 1.5rem; transition: background 0.3s ease;"
+          onmouseover="this.style.background='#ECEFF1'"
+          onmouseout="this.style.background='#F5F7F8'"
+        >
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #37474F; margin-bottom: 0.75rem;">Compromiso profesional</h3>
+          <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.75;">Nuestro equipo se actualiza de manera constante. Las aeronaves evolucionan y Hepta también, para garantizar siempre el mejor estándar técnico disponible en Uruguay.</p>
+        </div>
+
+        <div style="border-left: 4px solid #FF6F00; background: #F5F7F8; border-radius: 0 12px 12px 0; padding: 2rem 1.5rem; transition: background 0.3s ease;"
+          onmouseover="this.style.background='#ECEFF1'"
+          onmouseout="this.style.background='#F5F7F8'"
+        >
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #37474F; margin-bottom: 0.75rem;">Trato directo</h3>
+          <p style="color: #546E7A; font-size: 0.97rem; line-height: 1.75;">Hablás directamente con quien va a trabajar en tu helicóptero. Sin intermediarios, sin call centers, sin formularios eternos. Una llamada y lo coordinamos.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section style="padding: 5rem 1.5rem; background: #37474F; text-align: center;">
+    <div style="max-width: 680px; margin: 0 auto;">
+      <p style="font-family: 'Space Grotesk', sans-serif; color: #FF6F00; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem;">Estamos listos para ayudarte</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; color: #FAFAFA; font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 700; line-height: 1.2; margin-bottom: 1.25rem;">¿Tu helicóptero necesita atención?</h2>
+      <p style="color: rgba(250,250,250,0.78); font-size: 1.05rem; line-height: 1.75; margin-bottom: 2.5rem;">Llamanos y en minutos coordinamos una visita. Nos desplazamos hasta donde esté la aeronave, en cualquier punto de Uruguay.</p>
+      <a
+        href="tel:+59896969696"
+        style="display: inline-block; background: #FF6F00; color: #FAFAFA; font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; padding: 1rem 2.5rem; border-radius: 8px; text-decoration: none; letter-spacing: 0.03em; transition: background 0.3s ease, transform 0.3s ease; box-shadow: 0 4px 20px rgba(255,111,0,0.35);"
+        onmouseover="this.style.background='#E65100'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.background='#FF6F00'; this.style.transform='translateY(0)'"
+      >Llamar ahora</a>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+</main>
+
+<!-- ════════════════════════════════════
+     FOOTER
+════════════════════════════════════ -->
+<footer class="bg-primary text-accent">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <!-- Brand -->
+      <div class="flex flex-col gap-3">
+        <a href="/index.html" aria-label="Hepta — Inicio">
+          <img
+            src="/logo.png"
+            alt="Hepta"
+            style="height:36px; width:auto; object-fit:contain; filter:brightness(0) invert(1);"
+          />
+        </a>
+        <p class="text-sm text-accent text-opacity-70 leading-relaxed max-w-xs" style="color:rgba(250,250,250,0.65);">
+          Soluciones que elevan tu negocio.
+        </p>
+      </div>
+
+      <!-- Navigation links -->
+      <div class="flex flex-col gap-3">
+        <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-secondary mb-1">Navegación</h3>
+        <a href="/index.html"     class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Inicio</a>
+        <a href="/servicios.html" class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Servicios</a>
+        <a href="/nosotros.html"  class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Nosotros</a>
+        <a href="/contacto.html"  class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Contacto</a>
+      </div>
+
+      <!-- Contact & Social -->
+      <div class="flex flex-col gap-3">
+        <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-secondary mb-1">Contacto</h3>
+
+        <!-- Email -->
+        <a
+          href="mailto:hepta@copteros.uy"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          hepta@copteros.uy
+        </a>
+
+        <!-- WhatsApp -->
+        <a
+          href="https://wa.me/59896969696"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          WhatsApp: +598 96 969 696
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://instagram.com/hepta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          Instagram: @hepta
+        </a>
+
+        <!-- Facebook -->
+        <a
+          href="https://facebook.com/hepta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          Facebook: facebook/hepta
+        </a>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Bottom bar -->
+    <div class="mt-10 pt-6 border-t border-white border-opacity-10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs" style="color:rgba(250,250,250,0.45);">
+      <span>&copy; 2026 Hepta. Todos los derechos reservados.</span>
+      <a href="mailto:hepta@copteros.uy" class="footer-link" style="color:rgba(250,250,250,0.45);">hepta@copteros.uy</a>
+    </div>
+
+  </div><!-- /container -->
+</footer>
+
+<!-- ════════════════════════════════════
+     JS — Mobile menu toggle
+════════════════════════════════════ -->
+<script>
+  (function () {
+    const btn  = document.getElementById('hamburger-btn');
+    const menu = document.getElementById('mobile-menu');
+
+    btn.addEventListener('click', function () {
+      const isOpen = menu.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+    });
+
+    // Close menu when a link is tapped
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+      });
+    });
+
+    // Close menu on outside click
+    document.addEventListener('click', function (e) {
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

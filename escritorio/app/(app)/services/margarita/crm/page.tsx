@@ -5,18 +5,27 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { ContactsTable, Contact } from "@/components/margarita/crm/ContactsTable";
 import { ContactSheet } from "@/components/margarita/crm/ContactSheet";
-import { ScrapePanel } from "@/components/margarita/crm/ScrapePanel";
+import { CsvImportPanel } from "@/components/margarita/crm/CsvImportPanel";
 import type { ContactData } from "@/components/margarita/crm/ContactForm";
 import {
   Users, Search, Plus, Sparkles, RefreshCw,
   CheckCircle2, CalendarDays, Bot, X,
-  Wrench, ChevronRight, PanelRightClose, PanelRightOpen,
-  MessageCircle,
+  Wrench, ChevronRight, PanelRightClose,
+  MessageCircle, FileUp, ChevronDown, History, Send, Settings, Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AGENT_META } from "@/lib/agent-colors";
 import { marked } from "marked";
 import AgentInput from "@/components/chat/AgentInput";
 import { WaConnectPanel } from "@/components/whatsapp/WaConnectPanel";
+import { WaCampaignsList } from "@/components/margarita/crm/WaCampaignsList";
+import { WaCampaignBuilder } from "@/components/margarita/crm/WaCampaignBuilder";
+import { EmailConnectPanel } from "@/components/email/EmailConnectPanel";
+import { EmailCampaignsList } from "@/components/margarita/crm/EmailCampaignsList";
+import { EmailCampaignBuilder } from "@/components/margarita/crm/EmailCampaignBuilder";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 export const dynamic = "force-dynamic";
 
@@ -57,12 +66,16 @@ export default function CRMPage() {
   const [loading, setLoading] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<(ContactData & { id?: number }) | null>(null);
-  const [scrapeOpen, setScrapeOpen] = useState(false);
+  const [csvOpen, setCsvOpen] = useState(false);
   const [stats, setStats] = useState({ total: 0, optin: 0, thisMonth: 0 });
 
-  const [activeTab, setActiveTab] = useState<"contacts" | "whatsapp">("contacts");
+  const [activeTab, setActiveTab] = useState<
+    "contacts" | "whatsapp" | "wa-campaigns" | "wa-new-campaign" | "email-config" | "email-campaigns" | "email-new-campaign"
+  >("contacts");
   const [waConnected, setWaConnected] = useState(false);
   const [activeWaJids, setActiveWaJids] = useState<Set<string>>(new Set());
+  const [campaignsRefreshKey, setCampaignsRefreshKey] = useState(0);
+  const [emailCampaignsRefreshKey, setEmailCampaignsRefreshKey] = useState(0);
 
   const [agentOpen, setAgentOpen] = useState(false);
   const [agentMessages, setAgentMessages] = useState<AgentMessage[]>([]);
@@ -161,17 +174,6 @@ export default function CRMPage() {
     await fetchStats();
   }
 
-  async function handleImport(scraped: any[]) {
-    const res = await fetch("/api/margarita/crm/import", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contacts: scraped }),
-    });
-    if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Error al importar"); }
-    await fetchContacts(1, search);
-    setPage(1);
-    await fetchStats();
-  }
-
   function addAgentMsg(role: "user" | "assistant", content: string, extra?: Partial<AgentMessage>): string {
     const id = `am-${Date.now()}-${Math.random()}`;
     setAgentMessages((prev) => [...prev, { id, role, content, ...extra }]);
@@ -250,8 +252,8 @@ export default function CRMPage() {
         <div className="flex-shrink-0 px-5 py-4 border-b border-border">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20">
-                <Users className="size-4 text-emerald-400" />
+              <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg", AGENT_META.margarita.bgClass)}>
+                <AGENT_META.margarita.icon className={cn("size-4", AGENT_META.margarita.textClass)} />
               </div>
               <div>
                 <h1 className="text-base font-semibold">CRM</h1>
@@ -260,36 +262,18 @@ export default function CRMPage() {
             </div>
             <div className="flex items-center gap-2">
               {activeTab === "contacts" && (
-                <>
-                  <button
-                    onClick={() => setScrapeOpen(true)}
-                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-white/[0.05] text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Sparkles className="size-3.5 text-emerald-400" /> Buscador IA
-                  </button>
-                  <button
-                    onClick={() => { setEditingContact(null); setSheetOpen(true); }}
-                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
-                  >
-                    <Plus className="size-3.5" /> Nuevo lead
-                  </button>
-                  <button
-                    onClick={() => setAgentOpen(!agentOpen)}
-                    className={cn(
-                      "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors",
-                      agentOpen ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400" : "border-border text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
-                    )}
-                  >
-                    <Bot className="size-3.5" />
-                    {agentOpen ? <PanelRightClose className="size-3.5" /> : <PanelRightOpen className="size-3.5" />}
-                  </button>
-                </>
+                <button
+                  onClick={() => setCsvOpen(true)}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-white/[0.05] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <FileUp className="size-3.5 text-emerald-400" /> Importar CSV
+                </button>
               )}
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 mt-3">
+          <div className="flex gap-1 mt-3 p-1 rounded-xl bg-gradient-to-b from-white/[0.06] to-black/[0.08] border border-border shadow-[var(--btn-shadow)] w-fit">
             <button
               onClick={() => setActiveTab("contacts")}
               className={cn(
@@ -301,20 +285,79 @@ export default function CRMPage() {
             >
               <Users className="size-3.5" /> Contactos
             </button>
-            <button
-              onClick={() => setActiveTab("whatsapp")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
-                activeTab === "whatsapp"
-                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                  : "text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
-              )}
-            >
-              <MessageCircle className="size-3.5" /> WhatsApp
-              {waConnected && (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
-              )}
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                    ["whatsapp", "wa-campaigns", "wa-new-campaign"].includes(activeTab)
+                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+                  )}
+                >
+                  <MessageCircle className="size-3.5" /> WhatsApp
+                  {waConnected && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
+                  )}
+                  <ChevronDown className="size-3 ml-0.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setActiveTab("wa-campaigns")}>
+                  <History className="size-3.5" /> Campañas
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("wa-new-campaign")}>
+                  <Send className="size-3.5" /> Nueva campaña
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("whatsapp")}>
+                  <Settings className="size-3.5" /> Configuración
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                    ["email-config", "email-campaigns", "email-new-campaign"].includes(activeTab)
+                      ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/[0.05]"
+                  )}
+                >
+                  <Mail className="size-3.5" /> Emails
+                  <ChevronDown className="size-3 ml-0.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setActiveTab("email-campaigns")}>
+                  <History className="size-3.5" /> Campañas
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("email-new-campaign")}>
+                  <Send className="size-3.5" /> Nueva campaña
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab("email-config")}>
+                  <Settings className="size-3.5" /> Configuración
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {activeTab === "contacts" && (
+              <>
+                <span className="w-px my-1 bg-border" />
+                <button
+                  onClick={() => router.push("/services/margarita/crm/scrape")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-white/[0.05] transition-colors"
+                >
+                  <Sparkles className="size-3.5 text-emerald-400" /> Buscador IA
+                </button>
+                <button
+                  onClick={() => { setEditingContact(null); setSheetOpen(true); }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-600 hover:bg-emerald-500 text-white transition-colors"
+                >
+                  <Plus className="size-3.5" /> Nuevo lead
+                </button>
+              </>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-3 mt-4">
@@ -362,6 +405,26 @@ export default function CRMPage() {
         <div className="flex-1 overflow-y-auto">
           {activeTab === "whatsapp" ? (
             <WaConnectPanel />
+          ) : activeTab === "wa-campaigns" ? (
+            <WaCampaignsList refreshKey={campaignsRefreshKey} />
+          ) : activeTab === "wa-new-campaign" ? (
+            <WaCampaignBuilder
+              onLaunched={() => {
+                setCampaignsRefreshKey((k) => k + 1);
+                setActiveTab("wa-campaigns");
+              }}
+            />
+          ) : activeTab === "email-config" ? (
+            <EmailConnectPanel />
+          ) : activeTab === "email-campaigns" ? (
+            <EmailCampaignsList refreshKey={emailCampaignsRefreshKey} />
+          ) : activeTab === "email-new-campaign" ? (
+            <EmailCampaignBuilder
+              onLaunched={() => {
+                setEmailCampaignsRefreshKey((k) => k + 1);
+                setActiveTab("email-campaigns");
+              }}
+            />
           ) : loading && contacts.length === 0 ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground text-sm gap-2">
               <div className="flex gap-1">{[0, 150, 300].map((d) => <span key={d} className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse" style={{ animationDelay: `${d}ms` }} />)}</div>
@@ -479,7 +542,23 @@ export default function CRMPage() {
       )}
 
       <ContactSheet open={sheetOpen} onClose={() => setSheetOpen(false)} contact={editingContact} onSave={handleSave} />
-      <ScrapePanel open={scrapeOpen} onClose={() => setScrapeOpen(false)} onImport={handleImport} />
+      <CsvImportPanel
+        open={csvOpen}
+        onClose={() => setCsvOpen(false)}
+        onComplete={async () => { await fetchContacts(1, search); setPage(1); await fetchStats(); }}
+      />
+
+      {/* Asistente: botón flotante fijo */}
+      <button
+        onClick={() => setAgentOpen(!agentOpen)}
+        className={cn(
+          "fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-[var(--btn-shadow-hover)] transition-all hover:-translate-y-0.5 bg-violet-600 hover:bg-violet-500 text-white",
+          !agentOpen && "animate-pulse-slow"
+        )}
+        title={agentOpen ? "Cerrar asistente" : "Abrir asistente"}
+      >
+        {agentOpen ? <PanelRightClose className="size-5" /> : <Bot className="size-5" />}
+      </button>
     </div>
   );
 }

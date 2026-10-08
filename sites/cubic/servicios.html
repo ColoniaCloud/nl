@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cubic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1A73E8",
+            secondary: "#2D2D2D",
+            accent: "#00BCD4"
+          },
+          fontFamily: {
+            heading: ["Outfit", "sans-serif"],
+            body: ["DM Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: "DM Sans", sans-serif; }
+    h1, h2, h3, h4, h5, h6 { font-family: "Outfit", sans-serif; }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0%;
+      height: 2px;
+      background-color: #00BCD4;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #00BCD4;
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    .hamburger.open .hamburger-line:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.open .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open .hamburger-line:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease, padding-left 0.2s ease;
+    }
+    .mobile-nav-link:hover {
+      color: #00BCD4;
+      background-color: rgba(255,255,255,0.06);
+      padding-left: 1.5rem;
+    }
+
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .social-link:hover {
+      color: #00BCD4;
+      transform: translateY(-2px);
+    }
+
+    footer a {
+      transition: color 0.25s ease;
+    }
+    footer a:hover {
+      color: #00BCD4;
+    }
+  </style>
+</head>
+<body class="bg-white text-secondary font-body antialiased flex flex-col min-h-screen">
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="bg-secondary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center shrink-0" aria-label="Cubic - Inicio">
+          <img
+            src="https://nl360.site/logos/logo-99.svg"
+            alt="Cubic"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html"    class="nav-link text-white text-sm font-medium tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white text-sm font-medium tracking-wide">Servicios</a>
+          <a href="nosotros.html"  class="nav-link text-white text-sm font-medium tracking-wide">Nosotros</a>
+          <a href="contacto.html"  class="nav-link text-white text-sm font-medium tracking-wide">Contacto</a>
+        </nav>
+
+        <!-- CTA Button Desktop -->
+        <div class="hidden md:flex items-center">
+          <a
+            href="contacto.html"
+            class="bg-primary hover:bg-accent text-white text-sm font-semibold px-5 py-2 rounded-full transition-colors duration-300 shadow-sm"
+          >
+            Hablemos
+          </a>
+        </div>
+
+        <!-- Hamburger Button Mobile -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 flex flex-col gap-1 border-t border-white/10 pt-3">
+        <a href="index.html"     class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Inicio</a>
+        <a href="servicios.html" class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Servicios</a>
+        <a href="nosotros.html"  class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Nosotros</a>
+        <a href="contacto.html"  class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Contacto</a>
+        <div class="pt-2 pb-1 px-4">
+          <a
+            href="contacto.html"
+            class="block text-center bg-primary hover:bg-accent text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors duration-300"
+          >
+            Hablemos
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== CONTENT ===================== -->
+  <main class="font-['DM_Sans'] text-gray-700">
+
+  <!-- Banner superior -->
+  <section class="relative h-64 md:h-80 flex items-center justify-center overflow-hidden">
+    <img
+      src="https://images.unsplash.com/photo-1614792403436-ba5b3e747604?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Servicios de reparación Cubic"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-[#2D2D2D]/70"></div>
+    <div class="relative z-10 text-center px-4">
+      <p class="text-[#00BCD4] font-['Outfit'] text-sm uppercase tracking-widest mb-2">Lo que hacemos</p>
+      <h1 class="font-['Outfit'] text-4xl md:text-5xl font-bold text-white leading-tight">Nuestros Servicios</h1>
+      <p class="text-gray-300 mt-3 text-base md:text-lg max-w-xl mx-auto">Soluciones profesionales de reparación para tu computadora, rápido y sin complicaciones.</p>
+    </div>
+  </section>
+
+  <!-- Sección: service-detail -->
+  <section class="py-16 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-[#1A73E8] font-['Outfit'] text-sm uppercase tracking-widest mb-2">¿Qué reparamos?</p>
+        <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-[#2D2D2D]">Servicios detallados</h2>
+        <p class="mt-4 text-gray-500 max-w-2xl mx-auto">En Cubic trabajamos con todo tipo de computadoras de escritorio y laptops. Nuestro equipo técnico diagnostica y repara tu equipo con rapidez y garantía.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-20">
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1659353588229-6870b3b25800?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Reparación de hardware"
+            class="rounded-2xl shadow-lg w-full h-72 object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+        <div>
+          <h3 class="font-['Outfit'] text-2xl font-bold text-[#2D2D2D] mb-4">Reparación de Hardware</h3>
+          <p class="text-gray-500 mb-6 leading-relaxed">Cambiamos componentes dañados, solucionamos problemas de encendido, reemplazamos pantallas, teclados, baterías, fuentes de poder, discos y más. Si tu equipo no prende o falla constantemente, lo analizamos sin costo previo.</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Reemplazo de pantallas y teclados</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Cambio de disco duro o SSD</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Reparación de placa madre y fuente de poder</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Sustitución de baterías en laptops</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-20">
+        <div class="order-2 md:order-1">
+          <h3 class="font-['Outfit'] text-2xl font-bold text-[#2D2D2D] mb-4">Diagnóstico y Software</h3>
+          <p class="text-gray-500 mb-6 leading-relaxed">Eliminamos virus y malware, reinstalamos sistemas operativos, recuperamos datos perdidos y optimizamos el rendimiento de tu equipo para que vuelva a funcionar como el primer día.</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#00BCD4] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Eliminación de virus y malware</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#00BCD4] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Instalación y configuración de Windows / Linux</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#00BCD4] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Recuperación de archivos y datos</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#00BCD4] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Optimización y limpieza del sistema</span>
+            </li>
+          </ul>
+        </div>
+        <div class="order-1 md:order-2">
+          <img
+            src="https://images.unsplash.com/photo-1671040690726-b78261eff126?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Diagnóstico y software"
+            class="rounded-2xl shadow-lg w-full h-72 object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <div>
+          <img
+            src="https://images.unsplash.com/photo-1676311396794-f14881e9daaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Mantenimiento preventivo"
+            class="rounded-2xl shadow-lg w-full h-72 object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+        <div>
+          <h3 class="font-['Outfit'] text-2xl font-bold text-[#2D2D2D] mb-4">Mantenimiento Preventivo</h3>
+          <p class="text-gray-500 mb-6 leading-relaxed">No esperes a que tu equipo falle. Con nuestro servicio de mantenimiento preventivo limpiamos internamente tu PC, renovamos la pasta térmica y verificamos el estado de todos los componentes para prolongar su vida útil.</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Limpieza interna de polvo y ventiladores</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Renovación de pasta térmica</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Verificación de temperatura y rendimiento</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full bg-[#1A73E8] flex-shrink-0 flex items-center justify-center">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span>Informe de estado general del equipo</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: pricing -->
+  <section class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-[#1A73E8] font-['Outfit'] text-sm uppercase tracking-widest mb-2">Transparencia total</p>
+        <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-[#2D2D2D]">Precios orientativos</h2>
+        <p class="mt-4 text-gray-500 max-w-2xl mx-auto">Cada equipo es diferente. El precio final puede variar según el diagnóstico. El diagnóstico inicial siempre es sin costo.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Card 1 -->
+        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100">
+          <div class="h-2 bg-[#1A73E8]"></div>
+          <div class="p-8">
+            <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-2">Diagnóstico</h3>
+            <p class="text-gray-500 text-sm mb-6">Evaluación completa del estado de tu equipo. Sin compromiso.</p>
+            <div class="mb-6">
+              <span class="font-['Outfit'] text-4xl font-bold text-[#1A73E8]">Gratis</span>
+            </div>
+            <ul class="space-y-3 text-sm text-gray-600 mb-8">
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Evaluación de hardware y software
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Informe del problema detectado
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Presupuesto sin cargo
+              </li>
+            </ul>
+            <a href="tel:+59865656565" class="block text-center bg-[#1A73E8] hover:bg-[#1558b0] text-white font-semibold py-3 rounded-xl transition-colors duration-200">Consultar ahora</a>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-[#1A73E8] rounded-2xl shadow-xl overflow-hidden relative">
+          <div class="absolute top-4 right-4 bg-[#00BCD4] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Más popular</div>
+          <div class="p-8">
+            <h3 class="font-['Outfit'] text-xl font-bold text-white mb-2">Mantenimiento Preventivo</h3>
+            <p class="text-blue-100 text-sm mb-6">Limpieza completa y optimización de tu equipo.</p>
+            <div class="mb-2">
+              <span class="font-['Outfit'] text-4xl font-bold text-white">$590</span>
+              <span class="text-blue-200 text-sm ml-1">UYU</span>
+            </div>
+            <p class="text-blue-200 text-xs mb-6">Precio desde. Varía según el equipo.</p>
+            <ul class="space-y-3 text-sm text-blue-100 mb-8">
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Limpieza interna profunda
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Renovación de pasta térmica
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Optimización del sistema operativo
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Eliminación de virus
+              </li>
+            </ul>
+            <a href="tel:+59865656565" class="block text-center bg-white hover:bg-gray-100 text-[#1A73E8] font-semibold py-3 rounded-xl transition-colors duration-200">Llamar ahora</a>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100">
+          <div class="h-2 bg-[#00BCD4]"></div>
+          <div class="p-8">
+            <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-2">Reparación de Hardware</h3>
+            <p class="text-gray-500 text-sm mb-6">Cambio de piezas y reparación de componentes físicos.</p>
+            <div class="mb-2">
+              <span class="font-['Outfit'] text-4xl font-bold text-[#00BCD4]">$890</span>
+              <span class="text-gray-400 text-sm ml-1">UYU</span>
+            </div>
+            <p class="text-gray-400 text-xs mb-6">Mano de obra. Repuestos se cotizan aparte.</p>
+            <ul class="space-y-3 text-sm text-gray-600 mb-8">
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Cambio de pantalla / teclado
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Reemplazo de disco o RAM
+              </li>
+              <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-[#00BCD4]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Garantía de 30 días en mano de obra
+              </li>
+            </ul>
+            <a href="tel:+59865656565" class="block text-center bg-[#2D2D2D] hover:bg-[#1A73E8] text-white font-semibold py-3 rounded-xl transition-colors duration-200">Consultar precio</a>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="text-center text-gray-400 text-sm mt-8">Los precios están expresados en pesos uruguayos (UYU) e incluyen IVA. El precio final se confirma luego del diagnóstico.</p>
+    </div>
+  </section>
+
+  <!-- Sección: faq -->
+  <section class="py-16 md:py-24 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <p class="text-[#1A73E8] font-['Outfit'] text-sm uppercase tracking-widest mb-2">Dudas frecuentes</p>
+        <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-[#2D2D2D]">Preguntas frecuentes</h2>
+        <p class="mt-4 text-gray-500">Resolvemos las consultas más comunes de nuestros clientes.</p>
+      </div>
+
+      <div class="space-y-4">
+
+        <details class="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-6 py-5 font-['Outfit'] font-semibold text-[#2D2D2D] text-base select-none list-none">
+            ¿El diagnóstico realmente es gratis?
+            <span class="ml-4 flex-shrink-0 w-7 h-7 rounded-full border-2 border-[#1A73E8] flex items-center justify-center transition-transform duration-300 group-open:rotate-45">
+              <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 text-sm leading-relaxed">
+            Sí, 100% gratis y sin compromiso. Revisamos tu equipo, identificamos el problema y te damos un presupuesto detallado. Vos decidís si continuar o no con la reparación.
+          </div>
+        </details>
+
+        <details class="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-6 py-5 font-['Outfit'] font-semibold text-[#2D2D2D] text-base select-none list-none">
+            ¿Cuánto tiempo tarda una reparación?
+            <span class="ml-4 flex-shrink-0 w-7 h-7 rounded-full border-2 border-[#1A73E8] flex items-center justify-center transition-transform duration-300 group-open:rotate-45">
+              <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 text-sm leading-relaxed">
+            Depende del tipo de reparación. Un mantenimiento preventivo o una reinstalación de sistema puede estar listo el mismo día. Reparaciones de hardware que requieren repuestos pueden demorar entre 24 y 72 horas hábiles.
+          </div>
+        </details>
+
+        <details class="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-6 py-5 font-['Outfit'] font-semibold text-[#2D2D2D] text-base select-none list-none">
+            ¿Trabajan con laptops y PCs de escritorio?
+            <span class="ml-4 flex-shrink-0 w-7 h-7 rounded-full border-2 border-[#1A73E8] flex items-center justify-center transition-transform duration-300 group-open:rotate-45">
+              <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 text-sm leading-relaxed">
+            Sí, trabajamos con ambos. Atendemos laptops de todas las marcas (HP, Dell, Lenovo, Asus, Acer, etc.) y también computadoras de escritorio armadas o de marca.
+          </div>
+        </details>
+
+        <details class="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-6 py-5 font-['Outfit'] font-semibold text-[#2D2D2D] text-base select-none list-none">
+            ¿Puedo perder mis archivos durante la reparación?
+            <span class="ml-4 flex-shrink-0 w-7 h-7 rounded-full border-2 border-[#1A73E8] flex items-center justify-center transition-transform duration-300 group-open:rotate-45">
+              <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 text-sm leading-relaxed">
+            Antes de cualquier intervención te avisamos si existe riesgo de pérdida de datos. En caso necesario, realizamos una copia de seguridad de tu información antes de proceder. Tu tranquilidad es prioridad.
+          </div>
+        </details>
+
+        <details class="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-6 py-5 font-['Outfit'] font-semibold text-[#2D2D2D] text-base select-none list-none">
+            ¿Ofrecen garantía en sus reparaciones?
+            <span class="ml-4 flex-shrink-0 w-7 h-7 rounded-full border-2 border-[#1A73E8] flex items-center justify-center transition-transform duration-300 group-open:rotate-45">
+              <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 text-sm leading-relaxed">
+            Sí. Todos nuestros trabajos tienen garantía de 30 días sobre la mano de obra. Los repuestos pueden tener garantía adicional según el fabricante. Si el problema vuelve a aparecer, lo solucionamos sin costo extra.
+          </div>
+        </details>
+
+        <details class="group bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-6 py-5 font-['Outfit'] font-semibold text-[#2D2D2D] text-base select-none list-none">
+            ¿Cómo me comunico para llevar mi equipo?
+            <span class="ml-4 flex-shrink-0 w-7 h-7 rounded-full border-2 border-[#1A73E8] flex items-center justify-center transition-transform duration-300 group-open:rotate-45">
+              <svg class="w-4 h-4 text-[#1A73E8]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 text-sm leading-relaxed">
+            Podés llamarnos directamente, escribirnos por WhatsApp al <a href="https://wa.me/59865656565" class="text-[#1A73E8] hover:underline font-medium">+598 65 656 565</a> o enviarnos un mail a <a href="mailto:mail@cubic.net" class="text-[#1A73E8] hover:underline font-medium">mail@cubic.net</a>. Coordinamos el horario que mejor te quede.
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="py-16 bg-[#2D2D2D]">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-white mb-4">¿Tu equipo tiene un problema?</h2>
+      <p class="text-gray-400 mb-8 text-lg">Llamanos y lo resolvemos. El diagnóstico es gratis y sin compromiso.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="tel:+59865656565" class="inline-flex items-center justify-center gap-2 bg-[#1A73E8] hover:bg-[#1558b0] text-white font-semibold px-8 py-4 rounded-xl transition-colors duration-200 text-base">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          Llamar ahora
+        </a>
+        <a href="https://wa.me/59865656565" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-[#00BCD4] hover:bg-[#00BCD4] text-[#00BCD4] hover:text-white font-semibold px-8 py-4 rounded-xl transition-colors duration-200 text-base">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="bg-secondary text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-4">
+          <a href="index.html" aria-label="Cubic - Inicio">
+            <img
+              src="https://nl360.site/logos/logo-99.svg"
+              alt="Cubic"
+              style="height:36px;width:auto;object-fit:contain;"
+            />
+          </a>
+          <p class="text-white/60 text-sm leading-relaxed max-w-xs">
+            Creamos soluciones digitales que impulsan tu negocio hacia adelante.
+          </p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-col gap-3">
+          <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-white/40 mb-1">Navegación</h3>
+          <a href="index.html"     class="text-white/70 text-sm hover:text-accent">Inicio</a>
+          <a href="servicios.html" class="text-white/70 text-sm hover:text-accent">Servicios</a>
+          <a href="nosotros.html"  class="text-white/70 text-sm hover:text-accent">Nosotros</a>
+          <a href="contacto.html"  class="text-white/70 text-sm hover:text-accent">Contacto</a>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col gap-4">
+          <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-white/40 mb-1">Contacto</h3>
+          <a href="mailto:mail@cubic.net" class="text-white/70 text-sm hover:text-accent break-all">mail@cubic.net</a>
+
+          <!-- Social Links -->
+          <div class="flex items-center gap-5 mt-2">
+
+            <!-- Facebook -->
+            <a
+              href="https://facebook.com/cubic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-white/60"
+              aria-label="Facebook de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a
+              href="https://instagram.com/cubic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-white/60"
+              aria-label="Instagram de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+
+            <!-- WhatsApp -->
+            <a
+              href="https://wa.me/59865656565"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-white/60"
+              aria-label="WhatsApp de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a
+              href="mailto:mail@cubic.net"
+              class="social-link text-white/60"
+              aria-label="Email de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-white/40 text-xs font-body">
+          &copy; 2026 Cubic. Todos los derechos reservados.
+        </p>
+        <p class="text-white/30 text-xs font-body">
+          Diseño &amp; Desarrollo Digital
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===================== JS ===================== -->
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.contains("open");
+
+        if (isOpen) {
+          menu.classList.remove("open");
+          btn.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        } else {
+          menu.classList.add("open");
+          btn.classList.add("open");
+          btn.setAttribute("aria-expanded", "true");
+          btn.setAttribute("aria-label", "Cerrar menú");
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        }
+      });
+
+      // Mark active nav link
+      const currentPage = window.location.pathname.split("/").pop() || "index.html";
+      const allLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
+      allLinks.forEach(function (link) {
+        const href = link.getAttribute("href");
+        if (href === currentPage || (currentPage === "" && href === "index.html")) {
+          link.classList.add("active");
+          if (link.classList.contains("nav-link")) {
+            link.style.color = "#00BCD4";
+          }
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

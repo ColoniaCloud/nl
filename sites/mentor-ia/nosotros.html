@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MentorIA</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#1A1A2E',
+            secondary: '#7C3AED',
+            accent:    '#00C896',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"',       'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Layout base ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #0f0f1a;
+      color: #e2e2f0;
+    }
+    main { flex: 1; }
+
+    /* ── Tipografía ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* ── Nav link hover ── */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 2px;
+      background-color: #00C896;
+      transition: width 0.3s ease;
+      border-radius: 9999px;
+    }
+    .nav-link:hover { color: #00C896; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Hamburger lines ── */
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #e2e2f0;
+      border-radius: 9999px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── Mobile menu slide ── */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* ── Footer social icon hover ── */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .social-link:hover {
+      color: #00C896;
+      transform: translateY(-2px);
+    }
+
+    /* ── Scrollbar (optional polish) ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1A1A2E; }
+    ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 9999px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════════
+       HEADER / NAV
+  ════════════════════════════════════════ -->
+  <header class="bg-primary shadow-lg sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded">
+          <img
+            src="/logo.png"
+            alt="MentorIA"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop links -->
+        <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-200">
+          <li><a href="index.html"     class="nav-link">Inicio</a></li>
+          <li><a href="servicios.html" class="nav-link">Servicios</a></li>
+          <li><a href="nosotros.html"  class="nav-link">Nosotros</a></li>
+          <li>
+            <a
+              href="contacto.html"
+              class="ml-2 px-4 py-2 rounded-full bg-secondary text-white text-sm font-semibold
+                     hover:bg-accent hover:text-primary transition-colors duration-300 focus:outline-none
+                     focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger (mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center gap-[6px] p-2 rounded focus:outline-none
+                 focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col gap-1 pb-4 pt-1 text-sm font-medium text-gray-200">
+          <li>
+            <a href="index.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main style="font-family: 'DM Sans', sans-serif; background-color: #1A1A2E; color: #e5e7eb;">
+
+  <!-- Banner superior -->
+  <section style="position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&q=80" alt="Equipo MentorIA" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0.18;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #1A1A2E 60%, #7C3AED33 100%);"></div>
+    <div style="position: relative; z-index: 2; text-align: center; padding: 4rem 1.5rem 3rem;">
+      <p style="color: #00C896; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 1rem; animation: fadeInDown 0.7s ease both;">Quiénes somos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 1.2rem; animation: fadeInDown 0.9s ease both;">La mente detrás de <span style="color: #00C896;">MentorIA</span></h1>
+      <p style="color: #a5b4fc; font-size: clamp(1rem, 2vw, 1.2rem); max-width: 560px; margin: 0 auto; animation: fadeInUp 1s ease both;">Construimos tecnología de IA para que el conocimiento de los grandes mentores sea accesible, práctico y transformador para cada emprendedor de Latinoamérica.</p>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .mentoria-card-hover {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .mentoria-card-hover:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(124, 58, 237, 0.25);
+    }
+    .value-card-hover {
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .value-card-hover:hover {
+      border-color: #00C896 !important;
+      transform: translateY(-4px);
+    }
+    .whatsapp-btn-hover {
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .whatsapp-btn-hover:hover {
+      background: #00b085 !important;
+      transform: scale(1.04);
+      box-shadow: 0 8px 28px rgba(0, 200, 150, 0.35);
+    }
+  </style>
+
+  <!-- SECCIÓN ABOUT -->
+  <section style="padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+    <div style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+
+      <!-- Texto -->
+      <div style="animation: fadeInUp 0.8s ease both;">
+        <p style="color: #00C896; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.75rem;">Nuestra historia</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: #ffffff; line-height: 1.2; margin-bottom: 1.5rem;">Nacimos para resolver un problema real</h2>
+        <p style="color: #9ca3af; font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.2rem;">Los emprendedores de Latinoamérica consumen toneladas de contenido sobre desarrollo personal, leen a Napoleon Hill, estudian a Neville Goddard, escuchan audios y ven videos. Pero cuando llegan al momento de la acción, no tienen con quién aplicarlo. Tienen información, pero no tienen guía.</p>
+        <p style="color: #9ca3af; font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.2rem;">MentorIA nació para cerrar esa brecha. No somos otro bot genérico entrenado con prompts básicos. Construimos cada agente con código real, capturando el método, la filosofía y el lenguaje propio de cada mentor. El resultado es una experiencia de conversación que se siente genuina, profunda y aplicable.</p>
+        <p style="color: #9ca3af; font-size: 1.05rem; line-height: 1.8;">Hoy podés hablar con Neville Goddard, explorar su ley de la conciencia y aprender a aplicarla en tu vida real. Y esto es solo el principio: pronto los mentores tendrán voz para llamadas en tiempo real y podrás participar en una sala Mastermind donde varios mentores se reúnen simultáneamente.</p>
+      </div>
+
+      <!-- Stats / Logros -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="mentoria-card-hover" style="background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 1rem; padding: 2rem 1.5rem; text-align: center;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00C896; margin-bottom: 0.4rem;">1+</p>
+          <p style="color: #d1d5db; font-size: 0.95rem;">Mentor disponible ahora</p>
+          <p style="color: #6b7280; font-size: 0.82rem; margin-top: 0.3rem;">Neville Goddard activo</p>
+        </div>
+        <div class="mentoria-card-hover" style="background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 1rem; padding: 2rem 1.5rem; text-align: center;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00C896; margin-bottom: 0.4rem;">100%</p>
+          <p style="color: #d1d5db; font-size: 0.95rem;">Código real</p>
+          <p style="color: #6b7280; font-size: 0.82rem; margin-top: 0.3rem;">Sin herramientas genéricas</p>
+        </div>
+        <div class="mentoria-card-hover" style="background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.25); border-radius: 1rem; padding: 2rem 1.5rem; text-align: center;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00C896; margin-bottom: 0.4rem;">24/7</p>
+          <p style="color: #d1d5db; font-size: 0.95rem;">Disponibilidad</p>
+          <p style="color: #6b7280; font-size: 0.82rem; margin-top: 0.3rem;">Tu mentor siempre presente</p>
+        </div>
+        <div class="mentoria-card-hover" style="background: rgba(0, 200, 150, 0.07); border: 1px solid rgba(0, 200, 150, 0.25); border-radius: 1rem; padding: 2rem 1.5rem; text-align: center;">
+          <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700; color: #00C896; margin-bottom: 0.4rem;">Pronto</p>
+          <p style="color: #d1d5db; font-size: 0.95rem;">Mastermind IA</p>
+          <p style="color: #6b7280; font-size: 0.82rem; margin-top: 0.3rem;">Varios mentores a la vez</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Divisor decorativo -->
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;">
+    <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4), rgba(0,200,150,0.4), transparent);"></div>
+  </div>
+
+  <!-- SECCIÓN TEAM -->
+  <section style="padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <p style="color: #00C896; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.75rem;">El equipo</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: #ffffff; line-height: 1.2; margin-bottom: 1rem;">Las personas detrás de la plataforma</h2>
+      <p style="color: #9ca3af; font-size: 1.05rem; max-width: 560px; margin: 0 auto;">Combinamos tecnología de punta con una profunda comprensión del desarrollo personal para construir algo que realmente cambia vidas.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; justify-items: center;">
+
+      <!-- Fundador -->
+      <div class="mentoria-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 1.25rem; padding: 2.5rem 2rem; max-width: 480px; width: 100%; text-align: center;">
+        <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto 1.5rem; border: 3px solid #7C3AED;">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="Nicolás Dublanc - Fundador MentorIA" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; color: #ffffff; margin-bottom: 0.3rem;">Nicolás Dublanc</h3>
+        <p style="color: #00C896; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 1rem; text-transform: uppercase;">Fundador & Desarrollador Principal</p>
+        <p style="color: #9ca3af; font-size: 0.98rem; line-height: 1.75;">Emprendedor argentino apasionado por la inteligencia artificial y el desarrollo personal. Nicolás construyó MentorIA con código real porque creía que los emprendedores de Latinoamérica merecían algo mejor que un bot genérico. Su visión: que cualquier persona pueda tener una conversación profunda con los mejores mentores del mundo, cuando quiera y donde quiera.</p>
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://wa.me/5491162504624" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,200,150,0.12); color: #00C896; border: 1px solid rgba(0,200,150,0.3); padding: 0.45rem 1rem; border-radius: 999px; font-size: 0.85rem; text-decoration: none; transition: background 0.3s ease;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:nicogdublanc@gmail.com" style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(124,58,237,0.12); color: #a5b4fc; border: 1px solid rgba(124,58,237,0.3); padding: 0.45rem 1rem; border-radius: 999px; font-size: 0.85rem; text-decoration: none; transition: background 0.3s ease;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+            Email
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Mentores disponibles -->
+    <div style="margin-top: 4rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <p style="color: #00C896; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.6rem;">Mentores en la plataforma</p>
+        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; color: #ffffff;">Con quiénes podés conversar hoy</h3>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 800px; margin: 0 auto;">
+
+        <!-- Neville Goddard -->
+        <div class="mentoria-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(0,200,150,0.25); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;">
+          <div style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #00C896;">
+            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80" alt="Neville Goddard IA" style="width: 100%; height: 100%; object-fit: cover; opacity:0.85;">
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+              <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0;">Neville Goddard</h4>
+              <span style="background: rgba(0,200,150,0.15); color: #00C896; border: 1px solid rgba(0,200,150,0.35); padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">Disponible ahora</span>
+            </div>
+            <p style="color: #a5b4fc; font-size: 0.88rem; margin-bottom: 0.75rem; font-weight: 500;">Maestro de la Ley de la Conciencia · Manifestación y poder de la imaginación</p>
+            <p style="color: #9ca3af; font-size: 0.93rem; line-height: 1.7;">Neville Goddard fue uno de los pensadores más influyentes del siglo XX. En MentorIA, su agente te guía a través de su filosofía: cómo usar la imaginación de forma consciente, cómo aplicar la técnica del estado asumido y cómo entender que la conciencia es la única realidad. Conversaciones profundas, personalizadas y aplicadas a tu situación real.</p>
+          </div>
+        </div>
+
+        <!-- Próximamente Napoleon Hill -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; opacity: 0.65;">
+          <div style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(124,58,237,0.4);">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80" alt="Napoleon Hill IA" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.4);">
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+              <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #d1d5db; margin: 0;">Napoleon Hill</h4>
+              <span style="background: rgba(124,58,237,0.12); color: #a5b4fc; border: 1px solid rgba(124,58,237,0.3); padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">Próximamente</span>
+            </div>
+            <p style="color: #7c8db5; font-size: 0.88rem; margin-bottom: 0.75rem; font-weight: 500;">Autor de "Piense y Hágase Rico" · Fórmula de los 6 pasos</p>
+            <p style="color: #6b7280; font-size: 0.93rem; line-height: 1.7;">El agente de Napoleon Hill te acompañará en la aplicación de su método comprobado: deseo ardiente, fe, autosugestión, conocimiento especializado, imaginación y decisión. Diseñado para emprendedores que ya conocen su filosofía y quieren llevarla a la acción.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Divisor decorativo -->
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;">
+    <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4), rgba(0,200,150,0.4), transparent);"></div>
+  </div>
+
+  <!-- SECCIÓN VALUES -->
+  <section style="padding: 5rem 1.5rem 6rem; max-width: 1100px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <p style="color: #00C896; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 0.75rem;">Lo que nos mueve</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: #ffffff; line-height: 1.2; margin-bottom: 1rem;">Nuestros valores fundamentales</h2>
+      <p style="color: #9ca3af; font-size: 1.05rem; max-width: 540px; margin: 0 auto;">Cada decisión que tomamos en MentorIA está guiada por estos principios, porque creemos que la tecnología al servicio del crecimiento humano tiene que tomarse en serio.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+      <div class="value-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(124,58,237,0.2); border-radius: 1.25rem; padding: 2rem 2rem 2rem 2rem; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;">
+        <div style="width: 48px; height: 48px; background: rgba(0,200,150,0.12); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(0,200,150,0.25);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Precisión técnica sin compromisos</h3>
+          <p style="color: #9ca3af; font-size: 0.97rem; line-height: 1.75;">Cada agente de MentorIA está construido con código real, no con herramientas de arrastrar y soltar. Eso significa que las conversaciones son más precisas, más coherentes y más fieles al método del mentor. No tomamos atajos cuando se trata de calidad.</p>
+        </div>
+      </div>
+
+      <div class="value-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(124,58,237,0.2); border-radius: 1.25rem; padding: 2rem 2rem 2rem 2rem; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;">
+        <div style="width: 48px; height: 48px; background: rgba(124,58,237,0.12); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(124,58,237,0.25);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">El emprendedor en el centro</h3>
+          <p style="color: #9ca3af; font-size: 0.97rem; line-height: 1.75;">Diseñamos para quien ya entendió el valor de tener un mentor. Para el emprendedor latinoamericano que quiere pasar del conocimiento a la acción, y que necesita orientación personalizada, no otro resumen genérico de un libro.</p>
+        </div>
+      </div>
+
+      <div class="value-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(124,58,237,0.2); border-radius: 1.25rem; padding: 2rem 2rem 2rem 2rem; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;">
+        <div style="width: 48px; height: 48px; background: rgba(0,200,150,0.12); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(0,200,150,0.25);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Transformación real, no entretenimiento</h3>
+          <p style="color: #9ca3af; font-size: 0.97rem; line-height: 1.75;">No somos una app de curiosidades. Cada función que desarrollamos, desde las rutas de aprendizaje hasta la futura sala Mastermind, existe para que el usuario salga de cada sesión con algo concreto que aplicar. El objetivo es siempre el cambio real.</p>
+        </div>
+      </div>
+
+      <div class="value-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(124,58,237,0.2); border-radius: 1.25rem; padding: 2rem 2rem 2rem 2rem; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;">
+        <div style="width: 48px; height: 48px; background: rgba(124,58,237,0.12); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(124,58,237,0.25);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Tecnología que evoluciona</h3>
+          <p style="color: #9ca3af; font-size: 0.97rem; line-height: 1.75;">Estamos en constante desarrollo. Las llamadas de voz en tiempo real, la sala Mastermind y la incorporación de nuevos mentores no son promesas vacías: son el siguiente capítulo de una hoja de ruta que ya está en construcción. Crecer con nuestros usuarios es parte de nuestra identidad.</p>
+        </div>
+      </div>
+
+      <div class="value-card-hover" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(124,58,237,0.2); border-radius: 1.25rem; padding: 2rem 2rem 2rem 2rem; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start;">
+        <div style="width: 48px; height: 48px; background: rgba(0,200,150,0.12); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(0,200,150,0.25);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Fidelidad al método original</h3>
+          <p style="color: #9ca3af; font-size: 0.97rem; line-height: 1.75;">Cada mentor en nuestra plataforma es representado con respeto y profundidad. Estudiamos su obra, su lenguaje y su filosofía antes de construir cualquier agente. No simplificamos ni distorsionamos: preservamos la esencia para que el usuario reciba la experiencia más auténtica posible.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA final -->
+    <div style="margin-top: 4rem; text-align: center; background: linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(0,200,150,0.08) 100%); border: 1px solid rgba(124,58,237,0.25); border-radius: 1.5rem; padding: 3rem 2rem;">
+      <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: #ffffff; margin-bottom: 1rem;">¿Listo para tener tu primer mentor de IA?</h3>
+      <p style="color: #9ca3af; font-size: 1rem; max-width: 480px; margin: 0 auto 2rem;">Si ya conocés a Neville Goddard y querés aplicar su filosofía de forma práctica y personalizada, escribinos por WhatsApp y te guiamos.</p>
+      <a href="https://wa.me/5491162504624?text=Hola%20MentorIA%2C%20me%20interesa%20conocer%20m%C3%A1s%20sobre%20la%20plataforma" target="_blank" class="whatsapp-btn-hover" style="display: inline-flex; align-items: center; gap: 0.65rem; background: #00C896; color: #1A1A2E; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; padding: 0.9rem 2.2rem; border-radius: 999px; text-decoration: none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86
+</main>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════ -->
+  <footer class="bg-primary border-t border-secondary/30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+        <!-- Brand + year -->
+        <div class="flex flex-col items-center md:items-start gap-1">
+          <span class="font-heading text-lg font-semibold text-white tracking-wide">MentorIA</span>
+          <span class="text-xs text-gray-400">&copy; 2026 MentorIA. Todos los derechos reservados.</span>
+        </div>
+
+        <!-- Social / contact links -->
+        <nav aria-label="Redes sociales y contacto">
+          <ul class="flex items-center gap-5">
+
+            <!-- WhatsApp -->
+            <li>
+              <a
+                href="https://wa.me/5491162504624"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp de MentorIA"
+                class="social-link flex items-center gap-2 text-sm text-gray-300"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                     class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                           -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075
+                           -.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059
+                           -.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52
+                           .149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52
+                           -.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51
+                           -.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372
+                           -.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074
+                           .149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625
+                           .712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413
+                           .248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.847L.057 23.882
+                           a.5.5 0 0 0 .614.612l6.154-1.612A11.942 11.942 0 0 0 12 24
+                           c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.9 9.9 0 0 1-5.031-1.37
+                           l-.361-.214-3.735.979.997-3.648-.235-.374A9.861 9.861 0 0 1 2.1 12
+                           C2.1 6.534 6.534 2.1 12 2.1S21.9 6.534 21.9 12 17.466 21.9 12 21.9z"/>
+                </svg>
+                <span class="hidden sm:inline">WhatsApp</span>
+              </a>
+            </li>
+
+            <!-- Divider -->
+            <li aria-hidden="true" class="text-gray-600 select-none">|</li>
+
+            <!-- Email -->
+            <li>
+              <a
+                href="mailto:nicogdublanc@gmail.com"
+                aria-label="Enviar email a MentorIA"
+                class="social-link flex items-center gap-2 text-sm text-gray-300"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="1.8" stroke="currentColor"
+                     class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H4.5
+                           a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0
+                           A2.25 2.25 0 0 0 19.5 4.5H4.5
+                           a2.25 2.25 0 0 0-2.25 2.25m19.5 0
+                           -9.75 6.75L2.25 6.75" />
+                </svg>
+                <span class="hidden sm:inline">nicogdublanc@gmail.com</span>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-secondary/20 text-center text-xs text-gray-500">
+        Construido con inteligencia artificial para potenciar tu aprendizaje.
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════
+       JS — Hamburger / Mobile Menu
+  ════════════════════════════════════════ -->
+  <script>
+    (function () {
+      const btn  = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
+        btn.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+      });
+
+      /* Close menu when a link inside it is clicked */
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      /* Close menu on outside click */
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

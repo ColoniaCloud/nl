@@ -238,13 +238,18 @@ export function useMentoriaSession({
       const res = await fetch("/api/mentoria/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({})
+        body: JSON.stringify({}),
+        signal: AbortSignal.timeout(12000),
       });
       if (res.status === 401) throw new Error("Sesion expirada. Recarga la pagina.");
       if (!res.ok) throw new Error("No se pudo conectar con MentorIA.");
       return true;
     } catch (e: any) {
-      setProbeError(e.message || "Error al conectar. Intenta de nuevo.");
+      if (e?.name === "TimeoutError" || e?.name === "AbortError") {
+        setProbeError("MentorIA no responde. Intenta de nuevo en unos segundos.");
+      } else {
+        setProbeError(e.message || "Error al conectar. Intenta de nuevo.");
+      }
       return false;
     }
   }

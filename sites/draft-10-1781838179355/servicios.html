@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hola manu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FAF6F0",
+            secondary: "#C9A84C",
+            accent: "#F4C2C2"
+          },
+          fontFamily: {
+            heading: ["Nunito", "sans-serif"],
+            body: ["DM Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: #FAF6F0;
+    }
+    main {
+      flex: 1;
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #C9A84C;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.active .line1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active .line2 {
+      opacity: 0;
+    }
+    .hamburger.active .line3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+    footer a {
+      transition: color 0.25s ease;
+    }
+    footer a:hover {
+      color: #C9A84C;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bg-primary border-b border-secondary/20 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="/logo.png" alt="Hola manu" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Contacto</a>
+        </nav>
+
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col gap-1.5 p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary/50"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line line1"></span>
+          <span class="hamburger-line line2"></span>
+          <span class="hamburger-line line3"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="px-4 pb-4 pt-2 flex flex-col gap-1 bg-primary border-t border-secondary/10">
+        <a href="index.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Inicio</a>
+        <a href="servicios.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Servicios</a>
+        <a href="nosotros.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Nosotros</a>
+        <a href="contacto.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+<main style="font-family: 'DM Sans', sans-serif; background-color: #FAF6F0;">
+
+  <!-- Banner superior -->
+  <section class="relative flex items-center justify-center" style="min-height: 420px;">
+    <img
+      src="https://images.unsplash.com/photo-1758518727707-b023e285b709?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Nubox Servicios"
+      class="absolute inset-0 w-full h-full object-cover"
+      style="z-index:0;"
+    />
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(201,168,76,0.55) 0%, rgba(244,194,194,0.45) 100%); z-index:1;"></div>
+    <div class="relative text-center px-6" style="z-index:2;">
+      <p class="uppercase tracking-widest text-sm font-semibold mb-3" style="color:#FAF6F0; letter-spacing:0.2em;">Lo que ofrecemos</p>
+      <h1 style="font-family:'Nunito',sans-serif; color:#FAF6F0; font-size:clamp(2.2rem,6vw,4rem); font-weight:800; line-height:1.15; text-shadow: 0 2px 18px rgba(80,50,10,0.18);">
+        Nuestros Servicios
+      </h1>
+      <p class="mt-4 max-w-xl mx-auto text-base md:text-lg" style="color:#FAF6F0; opacity:0.92;">
+        Una solución pensada para madres que quieren darle lo mejor a su bebé sin que las compras mensuales les quiten tiempo.
+      </p>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL -->
+  <section id="service-detail" class="py-20 px-4" style="background:#FAF6F0;">
+    <style>
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(32px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in-up {
+        animation: fadeInUp 0.7s ease both;
+      }
+      .card-hover {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(201,168,76,0.18);
+      }
+      .btn-main {
+        background: #C9A84C;
+        color: #FAF6F0;
+        border: none;
+        border-radius: 9999px;
+        padding: 0.85rem 2.4rem;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+        display: inline-block;
+        text-decoration: none;
+        font-family: 'Nunito', sans-serif;
+      }
+      .btn-main:hover {
+        background: #b8933e;
+        transform: scale(1.04);
+      }
+      .btn-outline {
+        background: transparent;
+        color: #C9A84C;
+        border: 2px solid #C9A84C;
+        border-radius: 9999px;
+        padding: 0.8rem 2.2rem;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-block;
+        text-decoration: none;
+        font-family: 'Nunito', sans-serif;
+      }
+      .btn-outline:hover {
+        background: #C9A84C;
+        color: #FAF6F0;
+        transform: scale(1.04);
+      }
+      .step-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #F4C2C2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: #C9A84C;
+        flex-shrink: 0;
+      }
+      .faq-item summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.1rem 1.4rem;
+        font-weight: 700;
+        font-family: 'Nunito', sans-serif;
+        color: #3a2a10;
+        font-size: 1rem;
+        transition: color 0.2s;
+        border-radius: 12px;
+      }
+      .faq-item summary:hover {
+        color: #C9A84C;
+      }
+      .faq-item summary::-webkit-details-marker { display: none; }
+      .faq-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #F4C2C2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.1rem;
+        color: #C9A84C;
+        font-weight: 800;
+        transition: background 0.2s;
+      }
+      details[open] .faq-icon {
+        background: #C9A84C;
+        color: #FAF6F0;
+      }
+      .pricing-popular {
+        border: 2.5px solid #C9A84C;
+        position: relative;
+      }
+      .badge-popular {
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #C9A84C;
+        color: #FAF6F0;
+        font-family: 'Nunito', sans-serif;
+        font-weight: 700;
+        font-size: 0.78rem;
+        padding: 0.28rem 1.1rem;
+        border-radius: 9999px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+    </style>
+
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14 fade-in-up">
+        <span class="inline-block px-4 py-1 rounded-full text-sm font-semibold mb-4" style="background:#F4C2C2; color:#C9A84C; font-family:'Nunito',sans-serif;">Cómo funciona Nubox</span>
+        <h2 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; line-height:1.2;">
+          Todo lo que tu bebé necesita,<br/>en una caja que llega a tu puerta
+        </h2>
+        <p class="mt-4 max-w-2xl mx-auto text-base md:text-lg" style="color:#6b5533;">
+          Nubox es el servicio de caja por suscripción diseñado para madres con poco tiempo. Cada mes recibís una selección cuidada de productos esenciales y especiales para tu bebé, sin tener que planificar, buscar ni salir a comprar.
+        </p>
+      </div>
+
+      <!-- Imagen + descripcion principal -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-20">
+        <div class="fade-in-up" style="animation-delay:0.1s;">
+          <div class="rounded-2xl overflow-hidden shadow-lg" style="max-height:420px;">
+            <img
+              src="https://images.unsplash.com/photo-1758518727077-ffb66ffccced?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Caja Nubox para bebés"
+              class="w-full h-full object-cover"
+              style="max-height:420px;"
+            />
+          </div>
+        </div>
+        <div class="fade-in-up" style="animation-delay:0.2s;">
+          <h3 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:1.7rem; font-weight:800; margin-bottom:1rem;">
+            Olvidate de las listas interminables
+          </h3>
+          <p class="mb-5" style="color:#6b5533; line-height:1.8;">
+            Sabemos que ser mamá es uno de los trabajos más demandantes del mundo. Por eso en Nubox nos encargamos de seleccionar mensualmente los mejores productos para el cuidado, higiene, juego y desarrollo de tu bebé. Vos solo disfrutás cada apertura de caja.
+          </p>
+          <ul class="space-y-3 mb-7">
+            <li class="flex items-start gap-3">
+              <span style="width:22px;height:22px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FAF6F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span style="color:#6b5533;">Productos seleccionados por especialistas en crianza</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span style="width:22px;height:22px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FAF6F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span style="color:#6b5533;">Envío mensual directo a tu domicilio en Buenos Aires y alrededores</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span style="width:22px;height:22px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FAF6F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span style="color:#6b5533;">Sin sorpresas: sabés cuándo llega y qué tipo de productos contiene</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span style="width:22px;height:22px;border-radius:50%;background:#C9A84C;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#FAF6F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span style="color:#6b5533;">Podés cancelar o pausar tu suscripción cuando quieras</span>
+            </li>
+          </ul>
+          <a href="https://wa.me/5492392448733" class="btn-main">Quiero suscribirme</a>
+        </div>
+      </div>
+
+      <!-- Pasos / cómo funciona -->
+      <div class="text-center mb-10 fade-in-up">
+        <h3 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:clamp(1.5rem,3.5vw,2.2rem); font-weight:800;">
+          ¿Cómo funciona?
+        </h3>
+        <p class="mt-2 max-w-lg mx-auto" style="color:#6b5533;">Suscribite en tres pasos simples y empezá a recibir tu caja este mes.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        <div class="card-hover rounded-2xl p-8 text-center fade-in-up" style="background:#fff; box-shadow:0 4px 24px rgba(201,168,76,0.10); animation-delay:0.1s;">
+          <div class="step-circle mx-auto mb-5">1</div>
+          <h4 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:1.2rem; font-weight:700; margin-bottom:0.6rem;">Elegí tu plan</h4>
+          <p style="color:#6b5533; font-size:0.97rem; line-height:1.7;">Seleccioná el plan que mejor se adapta a la etapa de tu bebé y a tu presupuesto mensual.</p>
+        </div>
+        <div class="card-hover rounded-2xl p-8 text-center fade-in-up" style="background:#fff; box-shadow:0 4px 24px rgba(201,168,76,0.10); animation-delay:0.2s;">
+          <div class="step-circle mx-auto mb-5">2</div>
+          <h4 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:1.2rem; font-weight:700; margin-bottom:0.6rem;">Completá tus datos</h4>
+          <p style="color:#6b5533; font-size:0.97rem; line-height:1.7;">Contanos la edad de tu bebé y tu dirección de entrega. Así personalizamos tu caja cada mes.</p>
+        </div>
+        <div class="card-hover rounded-2xl p-8 text-center fade-in-up" style="background:#fff; box-shadow:0 4px 24px rgba(201,168,76,0.10); animation-delay:0.3s;">
+          <div class="step-circle mx-auto mb-5">3</div>
+          <h4 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:1.2rem; font-weight:700; margin-bottom:0.6rem;">Recibí tu Nubox</h4>
+          <p style="color:#6b5533; font-size:0.97rem; line-height:1.7;">Tu caja llega puntualmente cada mes con productos cuidados y listos para usar. ¡Solo abrís y disfrutás!</p>
+        </div>
+      </div>
+
+      <!-- Qué incluye -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-6">
+        <div class="fade-in-up" style="animation-delay:0.1s;">
+          <span class="inline-block px-4 py-1 rounded-full text-sm font-semibold mb-4" style="background:#F4C2C2; color:#C9A84C; font-family:'Nunito',sans-serif;">Contenido de cada caja</span>
+          <h3 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:1.6rem; font-weight:800; margin-bottom:1rem;">
+            ¿Qué encontrás dentro de tu Nubox?
+          </h3>
+          <p class="mb-5" style="color:#6b5533; line-height:1.8;">
+            Cada caja es una experiencia pensada con amor y criterio. El contenido varía según la edad del bebé y el plan elegido, pero siempre incluimos una combinación de productos prácticos y especiales.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="rounded-xl p-4 flex items-start gap-3" style="background:#FFF8F0;">
+              <div style="width:38px;height:38px;border-radius:10px;background:#F4C2C2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div>
+                <p style="font-family:'Nunito',sans-serif; font-weight:700; color:#3a2a10; font-size:0.95rem;">Higiene y cuidado</p>
+                <p style="color:#6b5533; font-size:0.85rem;">Cremas, jabones, toallitas y más</p>
+              </div>
+            </div>
+            <div class="rounded-xl p-4 flex items-start gap-3" style="background:#FFF8F0;">
+              <div style="width:38px;height:38px;border-radius:10px;background:#F4C2C2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </div>
+              <div>
+                <p style="font-family:'Nunito',sans-serif; font-weight:700; color:#3a2a10; font-size:0.95rem;">Juego y estimulación</p>
+                <p style="color:#6b5533; font-size:0.85rem;">Juguetes acordes a la etapa</p>
+              </div>
+            </div>
+            <div class="rounded-xl p-4 flex items-start gap-3" style="background:#FFF8F0;">
+              <div style="width:38px;height:38px;border-radius:10px;background:#F4C2C2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              </div>
+              <div>
+                <p style="font-family:'Nunito',sans-serif; font-weight:700; color:#3a2a10; font-size:0.95rem;">Productos especiales</p>
+                <p style="color:#6b5533; font-size:0.85rem;">Sorpresas y novedades del mercado</p>
+              </div>
+            </div>
+            <div class="rounded-xl p-4 flex items-start gap-3" style="background:#FFF8F0;">
+              <div style="width:38px;height:38px;border-radius:10px;background:#F4C2C2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <p style="font-family:'Nunito',sans-serif; font-weight:700; color:#3a2a10; font-size:0.95rem;">Guía mensual</p>
+                <p style="color:#6b5533; font-size:0.85rem;">Tips y consejos de crianza</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fade-in-up" style="animation-delay:0.2s;">
+          <div class="rounded-2xl overflow-hidden shadow-lg">
+            <img
+              src="https://images.unsplash.com/photo-1758873272222-ccd8c4296864?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Contenido de la caja Nubox"
+              class="w-full object-cover"
+              style="max-height:440px;"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="py-20 px-4" style="background: linear-gradient(180deg, #FAF6F0 0%, #FFF0E8 100%);">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 fade-in-up">
+        <span class="inline-block px-4 py-1 rounded-full text-sm font-semibold mb-4" style="background:#F4C2C2; color:#C9A84C; font-family:'Nunito',sans-serif;">Planes y precios</span>
+        <h2 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800;">
+          Elegí el plan perfecto para vos
+        </h2>
+        <p class="mt-4 max-w-xl mx-auto" style="color:#6b5533;">Sin compromisos rígidos. Podés cambiar, pausar o cancelar tu plan en cualquier momento.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+        <!-- Plan Esencial -->
+        <div class="card-hover rounded-2xl p-8 fade-in-up" style="background:#fff; box-shadow:0 4px 24px rgba(201,168,76,0.09); animation-delay:0.1s;">
+          <p class="text-sm font-semibold mb-2" style="color:#C9A84C; font-family:'Nunito',sans-serif; letter-spacing:0.08em; text-transform:uppercase;">Esencial</p>
+          <div class="flex items-end gap-1 mb-1">
+            <span style="font-family:'Nunito',sans-serif; font-size:2.8rem; font-weight:900; color:#3a2a10; line-height:1;">$19.900</span>
+          </div>
+          <p class="mb-6 text-sm" style="color:#6b5533;">por mes · Renovación mensual</p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>4 a 5 productos seleccionados
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Artículos de higiene y cuidado
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Guía mensual impresa
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Envío incluido en CABA
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#9a8060;">
+              <span style="opacity:0.4; flex-shrink:0;">-</span><span style="opacity:0.5;">Producto sorpresa premium</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#9a8060;">
+              <span style="opacity:0.4; flex-shrink:0;">-</span><span style="opacity:0.5;">Personalización avanzada</span>
+            </li>
+          </ul>
+          <a href="https://wa.me/5492392448733?text=Hola!%20Quiero%20el%20plan%20Esencial%20de%20Nubox" class="btn-outline w-full text-center" style="display:block;">Elegir Esencial</a>
+        </div>
+
+        <!-- Plan Completo (popular) -->
+        <div class="card-hover rounded-2xl p-8 pricing-popular fade-in-up" style="background:#fff; box-shadow:0 8px 40px rgba(201,168,76,0.22); animation-delay:0.2s; margin-top:-8px;">
+          <div class="badge-popular">MÁS ELEGIDO</div>
+          <p class="text-sm font-semibold mb-2 mt-3" style="color:#C9A84C; font-family:'Nunito',sans-serif; letter-spacing:0.08em; text-transform:uppercase;">Completo</p>
+          <div class="flex items-end gap-1 mb-1">
+            <span style="font-family:'Nunito',sans-serif; font-size:2.8rem; font-weight:900; color:#C9A84C; line-height:1;">$29.900</span>
+          </div>
+          <p class="mb-6 text-sm" style="color:#6b5533;">por mes · Renovación mensual</p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>7 a 9 productos seleccionados
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Higiene, cuidado y juego
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>1 producto sorpresa premium
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Guía mensual impresa
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Envío incluido en CABA y GBA
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#9a8060;">
+              <span style="opacity:0.4; flex-shrink:0;">-</span><span style="opacity:0.5;">Personalización avanzada</span>
+            </li>
+          </ul>
+          <a href="https://wa.me/5492392448733?text=Hola!%20Quiero%20el%20plan%20Completo%20de%20Nubox" class="btn-main w-full text-center" style="display:block;">Elegir Completo</a>
+        </div>
+
+        <!-- Plan Premium -->
+        <div class="card-hover rounded-2xl p-8 fade-in-up" style="background:#fff; box-shadow:0 4px 24px rgba(201,168,76,0.09); animation-delay:0.3s;">
+          <p class="text-sm font-semibold mb-2" style="color:#C9A84C; font-family:'Nunito',sans-serif; letter-spacing:0.08em; text-transform:uppercase;">Premium</p>
+          <div class="flex items-end gap-1 mb-1">
+            <span style="font-family:'Nunito',sans-serif; font-size:2.8rem; font-weight:900; color:#3a2a10; line-height:1;">$44.900</span>
+          </div>
+          <p class="mb-6 text-sm" style="color:#6b5533;">por mes · Renovación mensual</p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>12 o más productos seleccionados
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Higiene, cuidado, juego y nutrición
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>2 productos sorpresa premium
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Personalización avanzada por edad
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Envío incluido en todo Buenos Aires
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#6b5533;">
+              <span style="color:#C9A84C; font-weight:700; flex-shrink:0;">+</span>Acceso prioritario a novedades
+            </li>
+          </ul>
+          <a href="https://wa.me/5492392448733?text=Hola!%20Quiero%20el%20plan%20Premium%20de%20Nubox" class="btn-outline w-full text-center" style="display:block;">Elegir Premium</a>
+        </div>
+
+      </div>
+
+      <p class="text-center mt-8 text-sm" style="color:#9a8060;">Todos los precios son en pesos argentinos e incluyen IVA. El envío puede tener costo adicional fuera del área cubierta.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-20 px-4" style="background:#FAF6F0;">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-14 fade-in-up">
+        <span class="inline-block px-4 py-1 rounded-full text-sm font-semibold mb-4" style="background:#F4C2C2; color:#C9A84C; font-family:'Nunito',sans-serif;">Preguntas frecuentes</span>
+        <h2 style="font-family:'Nunito',sans-serif; color:#3a2a10; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800;">
+          Todo lo que querés saber
+        </h2>
+        <p class="mt-4 max-w-lg mx-auto" style="color:#6b5533;">Si no encontrás tu respuesta acá, escribinos sin dudar. Estamos para ayudarte.</p>
+      </div>
+
+      <div class="space-y-4 fade-in-up">
+
+        <details class="faq-item rounded-xl" style="background:#fff; box-shadow:0 2px 16px rgba(201,168,76,0.08);">
+          <summary>
+            <span>¿Cuándo llega mi caja cada mes?</span>
+            <div class="faq-icon">+</div>
+          </summary>
+          <div class="px-6 pb-5 pt-1" style="color:#6b5533; line-height:1.8; font-size:0.97rem;">
+            Una vez confirmada tu suscripción, la caja se despacha dentro de los primeros 5 días hábiles del mes. Recibirás un mensaje de WhatsApp con el número de seguimiento para que puedas rastrear tu pedido en tiempo real.
+          </div>
+        </details>
+
+        <details class="faq-item rounded-xl" style="background:#fff; box-shadow:0 2px 16px rgba(201,168,76,0.08);">
+          <summary>
+            <span>¿Puedo pausar o cancelar mi suscripción?</span>
+            <div class="faq-icon">+</div>
+          </summary>
+          <div class="px-6 pb-5 pt-1" style="color:#6b5533; line-height:1.8; font-size:0.97rem;">
+            Sí, podés pausar o cancelar tu suscripción cuando quieras sin penalidades. Solo te pedimos que nos avises antes del día 25 del mes corriente para que no se procese el próximo cobro. Lo hacés directamente por WhatsApp en un minuto.
+          </div>
+        </details>
+
+        <details class="faq-item rounded-xl" style="background:#fff; box-shadow:0 2px 16px rgba(201,168,76,0.08);">
+          <summary>
+            <span>¿Para qué edades es adecuada la Nubox?</span>
+            <div class="faq-icon">+</div>
+          </summary>
+          <div class="px-6 pb-5 pt-1" style="color:#6b5533; line-height:1.8; font-size:0.97rem;">
+            Nubox está pensada para bebés desde el nacimiento hasta los 3 años. Al suscribirte nos contás la edad de tu bebé y adaptamos el contenido de la caja a su etapa de desarrollo. A medida que tu bebé crece, la caja evoluciona con él.
+          </div>
+        </details>
+
+        <details class="faq-item rounded-xl" style="background:#fff; box-shadow:0 2px 16px rgba(201,168,76,0.08);">
+          <summary>
+            <span>¿Hacen envíos fuera de Buenos Aires?</span>
+            <div class="faq-icon">+</div>
+          </summary>
+          <div class="px-6 pb-5
+</main>
+
+  <footer class="bg-secondary/10 border-t border-secondary/25 text-gray-700">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <a href="index.html" class="flex items-center">
+            <img src="/logo.png" alt="Hola manu" style="height:36px;width:auto;object-fit:contain;" />
+          </a>
+          <p class="text-xs text-gray-500 font-body mt-1">© 2026 Hola manu. Todos los derechos reservados.</p>
+        </div>
+
+        <div class="flex flex-col items-center gap-3">
+          <p class="text-xs font-semibold uppercase tracking-widest text-secondary font-heading">Seguinos</p>
+          <div class="flex items-center gap-5">
+
+            <a
+              href="https://wa.me/5492392448733"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+              </svg>
+              WhatsApp
+            </a>
+
+            <a
+              href="https://instagram.com/Nubox"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="Instagram @Nubox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+              </svg>
+              @Nubox
+            </a>
+
+            <a
+              href="https://tiktok.com/@Nubox"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="TikTok @Nubox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+              </svg>
+              @Nubox
+            </a>
+
+            <a
+              href="mailto:nuboxbaby@gmail.com"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="Email nuboxbaby@gmail.com"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              nuboxbaby@gmail.com
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.toggle("open");
+        btn.classList.toggle("active", isOpen);
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && menu.classList.contains("open")) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.focus();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

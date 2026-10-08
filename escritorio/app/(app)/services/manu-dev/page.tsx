@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Globe, FileText, ShoppingBag, Zap } from "lucide-react";
+import { Globe, ShoppingBag, Hammer } from "lucide-react";
 
 const MOTORES = [
   {
@@ -14,17 +14,7 @@ const MOTORES = [
     color: "from-emerald-500/10 to-emerald-500/5",
     iconColor: "text-emerald-400",
     border: "hover:border-emerald-500/40",
-  },
-  {
-    id: "landing",
-    href: "/services/manu-dev/landing",
-    icon: FileText,
-    label: "Landing Page",
-    description: "Una sola página HTML+CSS con navegación por anclas. Lista en minutos, sin build de Next.js.",
-    tag: "HTML · Una página",
-    color: "from-blue-500/10 to-blue-500/5",
-    iconColor: "text-blue-400",
-    border: "hover:border-blue-500/40",
+    wide: true,
   },
   {
     id: "nubia",
@@ -40,7 +30,7 @@ const MOTORES = [
   {
     id: "forge",
     href: "/services/forge",
-    icon: Zap,
+    icon: Hammer,
     label: "Forge",
     description: "Tokenizá activos reales en blockchain. Ethereum, Polygon, Base y Arbitrum.",
     tag: "Blockchain · Solidity",
@@ -66,24 +56,44 @@ export default function ManuDevHomePage() {
           </p>
         </div>
 
-        {/* Grid de motores */}
+        {/* Animaciones de entrada (cards y, distinta, los iconos) */}
+        <style>{`
+          @keyframes cardIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+          }
+          @keyframes iconPop {
+            0%   { opacity: 0; transform: scale(0.4) rotate(-12deg); }
+            60%  { opacity: 1; transform: scale(1.15) rotate(4deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0); }
+          }
+          .motor-card { opacity: 0; animation: cardIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+          .motor-icon { opacity: 0; animation: iconPop 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+          @media (prefers-reduced-motion: reduce) {
+            .motor-card, .motor-icon { animation: none; opacity: 1; }
+          }
+        `}</style>
+
+        {/* Grid de motores (masonry: PRO ocupa toda la primera fila) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {MOTORES.map((motor) => {
+          {MOTORES.map((motor, index) => {
             const Icon = motor.icon;
             return (
               <button
                 key={motor.id}
                 onClick={() => router.push(motor.href)}
+                style={{ animationDelay: `${index * 90}ms` }}
                 className={`
-                  group relative text-left p-5 rounded-xl border border-border/50
+                  motor-card group relative text-left p-5 rounded-xl border border-border/50
                   bg-gradient-to-br ${motor.color}
                   ${motor.border}
+                  ${motor.wide ? "sm:col-span-2" : ""}
                   transition-all duration-200 hover:scale-[1.02] hover:shadow-lg
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
                 `}
               >
                 {/* Icono */}
-                <div className={`mb-4 ${motor.iconColor}`}>
+                <div className="motor-icon mb-4 text-white" style={{ animationDelay: `${index * 90 + 140}ms` }}>
                   <Icon size={24} strokeWidth={1.5} />
                 </div>
 

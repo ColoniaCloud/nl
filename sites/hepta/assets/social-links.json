@@ -1,0 +1,22 @@
+[
+  {
+    "platform": "whatsapp",
+    "name": "whatsapp",
+    "url": "+59896969696"
+  },
+  {
+    "platform": "instagram",
+    "name": "instagram",
+    "url": "@hepta"
+  },
+  {
+    "platform": "facebook",
+    "name": "facebook",
+    "url": "facebook/hepta"
+  },
+  {
+    "platform": "email",
+    "name": "email",
+    "url": "hepta@copteros.uy"
+  }
+]

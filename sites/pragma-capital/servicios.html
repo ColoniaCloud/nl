@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pragma Capital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0A1628',
+            secondary: '#C9A84C',
+            accent: '#2E5FA3',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #ffffff;
+      color: #0A1628;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover underline animation */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger animation */
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* Social icon hover */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header style="background-color: #0A1628;" class="sticky top-0 z-50 w-full shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0" aria-label="Pragma Capital - Inicio">
+          <img
+            src="/logo-ia.svg"
+            alt="Pragma Capital"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-sm font-semibold tracking-wide py-2 px-5 rounded-sm border transition-all duration-250" style="font-family: 'DM Sans', sans-serif; color: #C9A84C; border-color: #C9A84C; background-color: transparent;" onmouseover="this.style.backgroundColor='#C9A84C';this.style.color='#0A1628';" onmouseout="this.style.backgroundColor='transparent';this.style.color='#C9A84C';">Contacto</a>
+        </nav>
+
+        <!-- Mobile Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+          style="background: transparent; border: none; cursor: pointer;"
+        >
+          <span id="ham-line-1" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+          <span id="ham-line-2" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+          <span id="ham-line-3" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil" style="background-color: #0d1e35; border-top: 1px solid rgba(201,168,76,0.2);">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 pt-3 flex flex-col gap-1">
+        <a href="index.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Inicio</a>
+        <a href="servicios.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Servicios</a>
+        <a href="nosotros.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Nosotros</a>
+        <a href="contacto.html" class="block text-base font-semibold py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5" style="font-family: 'DM Sans', sans-serif; color: #C9A84C;">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTENT PLACEHOLDER ===== -->
+  <div style="flex:1;min-height:0;"><main class="bg-white">
+
+  <!-- Banner Superior -->
+  <section class="relative flex items-center justify-center" style="min-height:420px;">
+    <img
+      src="https://images.unsplash.com/photo-1672870153618-b369bcc8c55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Servicios Pragma Capital"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(10,22,40,0.92) 0%,rgba(46,95,163,0.7) 100%);"></div>
+    <div class="relative z-10 text-center px-6 py-20 max-w-3xl mx-auto">
+      <p class="text-sm font-semibold uppercase tracking-widest mb-3" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Lo que hacemos</p>
+      <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight" style="font-family:'Space Grotesk',sans-serif;">
+        Nuestros Servicios
+      </h1>
+      <p class="mt-5 text-lg text-gray-200 max-w-xl mx-auto" style="font-family:'DM Sans',sans-serif;">
+        Soluciones financieras customizadas para PyMEs en crecimiento que necesitan escalar con estructura sólida.
+      </p>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL -->
+  <section class="py-20 px-4" style="background:#F8F9FC;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold uppercase tracking-widest mb-2" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Tres unidades de negocio</p>
+        <h2 class="text-3xl md:text-4xl font-bold" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Un enfoque integral para tu empresa</h2>
+        <p class="mt-4 text-gray-500 max-w-2xl mx-auto" style="font-family:'DM Sans',sans-serif;">
+          Cada servicio está diseñado para atender etapas distintas del crecimiento empresarial, con acompañamiento personalizado de principio a fin.
+        </p>
+      </div>
+
+      <!-- Servicio 1: Financiamiento -->
+      <div class="grid md:grid-cols-2 gap-10 items-center mb-20" style="animation:fadeIn 0.7s ease both;">
+        <div class="order-2 md:order-1">
+          <span class="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style="background:#0A1628;color:#C9A84C;font-family:'DM Sans',sans-serif;">01 — Financiamiento</span>
+          <h3 class="text-2xl md:text-3xl font-bold mb-4" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Financiamiento Bancario y de Mercado de Capitales</h3>
+          <p class="text-gray-600 mb-5 leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            Accedé a financiamiento estructurado tanto en el sistema bancario tradicional como a través del mercado de capitales. Analizamos tu empresa, preparamos la documentación financiera y gestionamos el proceso con las entidades más adecuadas para tu perfil y necesidad de fondos.
+          </p>
+          <ul class="space-y-3 mb-7" style="font-family:'DM Sans',sans-serif;">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Créditos bancarios y líneas PyME con bancos públicos y privados</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Emisión de cheques de pago diferido y obligaciones negociables (ONs)</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Fideicomisos financieros y acceso al Mercado Abierto Electrónico (MAE)</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Preparación de legajos, proyecciones y presentación ante calificadoras</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491164977121?text=Hola%2C%20quiero%20consultar%20sobre%20el%20servicio%20de%20Financiamiento"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:opacity-90 hover:shadow-lg"
+            style="background:#C9A84C;color:#0A1628;font-family:'DM Sans',sans-serif;"
+          >
+            Consultar por WhatsApp
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.527 5.845L.057 23.985l6.304-1.653A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.518-5.162-1.418l-.371-.22-3.744.981.999-3.648-.242-.381A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          </a>
+        </div>
+        <div class="order-1 md:order-2 rounded-2xl overflow-hidden shadow-xl" style="height:340px;">
+          <img
+            src="https://images.unsplash.com/photo-1523287562758-66c7fc58967f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Financiamiento bancario y mercado de capitales"
+            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+      </div>
+
+      <!-- Servicio 2: Inversiones -->
+      <div class="grid md:grid-cols-2 gap-10 items-center mb-20" style="animation:fadeIn 0.9s ease both;">
+        <div class="rounded-2xl overflow-hidden shadow-xl" style="height:340px;">
+          <img
+            src="https://images.unsplash.com/photo-1618602500188-876e52298659?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Inversiones con ALyCs"
+            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+        <div>
+          <span class="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style="background:#0A1628;color:#C9A84C;font-family:'DM Sans',sans-serif;">02 — Inversiones</span>
+          <h3 class="text-2xl md:text-3xl font-bold mb-4" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Gestión de Inversiones con ALyCs</h3>
+          <p class="text-gray-600 mb-5 leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            Canalizamos tus excedentes de liquidez y activos financieros a través de convenios con 5 Agentes de Liquidación y Compensación (ALyCs) habilitados por la CNV. Definimos una estrategia de inversión acorde a tu perfil de riesgo y horizonte temporal, con seguimiento personalizado.
+          </p>
+          <ul class="space-y-3 mb-7" style="font-family:'DM Sans',sans-serif;">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Acceso a 5 ALyCs reguladas por la Comisión Nacional de Valores</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Portafolios en pesos y dólares: acciones, bonos, FCI y cedears</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Estrategia personalizada según perfil de riesgo y horizonte</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Reporting periódico y revisión de cartera con tu asesor</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491164977121?text=Hola%2C%20quiero%20consultar%20sobre%20el%20servicio%20de%20Inversiones"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:opacity-90 hover:shadow-lg"
+            style="background:#C9A84C;color:#0A1628;font-family:'DM Sans',sans-serif;"
+          >
+            Consultar por WhatsApp
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.527 5.845L.057 23.985l6.304-1.653A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.518-5.162-1.418l-.371-.22-3.744.981.999-3.648-.242-.381A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Servicio 3: Consultoría -->
+      <div class="grid md:grid-cols-2 gap-10 items-center" style="animation:fadeIn 1.1s ease both;">
+        <div class="order-2 md:order-1">
+          <span class="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style="background:#0A1628;color:#C9A84C;font-family:'DM Sans',sans-serif;">03 — Consultoría</span>
+          <h3 class="text-2xl md:text-3xl font-bold mb-4" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Consultoría de Finanzas Corporativas para PyMEs</h3>
+          <p class="text-gray-600 mb-5 leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            Acompañamos a empresas medianas en su proceso de profesionalización financiera. Trabajamos en la estructura de capital, planificación financiera, análisis de viabilidad de proyectos y preparación para acceder a fuentes de financiamiento más sofisticadas.
+          </p>
+          <ul class="space-y-3 mb-7" style="font-family:'DM Sans',sans-serif;">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Diagnóstico y reestructuración de la estructura de capital</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Modelos de proyección financiera y análisis de flujo de fondos</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Evaluación de proyectos de inversión y expansión</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-gray-700">Preparación para auditoria, Due Diligence y apertura al capital</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491164977121?text=Hola%2C%20quiero%20consultar%20sobre%20Consultor%C3%ADa%20de%20Finanzas%20Corporativas"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:opacity-90 hover:shadow-lg"
+            style="background:#C9A84C;color:#0A1628;font-family:'DM Sans',sans-serif;"
+          >
+            Consultar por WhatsApp
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.527 5.845L.057 23.985l6.304-1.653A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.651-.518-5.162-1.418l-.371-.22-3.744.981.999-3.648-.242-.381A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          </a>
+        </div>
+        <div class="order-1 md:order-2 rounded-2xl overflow-hidden shadow-xl" style="height:340px;">
+          <img
+            src="https://images.unsplash.com/photo-1714974528692-31aff2c54a62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Consultoría de finanzas corporativas para PyMEs"
+            class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="py-20 px-4" style="background:#0A1628;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold uppercase tracking-widest mb-2" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Esquemas de trabajo</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">Modalidades de contratación</h2>
+        <p class="mt-4 max-w-2xl mx-auto" style="color:#94a3b8;font-family:'DM Sans',sans-serif;">
+          Adaptamos nuestra estructura de honorarios al tipo de servicio y a los objetivos de tu empresa. Sin paquetes rígidos: cada propuesta es a medida.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+
+        <!-- Plan 1 -->
+        <div class="rounded-2xl p-8 flex flex-col transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl" style="background:#0F1E36;border:1px solid #1e3a5f;">
+          <div class="mb-6">
+            <span class="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style="background:rgba(201,168,76,0.15);color:#C9A84C;font-family:'DM Sans',sans-serif;">Inversiones</span>
+            <h3 class="text-xl font-bold text-white mb-2" style="font-family:'Space Grotesk',sans-serif;">Gestión de Cartera</h3>
+            <p style="color:#94a3b8;font-family:'DM Sans',sans-serif;font-size:0.95rem;">Para empresas que buscan rentabilizar excedentes de liquidez en mercado de capitales.</p>
+          </div>
+          <div class="mb-6">
+            <p class="text-3xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">Comisión</p>
+            <p style="color:#C9A84C;font-family:'DM Sans',sans-serif;font-size:0.9rem;">sobre el capital gestionado</p>
+          </div>
+          <ul class="space-y-3 mb-8 flex-1" style="font-family:'DM Sans',sans-serif;">
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Apertura de cuenta en ALyC seleccionada
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Estrategia de inversión personalizada
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Reporte mensual de performance
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Sin monto mínimo inicial fijo
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491164977121?text=Hola%2C%20me%20interesa%20la%20gesti%C3%B3n%20de%20cartera"
+            target="_blank"
+            rel="noopener"
+            class="block text-center font-semibold py-3 rounded-lg transition-all duration-300 hover:opacity-90"
+            style="background:#2E5FA3;color:#fff;font-family:'DM Sans',sans-serif;"
+          >
+            Consultar condiciones
+          </a>
+        </div>
+
+        <!-- Plan 2 (destacado) -->
+        <div class="rounded-2xl p-8 flex flex-col relative transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl" style="background:#C9A84C;border:1px solid #C9A84C;">
+          <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full" style="background:#0A1628;color:#C9A84C;font-family:'DM Sans',sans-serif;">Más solicitado</span>
+          <div class="mb-6">
+            <span class="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style="background:rgba(10,22,40,0.15);color:#0A1628;font-family:'DM Sans',sans-serif;">Financiamiento</span>
+            <h3 class="text-xl font-bold mb-2" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Gestión de Financiamiento</h3>
+            <p style="color:#6b4f10;font-family:'DM Sans',sans-serif;font-size:0.95rem;">Para PyMEs que necesitan acceder a crédito bancario o mercado de capitales.</p>
+          </div>
+          <div class="mb-6">
+            <p class="text-3xl font-bold" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Success fee</p>
+            <p style="color:#6b4f10;font-family:'DM Sans',sans-serif;font-size:0.9rem;">+ retainer mensual según complejidad</p>
+          </div>
+          <ul class="space-y-3 mb-8 flex-1" style="font-family:'DM Sans',sans-serif;">
+            <li class="flex items-start gap-3 text-sm" style="color:#0A1628;">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#0A1628;">
+                <svg class="w-2.5 h-2.5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Diagnóstico financiero inicial sin costo
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#0A1628;">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#0A1628;">
+                <svg class="w-2.5 h-2.5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Armado completo del legajo financiero
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#0A1628;">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#0A1628;">
+                <svg class="w-2.5 h-2.5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Gestión ante múltiples entidades en simultáneo
+            </li>
+            <li class="flex items-start gap-3 text-sm" style="color:#0A1628;">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#0A1628;">
+                <svg class="w-2.5 h-2.5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Seguimiento hasta el desembolso efectivo
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491164977121?text=Hola%2C%20quiero%20consultar%20sobre%20financiamiento%20para%20mi%20empresa"
+            target="_blank"
+            rel="noopener"
+            class="block text-center font-semibold py-3 rounded-lg transition-all duration-300 hover:opacity-90"
+            style="background:#0A1628;color:#C9A84C;font-family:'DM Sans',sans-serif;"
+          >
+            Iniciar consulta
+          </a>
+        </div>
+
+        <!-- Plan 3 -->
+        <div class="rounded-2xl p-8 flex flex-col transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl" style="background:#0F1E36;border:1px solid #1e3a5f;">
+          <div class="mb-6">
+            <span class="inline-block text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4" style="background:rgba(201,168,76,0.15);color:#C9A84C;font-family:'DM Sans',sans-serif;">Consultoría</span>
+            <h3 class="text-xl font-bold text-white mb-2" style="font-family:'Space Grotesk',sans-serif;">Consultoría Corporativa</h3>
+            <p style="color:#94a3b8;font-family:'DM Sans',sans-serif;font-size:0.95rem;">Para empresas que requieren un proyecto de transformación financiera estructurado.</p>
+          </div>
+          <div class="mb-6">
+            <p class="text-3xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">Por proyecto</p>
+            <p style="color:#C9A84C;font-family:'DM Sans',sans-serif;font-size:0.9rem;">o retainer mensual desde $USD 800</p>
+          </div>
+          <ul class="space-y-3 mb-8 flex-1" style="font-family:'DM Sans',sans-serif;">
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Diagnóstico financiero integral de la empresa
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Modelo financiero proyectado a 3 y 5 años
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Reuniones quincenales de seguimiento
+            </li>
+            <li class="flex items-start gap-3 text-gray-300 text-sm">
+              <span class="mt-0.5 w-4 h-4 flex-shrink-0 rounded-full flex items-center justify-center" style="background:#2E5FA3;">
+                <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Propuesta de estructura de capital óptima
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491164977121?text=Hola%2C%20me%20interesa%20la%20consultor%C3%ADa%20corporativa"
+            target="_blank"
+            rel="noopener"
+            class="block text-center font-semibold py-3 rounded-lg transition-all duration-300 hover:opacity-90"
+            style="background:#2E5FA3;color:#fff;font-family:'DM Sans',sans-serif;"
+          >
+            Solicitar propuesta
+          </a>
+        </div>
+
+      </div>
+
+      <p class="text-center mt-8 text-sm" style="color:#64748b;font-family:'DM Sans',sans-serif;">
+        Todos los honorarios se definen en la reunión inicial una vez evaluada la situación particular de tu empresa.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 px-4" style="background:#F8F9FC;">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold uppercase tracking-widest mb-2" style="color:#C9A84C;font-family:'DM Sans',sans-serif;">Preguntas frecuentes</p>
+        <h2 class="text-3xl md:text-4xl font-bold" style="color:#0A1628;font-family:'Space Grotesk',sans-serif;">Lo que más nos preguntan</h2>
+      </div>
+
+      <div class="space-y-4">
+
+        <!-- FAQ item 1 -->
+        <details class="group rounded-xl p-6 cursor-pointer transition-all duration-300" style="background:#fff;border:1px solid #e2e8f0;">
+          <summary class="flex items-center justify-between font-semibold text-base list-none" style="color:#0A1628;font-family:'DM Sans',sans-serif;">
+            ¿Qué tamaño de empresa necesita tener para trabajar con Pragma Capital?
+            <span class="ml-4 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 group-open:rotate-45" style="background:#0A1628;">
+              <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </span>
+          </summary>
+          <p class="mt-4 text-gray-600 leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            Trabajamos principalmente con PyMEs en etapa de crecimiento: empresas que ya tienen operación establecida, facturación recurrente y que buscan escalar con acceso a capital o mejorar su estructura financiera. No hay un mínimo de facturación fijo; lo evaluamos en la primera reunión.
+          </p>
+        </details>
+
+        <!-- FAQ item 2 -->
+        <details class="group rounded-xl p-6 cursor-pointer transition-all duration-300" style="background:#fff;border:1px solid #e2e8f0;">
+          <summary class="flex items-center justify-between font-semibold text-base list-none" style="color:#0A1628;font-family:'DM Sans',sans-serif;">
+            ¿Cuánto tiempo demora un proceso de financiamiento?
+            <span class="ml-4 flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 group-open:rotate-45" style="background:#0A1628;">
+              <svg class="w-3 h-3
+</main></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="background-color: #0A1628; border-top: 1px solid rgba(201,168,76,0.25);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+
+        <!-- Brand column -->
+        <div class="flex flex-col gap-4">
+          <a href="index.html" aria-label="Pragma Capital - Inicio">
+            <img
+              src="/logo-ia.svg"
+              alt="Pragma Capital"
+              style="height:clamp(28px,4vw,44px);width:auto;max-width:160px;object-fit:contain;filter:brightness(1);"
+            />
+          </a>
+          <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.6; max-width: 260px;">
+            Soluciones financieras con visión estratégica y enfoque pragmático.
+          </p>
+        </div>
+
+        <!-- Navigation column -->
+        <div class="flex flex-col gap-3">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; color: #C9A84C; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Navegación</h3>
+          <a href="index.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Inicio</a>
+          <a href="servicios.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Servicios</a>
+          <a href="nosotros.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Nosotros</a>
+          <a href="contacto.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Contacto</a>
+        </div>
+
+        <!-- Contact & Social column -->
+        <div class="flex flex-col gap-3">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; color: #C9A84C; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Contacto</h3>
+
+          <!-- Email -->
+          <a href="mailto:info@pragmacapital.com" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            info@pragmacapital.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a href="https://wa.me/5491164977121" target="_blank" rel="noopener noreferrer" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.37a16 16 0 0 0 6 6l1.27-.85a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +54 9 11 6497 7121
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com/company/pragma-capital" target="_blank" rel="noopener noreferrer" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; text-align: center;">
+        <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.35); font-size: 0.8rem; margin: 0;">
+          &copy; 2026 Pragma Capital. Todos los derechos reservados.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+      const line1 = document.getElementById('ham-line-1');
+      const line2 = document.getElementById('ham-line-2');
+      const line3 = document.getElementById('ham-line-3');
+      let isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        // Animate to X
+        line1.style.transform = 'translateY(8px) rotate(45deg)';
+        line2.style.opacity = '0';
+        line2.style.transform = 'scaleX(0)';
+        line3.style.transform = 'translateY(-8px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        // Animate back to hamburger
+        line1.style.transform = '';
+        line2.style.opacity = '1';
+        line2.style.transform = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Close menu when a link is clicked
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          closeMenu();
+        });
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+
+      // Active nav link detection
+      var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('header .nav-link').forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

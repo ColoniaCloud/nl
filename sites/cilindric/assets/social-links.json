@@ -1,0 +1,17 @@
+[
+  {
+    "platform": "facebook",
+    "name": "facebook",
+    "url": "facebook.com/cilindric"
+  },
+  {
+    "platform": "whatsapp",
+    "name": "whatsapp",
+    "url": "+59896969696"
+  },
+  {
+    "platform": "email",
+    "name": "email",
+    "url": "manu@manu.com"
+  }
+]
