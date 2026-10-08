@@ -185,6 +185,12 @@ Devolvé SOLO un JSON valido con esta estructura exacta (sin markdown, sin texto
       strategyId = result.insertId;
     }
 
+    const chatMessage = "La estrategia esta lista. Revisa el panel de estrategia a la derecha.";
+    await pool.execute(
+      "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'assistant', ?, 'strategy')",
+      [brandbook_id, user.id, chatMessage]
+    );
+
     return NextResponse.json({
       strategy_id: strategyId,
       strategy: {
@@ -192,6 +198,7 @@ Devolvé SOLO un JSON valido con esta estructura exacta (sin markdown, sin texto
         posting_frequency: filteredFrequency,
         platforms,
       },
+      chat_message: chatMessage,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Error interno" }, { status: 500 });

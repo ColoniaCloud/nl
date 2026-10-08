@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hola manu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FAF6F0",
+            secondary: "#C9A84C",
+            accent: "#F4C2C2"
+          },
+          fontFamily: {
+            heading: ["Nunito", "sans-serif"],
+            body: ["DM Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: #FAF6F0;
+    }
+    main {
+      flex: 1;
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #C9A84C;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.active .line1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active .line2 {
+      opacity: 0;
+    }
+    .hamburger.active .line3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+    footer a {
+      transition: color 0.25s ease;
+    }
+    footer a:hover {
+      color: #C9A84C;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bg-primary border-b border-secondary/20 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="/logo.png" alt="Hola manu" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Contacto</a>
+        </nav>
+
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col gap-1.5 p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary/50"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line line1"></span>
+          <span class="hamburger-line line2"></span>
+          <span class="hamburger-line line3"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="px-4 pb-4 pt-2 flex flex-col gap-1 bg-primary border-t border-secondary/10">
+        <a href="index.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Inicio</a>
+        <a href="servicios.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Servicios</a>
+        <a href="nosotros.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Nosotros</a>
+        <a href="contacto.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+<main style="font-family: 'DM Sans', sans-serif; background-color: #FAF6F0;">
+
+  <!-- Banner Superior -->
+  <section class="relative flex items-center justify-center" style="min-height: 340px;">
+    <img
+      src="https://images.unsplash.com/photo-1758873272222-ccd8c4296864?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Contacto Hola manu"
+      class="absolute inset-0 w-full h-full object-cover"
+      style="filter: brightness(0.45);"
+    />
+    <div class="relative z-10 text-center px-6 py-16" style="animation: fadeInDown 0.8s ease both;">
+      <p class="uppercase tracking-widest text-sm mb-3" style="color: #F4C2C2; font-family: 'DM Sans', sans-serif;">Estamos para vos</p>
+      <h1 class="text-4xl md:text-6xl font-bold text-white" style="font-family: 'Nunito', sans-serif;">Contacto</h1>
+      <p class="mt-4 text-lg max-w-xl mx-auto" style="color: #FAF6F0; opacity: 0.88;">¿Tenés dudas sobre tu caja? ¿Querés saber cómo funciona la suscripción? Escribinos, respondemos rápido.</p>
+    </div>
+  </section>
+
+  <!-- Sección: contact-form -->
+  <section id="contact-form" class="py-20 px-4" style="background-color: #FAF6F0;">
+    <div class="max-w-5xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-start">
+
+        <!-- Texto lateral -->
+        <div style="animation: fadeInLeft 0.8s ease both;">
+          <span class="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style="background-color: #F4C2C2; color: #7a4a4a;">Hablemos</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-5" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Tu tiempo vale. Nosotros nos ocupamos.</h2>
+          <p class="mb-6 leading-relaxed" style="color: #555;">Sabemos que entre pañales, siestas y mil pendientes, buscar productos para tu bebé se convierte en una tarea más que se acumula. Por eso existimos.</p>
+          <p class="mb-6 leading-relaxed" style="color: #555;">Si tenés alguna consulta sobre cómo funciona la suscripción, qué incluye cada caja o cómo personalizarla, estamos acá para ayudarte.</p>
+          <div class="flex flex-col gap-4 mt-8">
+            <div class="flex items-start gap-4 p-4 rounded-2xl" style="background-color: #fff; box-shadow: 0 2px 12px rgba(201,168,76,0.08);">
+              <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #F4C2C2;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#7a4a4a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: #C9A84C;">Email</p>
+                <a href="mailto:nuboxbaby@gmail.com" class="text-sm font-medium hover:underline" style="color: #2d2d2d;">nuboxbaby@gmail.com</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4 p-4 rounded-2xl" style="background-color: #fff; box-shadow: 0 2px 12px rgba(201,168,76,0.08);">
+              <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #F4C2C2;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#7a4a4a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: #C9A84C;">WhatsApp</p>
+                <a href="https://wa.me/5492392448733" target="_blank" class="text-sm font-medium hover:underline" style="color: #2d2d2d;">+54 9 2392 448733</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4 p-4 rounded-2xl" style="background-color: #fff; box-shadow: 0 2px 12px rgba(201,168,76,0.08);">
+              <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style="background-color: #F4C2C2;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#7a4a4a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: #C9A84C;">Ubicación</p>
+                <p class="text-sm font-medium" style="color: #2d2d2d;">Buenos Aires, Argentina</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="rounded-3xl p-8 md:p-10" style="background-color: #fff; box-shadow: 0 8px 40px rgba(201,168,76,0.10); animation: fadeInRight 0.8s ease both;">
+          <h3 class="text-2xl font-bold mb-2" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Envianos tu consulta</h3>
+          <p class="text-sm mb-7" style="color: #888;">Completá el formulario y te respondemos a la brevedad.</p>
+
+          <form id="contact-form-el" novalidate class="flex flex-col gap-5">
+
+            <div class="flex flex-col gap-1">
+              <label for="cf-name" class="text-xs font-semibold uppercase tracking-wider" style="color: #C9A84C;">Nombre completo</label>
+              <input
+                id="cf-name"
+                type="text"
+                name="name"
+                placeholder="Tu nombre"
+                required
+                class="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all"
+                style="border-color: #e5e0d8; background-color: #FAF6F0; color: #2d2d2d; font-family: 'DM Sans', sans-serif;"
+                onfocus="this.style.borderColor='#C9A84C'; this.style.boxShadow='0 0 0 3px rgba(201,168,76,0.13)'"
+                onblur="this.style.borderColor='#e5e0d8'; this.style.boxShadow='none'"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label for="cf-email" class="text-xs font-semibold uppercase tracking-wider" style="color: #C9A84C;">Email</label>
+              <input
+                id="cf-email"
+                type="email"
+                name="email"
+                placeholder="tu@email.com"
+                required
+                class="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all"
+                style="border-color: #e5e0d8; background-color: #FAF6F0; color: #2d2d2d; font-family: 'DM Sans', sans-serif;"
+                onfocus="this.style.borderColor='#C9A84C'; this.style.boxShadow='0 0 0 3px rgba(201,168,76,0.13)'"
+                onblur="this.style.borderColor='#e5e0d8'; this.style.boxShadow='none'"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label for="cf-message" class="text-xs font-semibold uppercase tracking-wider" style="color: #C9A84C;">Mensaje</label>
+              <textarea
+                id="cf-message"
+                name="message"
+                rows="5"
+                placeholder="Contanos tu consulta, el plan que te interesa o cualquier duda sobre la caja..."
+                required
+                class="w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all resize-none"
+                style="border-color: #e5e0d8; background-color: #FAF6F0; color: #2d2d2d; font-family: 'DM Sans', sans-serif;"
+                onfocus="this.style.borderColor='#C9A84C'; this.style.boxShadow='0 0 0 3px rgba(201,168,76,0.13)'"
+                onblur="this.style.borderColor='#e5e0d8'; this.style.boxShadow='none'"
+              ></textarea>
+            </div>
+
+            <!-- Mensaje inline -->
+            <div id="cf-feedback" class="hidden text-sm font-medium px-4 py-3 rounded-xl" role="alert"></div>
+
+            <button
+              type="submit"
+              id="cf-submit-btn"
+              class="w-full flex items-center justify-center gap-3 py-4 px-6 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
+              style="background-color: #C9A84C; color: #fff; font-family: 'Nunito', sans-serif; letter-spacing: 0.08em; transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 18px rgba(201,168,76,0.25);"
+              onmouseover="if(!this.disabled){this.style.backgroundColor='#b8943d'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 24px rgba(201,168,76,0.35)';}"
+              onmouseout="if(!this.disabled){this.style.backgroundColor='#C9A84C'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 18px rgba(201,168,76,0.25)';}"
+            >
+              <span id="cf-btn-text">Enviar consulta</span>
+              <svg id="cf-spinner" class="hidden animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+            </button>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: map -->
+  <section id="map" class="py-16 px-4" style="background: linear-gradient(180deg, #FAF6F0 0%, #f5ede3 100%);">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style="background-color: #F4C2C2; color: #7a4a4a;">Dónde estamos</span>
+        <h2 class="text-3xl font-bold" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Buenos Aires, Argentina</h2>
+        <p class="mt-2 text-sm max-w-md mx-auto" style="color: #888;">Operamos desde Buenos Aires y enviamos cajas a todo el país cada mes.</p>
+      </div>
+      <div class="rounded-3xl overflow-hidden w-full" style="box-shadow: 0 8px 40px rgba(201,168,76,0.12); height: 380px;">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d208589.0193750293!2d-58.70390065!3d-34.6158237!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires%2C%20Argentina!5e0!3m2!1ses!2sar!4v1700000000000"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mapa Buenos Aires - Hola manu"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: info -->
+  <section id="info" class="py-20 px-4" style="background-color: #FAF6F0;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="inline-block text-xs font-semibold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style="background-color: #F4C2C2; color: #7a4a4a;">Información útil</span>
+        <h2 class="text-3xl md:text-4xl font-bold mb-3" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Todo lo que necesitás saber</h2>
+        <p class="max-w-xl mx-auto text-sm" style="color: #888;">Respondemos las preguntas más frecuentes antes de que las hagas.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <div class="rounded-3xl p-7 flex flex-col gap-4 transition-all" style="background-color: #fff; box-shadow: 0 4px 24px rgba(201,168,76,0.09);">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background-color: #F4C2C2;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#7a4a4a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Tiempos de respuesta</h3>
+          <p class="text-sm leading-relaxed" style="color: #666;">Respondemos consultas de lunes a sábado de 9 a 20 h. Generalmente contestamos antes de las 2 horas por WhatsApp.</p>
+        </div>
+
+        <div class="rounded-3xl p-7 flex flex-col gap-4 transition-all" style="background-color: #fff; box-shadow: 0 4px 24px rgba(201,168,76,0.09);">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background-color: #F4C2C2;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#7a4a4a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Envíos a todo el país</h3>
+          <p class="text-sm leading-relaxed" style="color: #666;">Despachamos desde Buenos Aires hacia cualquier provincia de Argentina. Recibís tu caja en la puerta de tu casa cada mes.</p>
+        </div>
+
+        <div class="rounded-3xl p-7 flex flex-col gap-4 transition-all" style="background-color: #fff; box-shadow: 0 4px 24px rgba(201,168,76,0.09);">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background-color: #F4C2C2;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#7a4a4a" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Cancelación flexible</h3>
+          <p class="text-sm leading-relaxed" style="color: #666;">Podés pausar o cancelar tu suscripción en cualquier momento sin costo ni burocracia. Sin compromisos que te compliquen la vida.</p>
+        </div>
+
+      </div>
+
+      <!-- CTA final -->
+      <div class="mt-14 rounded-3xl p-10 md:p-14 text-center relative overflow-hidden" style="background: linear-gradient(135deg, #C9A84C 0%, #e0c06a 100%);">
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="relative z-10">
+          <h3 class="text-2xl md:text-3xl font-bold text-white mb-3" style="font-family: 'Nunito', sans-serif;">¿Lista para empezar?</h3>
+          <p class="text-white mb-8 max-w-md mx-auto text-sm" style="opacity: 0.9;">Sumate a las mamás que ya decidieron simplificar su vida. Suscribite hoy y recibí tu primera caja el próximo mes.</p>
+          <a
+            href="https://wa.me/5492392448733?text=Hola!%20Quiero%20suscribirme%20a%20Nubox%20%F0%9F%93%A6"
+            target="_blank"
+            class="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-wider transition-all"
+            style="background-color: #fff; color: #C9A84C; font-family: 'Nunito', sans-serif; box-shadow: 0 4px 18px rgba(0,0,0,0.12); transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 28px rgba(0,0,0,0.18)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 18px rgba(0,0,0,0.12)';"
+          >
+            Quiero mi caja ahora
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-24px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(24px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+
+  <script>
+    (function () {
+      var form = document.getElementById('contact-form-el');
+      var submitBtn = document.getElementById('cf-submit-btn');
+      var btnText = document.getElementById('cf-btn-text');
+      var spinner = document.getElementById('cf-spinner');
+      var feedback = document.getElementById('cf-feedback');
+
+      function showFeedback(message, isSuccess) {
+        feedback.classList.remove('hidden');
+        feedback.textContent = message;
+        if (isSuccess) {
+          feedback.style.backgroundColor = '#d1fae5';
+          feedback.style.color = '#065f46';
+          feedback.style.border = '1px solid #6ee7b7';
+        } else {
+          feedback.style.backgroundColor = '#fee2e2';
+          feedback.style.color = '#991b1b';
+          feedback.style.border = '1px solid #fca5a5';
+        }
+      }
+
+      function setLoading(loading) {
+        submitBtn.disabled = loading;
+        if (loading) {
+          btnText.textContent = 'Enviando...';
+          spinner.classList.remove('hidden');
+          submitBtn.style.opacity = '0.75';
+          submitBtn.style.cursor = 'not-allowed';
+        } else {
+          btnText.textContent = 'Enviar consulta';
+          spinner.classList.add('hidden');
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+        }
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        var name = document.getElementById('cf-name').value.trim();
+        var email = document.getElementById('cf-email').value.trim();
+        var message = document.getElementById('cf-message').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('Por favor completá todos los campos antes de enviar.', false);
+          return;
+        }
+
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showFeedback('Por favor ingresá un email válido.', false);
+          return;
+        }
+
+        feedback.classList.add('hidden');
+        setLoading(true);
+
+        try {
+          var response = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ project_id: 107, name: name, email: email, message: message })
+          });
+
+          if (response.ok) {
+            showFeedback('¡Mensaje enviado! Te responderemos a la brevedad. Gracias por escribirnos.', true);
+            form.reset();
+          } else {
+            showFeedback('Ocurrió un error al enviar tu mensaje. Por favor intentá de nuevo o escribinos por WhatsApp.', false);
+          }
+        } catch (error) {
+          showFeedback('No pudimos conectar con el servidor. Revisá tu conexión e intentá nuevamente.', false);
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+  </script>
+
+</main>
+
+  <footer class="bg-secondary/10 border-t border-secondary/25 text-gray-700">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <a href="index.html" class="flex items-center">
+            <img src="/logo.png" alt="Hola manu" style="height:36px;width:auto;object-fit:contain;" />
+          </a>
+          <p class="text-xs text-gray-500 font-body mt-1">© 2026 Hola manu. Todos los derechos reservados.</p>
+        </div>
+
+        <div class="flex flex-col items-center gap-3">
+          <p class="text-xs font-semibold uppercase tracking-widest text-secondary font-heading">Seguinos</p>
+          <div class="flex items-center gap-5">
+
+            <a
+              href="https://wa.me/5492392448733"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+              </svg>
+              WhatsApp
+            </a>
+
+            <a
+              href="https://instagram.com/Nubox"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="Instagram @Nubox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+              </svg>
+              @Nubox
+            </a>
+
+            <a
+              href="https://tiktok.com/@Nubox"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="TikTok @Nubox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+              </svg>
+              @Nubox
+            </a>
+
+            <a
+              href="mailto:nuboxbaby@gmail.com"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="Email nuboxbaby@gmail.com"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              nuboxbaby@gmail.com
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.toggle("open");
+        btn.classList.toggle("active", isOpen);
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && menu.classList.contains("open")) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.focus();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

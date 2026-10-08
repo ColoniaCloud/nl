@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tucson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1E3A5F",
+            secondary: "#E8471A",
+            accent: "#B0BEC5"
+          },
+          fontFamily: {
+            heading: ["Oswald", "sans-serif"],
+            body: ["Roboto", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+    }
+    main {
+      flex: 1;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Oswald", sans-serif;
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #E8471A;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #E8471A;
+    }
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+    .hamburger-bar {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger-btn.active .bar1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    #hamburger-btn.active .bar2 {
+      opacity: 0;
+    }
+    #hamburger-btn.active .bar3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+    .social-link {
+      transition: color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #E8471A;
+      transform: translateY(-2px);
+    }
+    .footer-link {
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover {
+      color: #E8471A;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 font-body">
+
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="/logo-ia.svg" alt="Tucson" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="index.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white font-body font-medium text-sm tracking-wide py-1">Contacto</a>
+        </nav>
+
+        <button
+          id="hamburger-btn"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-bar bar1"></span>
+          <span class="hamburger-bar bar2"></span>
+          <span class="hamburger-bar bar3"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" class="md:hidden bg-primary border-t border-white/10" role="navigation" aria-label="Menú móvil">
+      <div class="px-4 py-4 flex flex-col space-y-1">
+        <a href="index.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Inicio</a>
+        <a href="servicios.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Servicios</a>
+        <a href="nosotros.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Nosotros</a>
+        <a href="contacto.html" class="text-white font-body font-medium text-base py-3 px-2 rounded hover:bg-white/10 hover:text-secondary transition-colors duration-300">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+<main class="font-['Roboto'] text-gray-800">
+
+  <!-- Banner Superior -->
+  <section class="relative flex items-center justify-center" style="min-height:320px;">
+    <img
+      src="https://images.unsplash.com/photo-1602932365975-18086e1491b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NjkxNTd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Taller Tucson Contacto"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0" style="background:rgba(30,58,95,0.78);"></div>
+    <div class="relative z-10 text-center px-4 py-16" style="animation:fadeInDown .7s ease both;">
+      <h1 class="font-['Oswald'] text-4xl md:text-5xl font-bold text-white uppercase tracking-widest mb-3">Contacto</h1>
+      <p class="text-lg md:text-xl text-gray-200 max-w-xl mx-auto">¿Tenés una Tucson y necesitás asistencia? Contactanos y te respondemos a la brevedad.</p>
+    </div>
+  </section>
+
+  <!-- contact-form -->
+  <section id="contact-form" class="py-16 px-4" style="background:#f4f7fb;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-10" style="animation:fadeIn .7s ease both;">
+        <span class="inline-block text-sm font-semibold uppercase tracking-widest mb-2" style="color:#E8471A;">Escribinos</span>
+        <h2 class="font-['Oswald'] text-3xl md:text-4xl font-bold mb-3" style="color:#1E3A5F;">Envianos tu consulta</h2>
+        <p class="text-gray-600 max-w-xl mx-auto">Completá el formulario y uno de nuestros especialistas en Hyundai Tucson te contactará a la brevedad para coordinar tu turno o responder tus preguntas.</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-lg p-8 md:p-12 max-w-2xl mx-auto" style="border-top:4px solid #E8471A;">
+        <form id="contact-form-main" novalidate>
+          <div class="mb-6">
+            <label for="cf-name" class="block font-semibold mb-2 text-sm uppercase tracking-wide" style="color:#1E3A5F;">Nombre completo</label>
+            <input
+              type="text"
+              id="cf-name"
+              name="name"
+              required
+              placeholder="Ej: Juan Pérez"
+              class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 transition"
+              style="font-family:'Roboto',sans-serif; focus-ring-color:#1E3A5F;"
+              onfocus="this.style.borderColor='#1E3A5F'"
+              onblur="this.style.borderColor='#d1d5db'"
+            />
+          </div>
+          <div class="mb-6">
+            <label for="cf-email" class="block font-semibold mb-2 text-sm uppercase tracking-wide" style="color:#1E3A5F;">Correo electrónico</label>
+            <input
+              type="email"
+              id="cf-email"
+              name="email"
+              required
+              placeholder="Ej: juan@email.com"
+              class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 transition"
+              style="font-family:'Roboto',sans-serif;"
+              onfocus="this.style.borderColor='#1E3A5F'"
+              onblur="this.style.borderColor='#d1d5db'"
+            />
+          </div>
+          <div class="mb-6">
+            <label for="cf-message" class="block font-semibold mb-2 text-sm uppercase tracking-wide" style="color:#1E3A5F;">Mensaje</label>
+            <textarea
+              id="cf-message"
+              name="message"
+              required
+              rows="5"
+              placeholder="Contanos qué necesitás para tu Hyundai Tucson..."
+              class="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 transition resize-none"
+              style="font-family:'Roboto',sans-serif;"
+              onfocus="this.style.borderColor='#1E3A5F'"
+              onblur="this.style.borderColor='#d1d5db'"
+            ></textarea>
+          </div>
+          <div id="cf-feedback" class="mb-4 hidden rounded-lg px-4 py-3 text-sm font-semibold"></div>
+          <button
+            type="submit"
+            id="cf-submit"
+            class="w-full text-white font-['Oswald'] text-lg uppercase tracking-widest py-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-3"
+            style="background:#E8471A;"
+            onmouseover="if(!this.disabled)this.style.background='#c73a14'"
+            onmouseout="if(!this.disabled)this.style.background='#E8471A'"
+          >
+            <span id="cf-btn-text">Enviar mensaje</span>
+            <svg id="cf-spinner" class="hidden animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- map -->
+  <section id="map" class="py-16 px-4" style="background:#fff;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="inline-block text-sm font-semibold uppercase tracking-widest mb-2" style="color:#E8471A;">Ubicación</span>
+        <h2 class="font-['Oswald'] text-3xl md:text-4xl font-bold mb-3" style="color:#1E3A5F;">Dónde encontrarnos</h2>
+        <p class="text-gray-600 max-w-xl mx-auto">Estamos ubicados en Montevideo, Uruguay. Podés visitarnos de lunes a viernes o coordinar un turno por teléfono o WhatsApp.</p>
+      </div>
+      <div class="rounded-2xl overflow-hidden shadow-lg" style="border:3px solid #1E3A5F;">
+        <iframe
+          title="Ubicación Tucson Taller - Montevideo"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d105135.63694763658!2d-56.28406787939453!3d-34.90073!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd63657f93f93a2f%3A0x3be1162e62dcf16!2sMontevideo%2C%20Uruguay!5e0!3m2!1ses!2suy!4v1699000000000!5m2!1ses!2suy"
+          width="100%"
+          height="400"
+          style="border:0;display:block;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- info -->
+  <section id="info" class="py-16 px-4" style="background:#f4f7fb;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="inline-block text-sm font-semibold uppercase tracking-widest mb-2" style="color:#E8471A;">Información de contacto</span>
+        <h2 class="font-['Oswald'] text-3xl md:text-4xl font-bold mb-3" style="color:#1E3A5F;">Hablemos directamente</h2>
+        <p class="text-gray-600 max-w-xl mx-auto">Preferís el trato directo? Llamanos o escribinos por WhatsApp. Somos especialistas exclusivos en Hyundai Tucson en Montevideo.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Teléfono / WhatsApp -->
+        <div class="bg-white rounded-2xl shadow p-8 text-center flex flex-col items-center transition-transform duration-300 hover:-translate-y-1" style="border-top:4px solid #E8471A;">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4" style="background:#1E3A5F;">
+            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.62 10.79a15.91 15.91 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24 11.47 11.47 0 003.58.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.58a1 1 0 01-.24 1.01l-2.21 2.2z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Oswald'] text-xl font-bold mb-2" style="color:#1E3A5F;">Llamanos</h3>
+          <p class="text-gray-500 text-sm mb-4">Coordiná tu turno directamente por teléfono o WhatsApp.</p>
+          <a
+            href="https://wa.me/598969696"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300"
+            style="background:#E8471A;"
+            onmouseover="this.style.background='#c73a14'"
+            onmouseout="this.style.background='#E8471A'"
+          >+598 969 696</a>
+        </div>
+
+        <!-- Email -->
+        <div class="bg-white rounded-2xl shadow p-8 text-center flex flex-col items-center transition-transform duration-300 hover:-translate-y-1" style="border-top:4px solid #1E3A5F;">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4" style="background:#E8471A;">
+            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Oswald'] text-xl font-bold mb-2" style="color:#1E3A5F;">Email</h3>
+          <p class="text-gray-500 text-sm mb-4">Escribinos por correo y te respondemos lo antes posible.</p>
+          <a
+            href="mailto:manu@tucson.com"
+            class="inline-block font-semibold px-6 py-2 rounded-lg border-2 transition-all duration-300"
+            style="color:#1E3A5F;border-color:#1E3A5F;"
+            onmouseover="this.style.background='#1E3A5F';this.style.color='#fff'"
+            onmouseout="this.style.background='transparent';this.style.color='#1E3A5F'"
+          >manu@tucson.com</a>
+        </div>
+
+        <!-- Horario -->
+        <div class="bg-white rounded-2xl shadow p-8 text-center flex flex-col items-center transition-transform duration-300 hover:-translate-y-1" style="border-top:4px solid #B0BEC5;">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4" style="background:#1E3A5F;">
+            <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm.5 11H11V7h1.5v5.29l3.11 1.85-.75 1.24L12.5 13z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Oswald'] text-xl font-bold mb-2" style="color:#1E3A5F;">Horario de atención</h3>
+          <p class="text-gray-500 text-sm mb-4">Atendemos con y sin turno previo en estos horarios.</p>
+          <ul class="text-sm text-gray-700 space-y-1 text-left w-full max-w-xs mx-auto">
+            <li class="flex justify-between"><span class="font-semibold">Lunes a Viernes</span><span>8:00 — 18:00</span></li>
+            <li class="flex justify-between"><span class="font-semibold">Sábado</span><span>8:00 — 13:00</span></li>
+            <li class="flex justify-between"><span class="font-semibold">Domingo</span><span class="text-red-500">Cerrado</span></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- CTA final -->
+      <div class="mt-16 rounded-2xl text-white text-center px-6 py-12" style="background:linear-gradient(135deg,#1E3A5F 60%,#E8471A 100%);">
+        <h2 class="font-['Oswald'] text-3xl md:text-4xl font-bold mb-4 uppercase tracking-wide">¿Tenés una Tucson con algún problema?</h2>
+        <p class="text-lg text-gray-200 mb-8 max-w-xl mx-auto">No esperes más. Somos el taller especializado en Hyundai Tucson en Montevideo. Llamanos hoy y coordinamos tu turno.</p>
+        <a
+          href="https://wa.me/598969696"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block font-['Oswald'] text-lg uppercase tracking-widest px-10 py-4 rounded-lg transition-all duration-300 font-bold"
+          style="background:#E8471A;color:#fff;"
+          onmouseover="this.style.background='#fff';this.style.color='#E8471A'"
+          onmouseout="this.style.background='#E8471A';this.style.color='#fff'"
+        >Llamar ahora</a>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity:0; transform:translateY(-24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    #contact-form-main input:focus,
+    #contact-form-main textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(30,58,95,0.15);
+    }
+  </style>
+
+  <script>
+    (function () {
+      const form     = document.getElementById('contact-form-main');
+      const btn      = document.getElementById('cf-submit');
+      const btnText  = document.getElementById('cf-btn-text');
+      const spinner  = document.getElementById('cf-spinner');
+      const feedback = document.getElementById('cf-feedback');
+
+      function showFeedback(msg, success) {
+        feedback.textContent = msg;
+        feedback.className = 'mb-4 rounded-lg px-4 py-3 text-sm font-semibold ' +
+          (success
+            ? 'bg-green-50 text-green-800 border border-green-300'
+            : 'bg-red-50 text-red-800 border border-red-300');
+        feedback.classList.remove('hidden');
+      }
+
+      function setLoading(loading) {
+        btn.disabled = loading;
+        spinner.classList.toggle('hidden', !loading);
+        btnText.textContent = loading ? 'Enviando...' : 'Enviar mensaje';
+        btn.style.opacity = loading ? '0.75' : '1';
+        btn.style.cursor  = loading ? 'not-allowed' : 'pointer';
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        feedback.classList.add('hidden');
+
+        const name    = document.getElementById('cf-name').value.trim();
+        const email   = document.getElementById('cf-email').value.trim();
+        const message = document.getElementById('cf-message').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('Por favor completá todos los campos antes de enviar.', false);
+          return;
+        }
+        const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRx.test(email)) {
+          showFeedback('Por favor ingresá un correo electrónico válido.', false);
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          const res = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ project_id: 113, name, email, message })
+          });
+
+          if (res.ok) {
+            showFeedback('¡Mensaje enviado con éxito! Te contactaremos a la brevedad.', true);
+            form.reset();
+          } else {
+            showFeedback('Hubo un problema al enviar tu mensaje. Por favor intentá de nuevo o comunicate por WhatsApp.', false);
+          }
+        } catch (err) {
+          showFeedback('Error de conexión. Verificá tu internet e intentá nuevamente.', false);
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+  </script>
+
+</main>
+
+  <footer class="bg-primary text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <span class="font-heading text-2xl font-semibold tracking-wide text-white">Tucson</span>
+          <p class="text-accent text-sm font-body">&copy; 2026 Tucson. Todos los derechos reservados.</p>
+          <a href="mailto:manu@tucson.com" class="footer-link text-accent text-sm font-body hover:text-secondary mt-1">manu@tucson.com</a>
+        </div>
+
+        <div class="flex flex-col items-center md:items-end gap-4">
+          <p class="font-heading text-sm font-medium tracking-widest text-accent uppercase">Seguinos</p>
+          <div class="flex items-center gap-6">
+
+            
+
+            
+
+            
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-white/10 text-center">
+        <p class="text-accent text-xs font-body">Diseñado con dedicación para Tucson</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.contains("open");
+
+        if (isOpen) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        } else {
+          menu.classList.add("open");
+          btn.classList.add("active");
+          btn.setAttribute("aria-expanded", "true");
+          btn.setAttribute("aria-label", "Cerrar menú");
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        }
+      });
+
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 768) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

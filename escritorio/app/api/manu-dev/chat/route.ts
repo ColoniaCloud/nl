@@ -8,6 +8,8 @@ import getPool from "@/lib/db-manu";
 import { upsertBrandbook, linkAgentProject, getBrandContext } from "@/lib/shared-project";
 import { generateLogo, downloadLogoLocally } from "@/lib/logo-generator";
 import { getAgent, loadSystemPrompt } from "@/lib/agents";
+import { checkMaxSites } from "@/lib/billing-access";
+import { prepareBuildInfra } from "@/lib/manu-dev-build";
 
 export const runtime = "nodejs";
 
@@ -18,13 +20,12 @@ const CHAT_MODEL = getAgent("manu-dev")!.model;
 type Step =
   | "welcome"
   | "subdomain"
-  | "identity"
   | "address"
   | "logo"
   | "colors"
   | "fonts"
   | "social"
-  | "site_type"
+  | "content"
   | "building"
   | "complete"
   | "cms";
@@ -59,7 +60,7 @@ async function ensureProjectColumns() {
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
-async function getUser(token: string): Promise<{ id: number; name: string } | null> {
+async function getUser(token: string): Promise<{ id: number; name: string; roles: string[] } | null> {
   const res = await fetch(`${WP_BASE_URL}/wp-json/nl360/v1/me`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
@@ -67,7 +68,8 @@ async function getUser(token: string): Promise<{ id: number; name: string } | nu
   if (res.ok) {
     const data = await res.json();
     if (data.user?.id) {
-      return { id: data.user.id, name: data.user.display_name || data.user.name || "" };
+      const roles: string[] = Array.isArray(data.roles) ? data.roles : (Array.isArray(data.user?.roles) ? data.user.roles : []);
+      return { id: data.user.id, name: data.user.display_name || data.user.name || "", roles };
     }
   }
   const res2 = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/users/me`, {
@@ -76,7 +78,9 @@ async function getUser(token: string): Promise<{ id: number; name: string } | nu
   });
   if (!res2.ok) return null;
   const data2 = await res2.json();
-  return data2.id ? { id: data2.id, name: data2.name || "" } : null;
+  return data2.id
+    ? { id: data2.id, name: data2.name || "", roles: Array.isArray(data2.roles) ? data2.roles : [] }
+    : null;
 }
 
 // ─── Font helpers ────────────────────────────────────────────────────────────
@@ -150,40 +154,33 @@ function getSystemPrompt(step: Step, projectData?: Record<string, any>, username
   const steps: Record<Step, string> = {
     welcome: `${base}
 
-PASO: Bienvenida
-El usuario acaba de escribir el nombre de su proyecto o negocio. El mensaje del usuario ES el nombre.
-Tomalo tal cual como nombre del proyecto y avanza:
-"Genial, [nombre]! Ahora vamos a elegir tu direccion web en nl360.site."
-<!--MANU:{"next":"subdomain","data":{"name":"[nombre del proyecto]"}}-->
+PASO: Bienvenida — Usuario: ${displayUser}
+El usuario acaba de escribir el nombre de su proyecto o negocio. El mensaje del usuario ES el nombre del proyecto.
+Tomalo tal cual como nombre del proyecto.
+
+Genera un subdominio sugerido a partir del nombre del proyecto: pasalo a minusculas, reemplaza los espacios por guiones y elimina acentos y caracteres especiales (deja solo letras, numeros y guiones).
+
+Respondé EXACTAMENTE con este formato (reemplazando lo que esta entre corchetes, sin los corchetes):
+"Hola ${displayUser}! Vamos a crear el sitio web de [nombre del proyecto] en pocos minutos. Solo necesito que respondas algunas preguntas.
+
+Primero, que subdominio queres usar? Te sugiero [subdominio-sugerido].nl360.site — lo usamos o preferis otro nombre?"
+<!--MANU:{"next":"subdomain","data":{"name":"[nombre del proyecto]","suggested_subdomain":"[subdominio-sugerido]"}}-->
 
 OBLIGATORIO: Siempre emiti el marcador MANU en este paso. El nombre del proyecto es lo que el usuario escribio.`,
 
     subdomain: `${base}
 
 PASO: Subdominio — Proyecto: ${name}
-El sistema genero automaticamente opciones de subdominio que aparecen como botones. El usuario esta eligiendo o puede escribir uno propio.
+El sistema genero automaticamente opciones de subdominio que aparecen como botones. El usuario esta eligiendo o puede escribir uno propio. En este paso necesitas DOS datos: el subdominio y el rubro/industria del negocio.
 
-Cuando el usuario elija una opcion o escriba un subdominio:
-Confirmalo y pedi el rubro:
+Paso 1 — Cuando el usuario elija una opcion o escriba un subdominio, confirmalo y pedi el rubro. NO emitas marcador todavia:
 "Listo, tu sitio va a estar en [subdominio].nl360.site. A que se dedica ${name}?"
-<!--MANU:{"next":"identity","data":{"subdomain":"[el-elegido-sin-.nl360.site]"}}-->
 
-IMPORTANTE: En "data.subdomain" guarda SOLO el slug (por ejemplo "mi-negocio"), no la URL completa.`,
-
-    identity: `${base}
-
-PASO: Identidad — Proyecto: ${name}
-Necesitas 2 datos: rubro/industria y publico objetivo.
-Pide de a uno en orden segun lo que ya tienes en el historial. NO pidas los dos juntos.
-
-Primero pide el rubro/industria (si no lo tienes aun).
-Luego pide a quien le venden, quien es su publico objetivo (si no lo tienes aun).
-
-IMPORTANTE: Acepta la primera respuesta que de el usuario para cada dato. NO pidas que sea mas especifico ni hagas preguntas de seguimiento sobre el mismo dato.
-
-Cuando tengas los 2 datos, emite el marcador y pregunta la direccion:
+Paso 2 — Cuando el usuario responda el rubro, emite el marcador y pregunta la direccion:
 "Perfecto. Como es la direccion de tu negocio?"
-<!--MANU:{"next":"address","data":{"industry":"...","audience":"..."}}-->`,
+<!--MANU:{"next":"address","data":{"subdomain":"[el-elegido-sin-.nl360.site]","industry":"[rubro que indico el usuario]"}}-->
+
+IMPORTANTE: En "data.subdomain" guarda SOLO el slug (por ejemplo "mi-negocio"), no la URL completa. Acepta la primera respuesta del usuario para el rubro, no pidas que sea mas especifico.`,
 
     address: `${base}
 
@@ -206,6 +203,18 @@ REGLA: Acepta la primera respuesta del usuario. NO pidas detalles adicionales.`,
 
 PASO: Logo — Proyecto: ${name}
 
+GUIA DE PALETAS POR RUBRO (rubro actual: ${industry}):
+En cualquier momento de este paso en que propongas una paleta, genera UNA paleta de 3 colores (primario, secundario, acento) ESPECIFICA para el rubro "${industry}". NO uses siempre los mismos colores. Basate en la psicologia del color para ese sector:
+- Moda / boutique / calzado / indumentaria: neutros elegantes (negro, blanco, dorado, beige).
+- Restaurante / gastronomia / cafe / comida: calidos (rojos, naranjas, marrones, crema).
+- Salud / clinica / consultorio / medico: frescos (azules, verdes, blancos).
+- Tecnologia / startup / software / app: modernos (azul electrico, gris oscuro, acento vibrante).
+- Construccion / arquitectura / inmobiliaria: solidos (gris, negro, naranja, blanco).
+- Fitness / gym / deporte: energeticos (negro, rojo, amarillo, naranja).
+- Legal / abogados / contable: sobrios (azul marino, gris, blanco, dorado).
+- Belleza / spa / estetica / peluqueria: suaves (rosa, lavanda, beige, dorado).
+- Otro rubro: una paleta profesional acorde al nombre y la industria, basada en la psicologia del color de ese sector.
+
 Si el usuario eligio "Generar logo con IA":
 Decile que vas a generar el logo:
 "Dale, genero el logo para ${name} ahora mismo."
@@ -213,7 +222,7 @@ Decile que vas a generar el logo:
 El sistema mostrara el resultado. No hagas nada mas — espera la respuesta del usuario.
 
 Si el usuario aprobo el logo ("me gusta", "usarlo", etc.):
-Emite el marcador y propone paleta de colores basada en el rubro (${industry}) y el logo generado.
+Emite el marcador y propone una paleta segun la GUIA DE PALETAS POR RUBRO de arriba (rubro ${industry}) y el logo generado.
 "Logo guardado. Para ${name} propongo esta paleta:
 - [Nombre1]: #XXXXXX
 - [Nombre2]: #XXXXXX
@@ -231,7 +240,7 @@ Si el usuario eligio "Tengo logo, lo subo":
 <!--OPTIONS:["Ya subi mi logo","Continuar sin logo"]-->
 
 Si el usuario confirmo upload:
-Propone paleta basada en el rubro (${industry}):
+Propone una paleta segun la GUIA DE PALETAS POR RUBRO de arriba (rubro ${industry}):
 "Logo recibido. Para ${name} propongo esta paleta:
 - [Nombre1]: #XXXXXX
 - [Nombre2]: #XXXXXX
@@ -241,7 +250,7 @@ Propone paleta basada en el rubro (${industry}):
 <!--MANU:{"next":"colors","data":{"logo_type":"uploaded","primary_color":"#XXXXXX","secondary_color":"#XXXXXX","accent_color":"#XXXXXX"}}-->
 
 Si el usuario eligio "Continuar sin logo":
-Propone paleta basada en el rubro (${industry}):
+Propone una paleta segun la GUIA DE PALETAS POR RUBRO de arriba (rubro ${industry}):
 "Sin problema, usamos el nombre como texto estilizado. Para ${name} propongo esta paleta:
 - [Nombre1]: #XXXXXX
 - [Nombre2]: #XXXXXX
@@ -291,46 +300,37 @@ Si dice que no tiene WhatsApp, pregunta igualmente por las otras redes.
 Despues de las redes, pregunta SIEMPRE: "Tenes un email de contacto para el sitio? (lo vamos a mostrar en el pie de pagina y los formularios)"
 Si no tiene email, acepta y continua.
 
-Cuando tengas toda la info (redes + email o confirmacion de que no tiene):
-"Perfecto! Que tipo de sitio necesitas para ${name}?"
-<!--OPTIONS:["Tienda online","Blog","Web informativa"]-->
-<!--MANU:{"next":"site_type","data":{"social_links":[...]}}}-->
+Cuando tengas toda la info (redes + email o confirmacion de que no tiene), emite el marcador y hace las 3 preguntas de negocio:
+"Perfecto! Una ultima cosa antes de construir: necesito entender mejor tu negocio. Respondé estas 3 preguntas (podés ser breve):
+
+1. Que hace ${name} y que lo diferencia de la competencia?
+2. Quien es tu cliente ideal?
+3. Que querés que haga el visitante cuando entre al sitio? (ej: que te llame, que compre, que reserve un turno)"
+<!--MANU:{"next":"content","data":{"social_links":[...]}}-->
 
 En social_links, incluye TODAS las redes Y el email confirmados:
 [{"platform":"whatsapp","value":"+5491234..."},{"platform":"instagram","value":"@usuario"},{"platform":"email","value":"info@negocio.com"}]
 Plataformas validas: whatsapp, instagram, facebook, tiktok, youtube, twitter, linkedin, pinterest, telegram, email.
 Si no tiene redes ni email, usa array vacio [].`,
 
-    site_type: `${base}
+    content: `${base}
 
-PASO: Tipo de sitio — Proyecto: ${name}
-El usuario esta eligiendo que tipo de sitio quiere entre las opciones presentadas.
+PASO: Contenido — Proyecto: ${name}
+Necesitas entender el negocio antes de construir. Hace EXACTAMENTE estas 3 preguntas en UN solo mensaje:
 
-Si el usuario elige "Tienda online", NO confirmes todavia. Pregunta que tipo de ecommerce quiere:
-"Que tipo de tienda necesitas?"
-<!--OPTIONS:["E-commerce simple (WhatsApp)","E-commerce completo (Nubia)"]-->
+"Antes de construir tu sitio, necesito entender mejor tu negocio. Respondé estas 3 preguntas (podés ser breve):
 
-Explica brevemente:
-- **E-commerce simple**: Catalogo con boton de compra por WhatsApp. Ideal para empezar rapido.
-- **E-commerce completo**: Carrito, pagos con MercadoPago/transferencia/cripto, gestion de productos. Usa nuestro agente especializado Nubia.
+1. Que hace ${name} y que lo diferencia de la competencia?
+2. Quien es tu cliente ideal?
+3. Que querés que haga el visitante cuando entre al sitio? (ej: que te llame, que compre, que reserve un turno)"
 
-Si elige "E-commerce simple (WhatsApp)" o indica que quiere algo simple:
-"Perfecto, vamos a construir ${name} como tienda con catalogo y WhatsApp. Arranco con la construccion ahora."
-<!--MANU:{"next":"building","data":{"site_type":"store"}}-->
+No emitas ningun marcador en este primer mensaje — espera a que el usuario responda.
 
-Si elige "E-commerce completo (Nubia)" o indica que quiere carrito/pagos/ecommerce completo:
-"Excelente eleccion! Para una tienda completa con carrito y pagos, Nubia es la mejor opcion. Te redirijo ahora..."
-<!--MANU:{"next":"redirect_nubia","data":{"site_type":"store_full"}}-->
+Cuando el usuario responda (en uno o varios mensajes), agradece en una frase y arranca la construccion:
+"Listo, con esto ya puedo construir ${name}. Arranco con la construccion ahora."
+<!--MANU:{"next":"building","data":{}}-->
 
-Si elige "Blog":
-"Perfecto, vamos a construir ${name} como blog. Arranco con la construccion ahora."
-<!--MANU:{"next":"building","data":{"site_type":"blog"}}-->
-
-Si elige "Web informativa":
-"Perfecto, vamos a construir ${name} como web informativa. Arranco con la construccion ahora."
-<!--MANU:{"next":"building","data":{"site_type":"informational"}}-->
-
-REGLA: Siempre emiti el marcador MANU en este paso (excepto cuando recien preguntas el subtipo de tienda). No pidas mas informacion.`,
+REGLA: Acepta las respuestas del usuario tal cual, no pidas mas detalles. Emiti el marcador MANU solo una vez que el usuario ya respondio las preguntas.`,
 
     building: `${base}
 
@@ -377,15 +377,15 @@ function parseMessage(text: string): {
   let upload: string | undefined;
   let logoGenerate = false;
 
-  const manuMatch = cleanText.match(/<!--MANU:(\{[\s\S]*?\})-->/);
+  const manuMatch = cleanText.match(/<!--MANU:([\s\S]*?)-->/);
   if (manuMatch) {
+    cleanText = cleanText.replace(manuMatch[0], "").trim();
     try {
       const parsed = JSON.parse(manuMatch[1]);
-      cleanText = cleanText.replace(manuMatch[0], "");
       next = parsed.next;
       data = parsed.data;
     } catch (e) {
-      console.error("[chat] Failed to parse MANU marker:", manuMatch[1].slice(0, 200), e);
+      console.error("[chat] Failed to parse MANU marker:", e);
     }
   }
 
@@ -523,6 +523,25 @@ export async function POST(req: NextRequest) {
     if (!message.trim())
       return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 });
 
+    // Paywall temprano: si el usuario arranca una conversacion nueva (sin project_id)
+    // y su plan no le permite construir un sitio mas, avisamos antes del wizard
+    // en vez de dejarlo responder 8 preguntas para recien enterarse en "building".
+    if (!project_id) {
+      // Barre builds realmente colgados (crash, contenedor caido, etc.) antes de
+      // contar la cuota — si no, un build atascado en 'building' bloquearia al
+      // usuario para siempre aunque reconcileStuckBuilds() ya sepa resolverlo,
+      // porque create-site (que es quien normalmente la dispara) nunca llega a
+      // correr si el paywall/cuota lo frena aca primero.
+      await prepareBuildInfra();
+      const quotaCheck = await checkMaxSites(user.id, user.roles);
+      if (!quotaCheck.allowed) {
+        return NextResponse.json(
+          { error: quotaCheck.reason, paywall: true },
+          { status: 403 }
+        );
+      }
+    }
+
     const pool = getPool();
 
     // Only clear orphaned chat history when explicitly starting a new conversation.
@@ -534,6 +553,10 @@ export async function POST(req: NextRequest) {
         [user.id]
       );
     }
+
+    // Declared in the outer scope so the stream callback can read it via closure
+    // (assigned/read inside start()).
+    let modeToReturn: string | undefined;
 
     const currentStep = await getCurrentStep(user.id, project_id);
     const history = await getHistory(user.id, project_id);
@@ -662,7 +685,7 @@ export async function POST(req: NextRequest) {
 
           const { cleanText, next: rawNext, data, options: parsedOptions, colors, fonts, upload, logoGenerate } = parseMessage(fullText);
           // Validate that the AI-emitted next step is a known step; reject invented steps
-          const VALID_STEPS: Set<string> = new Set(["welcome","subdomain","identity","address","logo","colors","fonts","social","site_type","building","complete","cms"]);
+          const VALID_STEPS: Set<string> = new Set(["welcome","subdomain","address","logo","colors","fonts","social","content","building","complete","cms"]);
           const next = (rawNext && VALID_STEPS.has(rawNext)) ? rawNext : undefined;
           if (rawNext && !VALID_STEPS.has(rawNext)) {
             console.warn(`[chat] AI emitted unknown step "${rawNext}", ignoring marker`);
@@ -709,9 +732,10 @@ export async function POST(req: NextRequest) {
             });
             if (logoResult) {
               // Download SVG locally so generated site can use it without external dependency
-              const localPath = await downloadLogoLocally(project_id, logoResult.url);
+              const logoSubdomain = projectData?.subdomain as string | undefined;
+              const localPath = await downloadLogoLocally(project_id, logoResult.url, logoSubdomain);
               const logoUrl = localPath ?? logoResult.url;
-              logoPreview = logoUrl;
+              logoPreview = logoResult.url;
               await pool.execute(
                 "UPDATE md_projects SET logo_url = ? WHERE id = ? AND user_id = ?",
                 [logoUrl, project_id, user.id]
@@ -727,14 +751,45 @@ export async function POST(req: NextRequest) {
           // ── Data persistence per step transition ──
           if (next && data) {
             if (next === "subdomain" && !project_id) {
-              // welcome -> subdomain: Create project
+              // welcome -> subdomain: Create project (or reuse an existing draft).
+              // Every wizard restart without ?project= lands here with project_id=null,
+              // so without reuse each restart leaves behind another orphaned
+              // draft-{uid}-{ts} row that nothing ever cleans up.
               await ensureProjectColumns();
-              const tempSubdomain = `draft-${user.id}-${Date.now()}`;
-              const [result] = (await pool.execute(
-                "INSERT INTO md_projects (user_id, subdomain, name, generation_mode, status) VALUES (?, ?, ?, ?, 'draft')",
-                [user.id, tempSubdomain, data.name || "Mi Proyecto", requestedMode]
+              const [existingDraftRows] = (await pool.execute(
+                "SELECT id FROM md_projects WHERE user_id = ? AND status = 'draft' ORDER BY created_at DESC LIMIT 1",
+                [user.id]
               )) as any;
-              newProjectId = result.insertId;
+              const existingDraftId = existingDraftRows[0]?.id as number | undefined;
+
+              if (existingDraftId) {
+                // Reset everything the wizard sets incrementally (logo_url is the one
+                // field nothing ever clears on the "sin logo" path) so a reused draft
+                // starts genuinely blank instead of leaking answers from whatever
+                // conversation abandoned it.
+                await pool.execute(
+                  `UPDATE md_projects
+                   SET name = ?, generation_mode = ?, logo_url = NULL,
+                       location = NULL, social_links = NULL, extra_content = NULL
+                   WHERE id = ?`,
+                  [data.name || "Mi Proyecto", requestedMode, existingDraftId]
+                );
+                // Clear leftover history from whatever conversation abandoned this
+                // draft — otherwise getHistory() would feed Claude a mix of the old
+                // and new conversations once messages start pointing at this id.
+                await pool.execute(
+                  "DELETE FROM md_chat_history WHERE project_id = ? AND user_id = ?",
+                  [existingDraftId, user.id]
+                );
+                newProjectId = existingDraftId;
+              } else {
+                const tempSubdomain = `draft-${user.id}-${Date.now()}`;
+                const [result] = (await pool.execute(
+                  "INSERT INTO md_projects (user_id, subdomain, name, generation_mode, status) VALUES (?, ?, ?, ?, 'draft')",
+                  [user.id, tempSubdomain, data.name || "Mi Proyecto", requestedMode]
+                )) as any;
+                newProjectId = result.insertId;
+              }
               await pool.execute(
                 "UPDATE md_chat_history SET project_id = ? WHERE user_id = ? AND project_id IS NULL",
                 [newProjectId, user.id]
@@ -750,20 +805,21 @@ export async function POST(req: NextRequest) {
               const subOptions = await generateSubdomainOptions(pool, data.name || "mi-sitio");
               options = subOptions;
 
-            } else if (next === "identity" && project_id && data.subdomain) {
-              // subdomain -> identity: Save subdomain
-              const sub = String(data.subdomain).replace(/\.nl360\.site$/i, "").trim();
-              await pool.execute(
-                "UPDATE md_projects SET subdomain = ?, site_url = ? WHERE id = ? AND user_id = ?",
-                [sub, `https://${sub}.nl360.site`, project_id, user.id]
-              );
-
             } else if (next === "address" && project_id) {
-              // identity -> address: Save industry + audience
-              await pool.execute(
-                "UPDATE md_projects SET industry = ?, audience = ? WHERE id = ? AND user_id = ?",
-                [data.industry || "", data.audience || "", project_id, user.id]
-              );
+              // subdomain -> address: Save subdomain + site_url + industry in one transition
+              // (the identity step was removed; audience is no longer captured).
+              if (data.subdomain) {
+                const sub = String(data.subdomain).replace(/\.nl360\.site$/i, "").trim();
+                await pool.execute(
+                  "UPDATE md_projects SET subdomain = ?, site_url = ?, industry = ? WHERE id = ? AND user_id = ?",
+                  [sub, `https://${sub}.nl360.site`, data.industry || "", project_id, user.id]
+                );
+              } else {
+                await pool.execute(
+                  "UPDATE md_projects SET industry = ? WHERE id = ? AND user_id = ?",
+                  [data.industry || "", project_id, user.id]
+                );
+              }
               if (!options || options.length === 0) {
                 options = ["Direccion especifica", "Zona regional de operacion"];
               }
@@ -811,207 +867,49 @@ export async function POST(req: NextRequest) {
                 });
               }
 
-            } else if (next === "site_type" && project_id) {
-              // social -> site_type: Save social links
+            } else if (next === "content" && project_id) {
+              // social -> content: Save social links and force site_type to 'informational'.
+              // The site_type step was removed, but the column still drives generation in
+              // create-site (prompt, default pages, Unsplash queries), so we hardcode it.
               if (data.social_links) {
                 await pool.execute(
-                  "UPDATE md_projects SET social_links = ? WHERE id = ? AND user_id = ?",
+                  "UPDATE md_projects SET social_links = ?, site_type = 'informational' WHERE id = ? AND user_id = ?",
                   [JSON.stringify(data.social_links), project_id, user.id]
                 );
-              }
-              if (!options || options.length === 0) {
-                options = ["Tienda online", "Blog", "Web informativa"];
+              } else {
+                await pool.execute(
+                  "UPDATE md_projects SET site_type = 'informational' WHERE id = ? AND user_id = ?",
+                  [project_id, user.id]
+                );
               }
 
             } else if (next === "building" && project_id) {
-              // site_type -> building: Save site_type
-              if (data.site_type) {
-                await pool.execute(
-                  "UPDATE md_projects SET site_type = ?, status = 'building' WHERE id = ? AND user_id = ?",
-                  [data.site_type, project_id, user.id]
-                );
-              }
-              // Populate extra_content from chat history so site generation uses it
-              try {
-                const [chatRows] = await pool.execute(
-                  "SELECT content FROM md_chat_history WHERE project_id = ? AND role = 'user' ORDER BY id ASC",
-                  [project_id]
-                ) as any;
-                if (chatRows.length > 0) {
-                  const extraContent = chatRows
-                    .map((r: any) => r.content)
-                    .join("\n")
-                    .slice(0, 3000);
-                  await pool.execute(
-                    "UPDATE md_projects SET extra_content = ? WHERE id = ? AND user_id = ?",
-                    [extraContent, project_id, user.id]
-                  );
-                }
-              } catch (ecErr) {
-                console.error("[chat] Failed to populate extra_content:", ecErr);
-              }
-
-            } else if (next === "redirect_nubia" && project_id) {
-              // site_type -> redirect_nubia: User chose full e-commerce
-              // Collect project data to pass to Nubia
-              const [projRows] = await pool.execute(
-                "SELECT name, industry, subdomain, social_links FROM md_projects WHERE id = ? AND user_id = ?",
-                [project_id, user.id]
-              ) as any;
-              const projData = projRows[0] || {};
-              const [designRows] = await pool.execute(
-                "SELECT primary_color, secondary_color, accent_color, font_heading, font_body FROM md_design WHERE project_id = ?",
-                [project_id]
-              ) as any;
-              const designData = designRows[0] || {};
-              let socialLinks: any[] = [];
-              try { socialLinks = JSON.parse(projData.social_links || "[]"); } catch {}
-              const nubiaHandoff = {
-                name: projData.name || "",
-                industry: projData.industry || "",
-                subdomain: projData.subdomain || "",
-                colors: {
-                  primary: designData.primary_color || "",
-                  secondary: designData.secondary_color || "",
-                  accent: designData.accent_color || "",
-                },
-                fonts: {
-                  heading: designData.font_heading || "",
-                  body: designData.font_body || "",
-                },
-                email: socialLinks.find((s: any) => s.platform === "email")?.value || "",
-                phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-                whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-              };
-              // M2: Store handoff in DB and pass only the id — avoids URL length limits
-              let handoffId: number | null = null;
-              try {
-                const sp = await upsertBrandbook(user.id, {
-                  name: nubiaHandoff.name,
-                  industry: nubiaHandoff.industry,
-                  primary_color: nubiaHandoff.colors.primary || undefined,
-                  secondary_color: nubiaHandoff.colors.secondary || undefined,
-                  accent_color: nubiaHandoff.colors.accent || undefined,
-                  font_heading: nubiaHandoff.fonts.heading || undefined,
-                  font_body: nubiaHandoff.fonts.body || undefined,
-                  email: nubiaHandoff.email || undefined,
-                  whatsapp: nubiaHandoff.whatsapp || undefined,
-                });
-                const { recordHandoff } = await import("@/lib/shared-project");
-                handoffId = await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
-              } catch (hErr) {
-                logger.warn("No se pudo registrar handoff Manu Dev → Nubia");
-              }
-              // Pass redirect info in the response
-              nextStep = "redirect_nubia" as Step;
-              (options as any) = undefined;
-              (colors as any) = undefined;
-              (fonts as any) = undefined;
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    done: true,
-                    step: "redirect_nubia",
-                    project_id: newProjectId,
-                    cleanText: safeCleanText,
-                    handoffId,
-                  })}\n\n`
-                )
-              );
-              controller.close();
-              return;
-            }
-          }
-
-          // ── Programmatic fallback: site_type → building ──
-          // If Claude didn't emit the MANU marker when in site_type step, detect the
-          // user's choice and force the transition to building so it never gets stuck.
-          if (currentStep === "site_type" && nextStep === "site_type" && project_id) {
-            const userLower = message.trim().toLowerCase();
-            const combined = (userLower + " " + (safeCleanText || "").toLowerCase());
-            let detectedType: string | null = null;
-            let redirectNubia = false;
-
-            // Check for full e-commerce / Nubia redirect first
-            if (combined.includes("completo") || combined.includes("nubia") || combined.includes("carrito") || combined.includes("mercadopago") || combined.includes("pagos")) {
-              redirectNubia = true;
-            } else if (combined.includes("simple") || combined.includes("whatsapp") || combined.includes("catalogo")) {
-              detectedType = "store";
-            } else if (combined.includes("tienda") || combined.includes("store") || combined.includes("ecommerce") || combined.includes("e-commerce")) {
-              detectedType = "store";
-            } else if (combined.includes("blog")) {
-              detectedType = "blog";
-            } else if (combined.includes("informativ") || combined.includes("web") || combined.includes("landing") || combined.includes("corporativ") || combined.includes("institucional")) {
-              detectedType = "informational";
-            }
-
-            if (redirectNubia) {
-              console.log(`[chat] Fallback site_type: detected Nubia redirect from user message`);
-              // Collect project data for handoff
-              const [projRows] = await pool.execute(
-                "SELECT name, industry, subdomain, social_links FROM md_projects WHERE id = ? AND user_id = ?",
-                [project_id, user.id]
-              ) as any;
-              const projData = projRows[0] || {};
-              const [designRows] = await pool.execute(
-                "SELECT primary_color, secondary_color, accent_color, font_heading, font_body FROM md_design WHERE project_id = ?",
-                [project_id]
-              ) as any;
-              const designData = designRows[0] || {};
-              let socialLinks: any[] = [];
-              try { socialLinks = JSON.parse(projData.social_links || "[]"); } catch {}
-              const nubiaHandoff = {
-                name: projData.name || "",
-                industry: projData.industry || "",
-                subdomain: projData.subdomain || "",
-                colors: { primary: designData.primary_color || "", secondary: designData.secondary_color || "", accent: designData.accent_color || "" },
-                fonts: { heading: designData.font_heading || "", body: designData.font_body || "" },
-                email: socialLinks.find((s: any) => s.platform === "email")?.value || "",
-                phone: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-                whatsapp: socialLinks.find((s: any) => s.platform === "whatsapp")?.value || "",
-              };
-              // M2: Store handoff in DB (fallback path)
-              let fallbackHandoffId: number | null = null;
-              try {
-                const sp = await upsertBrandbook(user.id, {});
-                const { recordHandoff } = await import("@/lib/shared-project");
-                fallbackHandoffId = await recordHandoff(user.id, sp, "manu_dev", "nubia", nubiaHandoff as Record<string, unknown>);
-              } catch {}
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ done: true, step: "redirect_nubia", project_id: project_id, cleanText: safeCleanText, handoffId: fallbackHandoffId })}\n\n`
-                )
-              );
-              controller.close();
-              return;
-            }
-
-            if (detectedType) {
-              console.log(`[chat] Fallback site_type: detected "${detectedType}" from user message, forcing building step`);
+              // content -> building: Start the build and persist the user's answers to the
+              // 3 business questions into extra_content (replacing any previous value).
               await pool.execute(
-                "UPDATE md_projects SET site_type = ?, status = 'building' WHERE id = ? AND user_id = ?",
-                [detectedType, project_id, user.id]
+                "UPDATE md_projects SET status = 'building' WHERE id = ? AND user_id = ?",
+                [project_id, user.id]
               );
-              // Populate extra_content from chat history
               try {
-                const [chatRows] = await pool.execute(
-                  "SELECT content FROM md_chat_history WHERE project_id = ? AND role = 'user' ORDER BY id ASC",
+                const projName = projectData?.name || "tu negocio";
+                const [answerRows] = await pool.execute(
+                  "SELECT content FROM md_chat_history WHERE project_id = ? AND role = 'user' AND step = 'content' ORDER BY id ASC",
                   [project_id]
                 ) as any;
-                if (chatRows.length > 0) {
-                  const extraContent = chatRows
-                    .map((r: any) => r.content)
-                    .join("\n")
-                    .slice(0, 3000);
-                  await pool.execute(
-                    "UPDATE md_projects SET extra_content = ? WHERE id = ? AND user_id = ?",
-                    [extraContent, project_id, user.id]
-                  );
-                }
+                const answers = (answerRows as any[]).map((r) => r.content).join("\n").trim();
+                const header =
+                  `1. Que hace ${projName} y que lo diferencia de la competencia?\n` +
+                  `2. Quien es el cliente ideal?\n` +
+                  `3. Que se espera que haga el visitante cuando entra al sitio?`;
+                const extraContent = `${header}\n\nRespuestas del cliente:\n${answers}`.slice(0, 3000);
+                await pool.execute(
+                  "UPDATE md_projects SET extra_content = ? WHERE id = ? AND user_id = ?",
+                  [extraContent, project_id, user.id]
+                );
               } catch (ecErr) {
-                console.error("[chat] Failed to populate extra_content (fallback):", ecErr);
+                console.error("[chat] Failed to populate extra_content from content step:", ecErr);
               }
-              nextStep = "building" as Step;
+
             }
           }
 
@@ -1027,6 +925,7 @@ export async function POST(req: NextRequest) {
                 upload,
                 cleanText: safeCleanText,
                 logoPreview,
+                ...(modeToReturn ? { mode: modeToReturn } : {}),
               })}\n\n`
             )
           );

@@ -34,6 +34,17 @@ export function resolveEffectiveMode(mode: GenerationMode, pageCount: number): "
   return mode;
 }
 
+/** True for static HTML modes served by nginx (lite single-page and lite_plus multi-page). */
+export function isStaticMode(mode: GenerationMode): boolean {
+  return mode === "lite" || mode === "lite_plus";
+}
+
+/** Map a page slug to its static HTML filename (home → index.html, rest → <slug>.html). */
+export function slugToStaticFile(slug: string): string {
+  if (!slug || slug === "home") return "index.html";
+  return `${slug.replace(/[^a-zA-Z0-9-]/g, "-").toLowerCase()}.html`;
+}
+
 export function validateLiteScope(pages: AnyPage[]) {
   if (!Array.isArray(pages) || pages.length === 0) {
     return { ok: false, reason: "No hay paginas definidas para el proyecto." };
@@ -283,7 +294,7 @@ function baseLayout(params: {
   const secondaryVar = secondaryColor ? `--secondary:${secondaryColor};` : "";
 
   const brandContent = logoUrl
-    ? `<img src="${logoUrl}" alt="${businessName}" style="height:40px;width:auto;object-fit:contain;" />`
+    ? `<img src="${logoUrl}" alt="${businessName}" style="height:56px;max-height:100%;width:auto;max-width:220px;object-fit:contain;" />`
     : businessName;
 
   return `<!doctype html>

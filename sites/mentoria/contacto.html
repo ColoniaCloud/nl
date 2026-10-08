@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MentorIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1A1A2E",
+              secondary: "#7C3AED",
+              accent: "#00D4FF",
+            },
+            fontFamily: {
+              heading: ["Space Grotesk", "sans-serif"],
+              body: ["DM Sans", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        font-family: "DM Sans", sans-serif;
+        background-color: #f9fafb;
+      }
+      main {
+        flex: 1;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Space Grotesk", sans-serif;
+      }
+      .nav-link {
+        position: relative;
+        transition: color 0.3s ease;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #00d4ff;
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .nav-link:hover {
+        color: #00d4ff;
+      }
+      .hamburger-line {
+        transition: all 0.3s ease;
+      }
+      .mobile-menu {
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      .mobile-menu.open {
+        max-height: 400px;
+        opacity: 1;
+      }
+      .mobile-nav-link {
+        transition: color 0.3s ease, background-color 0.3s ease,
+          padding-left 0.3s ease;
+      }
+      .mobile-nav-link:hover {
+        color: #00d4ff;
+        background-color: rgba(124, 58, 237, 0.15);
+        padding-left: 1.5rem;
+      }
+      .logo-text {
+        transition: color 0.3s ease;
+      }
+      .logo-text:hover {
+        color: #00d4ff;
+      }
+      .footer-link {
+        transition: color 0.3s ease;
+      }
+      .footer-link:hover {
+        color: #00d4ff;
+      }
+      .social-link {
+        transition: color 0.3s ease, transform 0.3s ease;
+        display: inline-block;
+      }
+      .social-link:hover {
+        color: #00d4ff;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <a href="index.html" class="logo-text">
+            <span
+              class="font-heading font-bold text-2xl text-white tracking-tight"
+            >
+              Mentor<span class="text-accent">IA</span>
+            </span>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center space-x-8">
+            <a
+              href="index.html"
+              class="nav-link font-body font-medium text-gray-200 text-sm uppercase tracking-wide"
+            >
+              Inicio
+            </a>
+            <a
+              href="servicios.html"
+              class="nav-link font-body font-medium text-gray-200 text-sm uppercase tracking-wide"
+            >
+              Servicios
+            </a>
+            <a
+              href="nosotros.html"
+              class="nav-link font-body font-medium text-gray-200 text-sm uppercase tracking-wide"
+            >
+              Nosotros
+            </a>
+            <a
+              href="contacto.html"
+              class="font-body font-medium text-sm uppercase tracking-wide bg-secondary text-white px-5 py-2 rounded-full transition-all duration-300 hover:bg-accent hover:text-primary hover:shadow-lg hover:shadow-accent/30"
+            >
+              Contacto
+            </a>
+          </nav>
+
+          <!-- Hamburger Button -->
+          <button
+            id="hamburger-btn"
+            class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+          >
+            <span
+              class="hamburger-line block w-6 h-0.5 bg-white"
+              id="line-1"
+            ></span>
+            <span
+              class="hamburger-line block w-6 h-0.5 bg-white"
+              id="line-2"
+            ></span>
+            <span
+              class="hamburger-line block w-6 h-0.5 bg-white"
+              id="line-3"
+            ></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="mobile-menu bg-primary border-t border-secondary/30 md:hidden">
+        <nav class="px-4 pt-2 pb-4 space-y-1">
+          <a
+            href="index.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Inicio
+          </a>
+          <a
+            href="servicios.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Servicios
+          </a>
+          <a
+            href="nosotros.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Nosotros
+          </a>
+          <a
+            href="contacto.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Contacto
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="bg-[#1A1A2E] text-white" style="font-family: 'DM Sans', sans-serif;">
+
+  <!-- Banner Superior -->
+  <section class="relative flex items-center justify-center overflow-hidden" style="min-height: 340px;">
+    <img
+      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&q=80"
+      alt="Contacto MentorIA"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+      style="filter: brightness(0.25);"
+    />
+    <div class="relative z-10 text-center px-6 py-16 max-w-3xl mx-auto">
+      <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">Estamos para ayudarte</p>
+      <h1 class="text-4xl md:text-6xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+        Contacto
+      </h1>
+      <p class="text-lg md:text-xl text-gray-300 max-w-xl mx-auto">
+        Tenés dudas antes de empezar con tu mentor IA? Escribinos y te respondemos a la brevedad.
+      </p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#1A1A2E] to-transparent"></div>
+  </section>
+
+  <!-- Sección: contact-form -->
+  <section id="contact-form" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+
+        <!-- Texto lateral -->
+        <div class="space-y-6">
+          <div>
+            <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">Hablemos</p>
+            <h2 class="text-3xl md:text-4xl font-bold leading-tight" style="font-family: 'Space Grotesk', sans-serif;">
+              Tu próximo mentor te está esperando
+            </h2>
+          </div>
+          <p class="text-gray-300 text-base leading-relaxed">
+            Si estás interesado en acceder a MentorIA y tener conversaciones reales con la filosofía de mentores como Napoleon Hill, Robert Kiyosaki u otros referentes, completá el formulario o envianos un mensaje directo por WhatsApp.
+          </p>
+          <p class="text-gray-300 text-base leading-relaxed">
+            Te contamos cómo funciona la plataforma, qué mentores están disponibles y cuál es el plan que mejor se adapta a tu momento como emprendedor.
+          </p>
+          <div class="space-y-4 pt-2">
+            <div class="flex items-start gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7C3AED22, #00D4FF22); border: 1px solid #00D4FF44;">
+                <svg class="w-5 h-5" style="color: #00D4FF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-400 mb-1">Email</p>
+                <a href="mailto:nicogdublanc@gmail.com" class="text-white font-medium hover:underline transition-all" style="color: #00D4FF;">nicogdublanc@gmail.com</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7C3AED22, #00D4FF22); border: 1px solid #00D4FF44;">
+                <svg class="w-5 h-5" style="color: #00D4FF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-400 mb-1">WhatsApp</p>
+                <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" class="font-medium transition-all" style="color: #00D4FF;">+54 9 11 6250-4624</a>
+              </div>
+            </div>
+            <div class="flex items-start gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7C3AED22, #00D4FF22); border: 1px solid #00D4FF44;">
+                <svg class="w-5 h-5" style="color: #00D4FF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-400 mb-1">Tiempo de respuesta</p>
+                <p class="text-white font-medium">Menos de 24 horas hábiles</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="rounded-2xl p-8 border border-white/10" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,255,0.05));">
+          <h3 class="text-xl font-bold mb-6" style="font-family: 'Space Grotesk', sans-serif;">Envianos tu consulta</h3>
+
+          <form id="contactForm" class="space-y-5" novalidate>
+
+            <div>
+              <label for="nombre" class="block text-sm font-medium text-gray-300 mb-2">Nombre completo <span style="color: #00D4FF;">*</span></label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Tu nombre"
+                required
+                class="w-full px-4 py-3 rounded-xl border bg-white/5 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2"
+                style="border-color: rgba(255,255,255,0.15); font-family: 'DM Sans', sans-serif;"
+                onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 2px rgba(124,58,237,0.25)'"
+                onblur="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.boxShadow='none'"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email <span style="color: #00D4FF;">*</span></label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="tu@email.com"
+                required
+                class="w-full px-4 py-3 rounded-xl border bg-white/5 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none"
+                style="border-color: rgba(255,255,255,0.15); font-family: 'DM Sans', sans-serif;"
+                onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 2px rgba(124,58,237,0.25)'"
+                onblur="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.boxShadow='none'"
+              />
+            </div>
+
+            <div>
+              <label for="mensaje" class="block text-sm font-medium text-gray-300 mb-2">Mensaje <span style="color: #00D4FF;">*</span></label>
+              <textarea
+                id="mensaje"
+                name="mensaje"
+                rows="5"
+                placeholder="Contanos qué mentor te interesa, cuáles son tus objetivos o cualquier duda que tengas sobre la plataforma..."
+                required
+                class="w-full px-4 py-3 rounded-xl border bg-white/5 text-white placeholder-gray-500 transition-all duration-200 focus:outline-none resize-none"
+                style="border-color: rgba(255,255,255,0.15); font-family: 'DM Sans', sans-serif;"
+                onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 2px rgba(124,58,237,0.25)'"
+                onblur="this.style.borderColor='rgba(255,255,255,0.15)'; this.style.boxShadow='none'"
+              ></textarea>
+            </div>
+
+            <!-- Mensaje de estado inline -->
+            <div id="formStatus" class="hidden rounded-xl px-4 py-3 text-sm font-medium" role="alert"></div>
+
+            <button
+              type="submit"
+              id="submitBtn"
+              class="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-300 flex items-center justify-center gap-3 relative"
+              style="background: linear-gradient(135deg, #7C3AED, #5B21B6); font-family: 'Space Grotesk', sans-serif; box-shadow: 0 4px 20px rgba(124,58,237,0.4);"
+              onmouseover="if(!this.disabled){ this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 30px rgba(124,58,237,0.55)'; }"
+              onmouseout="if(!this.disabled){ this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(124,58,237,0.4)'; }"
+            >
+              <span id="btnText">Enviar consulta</span>
+              <span id="btnSpinner" class="hidden">
+                <svg class="animate-spin w-5 h-5 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                </svg>
+              </span>
+            </button>
+
+            <p class="text-xs text-gray-500 text-center">
+              También podés escribirnos directamente por 
+              <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" class="font-medium transition-colors" style="color: #00D4FF;">WhatsApp</a>
+              para una respuesta más rápida.
+            </p>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: map -->
+  <section id="map" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="rounded-2xl overflow-hidden border border-white/10 relative" style="min-height: 360px;">
+        <img
+          src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=1600&q=80"
+          alt="MentorIA - Presente en toda Latinoamérica"
+          class="w-full h-full object-cover object-center absolute inset-0"
+          style="filter: brightness(0.3) saturate(0.7);"
+        />
+        <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20" style="min-height: 360px;">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-6 border" style="background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.4);">
+            <svg class="w-7 h-7" style="color: #00D4FF;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">Presencia en toda Latinoamérica</h2>
+          <p class="text-gray-300 text-lg max-w-2xl leading-relaxed mb-6">
+            MentorIA es 100% digital. Desde México hasta Argentina, cualquier emprendedor puede acceder a su mentor IA favorito sin importar su ubicación.
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10">Argentina</span>
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10">México</span>
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10">Colombia</span>
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10">Chile</span>
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10">Perú</span>
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10">Uruguay</span>
+            <span class="px-4 py-2 rounded-full text-sm font-medium border border-white/20 bg-white/10 text-gray-400">+toda la región</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: info -->
+  <section id="info" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">Preguntas frecuentes de contacto</p>
+        <h2 class="text-3xl md:text-4xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">¿Qué pasa después de que nos escribís?</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+
+        <div class="rounded-2xl p-6 border border-white/10 transition-all duration-300 hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,255,0.04));">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(0,212,255,0.15)); border: 1px solid rgba(0,212,255,0.25);">
+            <span class="text-xl font-bold" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">1</span>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif;">Recibimos tu mensaje</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Nos llegará tu consulta por el formulario o directamente al WhatsApp. Revisamos cada mensaje personalmente.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-6 border border-white/10 transition-all duration-300 hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,255,0.04));">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(0,212,255,0.15)); border: 1px solid rgba(0,212,255,0.25);">
+            <span class="text-xl font-bold" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">2</span>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif;">Te asesoramos sin compromiso</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Te contamos cuáles mentores están disponibles, cómo funciona la plataforma y qué plan se adapta mejor a tu situación actual como emprendedor.
+          </p>
+        </div>
+
+        <div class="rounded-2xl p-6 border border-white/10 transition-all duration-300 hover:-translate-y-1" style="background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,255,0.04));">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(0,212,255,0.15)); border: 1px solid rgba(0,212,255,0.25);">
+            <span class="text-xl font-bold" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">3</span>
+          </div>
+          <h3 class="text-lg font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif;">Empezás con tu mentor</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Una vez que tenés claro el plan, accedés a la plataforma y comenzás a trabajar con la filosofía de tu mentor elegido de forma inmediata.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- CTA WhatsApp -->
+      <div class="rounded-2xl p-10 md:p-14 text-center border border-white/10 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(0,212,255,0.08));">
+        <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 70% 50%, rgba(0,212,255,0.06), transparent 70%);"></div>
+        <div class="relative z-10">
+          <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color: #00D4FF; font-family: 'Space Grotesk', sans-serif;">Respuesta inmediata</p>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+            ¿Preferís hablar ahora?
+          </h2>
+          <p class="text-gray-300 text-lg max-w-xl mx-auto mb-8 leading-relaxed">
+            Envianos un WhatsApp y resolvemos tus dudas en tiempo real. Es la forma más rápida de saber si MentorIA es para vos.
+          </p>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21%20Quisiera%20saber%20m%C3%A1s%20sobre%20MentorIA%20y%20sus%20planes."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-base transition-all duration-300 hover:-translate-y-1"
+            style="background: linear-gradient(135deg, #25D366, #128C7E); font-family: 'Space Grotesk', sans-serif; box-shadow: 0 4px 20px rgba(37,211,102,0.35);"
+            onmouseover="this.style.boxShadow='0 8px 30px rgba(37,211,102,0.5)'"
+            onmouseout="this.style.boxShadow='0 4px 20px rgba(37,211,102,0.35)'"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.549 4.099 1.517 5.832L.057 23.5l5.867-1.539A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22.08a10.065 10.065 0 01-5.132-1.4l-.368-.22-3.812 1.001.989-3.643-.24-.378A10.078 10.078 0 011.92 12C1.92 6.397 6.397 1.92 12 1.92S22.08 6.397 22.08 12 17.603 22.08 12 22.08z"/>
+            </svg>
+            Escribinos por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #contactForm, #contact-form .grid > div {
+      animation: fadeInUp 0.6s ease both;
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const form = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const btnSpinner = document.getElementById('btnSpinner');
+      const formStatus = document.getElementById('formStatus');
+
+      function showStatus(message, isSuccess) {
+        formStatus.classList.remove('hidden');
+        formStatus.textContent = message;
+        if (isSuccess) {
+          formStatus.style.background = 'rgba(0,212,255,0.1)';
+          formStatus.style.border = '1px solid rgba(0,212,255,0.35)';
+          formStatus.style.color = '#00D4FF';
+        } else {
+          formStatus.style.background = 'rgba(239,68,68,0.1)';
+          formStatus.style.border = '1px solid rgba(239,68,68,0.35)';
+          formStatus.style.color = '#FCA5A5';
+        }
+        formStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function setLoading(loading) {
+        if (loading) {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.7';
+          submitBtn.style.cursor = 'not-allowed';
+          btnText.textContent = 'Enviando...';
+          btnSpinner.classList.remove('hidden');
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+          btnText.textContent = 'Enviar consulta';
+          btnSpinner.classList.add('hidden');
+        }
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('nombre').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('mensaje').value.trim();
+
+        if (!name || !email || !message) {
+          showStatus('Por favor, completá todos los campos antes de enviar.', false);
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showStatus('Por favor, ingresá un email válido.', false);
+          return;
+        }
+
+        formStatus.classList.add('hidden');
+        setLoading(true);
+
+        try {
+          const response = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              project_id: 98,
+              name: name,
+              email: email,
+              message: message,
+            }),
+          });
+
+          if (response.ok) {
+            showStatus('Mensaje enviado correctamente. Te respondemos en menos de 24 horas hábiles.', true);
+            form.reset();
+          } else {
+            showStatus('Hubo un problema al enviar tu mensaje. Por favor, intentá nuevamente o escribinos por WhatsApp.', false);
+          }
+        } catch (error) {
+          showStatus('No se pudo conectar con el servidor. Por favor, intentá nuevamente o escribinos por WhatsApp.', false);
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+  </script>
+
+</main>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary text-gray-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <!-- Brand Column -->
+          <div class="space-y-4">
+            <a href="index.html">
+              <span class="font-heading font-bold text-2xl text-white tracking-tight">
+                Mentor<span class="text-accent">IA</span>
+              </span>
+            </a>
+            <p class="font-body text-sm text-gray-400 leading-relaxed max-w-xs">
+              Potenciamos tu crecimiento con inteligencia artificial y mentoría personalizada.
+            </p>
+          </div>
+
+          <!-- Navigation Column -->
+          <div class="space-y-4">
+            <h3 class="font-heading font-semibold text-white text-sm uppercase tracking-widest">
+              Navegación
+            </h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="index.html" class="footer-link font-body text-sm text-gray-400">
+                  Inicio
+                </a>
+              </li>
+              <li>
+                <a href="servicios.html" class="footer-link font-body text-sm text-gray-400">
+                  Servicios
+                </a>
+              </li>
+              <li>
+                <a href="nosotros.html" class="footer-link font-body text-sm text-gray-400">
+                  Nosotros
+                </a>
+              </li>
+              <li>
+                <a href="contacto.html" class="footer-link font-body text-sm text-gray-400">
+                  Contacto
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact & Social Column -->
+          <div class="space-y-4">
+            <h3 class="font-heading font-semibold text-white text-sm uppercase tracking-widest">
+              Contacto
+            </h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="mailto:nicogdublanc@gmail.com"
+                  class="footer-link font-body text-sm text-gray-400 flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  nicogdublanc@gmail.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/5491162504624"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="footer-link font-body text-sm text-gray-400 flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  +54 9 11 6250-4624
+                </a>
+              </li>
+            </ul>
+
+            <!-- Social Icons -->
+            <div class="flex items-center gap-4 pt-2">
+              <a
+                href="mailto:nicogdublanc@gmail.com"
+                class="social-link text-gray-400"
+                aria-label="Enviar email"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </a>
+              <a
+                href="https://wa.me/5491162504624"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link text-gray-400"
+                aria-label="WhatsApp"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-secondary/20 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="font-body text-xs text-gray-500">
+            &copy; 2026 MentorIA. Todos los derechos reservados.
+          </p>
+          <p class="font-body text-xs text-gray-600">
+            Hecho con dedicación e inteligencia artificial.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const hamburgerBtn = document.getElementById("hamburger-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const line1 = document.getElementById("line-1");
+      const line2 = document.getElementById("line-2");
+      const line3 = document.getElementById("line-3");
+
+      let menuOpen = false;
+
+      hamburgerBtn.addEventListener("click", function () {
+        menuOpen = !menuOpen;
+
+        if (menuOpen) {
+          mobileMenu.classList.add("open");
+          hamburgerBtn.setAttribute("aria-expanded", "true");
+          line1.style.transform = "translateY(8px) rotate(45deg)";
+          line2.style.opacity = "0";
+          line3.style.transform = "translateY(-8px) rotate(-45deg)";
+        } else {
+          mobileMenu.classList.remove("open");
+          hamburgerBtn.setAttribute("aria-expanded", "false");
+          line1.style.transform = "none";
+          line2.style.opacity = "1";
+          line3.style.transform = "none";
+        }
+      });
+
+      // Close mobile menu on resize to desktop
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 768 && menuOpen) {
+          mobileMenu.classList.remove("open");
+          hamburgerBtn.setAttribute("aria-expanded", "false");
+          line1.style.transform = "none";
+          line2.style.opacity = "1";
+          line3.style.transform = "none";
+          menuOpen = false;
+        }
+      });
+    </script>
+  </body>
+</html>

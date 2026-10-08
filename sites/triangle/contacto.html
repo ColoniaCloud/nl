@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triangle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#2D2D2D",
+            secondary: "#E85D04",
+            accent: "#FFB703"
+          },
+          fontFamily: {
+            heading: ["Raleway", "sans-serif"],
+            body: ["Nunito", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; font-family: "Nunito", sans-serif; }
+    main { flex: 1; }
+    h1, h2, h3, h4, h5, h6 { font-family: "Raleway", sans-serif; }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFB703;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #FFB703;
+    }
+
+    .mobile-nav-link {
+      transition: background-color 0.3s ease, color 0.3s ease, padding-left 0.3s ease;
+    }
+    .mobile-nav-link:hover {
+      background-color: rgba(232, 93, 4, 0.15);
+      color: #FFB703;
+      padding-left: 1.5rem;
+    }
+
+    #mobile-menu {
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #fff;
+      margin: 5px 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .social-link {
+      transition: color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #FFB703;
+      transform: translateY(-3px);
+    }
+
+    .footer-link {
+      transition: color 0.3s ease;
+    }
+    .footer-link:hover {
+      color: #FFB703;
+    }
+  </style>
+</head>
+<body class="bg-white text-primary font-body">
+
+  <!-- HEADER -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img
+            src="https://nl360.site/logos/logo-101.svg"
+            alt="Triangle"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-white font-heading font-600 text-sm uppercase tracking-wide">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-white font-heading font-600 text-sm uppercase tracking-wide">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-white font-heading font-600 text-sm uppercase tracking-wide">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="bg-secondary hover:bg-accent text-white hover:text-primary font-heading font-700 text-sm uppercase tracking-wide px-5 py-2 rounded-full transition-all duration-300 ease-in-out">
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center items-center w-10 h-10 focus:outline-none"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="md:hidden">
+        <ul class="flex flex-col pb-4 pt-2 border-t border-white border-opacity-10">
+          <li>
+            <a href="index.html" class="mobile-nav-link block text-white font-heading font-600 text-sm uppercase tracking-wide px-4 py-3">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="mobile-nav-link block text-white font-heading font-600 text-sm uppercase tracking-wide px-4 py-3">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="mobile-nav-link block text-white font-heading font-600 text-sm uppercase tracking-wide px-4 py-3">
+              Nosotros
+            </a>
+          </li>
+          <li class="px-4 pt-2 pb-1">
+            <a href="contacto.html" class="block text-center bg-secondary hover:bg-accent text-white hover:text-primary font-heading font-700 text-sm uppercase tracking-wide px-5 py-3 rounded-full transition-all duration-300 ease-in-out">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="font-nunito text-gray-800">
+
+  <!-- Banner superior -->
+  <section class="relative flex items-center justify-center" style="min-height:380px;">
+    <img
+      src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?auto=format&fit=crop&w=1600&q=80"
+      alt="Contacto Triangle"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(45,45,45,0.88) 60%,rgba(232,93,4,0.55) 100%);"></div>
+    <div class="relative z-10 text-center px-4 py-16 animate-fadeIn">
+      <p class="uppercase tracking-widest text-sm mb-3" style="color:#FFB703;font-family:'Raleway',sans-serif;letter-spacing:.2em;">Triangle Electricidad</p>
+      <h1 class="text-4xl md:text-6xl font-bold text-white mb-4" style="font-family:'Raleway',sans-serif;">Contactanos</h1>
+      <p class="text-lg text-gray-200 max-w-xl mx-auto">Estamos listos para atenderte. Contanos tu proyecto y te damos respuesta a la brevedad.</p>
+    </div>
+  </section>
+
+  <!-- Sección: contact-form -->
+  <section id="contact-form" class="py-16 px-4" style="background:#F9F9F9;">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-start">
+
+        <!-- Texto lateral -->
+        <div class="animate-fadeIn">
+          <span class="inline-block text-xs font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style="background:#FFB703;color:#2D2D2D;font-family:'Raleway',sans-serif;">Escribinos</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">¿Tenés un proyecto eléctrico en mente?</h2>
+          <p class="text-gray-600 mb-6 leading-relaxed">En Triangle combinamos precios accesibles con trabajo eficiente y prolijo. Completá el formulario y uno de nuestros electricistas certificados te contactará para coordinar una visita sin costo.</p>
+          <ul class="space-y-3 text-gray-700 text-sm">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold" style="background:#E85D04;">1</span>
+              <span>Completá el formulario con los datos de tu consulta.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold" style="background:#E85D04;">2</span>
+              <span>Te respondemos en menos de 24 horas hábiles.</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold" style="background:#E85D04;">3</span>
+              <span>Coordinamos una visita para evaluar el trabajo sin compromiso.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 md:p-10" style="border-top:4px solid #FFB703;">
+          <form id="contact-form-el" novalidate>
+            <div class="mb-5">
+              <label for="cf-name" class="block text-sm font-semibold mb-1" style="color:#2D2D2D;">Nombre completo <span style="color:#E85D04;">*</span></label>
+              <input
+                id="cf-name"
+                type="text"
+                name="name"
+                placeholder="Juan Pérez"
+                required
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 text-gray-800 text-sm transition"
+                style="font-family:'Nunito',sans-serif;--tw-ring-color:#FFB703;"
+              />
+            </div>
+            <div class="mb-5">
+              <label for="cf-email" class="block text-sm font-semibold mb-1" style="color:#2D2D2D;">Correo electrónico <span style="color:#E85D04;">*</span></label>
+              <input
+                id="cf-email"
+                type="email"
+                name="email"
+                placeholder="juan@correo.com"
+                required
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 text-gray-800 text-sm transition"
+                style="font-family:'Nunito',sans-serif;--tw-ring-color:#FFB703;"
+              />
+            </div>
+            <div class="mb-6">
+              <label for="cf-message" class="block text-sm font-semibold mb-1" style="color:#2D2D2D;">Mensaje <span style="color:#E85D04;">*</span></label>
+              <textarea
+                id="cf-message"
+                name="message"
+                rows="5"
+                placeholder="Describí brevemente el trabajo que necesitás (instalación, reparación, certificado, etc.)"
+                required
+                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 text-gray-800 text-sm transition resize-none"
+                style="font-family:'Nunito',sans-serif;--tw-ring-color:#FFB703;"
+              ></textarea>
+            </div>
+
+            <!-- Mensaje feedback -->
+            <div id="cf-feedback" class="hidden mb-4 px-4 py-3 rounded-lg text-sm font-semibold" role="alert"></div>
+
+            <button
+              id="cf-submit"
+              type="submit"
+              class="w-full flex items-center justify-center gap-3 font-bold py-3 px-6 rounded-lg transition-all duration-300 text-white text-sm"
+              style="background:#E85D04;font-family:'Raleway',sans-serif;letter-spacing:.05em;"
+            >
+              <span id="cf-btn-text">Reservar visita</span>
+              <svg id="cf-spinner" class="hidden animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: map -->
+  <section id="map" class="py-16 px-4" style="background:#fff;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="inline-block text-xs font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style="background:#FFB703;color:#2D2D2D;font-family:'Raleway',sans-serif;">¿Dónde estamos?</span>
+        <h2 class="text-3xl md:text-4xl font-bold" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">Operamos en todo Uruguay</h2>
+        <p class="text-gray-500 mt-3 max-w-xl mx-auto text-sm">Nuestro equipo cubre Montevideo y el interior del país. Si no estás seguro de si llegamos a tu zona, escribinos.</p>
+      </div>
+      <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100" style="height:400px;">
+        <iframe
+          title="Ubicación Triangle - Uruguay"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d208912.45117609534!2d-56.37!3d-34.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd2f4e4e4e4e4e4f%3A0x0!2sMontevideo%2C+Uruguay!5e0!3m2!1ses!2suy!4v1691000000000!5m2!1ses!2suy"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: info -->
+  <section id="info" class="py-16 px-4" style="background:#F4F4F4;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="inline-block text-xs font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full" style="background:#FFB703;color:#2D2D2D;font-family:'Raleway',sans-serif;">Información de contacto</span>
+        <h2 class="text-3xl md:text-4xl font-bold" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">Hablemos directamente</h2>
+        <p class="text-gray-500 mt-3 max-w-lg mx-auto text-sm">También podés contactarnos por los canales que prefieras. Te respondemos rápido.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- WhatsApp -->
+        <a
+          href="https://wa.me/59896969696"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group bg-white rounded-2xl p-6 shadow hover:shadow-md transition-all duration-300 flex flex-col items-center text-center"
+          style="border-bottom:3px solid #FFB703;"
+        >
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style="background:#E85D04;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.1 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652A11.954 11.954 0 0012.042 24c6.585 0 11.943-5.334 11.946-11.893.001-3.176-1.24-6.161-3.467-8.408zm-8.477 18.307a9.928 9.928 0 01-5.035-1.37l-.361-.214-3.741.975.999-3.648-.235-.374A9.828 9.828 0 012.1 11.895C2.103 6.44 6.601 2 12.045 2c2.636 0 5.11 1.02 6.97 2.875a9.767 9.767 0 012.89 6.926c-.004 5.456-4.5 9.895-9.852 9.955zM17.5 14.382c-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.148-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.207-.242-.579-.487-.5-.669-.51a12.56 12.56 0 00-.57-.01c-.198 0-.52.074-.793.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-base mb-1" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">WhatsApp</h3>
+          <p class="text-gray-500 text-sm">+598 96 969 696</p>
+          <span class="mt-3 text-xs font-semibold" style="color:#E85D04;">Escribinos ahora</span>
+        </a>
+
+        <!-- Facebook -->
+        <a
+          href="https://facebook.com/triangle"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group bg-white rounded-2xl p-6 shadow hover:shadow-md transition-all duration-300 flex flex-col items-center text-center"
+          style="border-bottom:3px solid #FFB703;"
+        >
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style="background:#E85D04;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073c0 6.027 4.388 11.024 10.125 11.927v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.313 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.932-1.956 1.888v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.097 24 18.1 24 12.073z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-base mb-1" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">Facebook</h3>
+          <p class="text-gray-500 text-sm">facebook.com/triangle</p>
+          <span class="mt-3 text-xs font-semibold" style="color:#E85D04;">Seguinos</span>
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://instagram.com/triangle"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group bg-white rounded-2xl p-6 shadow hover:shadow-md transition-all duration-300 flex flex-col items-center text-center"
+          style="border-bottom:3px solid #FFB703;"
+        >
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style="background:#E85D04;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-base mb-1" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">Instagram</h3>
+          <p class="text-gray-500 text-sm">instagram.com/triangle</p>
+          <span class="mt-3 text-xs font-semibold" style="color:#E85D04;">Ver trabajos</span>
+        </a>
+
+        <!-- Email -->
+        <a
+          href="mailto:manuel@tyriangle.com"
+          class="group bg-white rounded-2xl p-6 shadow hover:shadow-md transition-all duration-300 flex flex-col items-center text-center"
+          style="border-bottom:3px solid #FFB703;"
+        >
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110" style="background:#E85D04;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-base mb-1" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">Email</h3>
+          <p class="text-gray-500 text-sm">manuel@tyriangle.com</p>
+          <span class="mt-3 text-xs font-semibold" style="color:#E85D04;">Enviar correo</span>
+        </a>
+
+      </div>
+
+      <!-- Horario -->
+      <div class="mt-12 bg-white rounded-2xl shadow p-8 max-w-3xl mx-auto text-center" style="border-top:4px solid #FFB703;">
+        <h3 class="text-xl font-bold mb-4" style="font-family:'Raleway',sans-serif;color:#2D2D2D;">Horario de atención</h3>
+        <div class="grid sm:grid-cols-2 gap-4 text-sm text-gray-600">
+          <div class="flex justify-between px-4 py-2 rounded-lg" style="background:#F9F9F9;">
+            <span class="font-semibold" style="color:#2D2D2D;">Lunes a Viernes</span>
+            <span>08:00 – 19:00</span>
+          </div>
+          <div class="flex justify-between px-4 py-2 rounded-lg" style="background:#F9F9F9;">
+            <span class="font-semibold" style="color:#2D2D2D;">Sábados</span>
+            <span>08:00 – 13:00</span>
+          </div>
+          <div class="flex justify-between px-4 py-2 rounded-lg sm:col-span-2" style="background:#F9F9F9;">
+            <span class="font-semibold" style="color:#2D2D2D;">Urgencias eléctricas</span>
+            <span style="color:#E85D04;font-weight:700;">Disponible 24/7</span>
+          </div>
+        </div>
+        <p class="mt-5 text-xs text-gray-400">Para emergencias fuera de horario, contactanos por WhatsApp indicando "URGENTE" y te atendemos de inmediato.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn .7s ease both; }
+    #cf-submit:hover:not(:disabled) { background:#2D2D2D !important; transform: translateY(-1px); }
+    #cf-submit:disabled { opacity:.7; cursor:not-allowed; }
+    input:focus, textarea:focus { border-color:#FFB703 !important; box-shadow:0 0 0 2px rgba(255,183,3,.25); }
+  </style>
+
+  <script>
+    (function() {
+      const form     = document.getElementById('contact-form-el');
+      const btnEl    = document.getElementById('cf-submit');
+      const btnText  = document.getElementById('cf-btn-text');
+      const spinner  = document.getElementById('cf-spinner');
+      const feedback = document.getElementById('cf-feedback');
+
+      function showFeedback(msg, isError) {
+        feedback.textContent = msg;
+        feedback.classList.remove('hidden');
+        feedback.style.background  = isError ? '#FEE2E2' : '#D1FAE5';
+        feedback.style.color       = isError ? '#B91C1C' : '#065F46';
+        feedback.style.borderLeft  = isError ? '4px solid #E85D04' : '4px solid #10B981';
+      }
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const name    = document.getElementById('cf-name').value.trim();
+        const email   = document.getElementById('cf-email').value.trim();
+        const message = document.getElementById('cf-message').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('Por favor completá todos los campos antes de enviar.', true);
+          return;
+        }
+
+        const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRe.test(email)) {
+          showFeedback('El correo electrónico ingresado no es válido.', true);
+          return;
+        }
+
+        btnEl.disabled = true;
+        btnText.textContent = 'Enviando...';
+        spinner.classList.remove('hidden');
+        feedback.classList.add('hidden');
+
+        try {
+          const res = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ project_id: 101, name, email, message })
+          });
+
+          if (res.ok) {
+            showFeedback('¡Mensaje enviado! Nos pondremos en contacto contigo a la brevedad.', false);
+            form.reset();
+          } else {
+            showFeedback('Hubo un problema al enviar. Por favor intentá nuevamente o contactanos por WhatsApp.', true);
+          }
+        } catch (err) {
+          showFeedback('Error de conexión. Verificá tu internet e intentá de nuevo.', true);
+        } finally {
+          btnEl.disabled = false;
+          btnText.textContent = 'Reservar visita';
+          spinner.classList.add('hidden');
+        }
+      });
+    })();
+  </script>
+
+</main>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+
+        <!-- Columna 1: Marca -->
+        <div class="flex flex-col items-start gap-4">
+          <a href="index.html">
+            <img
+              src="https://nl360.site/logos/logo-101.svg"
+              alt="Triangle"
+              style="height:36px;width:auto;object-fit:contain;"
+            />
+          </a>
+          <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+            Soluciones creativas y profesionales para hacer crecer tu negocio.
+          </p>
+        </div>
+
+        <!-- Columna 2: Navegación -->
+        <div>
+          <h4 class="font-heading font-700 text-accent uppercase text-xs tracking-widest mb-5">
+            Navegación
+          </h4>
+          <ul class="flex flex-col gap-3">
+            <li>
+              <a href="index.html" class="footer-link text-gray-300 text-sm">Inicio</a>
+            </li>
+            <li>
+              <a href="servicios.html" class="footer-link text-gray-300 text-sm">Servicios</a>
+            </li>
+            <li>
+              <a href="nosotros.html" class="footer-link text-gray-300 text-sm">Nosotros</a>
+            </li>
+            <li>
+              <a href="contacto.html" class="footer-link text-gray-300 text-sm">Contacto</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: Contacto y redes -->
+        <div>
+          <h4 class="font-heading font-700 text-accent uppercase text-xs tracking-widest mb-5">
+            Contacto
+          </h4>
+          <ul class="flex flex-col gap-3 mb-6">
+            <li>
+              <a href="mailto:manuel@tyriangle.com" class="footer-link text-gray-300 text-sm break-all">
+                manuel@tyriangle.com
+              </a>
+            </li>
+            <li>
+              <a href="https://wa.me/59896969696" target="_blank" rel="noopener noreferrer" class="footer-link text-gray-300 text-sm">
+                +598 96 969 696
+              </a>
+            </li>
+          </ul>
+
+          <h4 class="font-heading font-700 text-accent uppercase text-xs tracking-widest mb-4">
+            Redes Sociales
+          </h4>
+          <div class="flex items-center gap-5">
+            <!-- WhatsApp -->
+            <a
+              href="https://wa.me/59896969696"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-300"
+              aria-label="WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </a>
+
+            <!-- Facebook -->
+            <a
+              href="https://facebook.com/triangle"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-300"
+              aria-label="Facebook"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a
+              href="https://instagram.com/triangle"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-300"
+              aria-label="Instagram"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a
+              href="mailto:manuel@tyriangle.com"
+              class="social-link text-gray-300"
+              aria-label="Email"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="border-t border-white border-opacity-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-gray-500 text-xs text-center sm:text-left">
+          &copy; 2026 Triangle. Todos los derechos reservados.
+        </p>
+        <p class="text-gray-600 text-xs">
+          Diseñado con pasión
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const hamburgerBtn = document.getElementById("hamburger-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    hamburgerBtn.addEventListener("click", function () {
+      const isOpen = mobileMenu.classList.contains("open");
+
+      if (isOpen) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("active");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      } else {
+        mobileMenu.classList.add("open");
+        hamburgerBtn.classList.add("active");
+        hamburgerBtn.setAttribute("aria-expanded", "true");
+      }
+    });
+
+    // Close mobile menu when a link is clicked
+    const mobileLinks = mobileMenu.querySelectorAll("a");
+    mobileLinks.forEach(function (link) {
+      link.addEventListener("click", function () {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("active");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    // Close mobile menu on resize to desktop
+    window.addEventListener("resize", function () {
+      if (window.innerWidth >= 768) {
+        mobileMenu.classList.remove("open");
+        hamburgerBtn.classList.remove("active");
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+  </script>
+
+</body>
+</html>

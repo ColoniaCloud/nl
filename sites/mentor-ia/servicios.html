@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MentorIA</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#1A1A2E',
+            secondary: '#7C3AED',
+            accent:    '#00C896',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"',       'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Layout base ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #0f0f1a;
+      color: #e2e2f0;
+    }
+    main { flex: 1; }
+
+    /* ── Tipografía ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* ── Nav link hover ── */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 2px;
+      background-color: #00C896;
+      transition: width 0.3s ease;
+      border-radius: 9999px;
+    }
+    .nav-link:hover { color: #00C896; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Hamburger lines ── */
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #e2e2f0;
+      border-radius: 9999px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── Mobile menu slide ── */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* ── Footer social icon hover ── */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .social-link:hover {
+      color: #00C896;
+      transform: translateY(-2px);
+    }
+
+    /* ── Scrollbar (optional polish) ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1A1A2E; }
+    ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 9999px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════════
+       HEADER / NAV
+  ════════════════════════════════════════ -->
+  <header class="bg-primary shadow-lg sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded">
+          <img
+            src="/logo.png"
+            alt="MentorIA"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop links -->
+        <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-200">
+          <li><a href="index.html"     class="nav-link">Inicio</a></li>
+          <li><a href="servicios.html" class="nav-link">Servicios</a></li>
+          <li><a href="nosotros.html"  class="nav-link">Nosotros</a></li>
+          <li>
+            <a
+              href="contacto.html"
+              class="ml-2 px-4 py-2 rounded-full bg-secondary text-white text-sm font-semibold
+                     hover:bg-accent hover:text-primary transition-colors duration-300 focus:outline-none
+                     focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger (mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center gap-[6px] p-2 rounded focus:outline-none
+                 focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col gap-1 pb-4 pt-1 text-sm font-medium text-gray-200">
+          <li>
+            <a href="index.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main style="font-family: 'DM Sans', sans-serif; background-color: #1A1A2E; color: #f0f0f0;">
+
+  <!-- Banner Superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1600&q=80" alt="Servicios MentorIA" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.18;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #1A1A2E 60%, #7C3AED44 100%);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 2rem 1.5rem;">
+      <p style="color: #00C896; font-size: 0.875rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; font-family: 'DM Sans', sans-serif;">Lo que ofrecemos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: #ffffff; line-height: 1.15; margin: 0;">Nuestros Servicios</h1>
+      <p style="margin-top: 1rem; font-size: 1.05rem; color: #c0b8e8; max-width: 520px; margin-left: auto; margin-right: auto;">Mentores de desarrollo personal convertidos en agentes de IA precisos, listos para acompañarte en tu transformación.</p>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL -->
+  <section id="service-detail" style="padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <p style="color: #00C896; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem;">Qué incluye</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 700; color: #ffffff; margin: 0;">Todo lo que MentorIA pone a tu disposición</h2>
+    </div>
+
+    <!-- Card principal: Chatbots de Mentores -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+      <!-- Servicio 1 -->
+      <div style="background: linear-gradient(135deg, #16213E, #0f0f23); border: 1px solid #7C3AED44; border-radius: 1.25rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 48px #7C3AED33';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 52px; height: 52px; border-radius: 0.75rem; background: linear-gradient(135deg, #7C3AED, #00C896); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #ffffff; margin: 0;">Conversaciones Aprendiz-Mentor</h3>
+        </div>
+        <p style="color: #a89ec8; line-height: 1.75; margin: 0;">Accede a sesiones ilimitadas de chat con el mentor de tu elección. Cada agente está construido sobre su filosofía real: métodos, preguntas poderosas, técnicas y lenguaje propios. No es un chatbot genérico — es una réplica funcional construida con código real, entrenada para guiarte con precisión.</p>
+        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem;">
+          <li style="display: flex; align-items: center; gap: 0.6rem; color: #d0cae8;"><span style="color: #00C896; font-size: 1rem;">&#10003;</span> Rutas de aprendizaje basadas en el método del mentor</li>
+          <li style="display: flex; align-items: center; gap: 0.6rem; color: #d0cae8;"><span style="color: #00C896; font-size: 1rem;">&#10003;</span> Sesiones personalizadas según tu progreso</li>
+          <li style="display: flex; align-items: center; gap: 0.6rem; color: #d0cae8;"><span style="color: #00C896; font-size: 1rem;">&#10003;</span> Respuestas coherentes con la filosofía del mentor real</li>
+          <li style="display: flex; align-items: center; gap: 0.6rem; color: #d0cae8;"><span style="color: #00C896; font-size: 1rem;">&#10003;</span> Mayor precisión que cualquier imitación con herramientas simples</li>
+        </ul>
+      </div>
+
+      <!-- Servicios en grid de 2 -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+        <!-- Servicio 2: Neville Goddard -->
+        <div style="background: linear-gradient(135deg, #16213E, #0f0f23); border: 1px solid #00C89633; border-radius: 1.25rem; padding: 2rem; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px #00C89622';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="width: 46px; height: 46px; border-radius: 0.65rem; background: #00C89622; border: 1px solid #00C89655; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0;">Neville Goddard — Disponible Ahora</h3>
+              <span style="font-size: 0.75rem; color: #00C896; letter-spacing: 0.08em; text-transform: uppercase;">Mentor Activo</span>
+            </div>
+          </div>
+          <p style="color: #a89ec8; line-height: 1.7; margin: 0; font-size: 0.95rem;">El agente de Neville Goddard está disponible hoy mismo. Aprende y aplica su filosofía del poder de la consciencia, el estado del ser, la imaginación como herramienta creadora y la técnica de revisión. Un mentor clásico reconstruido con precisión para el emprendedor moderno.</p>
+        </div>
+
+        <!-- Servicio 3: Próximamente -->
+        <div style="background: linear-gradient(135deg, #16213E, #0f0f23); border: 1px solid #7C3AED44; border-radius: 1.25rem; padding: 2rem; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 40px #7C3AED22';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="width: 46px; height: 46px; border-radius: 0.65rem; background: #7C3AED22; border: 1px solid #7C3AED55; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0;">Napoleon Hill — Próximamente</h3>
+              <span style="font-size: 0.75rem; color: #7C3AED; letter-spacing: 0.08em; text-transform: uppercase;">En Construcción</span>
+            </div>
+          </div>
+          <p style="color: #a89ec8; line-height: 1.7; margin: 0; font-size: 0.95rem;">El agente de Napoleon Hill y su fórmula de 6 pasos estará disponible muy pronto. Aplica los principios de Piensa y Hazte Rico en conversaciones guiadas, planes personales y ejercicios prácticos diseñados para el emprendedor latinoamericano.</p>
+        </div>
+
+      </div>
+
+      <!-- Servicios Próximos: Voz y Mastermind -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+        <div style="background: linear-gradient(135deg, #1A1A2E, #16213E); border: 1px dashed #7C3AED55; border-radius: 1.25rem; padding: 2rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 1rem; right: 1rem; background: #7C3AED22; border: 1px solid #7C3AED55; border-radius: 999px; padding: 0.2rem 0.75rem; font-size: 0.7rem; color: #a78bfa; letter-spacing: 0.1em; text-transform: uppercase;">Próximamente</div>
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; margin-top: 0.5rem;">
+            <div style="width: 46px; height: 46px; border-radius: 0.65rem; background: #7C3AED22; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #c4b5fd; margin: 0;">Llamadas en Tiempo Real con Voz del Mentor</h3>
+          </div>
+          <p style="color: #8878a8; line-height: 1.7; margin: 0; font-size: 0.92rem;">Los mentores tendrán su propia voz para sesiones de llamadas en vivo. Imagina una sesión de coaching con la voz característica del mentor, respondiendo en tiempo real a tus preguntas más profundas.</p>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #1A1A2E, #16213E); border: 1px dashed #7C3AED55; border-radius: 1.25rem; padding: 2rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 1rem; right: 1rem; background: #7C3AED22; border: 1px solid #7C3AED55; border-radius: 999px; padding: 0.2rem 0.75rem; font-size: 0.7rem; color: #a78bfa; letter-spacing: 0.1em; text-transform: uppercase;">Próximamente</div>
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; margin-top: 0.5rem;">
+            <div style="width: 46px; height: 46px; border-radius: 0.65rem; background: #7C3AED22; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #c4b5fd; margin: 0;">Sala Mastermind: Varios Mentores Simultáneos</h3>
+          </div>
+          <p style="color: #8878a8; line-height: 1.7; margin: 0; font-size: 0.92rem;">La sala Mastermind reunirá a múltiples mentores de IA al mismo tiempo. Plantea un desafío y obtén perspectivas cruzadas de diferentes filosofías en una sola conversación. Una experiencia sin precedentes en desarrollo personal.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Por qué construido con código real -->
+    <div style="margin-top: 3rem; background: linear-gradient(135deg, #0f0f23, #16213E); border: 1px solid #00C89633; border-radius: 1.25rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+      <div style="display: flex; align-items: flex-start; gap: 1rem;">
+        <div style="width: 50px; height: 50px; border-radius: 0.75rem; background: #00C89622; border: 1px solid #00C89655; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.2rem;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; color: #00C896; margin: 0 0 0.75rem 0;">Construido con código real — no con herramientas simples</h3>
+          <p style="color: #a89ec8; line-height: 1.75; margin: 0;">La mayoría de los "bots de mentores" en el mercado son flujos básicos construidos con plataformas sin código. Los agentes de MentorIA están desarrollados con arquitectura de IA real, lo que se traduce en respuestas más coherentes, contexto sostenido a lo largo de la conversación y una fidelidad filosófica que ninguna herramienta simple puede replicar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" style="padding: 5rem 1.5rem; background: linear-gradient(180deg, #0f0f1a 0%, #1A1A2E 100%);">
+    <div style="max-width: 1000px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <p style="color: #00C896; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem;">Planes y precios</p>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 700; color: #ffffff; margin: 0 0 1rem 0;">Elige tu plan de mentoría</h2>
+        <p style="color: #a89ec8; max-width: 520px; margin: 0 auto; line-height: 1.7;">Acceso a mentores de IA de alta precisión, con precios pensados para el emprendedor latinoamericano. ¿Tienes dudas? Escríbenos por WhatsApp antes de decidir.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: stretch;">
+
+        <!-- Plan Explorador -->
+        <div style="background: linear-gradient(135deg, #16213E, #0f0f23); border: 1px solid #7C3AED44; border-radius: 1.25rem; padding: 2.5rem; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 48px #7C3AED22';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+          <p style="color: #a78bfa; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 0.5rem 0;">Explorador</p>
+          <div style="display: flex; align-items: flex-end; gap: 0.4rem; margin-bottom: 0.5rem;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 2.75rem; font-weight: 800; color: #ffffff; line-height: 1;">USD 9</span>
+            <span style="color: #7878a8; font-size: 0.9rem; margin-bottom: 0.4rem;">/mes</span>
+          </div>
+          <p style="color: #7878a8; font-size: 0.85rem; margin: 0 0 1.75rem 0;">aprox. $8.500 ARS · $350 MXN · $35.000 COP</p>
+          <ul style="list-style: none; padding: 0; margin: 0 0 2rem 0; display: flex; flex-direction: column; gap: 0.75rem; flex: 1;">
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Acceso a 1 mentor de IA (Neville Goddard disponible ahora)</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Conversaciones ilimitadas en modo aprendiz-mentor</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Ruta de aprendizaje personalizada</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Historial de sesiones</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #6868a0; font-size: 0.95rem;"><span style="color: #44445a; flex-shrink: 0; margin-top: 0.1rem;">&#8722;</span> Acceso a nuevos mentores al lanzar</li>
+          </ul>
+          <a href="https://wa.me/5491162504624?text=Hola%2C%20me%20interesa%20el%20plan%20Explorador%20de%20MentorIA" target="_blank" rel="noopener noreferrer" style="display: block; text-align: center; padding: 0.9rem 1.5rem; border: 2px solid #7C3AED; border-radius: 0.75rem; color: #a78bfa; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: background 0.25s ease, color 0.25s ease;" onmouseover="this.style.background='#7C3AED';this.style.color='#fff';" onmouseout="this.style.background='transparent';this.style.color='#a78bfa';">Consultar por WhatsApp</a>
+        </div>
+
+        <!-- Plan Mentor Pro — Destacado -->
+        <div style="background: linear-gradient(135deg, #2d1060, #1A1A2E); border: 2px solid #7C3AED; border-radius: 1.25rem; padding: 2.5rem; display: flex; flex-direction: column; position: relative; box-shadow: 0 20px 60px #7C3AED33; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 28px 70px #7C3AED44';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 20px 60px #7C3AED33';">
+          <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, #7C3AED, #00C896); border-radius: 999px; padding: 0.3rem 1.25rem; font-size: 0.72rem; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #fff; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;">Más Popular</div>
+          <p style="color: #00C896; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; margin: 0.5rem 0 0.5rem 0;">Mentor Pro</p>
+          <div style="display: flex; align-items: flex-end; gap: 0.4rem; margin-bottom: 0.5rem;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 2.75rem; font-weight: 800; color: #ffffff; line-height: 1;">USD 24</span>
+            <span style="color: #7878a8; font-size: 0.9rem; margin-bottom: 0.4rem;">/mes</span>
+          </div>
+          <p style="color: #7878a8; font-size: 0.85rem; margin: 0 0 1.75rem 0;">aprox. $22.500 ARS · $950 MXN · $95.000 COP</p>
+          <ul style="list-style: none; padding: 0; margin: 0 0 2rem 0; display: flex; flex-direction: column; gap: 0.75rem; flex: 1;">
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Acceso a todos los mentores disponibles</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Conversaciones ilimitadas en modo aprendiz-mentor</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Rutas de aprendizaje para cada mentor</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Acceso prioritario a nuevos mentores al lanzar</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Acceso anticipado a la sala Mastermind</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Acceso anticipado a llamadas con voz del mentor</li>
+          </ul>
+          <a href="https://wa.me/5491162504624?text=Hola%2C%20me%20interesa%20el%20plan%20Mentor%20Pro%20de%20MentorIA" target="_blank" rel="noopener noreferrer" style="display: block; text-align: center; padding: 0.95rem 1.5rem; background: linear-gradient(90deg, #7C3AED, #00C896); border-radius: 0.75rem; color: #fff; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: opacity 0.25s ease;" onmouseover="this.style.opacity='0.88';" onmouseout="this.style.opacity='1';">Quiero este plan — WhatsApp</a>
+        </div>
+
+        <!-- Plan Anual -->
+        <div style="background: linear-gradient(135deg, #0d1f30, #0f0f23); border: 1px solid #00C89633; border-radius: 1.25rem; padding: 2.5rem; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 48px #00C89622';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none';">
+          <p style="color: #00C896; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 0.5rem 0;">Pro Anual</p>
+          <div style="display: flex; align-items: flex-end; gap: 0.4rem; margin-bottom: 0.25rem;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 2.75rem; font-weight: 800; color: #ffffff; line-height: 1;">USD 199</span>
+            <span style="color: #7878a8; font-size: 0.9rem; margin-bottom: 0.4rem;">/año</span>
+          </div>
+          <p style="color: #00C896; font-size: 0.82rem; margin: 0 0 0.3rem 0; font-weight: 600;">Ahorra el equivalente a casi 5 meses</p>
+          <p style="color: #7878a8; font-size: 0.85rem; margin: 0 0 1.75rem 0;">aprox. $187.000 ARS · $7.900 MXN · $790.000 COP</p>
+          <ul style="list-style: none; padding: 0; margin: 0 0 2rem 0; display: flex; flex-direction: column; gap: 0.75rem; flex: 1;">
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Todo lo incluido en Mentor Pro</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Facturación anual con descuento significativo</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Soporte prioritario directo</li>
+            <li style="display: flex; align-items: flex-start; gap: 0.6rem; color: #c0b8e8; font-size: 0.95rem;"><span style="color: #00C896; flex-shrink: 0; margin-top: 0.1rem;">&#10003;</span> Primero en acceder a cada nuevo mentor</li>
+          </ul>
+          <a href="https://wa.me/5491162504624?text=Hola%2C%20me%20interesa%20el%20plan%20Pro%20Anual%20de%20MentorIA" target="_blank" rel="noopener noreferrer" style="display: block; text-align: center; padding: 0.9rem 1.5rem; border: 2px solid #00C896; border-radius: 0.75rem; color: #00C896; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: background 0.25s ease, color 0.25s ease;" onmouseover="this.style.background='#00C896';this.style.color='#0f0f23';" onmouseout="this.style.background='transparent';this.style.color='#00C896';">Consultar plan anual</a>
+        </div>
+
+      </div>
+
+      <p style="text-align: center; color: #6868a8; font-size: 0.85rem; margin-top: 2rem; line-height: 1.6;">Los precios en moneda local son aproximados y pueden variar según cotización. Todos los pagos se coordinan vía WhatsApp.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" style="padding: 5rem 1.5rem; max-width: 780px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+      <p style="color: #00C896; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem;">Preguntas frecuentes</p>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.7rem, 4vw, 2.5rem); font-weight: 700; color: #ffffff; margin: 0;">Resolvemos tus dudas</h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+
+      <!-- FAQ Item 1 -->
+      <details style="background: linear-gradient(135deg, #16213E, #0f0f23); border: 1px solid #7C3AED33; border-radius: 1rem; overflow: hidden; transition: border-color 0.3s ease;" open>
+        <summary style="padding: 1.5rem; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; color: #ffffff; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none;">
+          ¿Cómo funciona la conversación con el mentor de IA?
+          <span style="color: #7C3AED; font-size: 1.25rem; flex-shrink: 0; transition: transform 0.3s ease;">&#43;</span>
+        </summary>
+        <div style="padding: 0 1.5rem 1.5rem 1.5rem; color: #a89ec8; line-height: 1.75; font-size: 0.95rem;">
+          Cuando entras en sesión con un mentor, el sistema adopta el rol, el lenguaje y la filosofía de ese mentor. Tú escribes como aprendiz — tus preguntas, dudas, situaciones — y el agente responde tal como lo haría ese mentor, usando sus propios conceptos, métodos y ejercicios. No es un resumen de Wikipedia: es una sesión real de mentoría basada en su obra.
+        </div>
+      </details>
+
+      <!-- FAQ Item 2 -->
+      <details style="background: linear-gradient(135deg, #16213E, #0f0f23); border: 1px solid #7C3AED33; border-radius: 1rem; overflow: hidden;">
+        <summary style="padding: 1.5rem; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; color: #ffffff; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none;">
+          ¿Qué diferencia hay con usar ChatGPT directamente?
+          <span style="color: #7C3AED; font-size: 1.25rem; flex-shrink: 0
+</main>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════ -->
+  <footer class="bg-primary border-t border-secondary/30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+        <!-- Brand + year -->
+        <div class="flex flex-col items-center md:items-start gap-1">
+          <span class="font-heading text-lg font-semibold text-white tracking-wide">MentorIA</span>
+          <span class="text-xs text-gray-400">&copy; 2026 MentorIA. Todos los derechos reservados.</span>
+        </div>
+
+        <!-- Social / contact links -->
+        <nav aria-label="Redes sociales y contacto">
+          <ul class="flex items-center gap-5">
+
+            <!-- WhatsApp -->
+            <li>
+              <a
+                href="https://wa.me/5491162504624"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp de MentorIA"
+                class="social-link flex items-center gap-2 text-sm text-gray-300"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                     class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                           -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075
+                           -.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059
+                           -.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52
+                           .149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52
+                           -.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51
+                           -.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372
+                           -.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074
+                           .149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625
+                           .712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413
+                           .248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.847L.057 23.882
+                           a.5.5 0 0 0 .614.612l6.154-1.612A11.942 11.942 0 0 0 12 24
+                           c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.9 9.9 0 0 1-5.031-1.37
+                           l-.361-.214-3.735.979.997-3.648-.235-.374A9.861 9.861 0 0 1 2.1 12
+                           C2.1 6.534 6.534 2.1 12 2.1S21.9 6.534 21.9 12 17.466 21.9 12 21.9z"/>
+                </svg>
+                <span class="hidden sm:inline">WhatsApp</span>
+              </a>
+            </li>
+
+            <!-- Divider -->
+            <li aria-hidden="true" class="text-gray-600 select-none">|</li>
+
+            <!-- Email -->
+            <li>
+              <a
+                href="mailto:nicogdublanc@gmail.com"
+                aria-label="Enviar email a MentorIA"
+                class="social-link flex items-center gap-2 text-sm text-gray-300"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="1.8" stroke="currentColor"
+                     class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H4.5
+                           a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0
+                           A2.25 2.25 0 0 0 19.5 4.5H4.5
+                           a2.25 2.25 0 0 0-2.25 2.25m19.5 0
+                           -9.75 6.75L2.25 6.75" />
+                </svg>
+                <span class="hidden sm:inline">nicogdublanc@gmail.com</span>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-secondary/20 text-center text-xs text-gray-500">
+        Construido con inteligencia artificial para potenciar tu aprendizaje.
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════
+       JS — Hamburger / Mobile Menu
+  ════════════════════════════════════════ -->
+  <script>
+    (function () {
+      const btn  = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
+        btn.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+      });
+
+      /* Close menu when a link inside it is clicked */
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      /* Close menu on outside click */
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

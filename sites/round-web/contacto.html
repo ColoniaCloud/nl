@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#2D2D2D',
+            secondary: '#E85D04',
+            accent:    '#FFB703',
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body:    ['Open Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Layout flexbox crítico */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Nav hover transitions */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFB703;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #FFB703;
+    }
+
+    /* Hamburger lines */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Mobile nav link */
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .mobile-nav-link:hover {
+      color: #FFB703;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Footer link transitions */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover {
+      color: #FFB703;
+    }
+  </style>
+</head>
+<body class="bg-white text-primary font-body">
+
+  <!-- ===== HEADER ===== -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0">
+          <img src="/logo.png" alt="Round" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <!-- Desktop Nav -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="inline-block bg-secondary hover:bg-accent text-white hover:text-primary text-sm font-heading font-700 tracking-wide uppercase px-5 py-2 rounded transition-colors duration-250">
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line" id="hline1"></span>
+          <span class="hamburger-line" id="hline2"></span>
+          <span class="hamburger-line" id="hline3"></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col pb-4 gap-1">
+          <li>
+            <a href="index.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+  </header>
+
+  <main style="font-family: 'Open Sans', sans-serif; background-color: #f9f9f9;">
+
+  <!-- Banner superior -->
+  <section
+    style="position: relative; min-height: 320px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1664870546503-b6f134986baa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Taller Round Contacto"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;">
+    <div style="position: absolute; inset: 0; background: rgba(45,45,45,0.78);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 2.5rem 1.25rem;">
+      <p
+        style="font-family: 'Montserrat', sans-serif; color: #FFB703; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; animation: fadeInDown 0.7s ease both;">
+        Taller Round — Colonia del Sacramento
+      </p>
+      <h1
+        style="font-family: 'Montserrat', sans-serif; color: #ffffff; font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.15; margin: 0 0 1rem; animation: fadeInDown 0.85s ease both;">
+        Contactanos
+      </h1>
+      <p
+        style="color: #e0e0e0; font-size: clamp(0.95rem, 2.2vw, 1.15rem); max-width: 560px; margin: 0 auto; animation: fadeIn 1s ease 0.3s both;">
+        Reserva tu turno o consultanos sin compromiso. Estamos para ayudarte con tu auto.
+      </p>
+    </div>
+  </section>
+
+  <!-- Sección contact-form -->
+  <section id="contact-form" style="background: #ffffff; padding: 5rem 1.25rem;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem;">
+
+      <!-- Encabezado -->
+      <div style="text-align: center; animation: fadeIn 0.8s ease both;">
+        <span
+          style="display: inline-block; background: #FFB703; color: #2D2D2D; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 999px; margin-bottom: 1rem;">
+          Reserva tu turno
+        </span>
+        <h2
+          style="font-family: 'Montserrat', sans-serif; color: #2D2D2D; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin: 0 0 1rem;">
+          Escribinos, te respondemos rápido
+        </h2>
+        <p style="color: #555; font-size: 1rem; max-width: 560px; margin: 0 auto; line-height: 1.7;">
+          Ya sea que tu auto tenga una falla o quieras darle una mejora, contanos qué necesitás y coordinamos el turno que mejor te quede.
+        </p>
+      </div>
+
+      <!-- Formulario + Info lateral -->
+      <div
+        style="display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: start; max-width: 1000px; margin: 0 auto; width: 100%;">
+
+        <!-- Formulario -->
+        <div
+          style="background: #f4f4f4; border-radius: 1rem; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(45,45,45,0.07); animation: fadeIn 0.9s ease both;">
+          <form id="contact-round-form" novalidate>
+            <div style="margin-bottom: 1.5rem;">
+              <label
+                for="round-name"
+                style="display: block; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #2D2D2D; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem;">
+                Nombre completo <span style="color: #E85D04;">*</span>
+              </label>
+              <input
+                type="text"
+                id="round-name"
+                name="name"
+                placeholder="Ej: Juan Pérez"
+                required
+                style="width: 100%; padding: 0.85rem 1rem; border: 1.5px solid #ddd; border-radius: 0.6rem; font-family: 'Open Sans', sans-serif; font-size: 0.97rem; color: #2D2D2D; background: #fff; outline: none; transition: border-color 0.25s; box-sizing: border-box;"
+                onfocus="this.style.borderColor='#E85D04'"
+                onblur="this.style.borderColor='#ddd'">
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label
+                for="round-email"
+                style="display: block; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #2D2D2D; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem;">
+                Correo electrónico <span style="color: #E85D04;">*</span>
+              </label>
+              <input
+                type="email"
+                id="round-email"
+                name="email"
+                placeholder="tucorreo@email.com"
+                required
+                style="width: 100%; padding: 0.85rem 1rem; border: 1.5px solid #ddd; border-radius: 0.6rem; font-family: 'Open Sans', sans-serif; font-size: 0.97rem; color: #2D2D2D; background: #fff; outline: none; transition: border-color 0.25s; box-sizing: border-box;"
+                onfocus="this.style.borderColor='#E85D04'"
+                onblur="this.style.borderColor='#ddd'">
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+              <label
+                for="round-message"
+                style="display: block; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; color: #2D2D2D; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem;">
+                Mensaje <span style="color: #E85D04;">*</span>
+              </label>
+              <textarea
+                id="round-message"
+                name="message"
+                placeholder="Contanos qué problema tiene tu auto o qué servicio necesitás..."
+                required
+                rows="5"
+                style="width: 100%; padding: 0.85rem 1rem; border: 1.5px solid #ddd; border-radius: 0.6rem; font-family: 'Open Sans', sans-serif; font-size: 0.97rem; color: #2D2D2D; background: #fff; outline: none; transition: border-color 0.25s; resize: vertical; box-sizing: border-box;"
+                onfocus="this.style.borderColor='#E85D04'"
+                onblur="this.style.borderColor='#ddd'"></textarea>
+            </div>
+
+            <!-- Mensaje de respuesta inline -->
+            <div id="form-feedback" style="display: none; margin-bottom: 1.25rem; padding: 0.85rem 1rem; border-radius: 0.6rem; font-size: 0.95rem; font-family: 'Open Sans', sans-serif;"></div>
+
+            <button
+              type="submit"
+              id="form-submit-btn"
+              style="display: flex; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; padding: 1rem 1.5rem; background: #E85D04; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; border: none; border-radius: 0.6rem; cursor: pointer; transition: background 0.25s, transform 0.2s; text-transform: uppercase;"
+              onmouseover="if(!this.disabled){this.style.background='#c94e03'; this.style.transform='translateY(-2px)';}"
+              onmouseout="if(!this.disabled){this.style.background='#E85D04'; this.style.transform='translateY(0)';}">
+              <span id="btn-text">Enviar mensaje</span>
+              <svg id="btn-spinner" style="display:none; animation: spin 0.8s linear infinite;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Tarjetas de info rápida -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem;">
+
+          <div
+            style="background: #2D2D2D; border-radius: 0.9rem; padding: 1.5rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; animation: fadeIn 1s ease 0.1s both;">
+            <div
+              style="flex-shrink: 0; width: 44px; height: 44px; background: #E85D04; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.88 11.93 19.79 19.79 0 0 1 1.82 3.3 2 2 0 0 1 3.8 1.11h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.87a16 16 0 0 0 6.06 6.06l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div>
+              <p
+                style="font-family: 'Montserrat', sans-serif; color: #FFB703; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.3rem;">
+                WhatsApp
+              </p>
+              <a
+                href="https://wa.me/59896969696"
+                target="_blank"
+                rel="noopener"
+                style="color: #ffffff; font-size: 1.05rem; font-weight: 600; text-decoration: none; transition: color 0.2s;"
+                onmouseover="this.style.color='#FFB703'"
+                onmouseout="this.style.color='#ffffff'">
+                +598 96 969 696
+              </a>
+              <p style="color: #aaa; font-size: 0.85rem; margin: 0.25rem 0 0;">Respondemos en el día</p>
+            </div>
+          </div>
+
+          <div
+            style="background: #2D2D2D; border-radius: 0.9rem; padding: 1.5rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; animation: fadeIn 1s ease 0.2s both;">
+            <div
+              style="flex-shrink: 0; width: 44px; height: 44px; background: #E85D04; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </div>
+            <div>
+              <p
+                style="font-family: 'Montserrat', sans-serif; color: #FFB703; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.3rem;">
+                Email
+              </p>
+              <a
+                href="mailto:manu@otto.com"
+                style="color: #ffffff; font-size: 1.05rem; font-weight: 600; text-decoration: none; transition: color 0.2s;"
+                onmouseover="this.style.color='#FFB703'"
+                onmouseout="this.style.color='#ffffff'">
+                manu@otto.com
+              </a>
+              <p style="color: #aaa; font-size: 0.85rem; margin: 0.25rem 0 0;">Consultas y presupuestos</p>
+            </div>
+          </div>
+
+          <div
+            style="background: #2D2D2D; border-radius: 0.9rem; padding: 1.5rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; animation: fadeIn 1s ease 0.3s both;">
+            <div
+              style="flex-shrink: 0; width: 44px; height: 44px; background: #E85D04; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <p
+                style="font-family: 'Montserrat', sans-serif; color: #FFB703; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.3rem;">
+                Ubicación
+              </p>
+              <p style="color: #ffffff; font-size: 1rem; font-weight: 600; margin: 0;">Barrio Dos Avenidas</p>
+              <p style="color: #aaa; font-size: 0.85rem; margin: 0.25rem 0 0;">Colonia del Sacramento, Uruguay</p>
+            </div>
+          </div>
+
+          <div
+            style="background: #2D2D2D; border-radius: 0.9rem; padding: 1.5rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; animation: fadeIn 1s ease 0.4s both;">
+            <div
+              style="flex-shrink: 0; width: 44px; height: 44px; background: #E85D04; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div>
+              <p
+                style="font-family: 'Montserrat', sans-serif; color: #FFB703; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.3rem;">
+                Horario
+              </p>
+              <p style="color: #ffffff; font-size: 1rem; font-weight: 600; margin: 0;">Lun a Vie: 8:00 — 18:00</p>
+              <p style="color: #aaa; font-size: 0.85rem; margin: 0.25rem 0 0;">Sábados: 8:00 — 13:00</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Sección map -->
+  <section id="map" style="background: #f0f0f0; padding: 5rem 1.25rem;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 2.5rem; animation: fadeIn 0.8s ease both;">
+        <span
+          style="display: inline-block; background: #FFB703; color: #2D2D2D; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 999px; margin-bottom: 1rem;">
+          Cómo llegar
+        </span>
+        <h2
+          style="font-family: 'Montserrat', sans-serif; color: #2D2D2D; font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; margin: 0 0 0.75rem;">
+          Nos encontramos en Barrio Dos Avenidas
+        </h2>
+        <p style="color: #555; font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.7;">
+          Colonia del Sacramento, Uruguay. Fácil acceso, estacionamiento disponible y trato personalizado desde el primer momento.
+        </p>
+      </div>
+
+      <div
+        style="border-radius: 1rem; overflow: hidden; box-shadow: 0 8px 32px rgba(45,45,45,0.12); animation: fadeIn 1s ease 0.2s both; position: relative;">
+        <iframe
+          title="Ubicación Round — Barrio Dos Avenidas, Colonia del Sacramento"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3320.4!2d-57.85!3d-34.47!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDI4JzA5LjYiUyA1N8KwNTEnMDAuMCJX!5e0!3m2!1ses!2suy!4v1680000000000!5m2!1ses!2suy"
+          width="100%"
+          height="420"
+          style="border:0; display: block;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <div
+          style="position: absolute; bottom: 1.25rem; left: 1.25rem; background: #2D2D2D; color: #fff; padding: 0.65rem 1.15rem; border-radius: 0.6rem; font-family: 'Montserrat', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
+          <span style="width: 8px; height: 8px; background: #E85D04; border-radius: 50%; flex-shrink: 0; display: inline-block;"></span>
+          Taller Round — Colonia del Sacramento
+        </div>
+      </div>
+
+      <!-- CTA debajo del mapa -->
+      <div style="text-align: center; margin-top: 2.25rem;">
+        <a
+          href="https://maps.google.com/?q=Barrio+Dos+Avenidas,+Colonia+del+Sacramento,+Uruguay"
+          target="_blank"
+          rel="noopener"
+          style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.75rem; background: #E85D04; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; border-radius: 0.6rem; transition: background 0.25s, transform 0.2s;"
+          onmouseover="this.style.background='#c94e03'; this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='#E85D04'; this.style.transform='translateY(0)'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          Abrir en Google Maps
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección info -->
+  <section id="info" style="background: #2D2D2D; padding: 5rem 1.25rem;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+
+      <div style="text-align: center; margin-bottom: 3rem; animation: fadeIn 0.8s ease both;">
+        <span
+          style="display: inline-block; background: #FFB703; color: #2D2D2D; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 999px; margin-bottom: 1rem;">
+          Información útil
+        </span>
+        <h2
+          style="font-family: 'Montserrat', sans-serif; color: #ffffff; font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; margin: 0 0 0.75rem;">
+          Todo lo que necesitás saber antes de venir
+        </h2>
+        <p style="color: #bbb; font-size: 1rem; max-width: 540px; margin: 0 auto; line-height: 1.7;">
+          Atendemos autos de todas las marcas y modelos. Presupuesto sin cargo antes de iniciar cualquier trabajo.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+        <!-- Fila 1 -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+          <div
+            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 1rem; padding: 2rem 1.75rem; animation: fadeIn 0.9s ease both; transition: background 0.25s;"
+            onmouseover="this.style.background='rgba(232,93,4,0.12)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem;">
+              <div style="width: 40px; height: 40px; background: #FFB703; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                </svg>
+              </div>
+              <h3 style="font-family: 'Montserrat', sans-serif; color: #ffffff; font-size: 1.1rem; font-weight: 700; margin: 0;">
+                Servicios disponibles
+              </h3>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.55rem;">
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: #ccc; font-size: 0.95rem;">
+                <span style="width: 6px; height: 6px; background: #E85D04; border-radius: 50%; flex-shrink: 0; display: inline-block;"></span>
+                Mecánica general y reparaciones
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: #ccc; font-size: 0.95rem;">
+                <span style="width: 6px; height: 6px; background: #E85D04; border-radius: 50%; flex-shrink: 0; display: inline-block;"></span>
+                Diagnóstico computarizado
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: #ccc; font-size: 0.95rem;">
+                <span style="width: 6px; height: 6px; background: #E85D04; border-radius: 50%; flex-shrink: 0; display: inline-block;"></span>
+                Frenos, suspensión y dirección
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: #ccc; font-size: 0.95rem;">
+                <span style="width: 6px; height: 6px; background: #E85D04; border-radius: 50%; flex-shrink: 0; display: inline-block;"></span>
+                Cambio de aceite y service periódico
+              </li>
+              <li style="display: flex; align-items: center; gap: 0.6rem; color: #ccc; font-size: 0.95rem;">
+                <span style="width: 6px; height: 6px; background: #E85D04; border-radius: 50%; flex-shrink: 0; display: inline-block;"></span>
+                Preparación y tuning de motores
+              </li>
+            </ul>
+          </div>
+
+          <div
+            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 1rem; padding: 2rem 1.75rem; animation: fadeIn 0.9s ease 0.15s both; transition: background 0.25s;"
+            onmouseover="this.style.background='rgba(232,93,4,0.12)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem;">
+              <div style="width: 40px; height: 40px; background: #FFB703; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <h3 style="font-family: 'Montserrat', sans-serif; color: #ffffff; font-size: 1.1rem; font-weight: 700; margin: 0;">
+                Cómo reservar tu turno
+              </h3>
+            </div>
+            <ol style="padding-left: 1.25rem; margin: 0; display: flex; flex-direction: column; gap: 0.55rem;">
+              <li style="color: #ccc; font-size: 0.95rem; line-height: 1.5;">Completá el formulario o escribinos por WhatsApp.</li>
+              <li style="color: #ccc; font-size: 0.95rem; line-height: 1.5;">Te confirmamos fecha y hora disponible.</li>
+              <li style="color: #ccc; font-size: 0.95rem; line-height: 1.5;">Traé tu auto al taller en el horario acordado.</li>
+              <li style="color: #ccc; font-size: 0.95rem; line-height: 1.5;">Te damos un presupuesto detallado sin cargo.</li>
+              <li style="color: #ccc; font-size: 0.95rem; line-height: 1.5;">Aprobás y arrancamos con el trabajo.</li>
+            </ol>
+          </div>
+
+          <div
+            style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); border-radius: 1rem; padding: 2rem 1.75rem; animation: fadeIn 0.9s ease 0.3s both; transition: background 0.25s;"
+            onmouseover="this.style.background='rgba(232,93,4,0.12)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem;">
+              <div style="width: 40px; height: 40px; background: #FFB703; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <h3 style="font-family: 'Montserrat', sans-serif; color: #ffffff; font-size: 1.1rem; font-weight: 700; margin: 0;">
+                Nuestro compromiso
+              </h3>
+            </div>
+            <p style="color: #ccc; font-size: 0.95rem; line-height: 1.7; margin: 0 0 0.75rem;">
+              En Round trabajamos con honestidad y transparencia. No hacemos trabajos innecesarios ni cobramos de más. Tu auto está en buenas manos.
+            </p>
+            <p style="color: #ccc; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+              Garantizamos todos los trabajos realizados. Si algo no queda bien, lo solucionamos sin costo adicional.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- CTA final -->
+      <div
+        style="margin-top: 3.5rem; text-align: center; background: linear-gradient(135deg, #E85D04 0%, #c94e03 100%); border-radius: 1rem; padding: 3rem 2rem; animation: fadeIn 1s ease 0.3s both;">
+        <h3
+          style="font-family: 'Montserrat', sans-serif; color: #fff; font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 800; margin: 0 0 0.75rem;">
+          Tu auto lo antes posible, bien hecho
+        </h3>
+        <p style="color: rgba(255,255,255,0.88); font-size: 1rem; max-width: 480px; margin: 0 auto 1.75rem; line-height: 1.7;">
+          No esperes a que el problema empeore. Contactanos hoy y coordinamos el turno para que tu auto vuelva a andar como corresponde.
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
+          <a
+            href="https://wa.me/59896969696"
+            target="_blank"
+            rel="noopener"
+            style="display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.9rem 1.75rem; background: #ffffff; color: #E85D04; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; text-decoration: none; border-radius: 0.6rem; transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.2)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.88 11.93 19.79 19.79 0 0 1 1.82 3.3 2 2 0 0 1 3.8 1.11h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.87a16 16 0 0 0 6.06 6.06l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            WhatsApp
+          </a>
+          <a
+            href="mailto:manu@otto.com"
+            style="display: inline-flex; align-items: center; gap
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-800 text-xl tracking-wide text-white">Round</span>
+          <p class="text-sm text-gray-400 font-body">
+            &copy; 2026 Round. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Navegación</span>
+          <a href="index.html"     class="footer-link text-sm text-gray-300">Inicio</a>
+          <a href="servicios.html" class="footer-link text-sm text-gray-300">Servicios</a>
+          <a href="nosotros.html"  class="footer-link text-sm text-gray-300">Nosotros</a>
+          <a href="contacto.html"  class="footer-link text-sm text-gray-300">Contacto</a>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Contacto</span>
+
+          <!-- Email -->
+          <a
+            href="mailto:manu@otto.com"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            manu@otto.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/59896969696"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.52 3.48A11.77 11.77 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.57A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52zM12 21.88a9.83 9.83 0 01-5.03-1.38l-.36-.21-3.69.93.98-3.58-.23-.37A9.86 9.86 0 012.13 12C2.13 6.54 6.54 2.13 12 2.13S21.87 6.54 21.87 12 17.46 21.88 12 21.88zm5.42-7.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07a8.14 8.14 0 01-2.39-1.48 8.98 8.98 0 01-1.65-2.06c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51H6.8c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.19-.57-.34z"/>
+            </svg>
+            +598 96 969 696
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="text-xs text-gray-500 font-body">Hecho con dedicación &mdash; Round 2026</p>
+        <a href="mailto:manu@otto.com" class="footer-link text-xs text-gray-500 font-body">manu@otto.com</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== JS: Hamburger Menu ===== -->
+  <script>
+    (function () {
+      var btn    = document.getElementById('hamburger-btn');
+      var menu   = document.getElementById('mobile-menu');
+      var line1  = document.getElementById('hline1');
+      var line2  = document.getElementById('hline2');
+      var line3  = document.getElementById('hline3');
+      var isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        line1.style.transform = 'translateY(7px) rotate(45deg)';
+        line2.style.opacity   = '0';
+        line3.style.transform = 'translateY(-7px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        line1.style.transform = '';
+        line2.style.opacity   = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) { closeMenu(); } else { openMenu(); }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

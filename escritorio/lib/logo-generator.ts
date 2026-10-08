@@ -1,8 +1,10 @@
 import { createLogger } from "@/lib/logger";
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
 
 const logger = createLogger("LogoGenerator");
+
+const SITES_DIR = "/opt/docker-apps/sites";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -34,29 +36,35 @@ function hexToRgb(hex: string): [number, number, number] | null {
 }
 
 function buildPrompt(params: LogoParams): string {
-  const { businessName, industry, style = "modern", additionalContext } = params;
-
   const styleDescriptions: Record<string, string> = {
-    minimalist: "clean minimalist design, simple shapes, lots of white space, single color accent",
-    modern:     "modern professional design, geometric shapes, clean lines, contemporary aesthetic",
-    bold:       "bold impactful design, strong typography, high contrast, powerful visual identity",
-    elegant:    "elegant sophisticated design, refined details, premium feel, luxury aesthetic",
-    tech:       "tech startup design, digital aesthetic, sharp angles, futuristic elements",
-    friendly:   "friendly approachable design, rounded shapes, warm tones, inviting aesthetic",
+    minimalist: "ultra-minimalist, clean lines, simple geometric shapes",
+    modern: "modern professional, balanced composition, strong visual hierarchy",
+    bold: "bold impactful, strong contrast, powerful typography, commanding presence",
+    elegant: "elegant sophisticated, refined details, premium luxury feel",
+    tech: "tech-forward, geometric precision, digital aesthetic, sharp edges",
+    friendly: "friendly approachable, rounded shapes, warm and inviting feel",
   };
 
-  const industryHint = industry ? `, ${industry} sector` : "";
-  const contextHint = additionalContext ? `. ${additionalContext}` : "";
-  const styleHint = styleDescriptions[style] || styleDescriptions.modern;
+  const styleDesc = styleDescriptions[params.style || "modern"] || styleDescriptions.modern;
 
-  return [
-    `Professional SVG logo for "${businessName}"${industryHint}.`,
-    styleHint + ".",
-    "Vector logo design: clear readable business name text integrated into the mark,",
-    "transparent background, scalable vector artwork, no gradients, flat design.",
-    "Suitable for business cards, websites, and print.",
-    contextHint,
-  ].join(" ").trim();
+  const colorHint = params.primaryColor
+    ? `Primary brand color: ${params.primaryColor}.`
+    : "";
+
+  return `Professional logo for "${params.businessName}"${params.industry ? `, a ${params.industry} business` : ""}.
+
+Style: ${styleDesc}. ${colorHint}
+${params.additionalContext ? `Context: ${params.additionalContext}.` : ""}
+
+Design requirements:
+- Logomark (icon/symbol) combined with the business name as wordmark
+- Transparent background, flat design, no gradients, no shadows
+- Bold clean typography, fully legible at small sizes
+- Horizontal composition suitable for a website header (wider than tall, not square)
+- The logomark + wordmark group must fill the canvas edge-to-edge with minimal margin (no more than 5% padding on any side) — avoid centering a small composition inside a large empty canvas
+- Scalable vector shapes, no raster effects
+- Single cohesive visual concept that represents the brand
+- Do NOT include taglines, decorative borders, or complex textures`;
 }
 
 // ─── Main function ────────────────────────────────────────────────────────────
@@ -131,19 +139,36 @@ export async function generateLogo(params: LogoParams): Promise<LogoResult | nul
  */
 export async function downloadLogoLocally(
   projectId: number,
-  remoteUrl: string
+  remoteUrl: string,
+  subdomain?: string,
 ): Promise<string | null> {
   try {
-    const res = await fetch(remoteUrl, { signal: AbortSignal.timeout(20_000) });
-    if (!res.ok) return null;
-    const buffer = Buffer.from(await res.arrayBuffer());
-    const dir = path.join(process.cwd(), "public", "logos");
-    fs.mkdirSync(dir, { recursive: true });
-    const filename = `logo-${projectId}.svg`;
-    fs.writeFileSync(path.join(dir, filename), buffer);
-    const frontendUrl = process.env.NL360_FRONTEND_URL || "https://nl360.site";
-    return `${frontendUrl}/logos/${filename}`;
-  } catch {
+    const response = await fetch(remoteUrl, {
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const buffer = await response.arrayBuffer();
+
+    if (subdomain) {
+      // Save to sites/{subdomain}/ — persistent volume, served by site's own nginx
+      const siteDir = path.join(SITES_DIR, subdomain);
+      await fs.mkdir(siteDir, { recursive: true });
+      const destPath = path.join(siteDir, "logo-ia.svg");
+      await fs.writeFile(destPath, Buffer.from(buffer));
+      console.log(`[logo-generator] Logo guardado en ${destPath}`);
+      return `/logo-ia.svg`;
+    } else {
+      // Fallback: save to public/logos/ (for Nubia or unknown callers)
+      const logosDir = path.join(process.cwd(), "public", "logos");
+      await fs.mkdir(logosDir, { recursive: true });
+      const localPath = path.join(logosDir, `logo-${projectId}.svg`);
+      await fs.writeFile(localPath, Buffer.from(buffer));
+      const frontendUrl = process.env.NL360_FRONTEND_URL || "https://nl360.site";
+      console.log(`[logo-generator] Logo guardado en public/logos/ (sin subdomain)`);
+      return `${frontendUrl}/logos/logo-${projectId}.svg`;
+    }
+  } catch (err: any) {
+    console.error("[logo-generator] Error descargando logo:", err?.message);
     return null;
   }
 }

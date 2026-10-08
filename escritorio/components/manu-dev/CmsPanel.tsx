@@ -583,6 +583,7 @@ function StoreModal({ projectId, onClose, onSaved }: { projectId: number; onClos
   const [saving, setSaving] = useState(false);
   const [storeInfo, setStoreInfo] = useState({ shipping: "", returns: "", how_to_buy: "" });
   const [savingInfo, setSavingInfo] = useState(false);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     fetch(`/api/manu-dev/store?project_id=${projectId}`)
@@ -615,27 +616,39 @@ function StoreModal({ projectId, onClose, onSaved }: { projectId: number; onClos
 
   async function addProduct() {
     setSaving(true);
-    await fetch("/api/manu-dev/products", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        project_id: projectId,
-        name: form.name, description: form.description,
-        price: form.price ? Number(form.price) : null,
-        sale_price: form.sale_price ? Number(form.sale_price) : null,
-        category_id: form.category_id ? Number(form.category_id) : null,
-        tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
-      }),
-    });
-    const res = await fetch(`/api/manu-dev/products?project_id=${projectId}`).then(r => r.json());
-    setProducts(res.products || []);
-    setForm({ name: "", description: "", price: "", sale_price: "", category_id: "", tags: "" });
-    setShowForm(false);
-    setSaving(false);
-    onSaved();
+    setFormError("");
+    try {
+      const res = await fetch("/api/manu-dev/products", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_id: projectId,
+          name: form.name, description: form.description,
+          price: form.price ? Number(form.price) : null,
+          sale_price: form.sale_price ? Number(form.sale_price) : null,
+          category_id: form.category_id ? Number(form.category_id) : null,
+          tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => null);
+        setFormError(d?.error || "Error al guardar el producto");
+        return;
+      }
+      const listRes = await fetch(`/api/manu-dev/products?project_id=${projectId}`).then(r => r.json());
+      setProducts(listRes.products || []);
+      setForm({ name: "", description: "", price: "", sale_price: "", category_id: "", tags: "" });
+      setShowForm(false);
+      onSaved();
+    } catch {
+      setFormError("Error de red al guardar el producto");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function deleteProduct(id: number) {
-    await fetch(`/api/manu-dev/products?id=${id}&project_id=${projectId}`, { method: "DELETE" });
+    const res = await fetch(`/api/manu-dev/products?id=${id}&project_id=${projectId}`, { method: "DELETE" }).catch(() => null);
+    if (!res?.ok) { setFormError("Error al eliminar el producto"); return; }
     setProducts(prev => prev.filter(p => p.id !== id));
     onSaved();
   }
@@ -688,6 +701,7 @@ function StoreModal({ projectId, onClose, onSaved }: { projectId: number; onClos
       <div className="overflow-y-auto max-h-[55vh] px-5 py-4">
         {tab === "products" && (
           <div className="space-y-3">
+            {formError && <p className="text-xs text-red-400">{formError}</p>}
             <div className="flex justify-end">
               <button onClick={() => setShowForm(!showForm)}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold hover:bg-muted transition-colors">
@@ -786,6 +800,7 @@ function BlogModal({ projectId, onClose, onSaved }: { projectId: number; onClose
   const [form, setForm] = useState({ title: "", summary: "", content: "", featured_image: "", tags: "", category_id: "", published: false });
   const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState({ allow_sharing: true, show_author: false });
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     fetch(`/api/manu-dev/blog?project_id=${projectId}`)
@@ -815,26 +830,38 @@ function BlogModal({ projectId, onClose, onSaved }: { projectId: number; onClose
 
   async function addPost() {
     setSaving(true);
-    await fetch("/api/manu-dev/blog-posts", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        project_id: projectId, title: form.title, summary: form.summary, content: form.content,
-        featured_image: form.featured_image,
-        tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
-        category_id: form.category_id ? Number(form.category_id) : null,
-        published: form.published ? 1 : 0,
-      }),
-    });
-    const res = await fetch(`/api/manu-dev/blog-posts?project_id=${projectId}`).then(r => r.json());
-    setPosts(res.posts || []);
-    setForm({ title: "", summary: "", content: "", featured_image: "", tags: "", category_id: "", published: false });
-    setShowForm(false);
-    setSaving(false);
-    onSaved();
+    setFormError("");
+    try {
+      const res = await fetch("/api/manu-dev/blog-posts", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_id: projectId, title: form.title, summary: form.summary, content: form.content,
+          featured_image: form.featured_image,
+          tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+          category_id: form.category_id ? Number(form.category_id) : null,
+          published: form.published ? 1 : 0,
+        }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => null);
+        setFormError(d?.error || "Error al guardar la entrada");
+        return;
+      }
+      const listRes = await fetch(`/api/manu-dev/blog-posts?project_id=${projectId}`).then(r => r.json());
+      setPosts(listRes.posts || []);
+      setForm({ title: "", summary: "", content: "", featured_image: "", tags: "", category_id: "", published: false });
+      setShowForm(false);
+      onSaved();
+    } catch {
+      setFormError("Error de red al guardar la entrada");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function deletePost(id: number) {
-    await fetch(`/api/manu-dev/blog-posts?id=${id}&project_id=${projectId}`, { method: "DELETE" });
+    const res = await fetch(`/api/manu-dev/blog-posts?id=${id}&project_id=${projectId}`, { method: "DELETE" }).catch(() => null);
+    if (!res?.ok) { setFormError("Error al eliminar la entrada"); return; }
     setPosts(prev => prev.filter(p => p.id !== id));
     onSaved();
   }
@@ -884,6 +911,7 @@ function BlogModal({ projectId, onClose, onSaved }: { projectId: number; onClose
       <div className="overflow-y-auto max-h-[55vh] px-5 py-4">
         {tab === "posts" && (
           <div className="space-y-3">
+            {formError && <p className="text-xs text-red-400">{formError}</p>}
             <div className="flex justify-end">
               <button onClick={() => setShowForm(!showForm)}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold hover:bg-muted transition-colors">
@@ -1203,6 +1231,44 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
     closeModal();
   }
 
+  // Tienda y Blog son vistas de gestion con pestañas (activar, agregar producto/post,
+  // borrar, editar info) donde el usuario suele encadenar varias acciones seguidas.
+  // A diferencia de Layout/Redes (un solo formulario, "guardar" = terminar), activar
+  // el modulo o guardar un item ahi no debe cerrar el modal — solo marcar que el sitio
+  // necesita redesplegarse.
+  function handleManagementSaved() {
+    setPendingChanges(true);
+  }
+
+  // Content edits (pages / AI fix) trigger their own auto-rebuild server-side
+  // (see app/api/manu-dev/content/route.ts), so there's no need to flag
+  // pendingChanges for a manual "Redesplegar" on top of it — but the preview
+  // iframe still needs to be refreshed once that background rebuild finishes,
+  // otherwise the admin sees stale content with no sign the edit worked.
+  function handleContentSaved() {
+    closeModal();
+    waitForContentSync();
+  }
+
+  async function waitForContentSync() {
+    setRebuildMsg("Aplicando cambios...");
+    setRebuildDone(false);
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 2000));
+      try {
+        const d = await fetch(`/api/manu-dev/content?project_id=${projectId}`).then((r) => r.json());
+        if (d?.project?.status && d.project.status !== "building") {
+          setRebuildMsg("¡Cambios aplicados!");
+          setRebuildDone(true);
+          setIframeKey((k) => k + 1);
+          return;
+        }
+      } catch { /* keep polling */ }
+    }
+    // Se agoto el tiempo de espera: igual refrescamos por si termino justo despues del ultimo chequeo
+    setIframeKey((k) => k + 1);
+  }
+
   async function rebuild() {
     setRebuilding(true);
     setRebuildMsg("Iniciando redespliegue...");
@@ -1279,11 +1345,6 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
             <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="text-2xs" />
             Ver sitio
           </a>
-          <button onClick={() => { rebuild(); }} disabled={rebuilding}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-40">
-            <FontAwesomeIcon icon={faWandMagicSparkles} className="text-2xs" />
-            Auto-Fix
-          </button>
           <button onClick={rebuild} disabled={rebuilding}
             className={[
               "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
@@ -1293,8 +1354,6 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
             ].join(" ")}>
             {rebuilding
               ? <><FontAwesomeIcon icon={faSpinner} className="animate-spin" /> {rebuildMsg.slice(0, 25) || "Redesplegando..."}</>
-              : pendingChanges
-              ? <><FontAwesomeIcon icon={faRotateRight} /> Redesplegar</>
               : <><FontAwesomeIcon icon={faRotateRight} /> Redesplegar</>
             }
           </button>
@@ -1355,7 +1414,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
             projectId={projectId}
             pages={data.pages}
             onClose={closeModal}
-            onSaved={handleSaved}
+            onSaved={handleContentSaved}
           />
         )}
 
@@ -1378,7 +1437,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
           <StoreModal
             projectId={projectId}
             onClose={closeModal}
-            onSaved={handleSaved}
+            onSaved={handleManagementSaved}
           />
         )}
 
@@ -1386,7 +1445,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
           <BlogModal
             projectId={projectId}
             onClose={closeModal}
-            onSaved={handleSaved}
+            onSaved={handleManagementSaved}
           />
         )}
 
@@ -1395,7 +1454,7 @@ export default function CmsPanel({ projectId, siteUrl, onBack }: {
             projectId={projectId}
             pages={data.pages}
             onClose={closeModal}
-            onSaved={handleSaved}
+            onSaved={handleContentSaved}
           />
         )}
 

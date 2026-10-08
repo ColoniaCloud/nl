@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hepta</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#37474F',
+            secondary: '#FF6F00',
+            accent:    '#FAFAFA',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Sticky-footer layout ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: #FAFAFA;
+      color: #37474F;
+    }
+    main { flex: 1; }
+
+    /* ── Nav hover transitions ── */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 2px;
+      background-color: #FF6F00;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover { color: #FF6F00; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Mobile menu transition ── */
+    #mobile-menu {
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* ── Hamburger lines ── */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #FAFAFA;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger-btn.open .line-1 { transform: translateY(8px) rotate(45deg); }
+    #hamburger-btn.open .line-2 { opacity: 0; transform: scaleX(0); }
+    #hamburger-btn.open .line-3 { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── Footer social links ── */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover { color: #FF6F00; }
+
+    /* ── Headings ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Space Grotesk", sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════
+     HEADER / NAVIGATION
+════════════════════════════════════ -->
+<header class="bg-primary shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="/index.html" class="flex-shrink-0 flex items-center" aria-label="Hepta — Inicio">
+        <img
+          src="/logo.png"
+          alt="Hepta"
+          style="height:40px; width:auto; object-fit:contain;"
+        />
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+        <a href="/index.html"     class="nav-link text-accent font-medium text-sm tracking-wide">Inicio</a>
+        <a href="/servicios.html" class="nav-link text-accent font-medium text-sm tracking-wide">Servicios</a>
+        <a href="/nosotros.html"  class="nav-link text-accent font-medium text-sm tracking-wide">Nosotros</a>
+        <a href="/contacto.html"  class="nav-link bg-secondary text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-25 tracking-wide" style="--tw-bg-opacity:1;">Contacto</a>
+      </nav>
+
+      <!-- Hamburger button (mobile) -->
+      <button
+        id="hamburger-btn"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="md:hidden flex flex-col justify-center items-center gap-[6px] p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+      >
+        <span class="hamburger-line line-1"></span>
+        <span class="hamburger-line line-2"></span>
+        <span class="hamburger-line line-3"></span>
+      </button>
+
+    </div><!-- /flex row -->
+  </div><!-- /container -->
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+    <nav class="flex flex-col gap-1 px-4 pb-4 pt-2 bg-primary border-t border-white border-opacity-10">
+      <a href="/index.html"     class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Inicio</a>
+      <a href="/servicios.html" class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Servicios</a>
+      <a href="/nosotros.html"  class="nav-link text-accent font-medium text-base py-2 border-b border-white border-opacity-10">Nosotros</a>
+      <a href="/contacto.html"  class="nav-link text-accent font-medium text-base py-2">Contacto</a>
+    </nav>
+  </div>
+
+</header>
+
+<main style="font-family: 'DM Sans', sans-serif; background-color: #FAFAFA; color: #37474F;">
+
+  <!-- Banner superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1659353590903-972270737d60?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4NDE2NDd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Contacto Hepta" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(55,71,79,0.88) 0%, rgba(55,71,79,0.65) 100%);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 2.5rem 1.5rem;">
+      <p style="font-family: 'Space Grotesk', sans-serif; color: #FF6F00; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem;">Hepta — Uruguay</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; color: #FAFAFA; margin: 0 0 1rem 0; line-height: 1.15;">Contactanos</h1>
+      <p style="color: rgba(250,250,250,0.82); font-size: 1.05rem; max-width: 520px; margin: 0 auto;">¿Tu helicóptero necesita atención? Llamanos y coordinamos la visita a domicilio.</p>
+    </div>
+  </section>
+
+  <!-- SECTION: contact-form -->
+  <section id="contact-form" style="padding: 5rem 1.5rem; background: #FAFAFA;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3.5rem;">
+
+      <!-- Intro texto -->
+      <div style="text-align: center;">
+        <span style="display: inline-block; background: #FF6F00; color: #FAFAFA; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 2rem; margin-bottom: 1rem;">Escribinos</span>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; color: #37474F; margin: 0 0 1rem 0;">La forma más rápida de empezar</h2>
+        <p style="color: #546E7A; font-size: 1rem; max-width: 560px; margin: 0 auto; line-height: 1.7;">Completá el formulario con tus datos y el motivo de contacto. Nos ponemos en touch a la brevedad para coordinar la reparación de tu helicóptero, donde estés en Uruguay.</p>
+      </div>
+
+      <!-- Grid form + aside -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2.5rem; max-width: 900px; margin: 0 auto; width: 100%;">
+
+        <!-- Formulario -->
+        <div style="background: #fff; border-radius: 1.25rem; box-shadow: 0 4px 32px rgba(55,71,79,0.10); padding: 2.5rem 2rem;">
+          <form id="hepta-contact-form" novalidate>
+            <div style="margin-bottom: 1.5rem;">
+              <label for="contact-name" style="display: block; font-weight: 600; font-size: 0.9rem; color: #37474F; margin-bottom: 0.5rem;">Nombre completo <span style="color:#FF6F00">*</span></label>
+              <input type="text" id="contact-name" name="name" required placeholder="Tu nombre" style="width: 100%; box-sizing: border-box; padding: 0.85rem 1rem; border: 1.5px solid #CFD8DC; border-radius: 0.6rem; font-family: 'DM Sans', sans-serif; font-size: 0.97rem; color: #37474F; background: #FAFAFA; outline: none; transition: border-color 0.2s;" />
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+              <label for="contact-email" style="display: block; font-weight: 600; font-size: 0.9rem; color: #37474F; margin-bottom: 0.5rem;">Correo electrónico <span style="color:#FF6F00">*</span></label>
+              <input type="email" id="contact-email" name="email" required placeholder="tu@email.com" style="width: 100%; box-sizing: border-box; padding: 0.85rem 1rem; border: 1.5px solid #CFD8DC; border-radius: 0.6rem; font-family: 'DM Sans', sans-serif; font-size: 0.97rem; color: #37474F; background: #FAFAFA; outline: none; transition: border-color 0.2s;" />
+            </div>
+            <div style="margin-bottom: 2rem;">
+              <label for="contact-message" style="display: block; font-weight: 600; font-size: 0.9rem; color: #37474F; margin-bottom: 0.5rem;">Mensaje <span style="color:#FF6F00">*</span></label>
+              <textarea id="contact-message" name="message" required placeholder="Contanos qué le pasa a tu helicóptero, dónde estás y cuándo podemos visitarte..." rows="5" style="width: 100%; box-sizing: border-box; padding: 0.85rem 1rem; border: 1.5px solid #CFD8DC; border-radius: 0.6rem; font-family: 'DM Sans', sans-serif; font-size: 0.97rem; color: #37474F; background: #FAFAFA; outline: none; resize: vertical; transition: border-color 0.2s;"></textarea>
+            </div>
+
+            <!-- Feedback inline -->
+            <div id="form-feedback" style="display: none; padding: 0.9rem 1.1rem; border-radius: 0.6rem; font-size: 0.93rem; font-weight: 600; margin-bottom: 1.2rem;"></div>
+
+            <button type="submit" id="form-submit-btn" style="width: 100%; padding: 1rem 1.5rem; background: #FF6F00; color: #FAFAFA; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; border: none; border-radius: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: background 0.2s, transform 0.15s; letter-spacing: 0.03em;">
+              <span id="btn-label">Enviar mensaje</span>
+              <svg id="btn-spinner" style="display:none; width:1.2rem; height:1.2rem; animation: hepta-spin 0.8s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke="#FAFAFA"/></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Sidebar contacto rápido -->
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+
+          <div style="background: #37474F; border-radius: 1.25rem; padding: 2rem 1.75rem; color: #FAFAFA;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin: 0 0 0.5rem 0; color: #FAFAFA;">Preferís llamar?</h3>
+            <p style="font-size: 0.93rem; color: rgba(250,250,250,0.75); margin: 0 0 1.25rem 0; line-height: 1.6;">Si el tema es urgente, contactanos directo por WhatsApp y coordinamos la visita al toque.</p>
+            <a href="https://wa.me/59896969696" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #FF6F00; color: #FAFAFA; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.97rem; padding: 0.75rem 1.4rem; border-radius: 0.6rem; text-decoration: none; transition: background 0.2s;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#FAFAFA"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.549 4.107 1.514 5.84L.057 23.249a.75.75 0 0 0 .916.948l5.635-1.479A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.726 9.726 0 0 1-4.964-1.361l-.356-.213-3.683.966.982-3.595-.232-.369A9.712 9.712 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+              +598 96 969 696
+            </a>
+          </div>
+
+          <div style="background: #fff; border-radius: 1.25rem; box-shadow: 0 4px 20px rgba(55,71,79,0.08); padding: 1.75rem;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #37474F; margin: 0 0 1rem 0;">Otros canales</h3>
+            <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem;">
+              <li>
+                <a href="mailto:hepta@copteros.uy" style="display: flex; align-items: center; gap: 0.75rem; color: #37474F; text-decoration: none; font-size: 0.93rem; font-weight: 500; transition: color 0.2s;">
+                  <span style="display:inline-flex; align-items:center; justify-content:center; width:2rem; height:2rem; background:#FFE0B2; border-radius:0.5rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF6F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  </span>
+                  hepta@copteros.uy
+                </a>
+              </li>
+              <li>
+                <a href="https://instagram.com/hepta" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 0.75rem; color: #37474F; text-decoration: none; font-size: 0.93rem; font-weight: 500; transition: color 0.2s;">
+                  <span style="display:inline-flex; align-items:center; justify-content:center; width:2rem; height:2rem; background:#FFE0B2; border-radius:0.5rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FF6F00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                  </span>
+                  @hepta
+                </a>
+              </li>
+              <li>
+                <a href="https://facebook.com/hepta" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 0.75rem; color: #37474F; text-decoration: none; font-size: 0.93rem; font-weight: 500; transition: color 0.2s;">
+                  <span style="display:inline-flex; align-items:center; justify-content:center; width:2rem; height:2rem; background:#FFE0B2; border-radius:0.5rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="#FF6F00"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                  </span>
+                  facebook/hepta
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: map -->
+  <section id="map" style="padding: 0 0 5rem 0; background: #FAFAFA;">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span style="display: inline-block; background: #FF6F00; color: #FAFAFA; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 2rem; margin-bottom: 1rem;">Dónde operamos</span>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; color: #37474F; margin: 0 0 0.75rem 0;">Servicio a domicilio en todo Uruguay</h2>
+        <p style="color: #546E7A; font-size: 1rem; max-width: 540px; margin: 0 auto; line-height: 1.7;">Nos desplazamos hasta donde estés. Desde Montevideo hasta el interior, Hepta llega con todo el equipo necesario para reparar tu helicóptero en el lugar.</p>
+      </div>
+      <div style="border-radius: 1.25rem; overflow: hidden; box-shadow: 0 4px 32px rgba(55,71,79,0.12); position: relative;">
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-58.5%2C-34.95%2C-56.0%2C-30.0&layer=mapnik&marker=-32.5%2C-56.0"
+          width="100%"
+          height="420"
+          style="border: 0; display: block;"
+          allowfullscreen=""
+          loading="lazy"
+          title="Zona de cobertura Hepta — Uruguay"
+        ></iframe>
+        <div style="position: absolute; top: 1rem; left: 1rem; background: #37474F; color: #FAFAFA; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.18);">
+          Cobertura: Todo Uruguay
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: info -->
+  <section id="info" style="padding: 5rem 1.5rem; background: #37474F;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <span style="display: inline-block; background: #FF6F00; color: #FAFAFA; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 2rem; margin-bottom: 1rem;">Información útil</span>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; color: #FAFAFA; margin: 0 0 0.75rem 0;">Lo que necesitás saber antes de llamar</h2>
+        <p style="color: rgba(250,250,250,0.72); font-size: 1rem; max-width: 540px; margin: 0 auto; line-height: 1.7;">Trabajamos de lunes a sábado. Para emergencias fuera de horario, escribinos por WhatsApp y evaluamos cada caso.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+        <div style="background: rgba(250,250,250,0.06); border: 1px solid rgba(250,250,250,0.12); border-radius: 1rem; padding: 1.75rem; display: flex; align-items: flex-start; gap: 1.25rem;">
+          <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:3rem; height:3rem; background:#FF6F00; border-radius:0.75rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FAFAFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #FAFAFA; margin: 0 0 0.4rem 0;">Horario de atención</h3>
+            <p style="color: rgba(250,250,250,0.72); font-size: 0.93rem; margin: 0; line-height: 1.6;">Lunes a viernes: 8:00 – 18:00 hs<br>Sábados: 9:00 – 13:00 hs<br>Domingos y feriados: solo emergencias vía WhatsApp</p>
+          </div>
+        </div>
+
+        <div style="background: rgba(250,250,250,0.06); border: 1px solid rgba(250,250,250,0.12); border-radius: 1rem; padding: 1.75rem; display: flex; align-items: flex-start; gap: 1.25rem;">
+          <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:3rem; height:3rem; background:#FF6F00; border-radius:0.75rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FAFAFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #FAFAFA; margin: 0 0 0.4rem 0;">¿Dónde operamos?</h3>
+            <p style="color: rgba(250,250,250,0.72); font-size: 0.93rem; margin: 0; line-height: 1.6;">Toda la República Oriental del Uruguay. El servicio es 100% a domicilio: nosotros vamos hasta tu hangar, predio o cualquier lugar donde se encuentre el helicóptero.</p>
+          </div>
+        </div>
+
+        <div style="background: rgba(250,250,250,0.06); border: 1px solid rgba(250,250,250,0.12); border-radius: 1rem; padding: 1.75rem; display: flex; align-items: flex-start; gap: 1.25rem;">
+          <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:3rem; height:3rem; background:#FF6F00; border-radius:0.75rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FAFAFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.25h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.68 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 5.55 5.55l1.73-1.73a2 2 0 0 1 2.11-.45c.91.33 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #FAFAFA; margin: 0 0 0.4rem 0;">Tiempo de respuesta</h3>
+            <p style="color: rgba(250,250,250,0.72); font-size: 0.93rem; margin: 0; line-height: 1.6;">Respondemos consultas en menos de 2 horas en horario de atención. Para coordinar visitas, generalmente podemos agendarte dentro de las 24 a 48 horas.</p>
+          </div>
+        </div>
+
+        <div style="background: rgba(250,250,250,0.06); border: 1px solid rgba(250,250,250,0.12); border-radius: 1rem; padding: 1.75rem; display: flex; align-items: flex-start; gap: 1.25rem;">
+          <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:3rem; height:3rem; background:#FF6F00; border-radius:0.75rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FAFAFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </span>
+          <div>
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700; color: #FAFAFA; margin: 0 0 0.4rem 0;">¿Qué pasa después de contactarnos?</h3>
+            <p style="color: rgba(250,250,250,0.72); font-size: 0.93rem; margin: 0; line-height: 1.6;">Te llamamos para entender la situación, coordinamos una visita de diagnóstico sin costo y te presentamos un presupuesto claro antes de tocar nada. Sin sorpresas.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA final -->
+      <div style="margin-top: 3rem; text-align: center; padding: 2.5rem 1.5rem; background: rgba(255,111,0,0.12); border: 1.5px solid rgba(255,111,0,0.3); border-radius: 1.25rem;">
+        <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.35rem; font-weight: 700; color: #FAFAFA; margin: 0 0 0.6rem 0;">¿Listo para coordinar la reparación?</h3>
+        <p style="color: rgba(250,250,250,0.75); font-size: 0.97rem; margin: 0 0 1.5rem 0; line-height: 1.6;">Una llamada es todo lo que se necesita. Nuestro equipo se encarga del resto.</p>
+        <a href="https://wa.me/59896969696" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #FF6F00; color: #FAFAFA; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1rem; padding: 0.9rem 2rem; border-radius: 0.7rem; text-decoration: none; transition: background 0.2s; box-shadow: 0 4px 16px rgba(255,111,0,0.35);">
+          Llamar por WhatsApp ahora
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes hepta-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes hepta-fadein {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #hepta-contact-form input:focus,
+    #hepta-contact-form textarea:focus {
+      border-color: #FF6F00 !important;
+      box-shadow: 0 0 0 3px rgba(255,111,0,0.12);
+    }
+    #form-submit-btn:hover:not(:disabled) {
+      background: #E65100 !important;
+      transform: translateY(-1px);
+    }
+    #form-submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    #contact-form,
+    #map,
+    #info {
+      animation: hepta-fadein 0.7s ease both;
+    }
+
+    @media (min-width: 768px) {
+      #hepta-contact-form ~ div,
+      section#contact-form > div > div:last-child {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      var form = document.getElementById('hepta-contact-form');
+      var btn = document.getElementById('form-submit-btn');
+      var label = document.getElementById('btn-label');
+      var spinner = document.getElementById('btn-spinner');
+      var feedback = document.getElementById('form-feedback');
+
+      // Responsive 2-col grid for form section
+      function setGrid() {
+        var grid = document.querySelector('#contact-form .hepta-form-grid');
+        if (!grid) return;
+        if (window.innerWidth >= 768) {
+          grid.style.gridTemplateColumns = '1fr 1fr';
+        } else {
+          grid.style.gridTemplateColumns = '1fr';
+        }
+      }
+
+      // Apply grid class
+      var formGrid = form && form.closest && form.closest('[data-form-grid]');
+
+      window.addEventListener('resize', setGrid);
+
+      // Also apply at load for inner grid
+      (function applyGridOnLoad() {
+        var grids = document.querySelectorAll('.hepta-info-grid');
+        grids.forEach(function(g) {
+          if (window.innerWidth >= 768) {
+            g.style.gridTemplateColumns = '1fr 1fr';
+          }
+        });
+      })();
+
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var name = document.getElementById('contact-name').value.trim();
+        var email = document.getElementById('contact-email').value.trim();
+        var message = document.getElementById('contact-message').value.trim();
+
+        // Basic validation
+        if (!name || !email || !message) {
+          showFeedback('Por favor completá todos los campos antes de enviar.', false);
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showFeedback('Ingresá un correo electrónico válido.', false);
+          return;
+        }
+
+        // Disable & spinner
+        btn.disabled = true;
+        label.textContent = 'Enviando...';
+        spinner.style.display = 'inline-block';
+        feedback.style.display = 'none';
+
+        fetch('https://nl360.site/api/manu-dev/form-submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_id: 110,
+            name: name,
+            email: email,
+            message: message
+          })
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error('Error del servidor');
+            return res.json();
+          })
+          .then(function () {
+            showFeedback('Mensaje enviado correctamente. Te contactamos a la brevedad.', true);
+            form.reset();
+            btn.disabled = false;
+            label.textContent = 'Enviar mensaje';
+            spinner.style.display = 'none';
+          })
+          .catch(function () {
+            showFeedback('Hubo un error al enviar el mensaje. Por favor intentá de nuevo o contactanos por WhatsApp.', false);
+            btn.disabled = false;
+            label.textContent = 'Enviar mensaje';
+            spinner.style.display = 'none';
+          });
+      });
+
+      function showFeedback(msg, success) {
+        feedback.textContent = msg;
+        feedback.style.display = 'block';
+        feedback.style.background = success ? '#E8F5E9' : '#FFF3E0';
+        feedback.style.color = success ? '#2E7D32' : '#E65100';
+        feedback.style.border = success ? '1px solid #A5D6A7' : '1px solid #FFCC80';
+      }
+
+      // Apply 2-col on form+aside grid at load and resize
+      function applyFormGrid() {
+        var wrap = document.querySelector('#contact-form > div > div:last-child');
+        if (!wrap) return;
+        if (window.innerWidth >= 768) {
+          wrap.style.gridTemplateColumns = '1fr 1fr';
+        } else {
+          wrap.style.gridTemplateColumns = '1fr';
+        }
+      }
+      applyFormGrid();
+
+      // Info cards 2-col
+      function applyInfoGrid() {
+        var wrap = document.querySelector('#info .hepta-info-cards');
+        if (wrap) {
+          wrap.style.gridTemplateColumns = window.innerWidth >= 768 ? '1fr 1fr' : '1fr';
+        }
+      }
+
+      window.addEventListener('resize', function () {
+        applyFormGrid();
+        applyInfoGrid();
+      });
+
+    })();
+  </script>
+
+  <!-- Responsive JS for info grid (inline style approach) -->
+  <script>
+    (function() {
+      var infoGrid = document.querySelector('#info > div > div[style*="grid-template-columns"]');
+      function updateInfoGrid() {
+        if (!infoGrid) return;
+        infoGrid.style.gridTemplateColumns = window.innerWidth >= 768 ? '1fr 1fr' : '1fr';
+      }
+      updateInfoGrid();
+      window.addEventListener('resize', updateInfoGrid);
+    })();
+  </script>
+
+</main>
+
+<!-- ════════════════════════════════════
+     FOOTER
+════════════════════════════════════ -->
+<footer class="bg-primary text-accent">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+      <!-- Brand -->
+      <div class="flex flex-col gap-3">
+        <a href="/index.html" aria-label="Hepta — Inicio">
+          <img
+            src="/logo.png"
+            alt="Hepta"
+            style="height:36px; width:auto; object-fit:contain; filter:brightness(0) invert(1);"
+          />
+        </a>
+        <p class="text-sm text-accent text-opacity-70 leading-relaxed max-w-xs" style="color:rgba(250,250,250,0.65);">
+          Soluciones que elevan tu negocio.
+        </p>
+      </div>
+
+      <!-- Navigation links -->
+      <div class="flex flex-col gap-3">
+        <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-secondary mb-1">Navegación</h3>
+        <a href="/index.html"     class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Inicio</a>
+        <a href="/servicios.html" class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Servicios</a>
+        <a href="/nosotros.html"  class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Nosotros</a>
+        <a href="/contacto.html"  class="footer-link text-sm" style="color:rgba(250,250,250,0.8);">Contacto</a>
+      </div>
+
+      <!-- Contact & Social -->
+      <div class="flex flex-col gap-3">
+        <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-secondary mb-1">Contacto</h3>
+
+        <!-- Email -->
+        <a
+          href="mailto:hepta@copteros.uy"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          hepta@copteros.uy
+        </a>
+
+        <!-- WhatsApp -->
+        <a
+          href="https://wa.me/59896969696"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          WhatsApp: +598 96 969 696
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://instagram.com/hepta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          Instagram: @hepta
+        </a>
+
+        <!-- Facebook -->
+        <a
+          href="https://facebook.com/hepta"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-link text-sm"
+          style="color:rgba(250,250,250,0.8);"
+        >
+          Facebook: facebook/hepta
+        </a>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- Bottom bar -->
+    <div class="mt-10 pt-6 border-t border-white border-opacity-10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs" style="color:rgba(250,250,250,0.45);">
+      <span>&copy; 2026 Hepta. Todos los derechos reservados.</span>
+      <a href="mailto:hepta@copteros.uy" class="footer-link" style="color:rgba(250,250,250,0.45);">hepta@copteros.uy</a>
+    </div>
+
+  </div><!-- /container -->
+</footer>
+
+<!-- ════════════════════════════════════
+     JS — Mobile menu toggle
+════════════════════════════════════ -->
+<script>
+  (function () {
+    const btn  = document.getElementById('hamburger-btn');
+    const menu = document.getElementById('mobile-menu');
+
+    btn.addEventListener('click', function () {
+      const isOpen = menu.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+    });
+
+    // Close menu when a link is tapped
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+      });
+    });
+
+    // Close menu on outside click
+    document.addEventListener('click', function (e) {
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

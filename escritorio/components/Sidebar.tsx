@@ -5,10 +5,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   Home,
-  Megaphone,
-  Handshake,
-  GraduationCap,
-  Code2,
   LogOut,
   BadgeCheck,
   Plus,
@@ -17,13 +13,12 @@ import {
   Users,
   Settings,
   ChevronRight,
-  ShoppingBag,
-  Coins,
   Layers,
   Crown,
   Eye,
 } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
+import { AGENT_META } from "@/lib/agent-colors";
 import { cn } from "@/lib/utils";
 import { useManuDevProjects } from "@/hooks/useManuDevProjects";
 import type { ManuDevProject, NubiaProject, ForgeProject } from "@/hooks/useManuDevProjects";
@@ -60,10 +55,13 @@ type SubAgent = {
   projectsKey: "manuDev" | "nubia" | "forge";
 };
 
+// Icono representativo de Manu Dev (fuente unica: AGENT_META)
+const ManuDevIcon = AGENT_META["manu-dev"].icon;
+
 const MANU_DEV_SUBAGENTS: SubAgent[] = [
-  { href: "/services/manu-dev", label: "Dev", icon: Globe, projectsKey: "manuDev" },
-  { href: "/services/nubia", label: "Nubia", icon: ShoppingBag, projectsKey: "nubia" },
-  { href: "/services/forge", label: "Forge", icon: Coins, projectsKey: "forge" },
+  { href: "/services/manu-dev/pro", label: "Dev", icon: Globe, projectsKey: "manuDev" },
+  { href: "/services/nubia", label: "Nubia", icon: AGENT_META.nubia.icon, projectsKey: "nubia" },
+  { href: "/services/forge", label: "Forge", icon: AGENT_META.forge.icon, projectsKey: "forge" },
 ];
 
 // Other top-level agents
@@ -71,7 +69,7 @@ const NAV_AGENTS: NavItem[] = [
   {
     href: "/services/margarita",
     label: "Margarita Mkt",
-    icon: Megaphone,
+    icon: AGENT_META.margarita.icon,
     newLabel: "Nueva conversacion",
     subItems: [
       { href: "/services/margarita/crm", label: "CRM", icon: Users },
@@ -80,13 +78,13 @@ const NAV_AGENTS: NavItem[] = [
   {
     href: "/services/grant",
     label: "Jordan",
-    icon: Handshake,
+    icon: AGENT_META.jordan.icon,
     newLabel: "Nueva conversacion",
   },
   {
     href: "/services/mentoria",
     label: "MentorIA",
-    icon: GraduationCap,
+    icon: AGENT_META.mentoria.icon,
     newLabel: "Nueva conversacion",
     subItems: [
       { href: "/services/mentoria?agent=NAPOLEON", label: "Napoleon", icon: Crown },
@@ -351,7 +349,7 @@ export default function AppSidebar() {
                           : "text-muted-foreground hover:bg-white/[0.07] hover:text-foreground"
                       )}
                     >
-                      <Code2 className="size-4 flex-shrink-0" />
+                      <ManuDevIcon className="size-4 flex-shrink-0" />
                       <span className="flex-1 truncate">Manu Dev</span>
                     </Link>
                     <button
@@ -379,7 +377,7 @@ export default function AppSidebar() {
                         : "text-muted-foreground hover:bg-white/[0.07] hover:text-foreground"
                     )}
                   >
-                    <Code2 className="size-4 flex-shrink-0" />
+                    <ManuDevIcon className="size-4 flex-shrink-0" />
                   </Link>
                 )}
 
@@ -413,7 +411,7 @@ export default function AppSidebar() {
                               href={sub.href}
                               title="Nuevo"
                               data-no-relief
-                              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-emerald-400 hover:bg-white/[0.08] hover:text-emerald-300 transition-colors"
+                              className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded text-violet-400 hover:bg-white/[0.08] hover:text-violet-300 transition-colors"
                             >
                               <Plus className="size-3" />
                             </Link>
@@ -541,7 +539,7 @@ export default function AppSidebar() {
                       data-no-relief
                       className={cn(
                         "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors min-w-0",
-                        "text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.05]"
+                        "text-violet-400 hover:text-violet-300 hover:bg-white/[0.05]"
                       )}
                     >
                       <Plus className="size-3 flex-shrink-0" />

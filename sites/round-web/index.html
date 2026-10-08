@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#2D2D2D',
+            secondary: '#E85D04',
+            accent:    '#FFB703',
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body:    ['Open Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Layout flexbox crítico */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Nav hover transitions */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFB703;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #FFB703;
+    }
+
+    /* Hamburger lines */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Mobile nav link */
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .mobile-nav-link:hover {
+      color: #FFB703;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Footer link transitions */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover {
+      color: #FFB703;
+    }
+  </style>
+</head>
+<body class="bg-white text-primary font-body">
+
+  <!-- ===== HEADER ===== -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0">
+          <img src="/logo.png" alt="Round" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <!-- Desktop Nav -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="inline-block bg-secondary hover:bg-accent text-white hover:text-primary text-sm font-heading font-700 tracking-wide uppercase px-5 py-2 rounded transition-colors duration-250">
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line" id="hline1"></span>
+          <span class="hamburger-line" id="hline2"></span>
+          <span class="hamburger-line" id="hline3"></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col pb-4 gap-1">
+          <li>
+            <a href="index.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+  </header>
+
+  <main>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fadeInUp {
+    animation: fadeInUp 0.8s ease forwards;
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1s ease forwards;
+  }
+  .delay-200 { animation-delay: 0.2s; opacity: 0; }
+  .delay-400 { animation-delay: 0.4s; opacity: 0; }
+  .delay-600 { animation-delay: 0.6s; opacity: 0; }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  .service-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-primary {
+    background-color: #E85D04;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-primary:hover {
+    background-color: #FFB703;
+    color: #2D2D2D;
+    transform: scale(1.04);
+  }
+  .btn-accent {
+    background-color: #FFB703;
+    color: #2D2D2D;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-accent:hover {
+    background-color: #E85D04;
+    color: #fff;
+    transform: scale(1.04);
+  }
+  .testimonial-card:hover {
+    box-shadow: 0 12px 32px rgba(232,93,4,0.15);
+  }
+  .testimonial-card {
+    transition: box-shadow 0.3s ease;
+  }
+</style>
+
+<!-- HERO -->
+<section id="hero" class="relative w-full" style="min-height:100vh;">
+  <div class="absolute inset-0 w-full h-full">
+    <img
+      src="https://images.unsplash.com/photo-1610259998914-d1b9afe0dc55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Taller mecánico Round"
+      class="w-full h-full object-cover"
+      style="min-height:100vh;"
+    />
+    <div class="absolute inset-0" style="background:rgba(20,20,20,0.72);"></div>
+  </div>
+  <div class="relative z-10 flex flex-col items-center justify-center text-center px-4 py-32" style="min-height:100vh;">
+    <span class="inline-block text-sm font-semibold tracking-widest uppercase mb-4 animate-fadeInUp delay-200" style="color:#FFB703; font-family:'Open Sans',sans-serif;">Taller Mecánico en Colonia del Sacramento</span>
+    <h1 class="text-4xl md:text-6xl font-black leading-tight mb-6 text-white animate-fadeInUp delay-400" style="font-family:'Montserrat',sans-serif;">
+      Tu auto en manos<br/>de profesionales
+    </h1>
+    <p class="text-lg md:text-xl text-gray-200 max-w-xl mx-auto mb-10 animate-fadeInUp delay-600" style="font-family:'Open Sans',sans-serif;">
+      En Round lo reparamos, lo afinamos y lo devolvemos listo para la ruta. Pedí tu turno hoy y andá tranquilo.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 animate-fadeInUp delay-600">
+      <a href="https://wa.me/59896969696?text=Hola%20Round%2C%20quiero%20reservar%20un%20turno" target="_blank" rel="noopener" class="btn-primary font-bold text-base px-8 py-4 rounded-lg" style="font-family:'Montserrat',sans-serif;">
+        Reservar turno
+      </a>
+      <a href="/servicios" class="btn-accent font-bold text-base px-8 py-4 rounded-lg" style="font-family:'Montserrat',sans-serif;">
+        Ver servicios
+      </a>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-0 right-0 flex justify-center z-10 animate-fadeIn delay-600">
+    <a href="#services" aria-label="Ver más" class="flex flex-col items-center gap-1 text-white opacity-70 hover:opacity-100 transition-opacity duration-300">
+      <span class="text-xs tracking-widest uppercase" style="font-family:'Open Sans',sans-serif;">Ver más</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="py-20 px-4" style="background:#F5F5F5;">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <span class="text-sm font-semibold tracking-widest uppercase" style="color:#E85D04; font-family:'Open Sans',sans-serif;">Lo que hacemos</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2 mb-4" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Servicios del taller</h2>
+      <p class="text-gray-600 max-w-xl mx-auto" style="font-family:'Open Sans',sans-serif;">Desde una revisión rápida hasta reparaciones complejas, en Round tenemos todo lo que tu auto necesita.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Card 1 -->
+      <div class="service-card bg-white rounded-xl p-8 shadow-md flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background:#FFB703;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Service y mantenimiento</h3>
+        <p class="text-gray-600 text-sm leading-relaxed" style="font-family:'Open Sans',sans-serif;">Cambio de aceite, filtros, bujías y revisión general para que tu auto funcione siempre en óptimas condiciones.</p>
+        <span class="font-bold mt-auto" style="color:#E85D04; font-family:'Montserrat',sans-serif;">Desde $1.200 UYU</span>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="service-card bg-white rounded-xl p-8 shadow-md flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background:#FFB703;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Frenos y suspensión</h3>
+        <p class="text-gray-600 text-sm leading-relaxed" style="font-family:'Open Sans',sans-serif;">Diagnóstico y reparación de sistema de frenos, amortiguadores y dirección. Seguridad antes que todo.</p>
+        <span class="font-bold mt-auto" style="color:#E85D04; font-family:'Montserrat',sans-serif;">Desde $2.500 UYU</span>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="service-card bg-white rounded-xl p-8 shadow-md flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background:#FFB703;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Sistema eléctrico</h3>
+        <p class="text-gray-600 text-sm leading-relaxed" style="font-family:'Open Sans',sans-serif;">Diagnóstico computarizado, reparación de luces, batería, alternador y todo el sistema eléctrico del vehículo.</p>
+        <span class="font-bold mt-auto" style="color:#E85D04; font-family:'Montserrat',sans-serif;">Desde $1.800 UYU</span>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="service-card bg-white rounded-xl p-8 shadow-md flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background:#FFB703;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Motor y transmisión</h3>
+        <p class="text-gray-600 text-sm leading-relaxed" style="font-family:'Open Sans',sans-serif;">Reparación de motor, caja de cambios, embrague y todo lo relacionado con la mecánica pesada del vehículo.</p>
+        <span class="font-bold mt-auto" style="color:#E85D04; font-family:'Montserrat',sans-serif;">Presupuesto sin cargo</span>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="service-card bg-white rounded-xl p-8 shadow-md flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background:#FFB703;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 1M13 16H9m0 0l-2-1m2 1v0M20 16h1a1 1 0 001-1v-4l-2-4H13v9h1" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Revisión técnica</h3>
+        <p class="text-gray-600 text-sm leading-relaxed" style="font-family:'Open Sans',sans-serif;">Preparamos tu auto para la inspección técnica vehicular con revisión integral y corrección de observaciones.</p>
+        <span class="font-bold mt-auto" style="color:#E85D04; font-family:'Montserrat',sans-serif;">Desde $900 UYU</span>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="service-card bg-white rounded-xl p-8 shadow-md flex flex-col gap-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2" style="background:#FFB703;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2D2D2D" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Diagnóstico express</h3>
+        <p class="text-gray-600 text-sm leading-relaxed" style="font-family:'Open Sans',sans-serif;">¿Tu auto hace un ruido raro o prendió una luz? Venite o contanos por WhatsApp y te damos un diagnóstico rápido.</p>
+        <span class="font-bold mt-auto" style="color:#E85D04; font-family:'Montserrat',sans-serif;">Sin costo</span>
+      </div>
+
+    </div>
+    <div class="text-center mt-12">
+      <a href="/servicios" class="btn-primary inline-block font-bold text-base px-8 py-4 rounded-lg" style="font-family:'Montserrat',sans-serif;">Ver todos los servicios</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT BRIEF -->
+<section id="about-brief" class="py-20 px-4" style="background:#2D2D2D;">
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <div class="relative">
+      <img
+        src="https://images.unsplash.com/photo-1664870546503-b6f134986baa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+        alt="Mecánicos trabajando en Round"
+        class="rounded-xl w-full object-cover shadow-2xl"
+        style="max-height:420px;"
+      />
+      <div class="absolute -bottom-5 -right-5 w-32 h-32 rounded-xl hidden md:block" style="background:#E85D04; z-index:-1;"></div>
+    </div>
+    <div class="flex flex-col gap-6">
+      <span class="text-sm font-semibold tracking-widest uppercase" style="color:#FFB703; font-family:'Open Sans',sans-serif;">Quiénes somos</span>
+      <h2 class="text-3xl md:text-4xl font-black text-white leading-tight" style="font-family:'Montserrat',sans-serif;">El taller de confianza del barrio Dos Avenidas</h2>
+      <p class="text-gray-300 leading-relaxed" style="font-family:'Open Sans',sans-serif;">
+        En Round somos mecánicos apasionados por los autos y comprometidos con la honestidad. Trabajamos en Colonia del Sacramento atendiendo a vecinos y conductores que necesitan un diagnóstico claro, precios justos y trabajo bien hecho.
+      </p>
+      <p class="text-gray-300 leading-relaxed" style="font-family:'Open Sans',sans-serif;">
+        No hacemos trabajo de más ni cobramos lo que no corresponde. Si el auto no necesita algo, te lo decimos. Eso es lo que nos diferencia.
+      </p>
+      <div class="grid grid-cols-2 gap-6 mt-2">
+        <div class="flex flex-col gap-1">
+          <span class="text-3xl font-black" style="color:#FFB703; font-family:'Montserrat',sans-serif;">+10</span>
+          <span class="text-gray-400 text-sm" style="font-family:'Open Sans',sans-serif;">Años de experiencia</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-3xl font-black" style="color:#FFB703; font-family:'Montserrat',sans-serif;">+500</span>
+          <span class="text-gray-400 text-sm" style="font-family:'Open Sans',sans-serif;">Autos reparados</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-3xl font-black" style="color:#FFB703; font-family:'Montserrat',sans-serif;">100%</span>
+          <span class="text-gray-400 text-sm" style="font-family:'Open Sans',sans-serif;">Garantía en mano de obra</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-3xl font-black" style="color:#FFB703; font-family:'Montserrat',sans-serif;">1 día</span>
+          <span class="text-gray-400 text-sm" style="font-family:'Open Sans',sans-serif;">Entrega promedio</span>
+        </div>
+      </div>
+      <div class="mt-4">
+        <a href="/nosotros" class="btn-accent inline-block font-bold text-base px-8 py-4 rounded-lg" style="font-family:'Montserrat',sans-serif;">Conocenos</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="py-20 px-4" style="background:#fff;">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <span class="text-sm font-semibold tracking-widest uppercase" style="color:#E85D04; font-family:'Open Sans',sans-serif;">Opiniones</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2 mb-4" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Lo que dicen nuestros clientes</h2>
+      <p class="text-gray-600 max-w-lg mx-auto" style="font-family:'Open Sans',sans-serif;">Vecinos de Colonia del Sacramento que confiaron en Round y volvieron a andar tranquilos.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <div class="testimonial-card bg-gray-50 rounded-xl p-8 flex flex-col gap-4 shadow-sm border border-gray-100">
+        <div class="flex gap-1 mb-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+        </div>
+        <p class="text-gray-700 text-sm leading-relaxed italic" style="font-family:'Open Sans',sans-serif;">"Llevé mi Chevrolet Corsa que no arrancaba. En menos de 24 horas ya estaba listo y el precio fue muy razonable. Me explicaron todo lo que hicieron, sin vueltas."</p>
+        <div class="flex items-center gap-3 mt-auto pt-4 border-t border-gray-200">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background:#E85D04; font-family:'Montserrat',sans-serif;">MR</div>
+          <div>
+            <p class="font-bold text-sm" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Marcos Rodríguez</p>
+            <p class="text-xs text-gray-500" style="font-family:'Open Sans',sans-serif;">Vecino de Colonia</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card bg-gray-50 rounded-xl p-8 flex flex-col gap-4 shadow-sm border border-gray-100">
+        <div class="flex gap-1 mb-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+        </div>
+        <p class="text-gray-700 text-sm leading-relaxed italic" style="font-family:'Open Sans',sans-serif;">"Fui para la revisión técnica y me avisaron que tenía los frenos flojos. Me lo arreglaron ese mismo día. Nunca me habían atendido tan bien en un taller."</p>
+        <div class="flex items-center gap-3 mt-auto pt-4 border-t border-gray-200">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background:#E85D04; font-family:'Montserrat',sans-serif;">LF</div>
+          <div>
+            <p class="font-bold text-sm" style="color:#2D2D2D; font-family:'Montserrat',sans-serif;">Laura Fernández</p>
+            <p class="text-xs text-gray-500" style="font-family:'Open Sans',sans-serif;">Barrio Dos Avenidas</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card bg-gray-50 rounded-xl p-8 flex flex-col gap-4 shadow-sm border border-gray-100">
+        <div class="flex gap-1 mb-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="#FFB703" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-800 text-xl tracking-wide text-white">Round</span>
+          <p class="text-sm text-gray-400 font-body">
+            &copy; 2026 Round. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Navegación</span>
+          <a href="index.html"     class="footer-link text-sm text-gray-300">Inicio</a>
+          <a href="servicios.html" class="footer-link text-sm text-gray-300">Servicios</a>
+          <a href="nosotros.html"  class="footer-link text-sm text-gray-300">Nosotros</a>
+          <a href="contacto.html"  class="footer-link text-sm text-gray-300">Contacto</a>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Contacto</span>
+
+          <!-- Email -->
+          <a
+            href="mailto:manu@otto.com"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            manu@otto.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/59896969696"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.52 3.48A11.77 11.77 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.57A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52zM12 21.88a9.83 9.83 0 01-5.03-1.38l-.36-.21-3.69.93.98-3.58-.23-.37A9.86 9.86 0 012.13 12C2.13 6.54 6.54 2.13 12 2.13S21.87 6.54 21.87 12 17.46 21.88 12 21.88zm5.42-7.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07a8.14 8.14 0 01-2.39-1.48 8.98 8.98 0 01-1.65-2.06c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51H6.8c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.19-.57-.34z"/>
+            </svg>
+            +598 96 969 696
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="text-xs text-gray-500 font-body">Hecho con dedicación &mdash; Round 2026</p>
+        <a href="mailto:manu@otto.com" class="footer-link text-xs text-gray-500 font-body">manu@otto.com</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== JS: Hamburger Menu ===== -->
+  <script>
+    (function () {
+      var btn    = document.getElementById('hamburger-btn');
+      var menu   = document.getElementById('mobile-menu');
+      var line1  = document.getElementById('hline1');
+      var line2  = document.getElementById('hline2');
+      var line3  = document.getElementById('hline3');
+      var isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        line1.style.transform = 'translateY(7px) rotate(45deg)';
+        line2.style.opacity   = '0';
+        line3.style.transform = 'translateY(-7px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        line1.style.transform = '';
+        line2.style.opacity   = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) { closeMenu(); } else { openMenu(); }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

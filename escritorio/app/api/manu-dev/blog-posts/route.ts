@@ -67,10 +67,19 @@ export async function POST(req: NextRequest) {
   const slug = body.slug ? String(body.slug).slice(0, 200) : slugify(title);
   const tags = Array.isArray(body.tags) ? body.tags : [];
 
+  let category_id = body.category_id ? Number(body.category_id) : null;
+  if (category_id) {
+    const [cat] = await pool.execute(
+      "SELECT id FROM md_blog_categories WHERE id = ? AND project_id = ? LIMIT 1",
+      [category_id, project_id]
+    ) as any;
+    if (!cat.length) category_id = null;
+  }
+
   const [result] = await pool.execute(
     `INSERT INTO md_blog_posts (project_id, category_id, title, slug, summary, content, featured_image, tags, published)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [project_id, body.category_id || null, title, slug,
+    [project_id, category_id, title, slug,
      String(body.summary || ""), String(body.content || ""),
      String(body.featured_image || "").slice(0, 500),
      JSON.stringify(tags), body.published ? 1 : 0]
@@ -94,6 +103,14 @@ export async function PATCH(req: NextRequest) {
 
   const pool = getPool();
   if (!await assertOwner(pool, project_id, userId)) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+
+  if (body.category_id) {
+    const [cat] = await pool.execute(
+      "SELECT id FROM md_blog_categories WHERE id = ? AND project_id = ? LIMIT 1",
+      [Number(body.category_id), project_id]
+    ) as any;
+    if (!cat.length) return NextResponse.json({ error: "Categoria invalida" }, { status: 400 });
+  }
 
   const allowed = ["title", "slug", "summary", "content", "featured_image", "category_id", "published"];
   const updates: string[] = [];

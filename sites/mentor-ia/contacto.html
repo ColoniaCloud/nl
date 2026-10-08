@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MentorIA</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#1A1A2E',
+            secondary: '#7C3AED',
+            accent:    '#00C896',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"',       'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ── Layout base ── */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #0f0f1a;
+      color: #e2e2f0;
+    }
+    main { flex: 1; }
+
+    /* ── Tipografía ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* ── Nav link hover ── */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 2px;
+      background-color: #00C896;
+      transition: width 0.3s ease;
+      border-radius: 9999px;
+    }
+    .nav-link:hover { color: #00C896; }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ── Hamburger lines ── */
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #e2e2f0;
+      border-radius: 9999px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ── Mobile menu slide ── */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* ── Footer social icon hover ── */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .social-link:hover {
+      color: #00C896;
+      transform: translateY(-2px);
+    }
+
+    /* ── Scrollbar (optional polish) ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1A1A2E; }
+    ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 9999px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════════
+       HEADER / NAV
+  ════════════════════════════════════════ -->
+  <header class="bg-primary shadow-lg sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded">
+          <img
+            src="/logo.png"
+            alt="MentorIA"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop links -->
+        <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-200">
+          <li><a href="index.html"     class="nav-link">Inicio</a></li>
+          <li><a href="servicios.html" class="nav-link">Servicios</a></li>
+          <li><a href="nosotros.html"  class="nav-link">Nosotros</a></li>
+          <li>
+            <a
+              href="contacto.html"
+              class="ml-2 px-4 py-2 rounded-full bg-secondary text-white text-sm font-semibold
+                     hover:bg-accent hover:text-primary transition-colors duration-300 focus:outline-none
+                     focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger (mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center gap-[6px] p-2 rounded focus:outline-none
+                 focus-visible:ring-2 focus-visible:ring-accent"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col gap-1 pb-4 pt-1 text-sm font-medium text-gray-200">
+          <li>
+            <a href="index.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html"
+               class="block px-3 py-2 rounded-lg hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main style="font-family: 'DM Sans', sans-serif; background-color: #1A1A2E; color: #f1f1f1;">
+
+  <!-- Banner superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1600&q=80"
+      alt="Contacto MentorIA"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0.18;"
+    />
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #1A1A2E 60%, #7C3AED44 100%);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 3rem 1.5rem;">
+      <p style="color: #00C896; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 600;">Hablemos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; color: #ffffff; line-height: 1.15; margin: 0 0 1rem;">
+        Contacta con <span style="color: #00C896;">MentorIA</span>
+      </h1>
+      <p style="max-width: 540px; margin: 0 auto; color: #c4c4d4; font-size: 1.05rem; line-height: 1.65;">
+        ¿Listo para aprender junto a los mentores más influyentes del desarrollo personal potenciados por IA? Escríbenos y te respondemos a la brevedad.
+      </p>
+    </div>
+  </section>
+
+  <!-- Sección: contact-form + info lateral -->
+  <section id="contact-form" style="padding: 5rem 1.5rem;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem;">
+
+      <!-- Columna formulario -->
+      <div style="background: #12122a; border: 1px solid #7C3AED33; border-radius: 1.25rem; padding: 2.5rem 2rem; box-shadow: 0 8px 40px #7C3AED1A;">
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: #ffffff; margin: 0 0 0.5rem;">Envíanos un mensaje</h2>
+        <p style="color: #9898b8; font-size: 0.97rem; margin: 0 0 2rem; line-height: 1.6;">
+          Completa el formulario y un miembro del equipo de MentorIA se pondrá en contacto contigo para resolver tus dudas o ayudarte a comenzar tu camino con tu mentor de IA.
+        </p>
+
+        <form id="contactForm" novalidate>
+
+          <div style="margin-bottom: 1.4rem;">
+            <label for="inputName" style="display: block; font-size: 0.88rem; font-weight: 600; color: #c4c4d4; margin-bottom: 0.45rem; letter-spacing: 0.03em;">Nombre completo</label>
+            <input
+              type="text"
+              id="inputName"
+              name="name"
+              placeholder="Tu nombre"
+              required
+              style="width: 100%; box-sizing: border-box; background: #1A1A2E; border: 1.5px solid #7C3AED55; border-radius: 0.65rem; padding: 0.85rem 1.1rem; color: #f1f1f1; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.25s;"
+              onfocus="this.style.borderColor='#00C896'" onblur="this.style.borderColor='#7C3AED55'"
+            />
+          </div>
+
+          <div style="margin-bottom: 1.4rem;">
+            <label for="inputEmail" style="display: block; font-size: 0.88rem; font-weight: 600; color: #c4c4d4; margin-bottom: 0.45rem; letter-spacing: 0.03em;">Correo electrónico</label>
+            <input
+              type="email"
+              id="inputEmail"
+              name="email"
+              placeholder="tu@email.com"
+              required
+              style="width: 100%; box-sizing: border-box; background: #1A1A2E; border: 1.5px solid #7C3AED55; border-radius: 0.65rem; padding: 0.85rem 1.1rem; color: #f1f1f1; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.25s;"
+              onfocus="this.style.borderColor='#00C896'" onblur="this.style.borderColor='#7C3AED55'"
+            />
+          </div>
+
+          <div style="margin-bottom: 1.8rem;">
+            <label for="inputMessage" style="display: block; font-size: 0.88rem; font-weight: 600; color: #c4c4d4; margin-bottom: 0.45rem; letter-spacing: 0.03em;">Mensaje</label>
+            <textarea
+              id="inputMessage"
+              name="message"
+              rows="5"
+              placeholder="Cuéntanos qué mentor te interesa, tus dudas o cómo podemos ayudarte..."
+              required
+              style="width: 100%; box-sizing: border-box; background: #1A1A2E; border: 1.5px solid #7C3AED55; border-radius: 0.65rem; padding: 0.85rem 1.1rem; color: #f1f1f1; font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.25s; resize: vertical;"
+              onfocus="this.style.borderColor='#00C896'" onblur="this.style.borderColor='#7C3AED55'"
+            ></textarea>
+          </div>
+
+          <!-- Mensaje feedback inline -->
+          <div id="formFeedback" style="display:none; margin-bottom: 1.2rem; padding: 0.85rem 1.1rem; border-radius: 0.6rem; font-size: 0.95rem; font-weight: 500;"></div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            style="width: 100%; background: #00C896; color: #1A1A2E; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; padding: 0.95rem 1.5rem; border: none; border-radius: 0.75rem; cursor: pointer; transition: background 0.25s, transform 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.6rem;"
+            onmouseover="this.style.background='#00a87d'" onmouseout="this.style.background='#00C896'"
+          >
+            <span id="btnText">Enviar mensaje</span>
+            <svg id="btnSpinner" style="display:none; width:18px; height:18px; animation: spin 0.8s linear infinite;" viewBox="0 0 24 24" fill="none" stroke="#1A1A2E" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10" stroke-opacity="0.3"/>
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="#1A1A2E"/>
+            </svg>
+          </button>
+
+        </form>
+      </div>
+
+      <!-- Columna info de contacto -->
+      <div id="info" style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+        <div style="background: #12122a; border: 1px solid #7C3AED33; border-radius: 1.25rem; padding: 2rem 1.75rem;">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 1.1rem;">Información de contacto</h3>
+
+          <!-- WhatsApp -->
+          <a href="https://wa.me/5491162504624" target="_blank" rel="noopener" style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; text-decoration: none; group;">
+            <div style="width: 44px; height: 44px; min-width: 44px; background: #00C89622; border-radius: 0.65rem; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#00C896"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            </div>
+            <div>
+              <p style="color: #9898b8; font-size: 0.82rem; margin: 0 0 0.15rem; text-transform: uppercase; letter-spacing: 0.08em;">WhatsApp</p>
+              <p style="color: #00C896; font-size: 1rem; font-weight: 600; margin: 0; transition: color 0.2s;">+54 9 11 6250 4624</p>
+            </div>
+          </a>
+
+          <!-- Email -->
+          <a href="mailto:nicogdublanc@gmail.com" style="display: flex; align-items: flex-start; gap: 1rem; text-decoration: none;">
+            <div style="width: 44px; height: 44px; min-width: 44px; background: #7C3AED22; border-radius: 0.65rem; display: flex; align-items: center; justify-content: center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 4 10 10L22 4"/></svg>
+            </div>
+            <div>
+              <p style="color: #9898b8; font-size: 0.82rem; margin: 0 0 0.15rem; text-transform: uppercase; letter-spacing: 0.08em;">Correo electrónico</p>
+              <p style="color: #c4c4d4; font-size: 1rem; font-weight: 500; margin: 0;">nicogdublanc@gmail.com</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Card: tiempo de respuesta -->
+        <div style="background: linear-gradient(135deg, #7C3AED18 0%, #00C89615 100%); border: 1px solid #00C89633; border-radius: 1.25rem; padding: 1.75rem;">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #00C896; margin: 0 0 0.5rem;">Respuesta rápida garantizada</h3>
+          <p style="color: #9898b8; font-size: 0.95rem; line-height: 1.6; margin: 0;">
+            Respondemos todas las consultas por WhatsApp en menos de 24 horas. Para acceso anticipado o preguntas sobre Neville Goddard y demás mentores disponibles, escríbenos directamente.
+          </p>
+        </div>
+
+        <!-- Card: para quién -->
+        <div style="background: #12122a; border: 1px solid #7C3AED33; border-radius: 1.25rem; padding: 1.75rem;">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #ffffff; margin: 0 0 0.75rem;">¿Para quién es MentorIA?</h3>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.6rem;">
+            <li style="display: flex; align-items: center; gap: 0.65rem; color: #c4c4d4; font-size: 0.95rem;">
+              <span style="width: 8px; height: 8px; min-width: 8px; background: #00C896; border-radius: 50%; display: inline-block;"></span>
+              Emprendedores que ya estudian a mentores como Neville Goddard o Napoleon Hill
+            </li>
+            <li style="display: flex; align-items: center; gap: 0.65rem; color: #c4c4d4; font-size: 0.95rem;">
+              <span style="width: 8px; height: 8px; min-width: 8px; background: #00C896; border-radius: 50%; display: inline-block;"></span>
+              Personas que entienden el valor de tener un mentor en su vida
+            </li>
+            <li style="display: flex; align-items: center; gap: 0.65rem; color: #c4c4d4; font-size: 0.95rem;">
+              <span style="width: 8px; height: 8px; min-width: 8px; background: #00C896; border-radius: 50%; display: inline-block;"></span>
+              Quienes buscan aplicar filosofías de forma práctica y personalizada con IA
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: CTA WhatsApp destacado -->
+  <section style="padding: 0 1.5rem 5rem;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="background: linear-gradient(135deg, #7C3AED 0%, #1A1A2E 100%); border-radius: 1.25rem; padding: 3rem 2rem; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; background: #00C89615; border-radius: 50%;"></div>
+        <div style="position: absolute; bottom: -40px; left: -40px; width: 160px; height: 160px; background: #7C3AED22; border-radius: 50%;"></div>
+        <div style="position: relative; z-index: 1;">
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.5rem, 3.5vw, 2.1rem); font-weight: 700; color: #ffffff; margin: 0 0 0.85rem;">
+            ¿Listo para empezar con tu mentor de IA?
+          </h2>
+          <p style="color: #d4d4f0; font-size: 1rem; max-width: 520px; margin: 0 auto 2rem; line-height: 1.65;">
+            Contáctanos directo por WhatsApp, cuéntanos qué mentor te interesa y te explicamos cómo comenzar hoy mismo.
+          </p>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20MentorIA%20y%20los%20mentores%20disponibles"
+            target="_blank"
+            rel="noopener"
+            style="display: inline-flex; align-items: center; gap: 0.6rem; background: #00C896; color: #1A1A2E; font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; padding: 0.9rem 2rem; border-radius: 0.75rem; text-decoration: none; transition: background 0.25s, transform 0.2s;"
+            onmouseover="this.style.background='#00a87d'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#00C896'; this.style.transform='translateY(0)'"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#1A1A2E"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            Escribir por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes mentoria-fadeIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #contact-form > div {
+      animation: mentoria-fadeIn 0.6s ease both;
+    }
+    @media (min-width: 900px) {
+      #contact-form > div {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      // Responsive grid para pantallas grandes
+      function applyGrid() {
+        var grid = document.querySelector('#contact-form > div');
+        if (!grid) return;
+        if (window.innerWidth >= 900) {
+          grid.style.gridTemplateColumns = '1fr 1fr';
+        } else {
+          grid.style.gridTemplateColumns = '1fr';
+        }
+      }
+      applyGrid();
+      window.addEventListener('resize', applyGrid);
+
+      // Manejo del formulario
+      var form = document.getElementById('contactForm');
+      var submitBtn = document.getElementById('submitBtn');
+      var btnText = document.getElementById('btnText');
+      var btnSpinner = document.getElementById('btnSpinner');
+      var feedback = document.getElementById('formFeedback');
+
+      function showFeedback(message, isError) {
+        feedback.style.display = 'block';
+        feedback.textContent = message;
+        if (isError) {
+          feedback.style.background = '#3d1010';
+          feedback.style.border = '1px solid #e53e3e55';
+          feedback.style.color = '#fc8181';
+        } else {
+          feedback.style.background = '#0d2e22';
+          feedback.style.border = '1px solid #00C89655';
+          feedback.style.color = '#00C896';
+        }
+      }
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var name = document.getElementById('inputName').value.trim();
+        var email = document.getElementById('inputEmail').value.trim();
+        var message = document.getElementById('inputMessage').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('Por favor completa todos los campos antes de enviar.', true);
+          return;
+        }
+
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showFeedback('Por favor ingresa un correo electrónico válido.', true);
+          return;
+        }
+
+        // Deshabilitar botón y mostrar spinner
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.75';
+        submitBtn.style.cursor = 'not-allowed';
+        btnText.textContent = 'Enviando...';
+        btnSpinner.style.display = 'block';
+        feedback.style.display = 'none';
+
+        fetch('https://nl360.site/api/manu-dev/form-submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ project_id: 102, name: name, email: email, message: message })
+        })
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error('Error del servidor: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(function() {
+          showFeedback('¡Mensaje enviado con éxito! Te contactaremos pronto por WhatsApp o email.', false);
+          form.reset();
+          btnText.textContent = 'Mensaje enviado';
+          btnSpinner.style.display = 'none';
+          submitBtn.style.background = '#00a87d';
+        })
+        .catch(function() {
+          showFeedback('Ocurrió un error al enviar el mensaje. Por favor intenta nuevamente o escríbenos directamente por WhatsApp.', true);
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+          btnText.textContent = 'Enviar mensaje';
+          btnSpinner.style.display = 'none';
+          submitBtn.style.background = '#00C896';
+        });
+      });
+    })();
+  </script>
+
+</main>
+
+  <!-- ════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════ -->
+  <footer class="bg-primary border-t border-secondary/30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+
+        <!-- Brand + year -->
+        <div class="flex flex-col items-center md:items-start gap-1">
+          <span class="font-heading text-lg font-semibold text-white tracking-wide">MentorIA</span>
+          <span class="text-xs text-gray-400">&copy; 2026 MentorIA. Todos los derechos reservados.</span>
+        </div>
+
+        <!-- Social / contact links -->
+        <nav aria-label="Redes sociales y contacto">
+          <ul class="flex items-center gap-5">
+
+            <!-- WhatsApp -->
+            <li>
+              <a
+                href="https://wa.me/5491162504624"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp de MentorIA"
+                class="social-link flex items-center gap-2 text-sm text-gray-300"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                     class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                           -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075
+                           -.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059
+                           -.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52
+                           .149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52
+                           -.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51
+                           -.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372
+                           -.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074
+                           .149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625
+                           .712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413
+                           .248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.847L.057 23.882
+                           a.5.5 0 0 0 .614.612l6.154-1.612A11.942 11.942 0 0 0 12 24
+                           c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.9a9.9 9.9 0 0 1-5.031-1.37
+                           l-.361-.214-3.735.979.997-3.648-.235-.374A9.861 9.861 0 0 1 2.1 12
+                           C2.1 6.534 6.534 2.1 12 2.1S21.9 6.534 21.9 12 17.466 21.9 12 21.9z"/>
+                </svg>
+                <span class="hidden sm:inline">WhatsApp</span>
+              </a>
+            </li>
+
+            <!-- Divider -->
+            <li aria-hidden="true" class="text-gray-600 select-none">|</li>
+
+            <!-- Email -->
+            <li>
+              <a
+                href="mailto:nicogdublanc@gmail.com"
+                aria-label="Enviar email a MentorIA"
+                class="social-link flex items-center gap-2 text-sm text-gray-300"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="1.8" stroke="currentColor"
+                     class="w-5 h-5 flex-shrink-0" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H4.5
+                           a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0
+                           A2.25 2.25 0 0 0 19.5 4.5H4.5
+                           a2.25 2.25 0 0 0-2.25 2.25m19.5 0
+                           -9.75 6.75L2.25 6.75" />
+                </svg>
+                <span class="hidden sm:inline">nicogdublanc@gmail.com</span>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-secondary/20 text-center text-xs text-gray-500">
+        Construido con inteligencia artificial para potenciar tu aprendizaje.
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════
+       JS — Hamburger / Mobile Menu
+  ════════════════════════════════════════ -->
+  <script>
+    (function () {
+      const btn  = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', String(isOpen));
+        btn.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+      });
+
+      /* Close menu when a link inside it is clicked */
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      /* Close menu on outside click */
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

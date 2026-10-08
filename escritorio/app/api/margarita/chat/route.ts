@@ -61,6 +61,16 @@ async function getManuDevProjects(userId: number): Promise<{ id: number; name: s
   }
 }
 
+function safeParseJSON(val: any): any {
+  if (val == null) return val;
+  if (typeof val !== "string") return val;
+  try {
+    return JSON.parse(val);
+  } catch {
+    return val;
+  }
+}
+
 function getSystemPrompt(step: Step, ctx?: Record<string, any>): string {
   const brandName = ctx?.business_name || "el negocio";
   const manuDevProjects: string = ctx?.manu_dev_projects
@@ -68,6 +78,11 @@ function getSystemPrompt(step: Step, ctx?: Record<string, any>): string {
         .map((p) => `- ${p.name} (ID: ${p.id})`)
         .join("\n")
     : "";
+
+  const brandValues = safeParseJSON(ctx?.brand_values) || [];
+  const strategyPillars = ctx?.strategy ? safeParseJSON(ctx.strategy.content_pillars) || [] : [];
+  const strategyFrequency = ctx?.strategy ? safeParseJSON(ctx.strategy.posting_frequency) || {} : {};
+  const strategyPlatforms = ctx?.strategy ? safeParseJSON(ctx.strategy.selected_platforms) || [] : [];
 
   const base = loadSystemPrompt("margarita").trim();
 
@@ -149,50 +164,60 @@ Luego informa que vas a generar la estrategia:
 
     strategy: `${base}
 
-PASO: Estrategia Lista — Negocio: ${brandName}
-La estrategia fue generada automaticamente. Presenta un resumen ejecutivo al usuario:
-- 3 pilares de contenido principales
-- Frecuencia de publicacion sugerida por red
-- Tono y guia de voz
-Pregunta si quiere ajustar algo o aprueba la estrategia.
+PASO: Revision de Estrategia — Negocio: ${brandName}
+${
+  ctx?.strategy
+    ? `La estrategia YA fue generada. Estos son los datos REALES (usalos tal cual, no inventes otros pilares, frecuencias ni tono):
+- Titulo: ${ctx.strategy.title || "-"}
+- Pilares de contenido: ${JSON.stringify(strategyPillars)}
+- Frecuencia de publicacion: ${JSON.stringify(strategyFrequency)}
+- Guia de voz: ${ctx.strategy.brand_voice_guidelines || "-"}
+
+El usuario ya vio esta estrategia completa en el panel lateral, asi que NO la repitas entera. Reacciona breve a lo que te diga.`
+    : "La estrategia todavia se esta generando. No inventes pilares, frecuencias ni tono — decile al usuario que esta lista en un momento."
+}
 <!--OPTIONS:["La estrategia me parece bien","Quiero ajustar algo"]-->
 
-Si aprueba, emite:
+Si el usuario aprueba, emite:
 <!--MARGARITA:{"next":"strategy_confirm","data":{"confirmed":true}}-->
-"Estrategia aprobada. Genero el primer calendario de 2 semanas de contenido..."`,
+"Genial, genero el contenido de las proximas 2 semanas..."
+
+Si quiere ajustar algo, pregunta que quiere cambiar (todavia no emitas el marcador).`,
 
     strategy_confirm: `${base}
 
-PASO: Contenido Generado — Negocio: ${brandName}
-El contenido de 2 semanas fue generado automaticamente. Informa al usuario que:
-- Los posts fueron creados con captions y hashtags personalizados
-- Se generaron descripciones visuales para cada imagen
-- Puede revisar y editar cada post antes de programar
+PASO: Generacion de Contenido — Negocio: ${brandName}
+${
+  ctx?.contentCount
+    ? `Ya se generaron ${ctx.contentCount} posts para las proximas 2 semanas y el usuario los esta viendo en el panel de contenido. No repitas la lista completa ni inventes detalles de posts que no te dieron — confirma brevemente y pregunta si quiere crear el calendario en ClickUp.`
+    : "El contenido todavia se esta generando en este momento. NO afirmes que ya esta listo ni inventes captions, hashtags o descripciones visuales — decile al usuario que en instantes va a poder revisarlo."
+}
 
-Cuando el usuario confirme, emite:
-<!--MARGARITA:{"next":"content_generate","data":{"confirmed":true}}-->
-"Creando el calendario en ClickUp con todos los posts..."`,
+Cuando el usuario confirme que quiere avanzar, emite:
+<!--MARGARITA:{"next":"content_generate","data":{"confirmed":true}}-->`,
 
     content_generate: `${base}
 
-PASO: Calendario Creado — Negocio: ${brandName}
-El calendario en ClickUp fue creado con todas las tareas de publicacion.
-Informa al usuario que puede:
-1. Revisar los posts en ClickUp
-2. Aprobar o modificar cada post
-3. Una vez aprobados, se programan automaticamente en las redes
+PASO: Revision de Contenido — Negocio: ${brandName}
+${
+  ctx?.contentCount
+    ? `Los ${ctx.contentCount} posts ya estan generados y el usuario los esta revisando en el panel. El calendario en ClickUp TODAVIA NO fue creado.`
+    : "El contenido se esta generando."
+}
+Informa que al confirmar, se va a crear el calendario en ClickUp con todas las tareas de publicacion.
 
-Cuando el usuario lo entienda, emite:
+Cuando el usuario confirme, emite:
 <!--MARGARITA:{"next":"calendar_create","data":{"confirmed":true}}-->`,
 
     calendar_create: `${base}
 
 PASO: Configuracion Final — Negocio: ${brandName}
-Todo el sistema esta configurado. Resume lo que se logro:
-- Brandbook definido
-- Estrategia de contenido creada
-- Calendario de 2 semanas en ClickUp
-- Listo para conectar redes sociales y programar
+${
+  ctx?.strategy?.calendar_url
+    ? `El calendario ya fue creado en ClickUp (${ctx.strategy.calendar_url}).`
+    : "El calendario se esta creando en ClickUp en este momento."
+}
+Resume brevemente lo logrado (brandbook, estrategia, contenido, calendario) usando solo los datos reales del contexto, y ofrece conectar redes sociales para programar la publicacion automatica.
 
 Emite la transicion final:
 <!--MARGARITA:{"next":"complete","data":{}}-->
@@ -200,12 +225,30 @@ Emite la transicion final:
 
     complete: `${base}
 
-PASO: Configuracion Completa — Negocio: ${brandName}
-El sistema de marketing esta configurado. Ayuda al usuario con lo que necesite:
-- Generar mas contenido
+PASO: Chat Continuo (post-configuracion) — Negocio: ${brandName}
+El sistema de marketing ya esta configurado. Esta es la conversacion principal en curso: NO hay mas marcadores de flujo que emitir, es chat libre. Estos son los datos REALES del negocio y su estrategia — usalos como base de cualquier respuesta, no inventes otros:
+- Industria: ${ctx?.industry || "-"}
+- Tono de voz: ${ctx?.tone_of_voice || "-"}
+- Valores de marca: ${JSON.stringify(brandValues)}
+- Tagline: ${ctx?.tagline || "-"}
+- Propuesta de valor: ${ctx?.unique_value_proposition || "-"}
+${
+  ctx?.strategy
+    ? `- Pilares de contenido: ${JSON.stringify(strategyPillars)}
+- Frecuencia de publicacion: ${JSON.stringify(strategyFrequency)}
+- Guia de voz: ${ctx.strategy.brand_voice_guidelines || "-"}
+- Estrategia de hashtags: ${ctx.strategy.hashtag_strategy || "-"}
+- Redes conectadas: ${JSON.stringify(strategyPlatforms)}
+- Posts generados: ${ctx?.contentCount ?? 0}
+- Calendario ClickUp: ${ctx.strategy.calendar_url || "todavia no creado"}`
+    : "- Todavia no hay estrategia registrada para este negocio."
+}
+
+Ayuda al usuario con lo que necesite, siempre en base a los datos reales de arriba:
+- Generar mas contenido (pedile que confirme y avisa que se va a generar, no digas que ya esta listo)
 - Conectar redes sociales
-- Revisar metricas
-- Ajustar la estrategia`,
+- Ajustar la estrategia
+- Si pregunta por metricas de rendimiento, recorda que todavia no estan disponibles — no inventes numeros`,
   };
 
   return steps[step] || steps.welcome;
@@ -247,24 +290,30 @@ function parseMessage(text: string): {
   return { cleanText: cleanText.trim(), next, data, options };
 }
 
-async function getCurrentStep(userId: number, brandbookId: number | null): Promise<Step> {
+// Cuando todavia no hay brandbook_id (onboarding en curso), el bucket brandbook_id IS NULL
+// se scopea ademas por session_id para no mezclar intentos de onboarding abandonados del mismo usuario.
+function nullBucketClause(sessionId: string | null): { clause: string; extraParams: any[] } {
+  return sessionId
+    ? { clause: "AND brandbook_id IS NULL AND session_id = ?", extraParams: [sessionId] }
+    : { clause: "AND brandbook_id IS NULL", extraParams: [] };
+}
+
+async function getCurrentStep(userId: number, brandbookId: number | null, sessionId: string | null): Promise<Step> {
   const pool = getPool();
+  const { clause, extraParams } = brandbookId ? { clause: "AND brandbook_id = ?", extraParams: [brandbookId] } : nullBucketClause(sessionId);
   const [rows] = (await pool.execute(
-    `SELECT step FROM mm_chat_history WHERE user_id = ? ${
-      brandbookId ? "AND brandbook_id = ?" : "AND brandbook_id IS NULL"
-    } AND role = "assistant" ORDER BY created_at DESC LIMIT 1`,
-    brandbookId ? [userId, brandbookId] : [userId]
+    `SELECT step FROM mm_chat_history WHERE user_id = ? ${clause} AND role = "assistant" ORDER BY created_at DESC LIMIT 1`,
+    [userId, ...extraParams]
   )) as any;
   return (rows[0]?.step as Step) || "welcome";
 }
 
-async function getHistory(userId: number, brandbookId: number | null) {
+async function getHistory(userId: number, brandbookId: number | null, sessionId: string | null) {
   const pool = getPool();
+  const { clause, extraParams } = brandbookId ? { clause: "AND brandbook_id = ?", extraParams: [brandbookId] } : nullBucketClause(sessionId);
   const [rows] = (await pool.execute(
-    `SELECT role, content FROM mm_chat_history WHERE user_id = ? ${
-      brandbookId ? "AND brandbook_id = ?" : "AND brandbook_id IS NULL"
-    } ORDER BY created_at ASC LIMIT 50`,
-    brandbookId ? [userId, brandbookId] : [userId]
+    `SELECT role, content FROM mm_chat_history WHERE user_id = ? ${clause} ORDER BY created_at ASC LIMIT 50`,
+    [userId, ...extraParams]
   )) as any;
   return rows as { role: "user" | "assistant"; content: string }[];
 }
@@ -287,14 +336,15 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const message: string = body.message ?? "";
     const brandbook_id: number | null = body.brandbook_id ?? null;
+    const session_id: string | null = typeof body.session_id === "string" && body.session_id ? body.session_id : null;
 
     if (!message.trim()) return NextResponse.json({ error: "Mensaje requerido" }, { status: 400 });
 
     await ensureTables();
     const pool = getPool();
 
-    const currentStep = await getCurrentStep(user.id, brandbook_id);
-    const history = await getHistory(user.id, brandbook_id);
+    const currentStep = await getCurrentStep(user.id, brandbook_id, session_id);
+    const history = await getHistory(user.id, brandbook_id, session_id);
 
     // Build context for system prompt
     let ctx: Record<string, any> = {};
@@ -304,6 +354,19 @@ export async function POST(req: NextRequest) {
         [brandbook_id, user.id]
       )) as any;
       if (bRows[0]) ctx = bRows[0];
+
+      const [sRows] = (await pool.execute(
+        "SELECT * FROM mm_strategies WHERE brandbook_id = ? ORDER BY created_at DESC LIMIT 1",
+        [brandbook_id]
+      )) as any;
+      if (sRows[0]) {
+        ctx.strategy = sRows[0];
+        const [cRows] = (await pool.execute(
+          "SELECT COUNT(*) as cnt FROM mm_content WHERE strategy_id = ?",
+          [sRows[0].id]
+        )) as any;
+        ctx.contentCount = cRows[0]?.cnt || 0;
+      }
     }
 
     // For welcome/brandbook_source: inject Manu Dev projects
@@ -312,8 +375,8 @@ export async function POST(req: NextRequest) {
     }
 
     await pool.execute(
-      "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'user', ?, ?)",
-      [brandbook_id, user.id, message.trim(), currentStep]
+      "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step, session_id) VALUES (?, ?, 'user', ?, ?, ?)",
+      [brandbook_id, user.id, message.trim(), currentStep, session_id]
     );
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -398,8 +461,8 @@ export async function POST(req: NextRequest) {
           let newBrandbookId = brandbook_id;
 
           await pool.execute(
-            "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'assistant', ?, ?)",
-            [brandbook_id, user.id, cleanText, nextStep]
+            "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step, session_id) VALUES (?, ?, 'assistant', ?, ?, ?)",
+            [brandbook_id, user.id, cleanText, nextStep, session_id]
           );
 
           // DB side effects on step transitions
@@ -441,10 +504,13 @@ export async function POST(req: NextRequest) {
                 }
               }
 
-              // Update chat history to reference new brandbook
+              // Update chat history to reference new brandbook — solo los mensajes de ESTA sesion de onboarding,
+              // para no arrastrar intentos abandonados anteriores del mismo usuario.
               await pool.execute(
-                "UPDATE mm_chat_history SET brandbook_id = ? WHERE user_id = ? AND brandbook_id IS NULL",
-                [newBrandbookId, user.id]
+                session_id
+                  ? "UPDATE mm_chat_history SET brandbook_id = ? WHERE user_id = ? AND brandbook_id IS NULL AND session_id = ?"
+                  : "UPDATE mm_chat_history SET brandbook_id = ? WHERE user_id = ? AND brandbook_id IS NULL",
+                session_id ? [newBrandbookId, user.id, session_id] : [newBrandbookId, user.id]
               );
             } else if (next === "brandbook_confirm" && newBrandbookId) {
               // Save collected brandbook fields
@@ -506,6 +572,90 @@ export async function POST(req: NextRequest) {
         "Cache-Control": "no-cache",
         Connection: "keep-alive",
       },
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message || "Error interno" }, { status: 500 });
+  }
+}
+
+// GET /api/margarita/chat?brandbook_id=X | ?session_id=Y — rehidrata la conversacion (p.ej. tras un refresh de pagina)
+export async function GET(req: NextRequest) {
+  try {
+    const jar = await cookies();
+    const token = jar.get(COOKIE_NAME)?.value;
+    if (!token) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+
+    const user = await getUser(token);
+    if (!user?.id) return NextResponse.json({ error: "Token invalido" }, { status: 401 });
+
+    const agentCheck = checkAgentAccess(user.roles, "margarita");
+    if (!agentCheck.allowed) {
+      return Response.json({ ok: false, error: agentCheck.reason }, { status: 403 });
+    }
+
+    await ensureTables();
+    const pool = getPool();
+
+    const { searchParams } = new URL(req.url);
+    const brandbookIdParam = searchParams.get("brandbook_id");
+    const sessionId = searchParams.get("session_id");
+    const brandbook_id = brandbookIdParam ? Number(brandbookIdParam) : null;
+
+    if (!brandbook_id && !sessionId) {
+      return NextResponse.json({ error: "brandbook_id o session_id requerido" }, { status: 400 });
+    }
+
+    if (brandbook_id) {
+      const [bRows] = (await pool.execute(
+        "SELECT id FROM mm_brandbooks WHERE id = ? AND user_id = ?",
+        [brandbook_id, user.id]
+      )) as any;
+      if (!bRows[0]) return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
+
+    const step = await getCurrentStep(user.id, brandbook_id, sessionId);
+    const history = await getHistory(user.id, brandbook_id, sessionId);
+
+    let strategy: any = null;
+    let posts: any[] = [];
+    let calendarUrl: string | null = null;
+
+    if (brandbook_id) {
+      const [sRows] = (await pool.execute(
+        "SELECT * FROM mm_strategies WHERE brandbook_id = ? ORDER BY created_at DESC LIMIT 1",
+        [brandbook_id]
+      )) as any;
+      if (sRows[0]) {
+        const s = sRows[0];
+        strategy = {
+          id: s.id,
+          title: s.title,
+          objectives: safeParseJSON(s.objectives) || [],
+          target_audience: s.target_audience,
+          content_pillars: safeParseJSON(s.content_pillars) || [],
+          posting_frequency: safeParseJSON(s.posting_frequency) || {},
+          brand_voice_guidelines: s.brand_voice_guidelines,
+          hashtag_strategy: s.hashtag_strategy,
+          selected_platforms: safeParseJSON(s.selected_platforms) || [],
+          calendar_url: s.calendar_url,
+        };
+        calendarUrl = s.calendar_url || null;
+
+        const [pRows] = (await pool.execute(
+          "SELECT * FROM mm_content WHERE strategy_id = ? ORDER BY scheduled_at ASC",
+          [s.id]
+        )) as any;
+        posts = pRows;
+      }
+    }
+
+    return NextResponse.json({
+      step,
+      messages: history,
+      brandbook_id,
+      strategy,
+      posts,
+      calendar_url: calendarUrl,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Error interno" }, { status: 500 });

@@ -21,6 +21,10 @@ import {
   MicOff,
   FileDown,
 } from "lucide-react";
+import { AGENT_META } from "@/lib/agent-colors";
+
+// Icono representativo de Jordan (fuente unica: AGENT_META)
+const JordanIcon = AGENT_META.jordan.icon;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -572,7 +576,7 @@ export default function JordanPage() {
           {/* Header */}
           <div className="flex items-center gap-3 mb-2">
             <div className="h-10 w-10 rounded-xl bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-              <Handshake className="size-5 text-orange-400" />
+              <JordanIcon className="size-5 text-orange-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">Jordan</h1>

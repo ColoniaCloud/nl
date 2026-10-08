@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Made In Gaia</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#F5F5F0',
+            secondary: '#7C3AED',
+            accent:    '#00C896',
+          },
+          fontFamily: {
+            heading: ['Manrope', 'sans-serif'],
+            body:    ['DM Sans', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* Layout base */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #F5F5F0;
+      color: #1a1a1a;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Tipografía global */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Manrope', sans-serif;
+    }
+
+    /* Nav link hover */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #00C896;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #00C896;
+    }
+
+    /* Mobile menu animation */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger lines */
+    .hamburger-line {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background-color: #F5F5F0;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger-btn.is-open .line-1 {
+      transform: translateY(6px) rotate(45deg);
+    }
+    #hamburger-btn.is-open .line-2 {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    #hamburger-btn.is-open .line-3 {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    /* Footer social links */
+    .footer-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .footer-link:hover {
+      color: #00C896;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======================== HEADER ======================== -->
+  <header class="bg-secondary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0 flex items-center">
+          <img
+            src="/logo.png"
+            alt="Made In Gaia"
+            style="height:40px; width:auto; object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop navigation -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-primary font-body font-medium text-sm tracking-wide">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-primary font-body font-medium text-sm tracking-wide">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-primary font-body font-medium text-sm tracking-wide">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a
+              href="contacto.html"
+              class="ml-2 px-5 py-2 rounded-full bg-accent text-white font-body font-semibold text-sm tracking-wide transition-all duration-250 hover:brightness-110 hover:scale-105 shadow-sm"
+            >
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Mobile hamburger button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          class="md:hidden flex flex-col gap-[5px] items-center justify-center p-2 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" aria-hidden="true">
+        <ul class="flex flex-col pb-4 gap-1 border-t border-white/20 mt-1 pt-3">
+          <li>
+            <a
+              href="index.html"
+              class="block px-3 py-2 rounded-lg text-primary font-body font-medium text-sm tracking-wide transition-colors duration-200 hover:bg-white/10 hover:text-accent"
+            >
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a
+              href="servicios.html"
+              class="block px-3 py-2 rounded-lg text-primary font-body font-medium text-sm tracking-wide transition-colors duration-200 hover:bg-white/10 hover:text-accent"
+            >
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a
+              href="nosotros.html"
+              class="block px-3 py-2 rounded-lg text-primary font-body font-medium text-sm tracking-wide transition-colors duration-200 hover:bg-white/10 hover:text-accent"
+            >
+              Nosotros
+            </a>
+          </li>
+          <li class="mt-2">
+            <a
+              href="contacto.html"
+              class="block px-5 py-2 rounded-full bg-accent text-white font-body font-semibold text-sm tracking-wide text-center transition-all duration-250 hover:brightness-110"
+            >
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ======================== CONTENT ======================== -->
+  <main>
+    <main style="font-family: 'DM Sans', sans-serif; background-color: #F5F5F0;">
+
+  <!-- Banner Superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1758876022356-9e7597f556d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU4NDV8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Contacto Made In Gaia"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;"
+    />
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(124,58,237,0.72) 0%, rgba(0,0,0,0.55) 100%);"></div>
+    <div style="position: relative; z-index: 2; text-align: center; padding: 2.5rem 1.5rem;">
+      <p style="font-family: 'Manrope', sans-serif; color: #00C896; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; animation: fadeInDown 0.7s ease both;">Estamos aquí para vos</p>
+      <h1 style="font-family: 'Manrope', sans-serif; color: #F5F5F0; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; margin: 0 0 1rem; animation: fadeInDown 0.9s ease both;">Contacto</h1>
+      <p style="color: rgba(245,245,240,0.88); font-size: clamp(1rem, 2.5vw, 1.15rem); max-width: 520px; margin: 0 auto; line-height: 1.65; animation: fadeInUp 1.1s ease both;">¿Tenés una consulta, querés conocer nuestras colecciones o simplemente conectar con nosotros? Escribinos y te respondemos a la brevedad.</p>
+    </div>
+  </section>
+
+  <!-- Sección: Formulario de Contacto -->
+  <section id="contact-form" style="padding: 5rem 1.5rem; background-color: #F5F5F0;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3.5rem; align-items: start;">
+
+      <!-- Columna izquierda: texto + imagen -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;" class="contact-left-col">
+        <div>
+          <span style="display: inline-block; background: #00C896; color: #fff; font-family: 'Manrope', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 999px; margin-bottom: 1.1rem;">Hablemos</span>
+          <h2 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; line-height: 1.25; margin: 0 0 1rem;">Conectá con Made In Gaia</h2>
+          <p style="color: #4b4b6b; font-size: 1.05rem; line-height: 1.75; margin: 0 0 1.5rem;">Cada consulta es una nueva conexión. Ya sea que quieras saber más sobre nuestras prendas de alta vibración, hacer un pedido personalizado o simplemente conocer la filosofía detrás de la marca, estamos listos para acompañarte.</p>
+          <p style="color: #4b4b6b; font-size: 1rem; line-height: 1.7; margin: 0;">Respondemos en menos de 24 horas. También podés encontrarnos en Instagram y WhatsApp para una respuesta más inmediata.</p>
+        </div>
+        <div style="border-radius: 1.25rem; overflow: hidden; box-shadow: 0 8px 40px rgba(124,58,237,0.13);">
+          <img
+            src="https://images.unsplash.com/photo-1758611972271-fce956444233?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MzU4NDV8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Made In Gaia indumentaria consciente"
+            style="width: 100%; height: 260px; object-fit: cover; display: block; transition: transform 0.5s ease;"
+            onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'"
+          />
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div style="background: #fff; border-radius: 1.5rem; padding: 2.5rem 2rem; box-shadow: 0 8px 50px rgba(124,58,237,0.10); border: 1px solid rgba(124,58,237,0.08);">
+        <h3 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: 1.35rem; font-weight: 700; margin: 0 0 0.4rem;">Envianos tu mensaje</h3>
+        <p style="color: #7c7c9a; font-size: 0.95rem; margin: 0 0 2rem;">Completá el formulario y te responderemos pronto.</p>
+
+        <form id="contactForm" novalidate style="display: flex; flex-direction: column; gap: 1.4rem;">
+
+          <div>
+            <label for="contact_name" style="display: block; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 600; color: #1a1a2e; margin-bottom: 0.45rem; letter-spacing: 0.02em;">Nombre completo <span style="color:#7C3AED;">*</span></label>
+            <input
+              type="text"
+              id="contact_name"
+              name="name"
+              placeholder="Tu nombre y apellido"
+              required
+              style="width: 100%; padding: 0.85rem 1rem; border: 1.5px solid #e2e2ee; border-radius: 0.75rem; font-family: 'DM Sans', sans-serif; font-size: 1rem; color: #1a1a2e; background: #fafafa; outline: none; transition: border-color 0.25s, box-shadow 0.25s; box-sizing: border-box;"
+              onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 3px rgba(124,58,237,0.10)'"
+              onblur="this.style.borderColor='#e2e2ee'; this.style.boxShadow='none'"
+            />
+          </div>
+
+          <div>
+            <label for="contact_email" style="display: block; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 600; color: #1a1a2e; margin-bottom: 0.45rem; letter-spacing: 0.02em;">Correo electrónico <span style="color:#7C3AED;">*</span></label>
+            <input
+              type="email"
+              id="contact_email"
+              name="email"
+              placeholder="tu@email.com"
+              required
+              style="width: 100%; padding: 0.85rem 1rem; border: 1.5px solid #e2e2ee; border-radius: 0.75rem; font-family: 'DM Sans', sans-serif; font-size: 1rem; color: #1a1a2e; background: #fafafa; outline: none; transition: border-color 0.25s, box-shadow 0.25s; box-sizing: border-box;"
+              onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 3px rgba(124,58,237,0.10)'"
+              onblur="this.style.borderColor='#e2e2ee'; this.style.boxShadow='none'"
+            />
+          </div>
+
+          <div>
+            <label for="contact_message" style="display: block; font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 600; color: #1a1a2e; margin-bottom: 0.45rem; letter-spacing: 0.02em;">Mensaje <span style="color:#7C3AED;">*</span></label>
+            <textarea
+              id="contact_message"
+              name="message"
+              placeholder="Contanos tu consulta, pedido o simplemente lo que necesitás..."
+              required
+              rows="5"
+              style="width: 100%; padding: 0.85rem 1rem; border: 1.5px solid #e2e2ee; border-radius: 0.75rem; font-family: 'DM Sans', sans-serif; font-size: 1rem; color: #1a1a2e; background: #fafafa; outline: none; transition: border-color 0.25s, box-shadow 0.25s; resize: vertical; box-sizing: border-box; min-height: 130px;"
+              onfocus="this.style.borderColor='#7C3AED'; this.style.boxShadow='0 0 0 3px rgba(124,58,237,0.10)'"
+              onblur="this.style.borderColor='#e2e2ee'; this.style.boxShadow='none'"
+            ></textarea>
+          </div>
+
+          <!-- Mensaje inline feedback -->
+          <div id="formFeedback" style="display: none; border-radius: 0.75rem; padding: 0.9rem 1.1rem; font-size: 0.97rem; font-weight: 500;"></div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            style="display: flex; align-items: center; justify-content: center; gap: 0.6rem; background: #7C3AED; color: #fff; font-family: 'Manrope', sans-serif; font-size: 1rem; font-weight: 700; padding: 0.95rem 2rem; border: none; border-radius: 0.85rem; cursor: pointer; transition: background 0.25s, transform 0.2s, box-shadow 0.25s; box-shadow: 0 4px 20px rgba(124,58,237,0.25); letter-spacing: 0.02em;"
+            onmouseover="if(!this.disabled){this.style.background='#6d28d9'; this.style.boxShadow='0 6px 28px rgba(124,58,237,0.35)'; this.style.transform='translateY(-1px)';}"
+            onmouseout="if(!this.disabled){this.style.background='#7C3AED'; this.style.boxShadow='0 4px 20px rgba(124,58,237,0.25)'; this.style.transform='translateY(0)';}"
+          >
+            <span id="submitBtnText">Enviar mensaje</span>
+            <svg id="submitSpinner" style="display:none; width:18px; height:18px; animation: spinAnim 0.8s linear infinite;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+              <path d="M12 2 a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Sección: Mapa -->
+  <section id="map" style="padding: 0 1.5rem 5rem; background-color: #F5F5F0;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span style="display: inline-block; background: rgba(0,200,150,0.12); color: #00C896; font-family: 'Manrope', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 999px; margin-bottom: 0.9rem;">Ubicación</span>
+        <h2 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin: 0 0 0.6rem;">Encontranos en Argentina</h2>
+        <p style="color: #4b4b6b; font-size: 1rem; max-width: 480px; margin: 0 auto; line-height: 1.65;">Somos una marca argentina. Realizamos envíos a todo el país y atendemos consultas de forma virtual.</p>
+      </div>
+      <div style="border-radius: 1.5rem; overflow: hidden; box-shadow: 0 8px 50px rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.08);">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d209648.9259226418!2d-58.70256195!3d-34.6154227!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca3b4ef90cbd%3A0xa0b3812e88e88e87!2sBuenos%20Aires%2C%20Argentina!5e0!3m2!1ses!2sar!4v1680000000000!5m2!1ses!2sar"
+          width="100%"
+          height="380"
+          style="border: 0; display: block;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Made In Gaia - Buenos Aires, Argentina"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: Info de Contacto -->
+  <section id="info" style="padding: 0 1.5rem 5.5rem; background-color: #F5F5F0;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <span style="display: inline-block; background: rgba(124,58,237,0.1); color: #7C3AED; font-family: 'Manrope', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.3rem 0.9rem; border-radius: 999px; margin-bottom: 0.9rem;">Canales directos</span>
+        <h2 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin: 0 0 0.6rem;">Otras formas de conectar</h2>
+        <p style="color: #4b4b6b; font-size: 1rem; max-width: 480px; margin: 0 auto; line-height: 1.65;">Elegí el canal que más te guste. Estamos disponibles para acompañarte en cada paso.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;" class="info-cards-grid">
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/5491162504624" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+          <div style="background: #fff; border-radius: 1.25rem; padding: 2rem 1.75rem; border: 1.5px solid rgba(0,200,150,0.18); box-shadow: 0 4px 24px rgba(0,200,150,0.07); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;"
+               onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 40px rgba(0,200,150,0.15)';"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(0,200,150,0.07)';">
+            <div style="width: 52px; height: 52px; background: rgba(0,200,150,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.24-1.57A11.97 11.97 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52zM12 22c-1.85 0-3.65-.5-5.23-1.44l-.37-.22-3.7.97.99-3.63-.24-.38A9.94 9.94 0 0 1 2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm5.47-7.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.6.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51-.17 0-.37-.02-.57-.02s-.52.07-.79.37c-.27.3-1.04 1.01-1.04 2.47s1.06 2.87 1.21 3.07c.15.2 2.09 3.19 5.07 4.48.71.3 1.26.49 1.69.62.71.22 1.36.19 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z" fill="#00C896"/>
+              </svg>
+            </div>
+            <h3 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: 1.1rem; font-weight: 700; margin: 0 0 0.4rem;">WhatsApp</h3>
+            <p style="color: #4b4b6b; font-size: 0.95rem; margin: 0 0 0.75rem; line-height: 1.6;">Consultá sobre colecciones, talles, pedidos o armá tu look ideal con nuestra asesoría personalizada.</p>
+            <span style="color: #00C896; font-family: 'Manrope', sans-serif; font-size: 0.9rem; font-weight: 700;">+54 9 11 6250-4624 &rarr;</span>
+          </div>
+        </a>
+
+        <!-- Instagram -->
+        <a href="https://instagram.com/madeingaia" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+          <div style="background: #fff; border-radius: 1.25rem; padding: 2rem 1.75rem; border: 1.5px solid rgba(124,58,237,0.15); box-shadow: 0 4px 24px rgba(124,58,237,0.07); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;"
+               onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 40px rgba(124,58,237,0.15)';"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(124,58,237,0.07)';">
+            <div style="width: 52px; height: 52px; background: rgba(124,58,237,0.10); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="5.5" stroke="#7C3AED" stroke-width="2"/>
+                <circle cx="12" cy="12" r="4.5" stroke="#7C3AED" stroke-width="2"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="#7C3AED"/>
+              </svg>
+            </div>
+            <h3 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: 1.1rem; font-weight: 700; margin: 0 0 0.4rem;">Instagram</h3>
+            <p style="color: #4b4b6b; font-size: 0.95rem; margin: 0 0 0.75rem; line-height: 1.6;">Seguinos para descubrir las últimas colecciones, estampados de geometría sagrada y novedades de la marca.</p>
+            <span style="color: #7C3AED; font-family: 'Manrope', sans-serif; font-size: 0.9rem; font-weight: 700;">@madeingaia &rarr;</span>
+          </div>
+        </a>
+
+        <!-- Email -->
+        <a href="mailto:nicoskwarok@gmail.com" style="text-decoration: none;">
+          <div style="background: #fff; border-radius: 1.25rem; padding: 2rem 1.75rem; border: 1.5px solid rgba(26,26,46,0.1); box-shadow: 0 4px 24px rgba(26,26,46,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;"
+               onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 40px rgba(26,26,46,0.12)';"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(26,26,46,0.05)';">
+            <div style="width: 52px; height: 52px; background: rgba(26,26,46,0.07); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="4" width="20" height="16" rx="3" stroke="#1a1a2e" stroke-width="2"/>
+                <path d="M2 8l10 7 10-7" stroke="#1a1a2e" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 style="font-family: 'Manrope', sans-serif; color: #1a1a2e; font-size: 1.1rem; font-weight: 700; margin: 0 0 0.4rem;">Correo electrónico</h3>
+            <p style="color: #4b4b6b; font-size: 0.95rem; margin: 0 0 0.75rem; line-height: 1.6;">Para consultas detalladas, colaboraciones o pedidos mayoristas. Respondemos en menos de 24 horas hábiles.</p>
+            <span style="color: #1a1a2e; font-family: 'Manrope', sans-serif; font-size: 0.9rem; font-weight: 700;">nicoskwarok@gmail.com &rarr;</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Estilos y Script -->
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spinAnim {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (min-width: 768px) {
+      .contact-left-col {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      #contact-form > div {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      .info-cards-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const form = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+      const submitSpinner = document.getElementById('submitSpinner');
+      const formFeedback = document.getElementById('formFeedback');
+
+      function showFeedback(type, message) {
+        formFeedback.style.display = 'block';
+        if (type === 'success') {
+          formFeedback.style.background = 'rgba(0,200,150,0.10)';
+          formFeedback.style.border = '1.5px solid rgba(0,200,150,0.35)';
+          formFeedback.style.color = '#007a5e';
+        } else {
+          formFeedback.style.background = 'rgba(220,38,38,0.08)';
+          formFeedback.style.border = '1.5px solid rgba(220,38,38,0.25)';
+          formFeedback.style.color = '#b91c1c';
+        }
+        formFeedback.textContent = message;
+      }
+
+      function setLoading(isLoading) {
+        submitBtn.disabled = isLoading;
+        if (isLoading) {
+          submitBtnText.textContent = 'Enviando...';
+          submitSpinner.style.display = 'block';
+          submitBtn.style.background = '#9d68f0';
+          submitBtn.style.cursor = 'not-allowed';
+          submitBtn.style.boxShadow = 'none';
+        } else {
+          submitBtnText.textContent = 'Enviar mensaje';
+          submitSpinner.style.display = 'none';
+          submitBtn.style.background = '#7C3AED';
+          submitBtn.style.cursor = 'pointer';
+          submitBtn.style.boxShadow = '0 4px 20px rgba(124,58,237,0.25)';
+        }
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        formFeedback.style.display = 'none';
+
+        const name = document.getElementById('contact_name').value.trim();
+        const email = document.getElementById('contact_email').value.trim();
+        const message = document.getElementById('contact_message').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('error', 'Por favor, completá todos los campos antes de enviar.');
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showFeedback('error', 'Ingresá un correo electrónico válido.');
+          return;
+        }
+
+        setLoading(true);
+
+        try {
+          const response = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              project_id: 105,
+              name: name,
+              email: email,
+              message: message,
+            }),
+          });
+
+          if (response.ok) {
+            showFeedback('success', '¡Mensaje enviado con éxito! Gracias por contactarnos. Te responderemos a la brevedad.');
+            form.reset();
+          } else {
+            showFeedback('error', 'Hubo un problema al enviar tu mensaje. Por favor, intentá de nuevo o escribinos directamente por WhatsApp.');
+          }
+        } catch (error) {
+          showFeedback('error', 'No pudimos conectar con el servidor. Verificá tu conexión e intentá nuevamente.');
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+  </script>
+
+</main>
+  </main>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer class="bg-secondary text-primary">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <img
+            src="/logo.png"
+            alt="Made In Gaia"
+            style="height:36px; width:auto; object-fit:contain;"
+          />
+          <p class="font-heading font-semibold text-lg tracking-wide text-primary mt-1">
+            Made In Gaia
+          </p>
+          <p class="font-body text-sm text-primary/60">
+            &copy; 2026 Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Navigation links -->
+        <nav aria-label="Footer navigation">
+          <ul class="flex flex-col items-center md:items-start gap-2">
+            <li>
+              <a href="index.html" class="footer-link font-body text-sm text-primary/80">Inicio</a>
+            </li>
+            <li>
+              <a href="servicios.html" class="footer-link font-body text-sm text-primary/80">Servicios</a>
+            </li>
+            <li>
+              <a href="nosotros.html" class="footer-link font-body text-sm text-primary/80">Nosotros</a>
+            </li>
+            <li>
+              <a href="contacto.html" class="footer-link font-body text-sm text-primary/80">Contacto</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col items-center md:items-start gap-3">
+          <p class="font-heading font-semibold text-sm uppercase tracking-widest text-primary/50">
+            Contacto
+          </p>
+
+          <!-- Email -->
+          <a
+            href="mailto:nicoskwarok@gmail.com"
+            class="footer-link font-body text-sm text-primary/80"
+            aria-label="Enviar email a Made In Gaia"
+          >
+            nicoskwarok@gmail.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/5491162504624"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link font-body text-sm text-primary/80"
+            aria-label="Contactar por WhatsApp"
+          >
+            WhatsApp: +54 9 11 6250-4624
+          </a>
+
+          <!-- Instagram -->
+          <a
+            href="https://instagram.com/madeingaia"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link font-body text-sm text-primary/80"
+            aria-label="Ver Instagram de Made In Gaia"
+          >
+            Instagram: @madeingaia
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-white/15 mt-8 pt-5 text-center">
+        <p class="font-body text-xs text-primary/40">
+          Hecho con dedicación &mdash; Made In Gaia &copy; 2026
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ======================== JS ======================== -->
+  <script>
+    (function () {
+      const btn  = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.toggle('open');
+        btn.classList.toggle('is-open', isOpen);
+        btn.setAttribute('aria-expanded', isOpen.toString());
+        menu.setAttribute('aria-hidden', (!isOpen).toString());
+      });
+
+      // Close menu when a link inside it is clicked
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          menu.setAttribute('aria-hidden', 'true');
+        });
+      });
+
+      // Mark active nav link based on current page
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('.nav-link').forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPage) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

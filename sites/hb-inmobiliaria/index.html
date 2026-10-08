@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HB Inmobiliaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4A4A4A',
+            secondary: '#F5F5F5',
+            accent: '#E07B2A',
+          },
+          fontFamily: {
+            heading: ['Raleway', 'sans-serif'],
+            body: ['Nunito', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      background-color: #F5F5F5;
+      color: #4A4A4A;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Raleway', sans-serif;
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #E07B2A;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #E07B2A;
+    }
+
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease, padding-left 0.2s ease;
+    }
+
+    .mobile-nav-link:hover {
+      color: #E07B2A;
+      background-color: rgba(224, 123, 42, 0.08);
+      padding-left: 1.5rem;
+    }
+
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .hamburger-bar {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #F5F5F5;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    #hamburger-btn.is-open .bar-top {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    #hamburger-btn.is-open .bar-mid {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    #hamburger-btn.is-open .bar-bot {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .social-link:hover {
+      color: #E07B2A;
+      transform: translateY(-2px);
+    }
+
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+
+    .footer-link:hover {
+      color: #E07B2A;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center shrink-0" aria-label="HB Inmobiliaria - Inicio">
+          <img
+            src="/logo-ia.svg"
+            alt="HB Inmobiliaria"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-secondary font-body font-600 text-sm tracking-wide uppercase">Inicio</a>
+          <a href="servicios.html" class="nav-link text-secondary font-body font-600 text-sm tracking-wide uppercase">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-secondary font-body font-600 text-sm tracking-wide uppercase">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-secondary font-body font-600 text-sm tracking-wide uppercase">Contacto</a>
+        </nav>
+
+        <!-- Desktop CTA -->
+        <a
+          href="contacto.html"
+          class="hidden md:inline-flex items-center px-5 py-2 rounded-md bg-accent text-white font-heading font-semibold text-sm tracking-wide transition-all duration-250 hover:bg-opacity-90 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+        >
+          Consultar ahora
+        </a>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button
+          id="hamburger-btn"
+          type="button"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-1 focus:ring-offset-primary"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+          aria-label="Abrir menú de navegación"
+        >
+          <span class="hamburger-bar bar-top"></span>
+          <span class="hamburger-bar bar-mid"></span>
+          <span class="hamburger-bar bar-bot"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="bg-primary border-t border-white border-opacity-10 px-4 pt-2 pb-4 flex flex-col gap-1">
+        <a href="index.html" class="mobile-nav-link text-secondary font-body font-semibold text-base px-4 py-3 rounded-md block">Inicio</a>
+        <a href="servicios.html" class="mobile-nav-link text-secondary font-body font-semibold text-base px-4 py-3 rounded-md block">Servicios</a>
+        <a href="nosotros.html" class="mobile-nav-link text-secondary font-body font-semibold text-base px-4 py-3 rounded-md block">Nosotros</a>
+        <a href="contacto.html" class="mobile-nav-link text-secondary font-body font-semibold text-base px-4 py-3 rounded-md block">Contacto</a>
+        <div class="mt-2 pt-2 border-t border-white border-opacity-10">
+          <a
+            href="contacto.html"
+            class="block text-center bg-accent text-white font-heading font-semibold text-sm px-5 py-3 rounded-md transition-opacity duration-200 hover:opacity-90"
+          >
+            Consultar ahora
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT WRAPPER -->
+  <div style="flex:1;min-height:0;"><main>
+
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fadeInUp {
+    animation: fadeInUp 0.8s ease forwards;
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1s ease forwards;
+  }
+  .delay-200 { animation-delay: 0.2s; opacity: 0; }
+  .delay-400 { animation-delay: 0.4s; opacity: 0; }
+  .delay-600 { animation-delay: 0.6s; opacity: 0; }
+  .service-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  }
+  .service-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-accent {
+    background-color: #E07B2A;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  .btn-accent:hover {
+    background-color: #c96a1e;
+    transform: scale(1.04);
+  }
+  .testimonial-card {
+    transition: box-shadow 0.3s ease;
+  }
+  .testimonial-card:hover {
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+  }
+</style>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center justify-center" style="font-family: 'Nunito', sans-serif;">
+  <img
+    src="https://images.unsplash.com/photo-1591474200742-8e512e6f98f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwMTY5OTB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+    alt="Propiedad refaccionada por HB Inmobiliaria en San Rafael, Mendoza"
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+  <div class="absolute inset-0" style="background-color: rgba(30,30,30,0.68);"></div>
+  <div class="relative z-10 text-center px-6 max-w-3xl mx-auto">
+    <p class="animate-fadeInUp delay-200 text-sm uppercase tracking-widest mb-4" style="color: #E07B2A; font-family: 'Nunito', sans-serif; font-weight: 600;">San Rafael, Mendoza</p>
+    <h1 class="animate-fadeInUp delay-400 text-4xl md:text-6xl font-bold leading-tight text-white mb-6" style="font-family: 'Raleway', sans-serif;">
+      Convertimos propiedades difíciles en oportunidades reales
+    </h1>
+    <p class="animate-fadeInUp delay-600 text-lg md:text-xl text-gray-200 mb-10 leading-relaxed">
+      Refaccionamos y comercializamos inmuebles antiguos o en mal estado para que puedas venderlos al mejor precio posible. Con experiencia, criterio y resultados concretos.
+    </p>
+    <div class="animate-fadeInUp delay-600 flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="https://wa.me/5492604846327?text=Hola%20HB%20Inmobiliaria%2C%20quisiera%20consultar%20sobre%20una%20propiedad"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-accent inline-block text-white font-bold px-8 py-4 rounded-lg text-lg shadow-lg"
+        style="font-family: 'Raleway', sans-serif;"
+      >
+        Consultar por WhatsApp
+      </a>
+      <a
+        href="servicios.html"
+        class="inline-block border-2 border-white text-white font-bold px-8 py-4 rounded-lg text-lg hover:bg-white transition-colors duration-300"
+        style="font-family: 'Raleway', sans-serif; hover-color: #4A4A4A;"
+      >
+        Ver nuestros servicios
+      </a>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="servicios" class="py-20 px-6" style="background-color: #F5F5F5; font-family: 'Nunito', sans-serif;">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <span class="text-sm font-bold uppercase tracking-widest" style="color: #E07B2A;">Lo que hacemos</span>
+      <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4" style="font-family: 'Raleway', sans-serif; color: #4A4A4A;">Servicios de HB Inmobiliaria</h2>
+      <p class="text-gray-500 max-w-2xl mx-auto text-lg">Desde la evaluación inicial hasta la venta exitosa, acompañamos cada etapa del proceso con profesionalismo y compromiso real.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Card 1 -->
+      <div class="service-card bg-white rounded-2xl overflow-hidden shadow-md">
+        <div class="h-52 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1761158494764-bbf2a2e2a70d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwMTY5OTB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Refacción de propiedades"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <div class="p-7">
+          <div class="w-10 h-1 rounded mb-4" style="background-color: #E07B2A;"></div>
+          <h3 class="text-xl font-bold mb-3" style="font-family: 'Raleway', sans-serif; color: #4A4A4A;">Refacción de Inmuebles</h3>
+          <p class="text-gray-500 leading-relaxed">Renovamos propiedades antiguas o deterioradas para aumentar su valor de mercado. Pintura, pisos, instalaciones y más, con materiales de calidad y mano de obra de confianza.</p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="service-card bg-white rounded-2xl overflow-hidden shadow-md">
+        <div class="h-52 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1758193431355-54df41421657?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwMTY5OTB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Compra y venta de propiedades"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <div class="p-7">
+          <div class="w-10 h-1 rounded mb-4" style="background-color: #E07B2A;"></div>
+          <h3 class="text-xl font-bold mb-3" style="font-family: 'Raleway', sans-serif; color: #4A4A4A;">Compra y Venta de Propiedades</h3>
+          <p class="text-gray-500 leading-relaxed">Gestionamos la compraventa de inmuebles en San Rafael con asesoramiento integral. Tasación justa, documentación en orden y acompañamiento hasta la firma.</p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="service-card bg-white rounded-2xl overflow-hidden shadow-md">
+        <div class="h-52 overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1766696458220-46a56a9fecfb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwMTY5OTB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Asesoramiento inmobiliario"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+        <div class="p-7">
+          <div class="w-10 h-1 rounded mb-4" style="background-color: #E07B2A;"></div>
+          <h3 class="text-xl font-bold mb-3" style="font-family: 'Raleway', sans-serif; color: #4A4A4A;">Asesoramiento Personalizado</h3>
+          <p class="text-gray-500 leading-relaxed">¿Tenés un familiar con una propiedad antigua que no logra vender? Te asesoramos sin compromiso para encontrar la mejor solución y maximizar el resultado de la venta.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="text-center mt-12">
+      <a
+        href="servicios.html"
+        class="inline-block font-bold px-8 py-4 rounded-lg border-2 transition-all duration-300"
+        style="font-family: 'Raleway', sans-serif; color: #E07B2A; border-color: #E07B2A;"
+        onmouseover="this.style.backgroundColor='#E07B2A'; this.style.color='#fff';"
+        onmouseout="this.style.backgroundColor='transparent'; this.style.color='#E07B2A';"
+      >
+        Ver todos los servicios
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT BRIEF -->
+<section id="nosotros-brief" class="py-20 px-6" style="background-color: #fff; font-family: 'Nunito', sans-serif;">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row items-center gap-14">
+      <div class="md:w-1/2">
+        <div class="relative rounded-2xl overflow-hidden shadow-xl">
+          <img
+            src="https://images.unsplash.com/photo-1769454940340-ba5dbf52d22c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwMTY5OTB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="El equipo de HB Inmobiliaria trabajando"
+            class="w-full h-80 md:h-96 object-cover"
+          />
+          <div class="absolute bottom-0 left-0 right-0 p-5" style="background: linear-gradient(to top, rgba(74,74,74,0.85), transparent);">
+            <p class="text-white font-bold text-lg" style="font-family: 'Raleway', sans-serif;">Más de 10 años en el mercado de San Rafael</p>
+          </div>
+        </div>
+      </div>
+      <div class="md:w-1/2">
+        <span class="text-sm font-bold uppercase tracking-widest" style="color: #E07B2A;">Quiénes somos</span>
+        <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-6 leading-snug" style="font-family: 'Raleway', sans-serif; color: #4A4A4A;">
+          La experiencia que marca la diferencia
+        </h2>
+        <p class="text-gray-500 leading-relaxed mb-5 text-base">
+          En HB Inmobiliaria no solo publicamos propiedades: las transformamos. Nuestros dueños tienen años de experiencia en refacción y comercialización de inmuebles, lo que nos permite ver el potencial donde otros solo ven problemas.
+        </p>
+        <p class="text-gray-500 leading-relaxed mb-8 text-base">
+          Nos especializamos en propiedades antiguas o difíciles de vender. Si conocés a alguien en esa situación, nosotros tenemos la solución. Trabajamos en San Rafael y toda la zona de Mendoza con trato directo y resultados comprobados.
+        </p>
+        <div class="grid grid-cols-2 gap-6 mb-8">
+          <div class="text-center p-5 rounded-xl" style="background-color: #F5F5F5;">
+            <p class="text-3xl font-bold" style="font-family: 'Raleway', sans-serif; color: #E07B2A;">+150</p>
+            <p class="text-sm text-gray-500 mt-1 font-semibold">Propiedades gestionadas</p>
+          </div>
+          <div class="text-center p-5 rounded-xl" style="background-color: #F5F5F5;">
+            <p class="text-3xl font-bold" style="font-family: 'Raleway', sans-serif; color: #E07B2A;">+10</p>
+            <p class="text-sm text-gray-500 mt-1 font-semibold">Años de experiencia</p>
+          </div>
+        </div>
+        <a
+          href="nosotros.html"
+          class="inline-block font-bold px-7 py-3 rounded-lg text-white transition-all duration-300 btn-accent"
+          style="font-family: 'Raleway', sans-serif;"
+        >
+          Conocer más sobre nosotros
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonios" class="py-20 px-6" style="background-color: #F5F5F5; font-family: 'Nunito', sans-serif;">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-14">
+      <span class="text-sm font-bold uppercase tracking-widest" style="color: #E07B2A;">Lo que dicen nuestros clientes</span>
+      <h2 class="text-3xl md:text-4xl font-bold mt-2" style="font-family: 'Raleway', sans-serif; color: #4A4A4A;">Resultados reales, personas satisfechas</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card bg-white rounded-2xl p-8 shadow-sm">
+        <div class="flex mb-4">
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="text-gray-500 leading-relaxed mb-6 italic">"Mi tía tenía una casa vieja en el centro de San Rafael que nadie quería comprar. HB la refaccionó y la vendió en menos de dos meses a un precio que no esperábamos. Excelente trabajo."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: #4A4A4A;">MR</div>
+          <div>
+            <p class="font-bold text-sm" style="color: #4A4A4A;">Marcela R.</p>
+            <p class="text-xs text-gray-400">San Rafael, Mendoza</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card bg-white rounded-2xl p-8 shadow-sm">
+        <div class="flex mb-4">
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="text-gray-500 leading-relaxed mb-6 italic">"Tenía un departamento heredado que necesitaba mucho trabajo. Heber evaluó la situación, gestionó la refacción y se encargó de todo. Muy profesional y honesto en todo momento."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: #4A4A4A;">JL</div>
+          <div>
+            <p class="font-bold text-sm" style="color: #4A4A4A;">Jorge L.</p>
+            <p class="text-xs text-gray-400">General Alvear, Mendoza</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card bg-white rounded-2xl p-8 shadow-sm">
+        <div class="flex mb-4">
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          <svg class="w-5 h-5" style="color: #E07B2A;" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+        </div>
+        <p class="text-gray-500 leading-relaxed mb-6 italic">"Una amiga me recomendó HB Inmobiliaria cuando nadie quería mi propiedad de los 80s. La transformaron por completo y la vendieron a buen precio. No puedo pedir más."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: #4A4A4A;">CP</div>
+          <div>
+            <p class="font-bold text-sm" style="color: #4A4A4A;">Carolina P.</p>
+            <p class="text-xs text-gray-400">San Rafael, Mendoza</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="cta" class="relative py-24 px-6 flex items-center justify-center" style="font-family: 'Nunito', sans-serif;">
+  <img
+    src="https://images.unsplash.com/photo-1776803811387-e9d2720b15ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwMTY5OTB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+    alt="Propiedad lista para vender"
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+  <div class="absolute inset-0" style="background-color: rgba(74,74,74,0.82);"></div>
+  <div class="relative z-10 text-center max-w-2xl mx-auto">
+    <span class="text-sm font-bold uppercase tracking-widest" style="color: #E07B2A;">Sin compromiso</span>
+    <h2 class="text-3xl md:text-5xl font-bold text-white mt-3 mb-5 leading-tight" style="font-family: 'Raleway', sans-serif;">
+      ¿Conocés una propiedad difícil de vender?
+    </h2>
+    <p class="text-gray-200 text-lg mb-10 leading-relaxed">
+      Hablanos por WhatsApp y contanos la situación. Te damos una evaluación gratuita y sin obligación. En HB Inmobiliaria encontramos soluciones donde otros no las ven.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a
+        href="https://wa.me/5492604846327?text=Hola%20HB%20Inmobiliaria%2C%20quisiera%20consultar%20sobre%20una%20propiedad"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-accent inline-flex items-center justify-center gap-2 text-white font-bold px-9 py-4 rounded-lg text-lg shadow-xl"
+        style="font-family: 'Raleway', sans-serif;"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Consultar ahora por WhatsApp
+      </a>
+      <a
+        href="contacto.html"
+        class="inline-block border-2 border-white text-white font-bold px-8 py-4 rounded-lg text-lg transition-all duration-300 hover:bg-white"
+        style="font-family: 'Raleway', sans-serif;"
+        onmouseover="this.style.color='#4A4A4A';"
+        onmouseout="this.style.color='white';"
+      >
+        Enviar un mensaje
+      </a>
+    </div>
+    <p class="text-gray-400 text-sm mt-8">Atención de lunes a sábado — San Rafael, Mendoza</p>
+  </div>
+</section>
+
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary text-secondary">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+        <!-- Columna 1: Marca -->
+        <div class="flex flex-col gap-4">
+          <a href="index.html" aria-label="HB Inmobiliaria - Inicio">
+            <img
+              src="/logo-ia.svg"
+              alt="HB Inmobiliaria"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;filter:brightness(0) invert(1);"
+            />
+          </a>
+          <p class="text-sm text-secondary text-opacity-70 leading-relaxed max-w-xs" style="color:rgba(245,245,245,0.7);">
+            Tu partner de confianza en el mercado inmobiliario. Asesoramiento personalizado para cada etapa de tu inversión.
+          </p>
+        </div>
+
+        <!-- Columna 2: Navegación -->
+        <div class="flex flex-col gap-3">
+          <h3 class="font-heading font-700 text-accent text-base uppercase tracking-widest mb-1" style="font-family:'Raleway',sans-serif;font-weight:700;">Navegación</h3>
+          <a href="index.html" class="footer-link text-sm" style="color:rgba(245,245,245,0.8);">Inicio</a>
+          <a href="servicios.html" class="footer-link text-sm" style="color:rgba(245,245,245,0.8);">Servicios</a>
+          <a href="nosotros.html" class="footer-link text-sm" style="color:rgba(245,245,245,0.8);">Nosotros</a>
+          <a href="contacto.html" class="footer-link text-sm" style="color:rgba(245,245,245,0.8);">Contacto</a>
+        </div>
+
+        <!-- Columna 3: Contacto y Redes -->
+        <div class="flex flex-col gap-3">
+          <h3 class="font-heading font-700 text-accent text-base uppercase tracking-widest mb-1" style="font-family:'Raleway',sans-serif;font-weight:700;">Contacto</h3>
+
+          <!-- Email -->
+          <a
+            href="mailto:heber@hbinm.com"
+            class="social-link text-sm"
+            style="color:rgba(245,245,245,0.8);"
+            aria-label="Enviar email a heber@hbinm.com"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            heber@hbinm.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/5492604846327"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-sm"
+            style="color:rgba(245,245,245,0.8);"
+            aria-label="Contactar por WhatsApp"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+            </svg>
+            +54 9 260 484-6327
+          </a>
+
+          <!-- Instagram -->
+          <a
+            href="https://instagram.com/hbinmo"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-sm"
+            style="color:rgba(245,245,245,0.8);"
+            aria-label="Seguir en Instagram @hbinmo"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            @hbinmo
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="mt-10 pt-6 border-t" style="border-color:rgba(245,245,245,0.12);">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs" style="color:rgba(245,245,245,0.5);">
+          <p style="font-family:'Nunito',sans-serif;">&copy; 2026 HB Inmobiliaria. Todos los derechos reservados.</p>
+          <p style="font-family:'Nunito',sans-serif;">Diseñado con dedicación para vos.</p>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var btn = document.getElementById('hamburger-btn');
+      var menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      function toggleMenu(open) {
+        if (open) {
+          menu.classList.add('open');
+          btn.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-label', 'Cerrar menú de navegación');
+        } else {
+          menu.classList.remove('open');
+          btn.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú de navegación');
+        }
+      }
+
+      btn.addEventListener('click', function () {
+        var isOpen = menu.classList.contains('open');
+        toggleMenu(!isOpen);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('open')) {
+          toggleMenu(false);
+          btn.focus();
+        }
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          if (menu.classList.contains('open')) {
+            toggleMenu(false);
+          }
+        }
+      });
+
+      // Marcar link activo segun la pagina actual
+      var currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      var navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

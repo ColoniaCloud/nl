@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pragma Capital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0A1628',
+            secondary: '#C9A84C',
+            accent: '#2E5FA3',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #ffffff;
+      color: #0A1628;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover underline animation */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger animation */
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* Social icon hover */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header style="background-color: #0A1628;" class="sticky top-0 z-50 w-full shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-18 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0" aria-label="Pragma Capital - Inicio">
+          <img
+            src="/logo-ia.svg"
+            alt="Pragma Capital"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white text-sm font-medium tracking-wide py-1" style="font-family: 'DM Sans', sans-serif;">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-sm font-semibold tracking-wide py-2 px-5 rounded-sm border transition-all duration-250" style="font-family: 'DM Sans', sans-serif; color: #C9A84C; border-color: #C9A84C; background-color: transparent;" onmouseover="this.style.backgroundColor='#C9A84C';this.style.color='#0A1628';" onmouseout="this.style.backgroundColor='transparent';this.style.color='#C9A84C';">Contacto</a>
+        </nav>
+
+        <!-- Mobile Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded focus:outline-none focus:ring-2 focus:ring-secondary"
+          style="background: transparent; border: none; cursor: pointer;"
+        >
+          <span id="ham-line-1" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+          <span id="ham-line-2" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+          <span id="ham-line-3" class="hamburger-line block w-6 h-0.5" style="background-color: #ffffff;"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil" style="background-color: #0d1e35; border-top: 1px solid rgba(201,168,76,0.2);">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 pt-3 flex flex-col gap-1">
+        <a href="index.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Inicio</a>
+        <a href="servicios.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Servicios</a>
+        <a href="nosotros.html" class="block text-white text-base font-medium py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5 hover:text-secondary" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.9);">Nosotros</a>
+        <a href="contacto.html" class="block text-base font-semibold py-3 px-2 rounded transition-colors duration-200 hover:bg-white/5" style="font-family: 'DM Sans', sans-serif; color: #C9A84C;">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTENT PLACEHOLDER ===== -->
+  <div style="flex:1;min-height:0;"><main style="font-family: 'DM Sans', sans-serif; background-color: #f8f9fa;">
+
+  <!-- Banner Superior -->
+  <section style="position: relative; min-height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1672870153618-b369bcc8c55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4ODkxMjB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Contacto Pragma Capital" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(10,22,40,0.92) 0%, rgba(46,95,163,0.7) 100%);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 3rem 1.5rem;" class="animate-fadeIn">
+      <p style="color: #C9A84C; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem;">Pragma Capital</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: #ffffff; line-height: 1.15; margin-bottom: 1.25rem;">Hablemos de tu negocio</h1>
+      <p style="color: rgba(255,255,255,0.8); font-size: 1.125rem; max-width: 560px; margin: 0 auto; line-height: 1.7;">Estamos listos para escucharte y diseñar una solución financiera a medida para tu empresa.</p>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pc-fadein { animation: fadeInUp 0.7s ease both; }
+    .pc-fadein-2 { animation: fadeInUp 0.7s 0.15s ease both; }
+    .pc-fadein-3 { animation: fadeInUp 0.7s 0.3s ease both; }
+    .pc-fadein-4 { animation: fadeInUp 0.7s 0.45s ease both; }
+    .pc-btn-wa {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background-color: #C9A84C;
+      color: #0A1628;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 18px rgba(201,168,76,0.25);
+    }
+    .pc-btn-wa:hover {
+      background-color: #e0bb5a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(201,168,76,0.35);
+    }
+    .pc-input {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      border: 1.5px solid #d1d5db;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.975rem;
+      color: #0A1628;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .pc-input:focus {
+      border-color: #2E5FA3;
+      box-shadow: 0 0 0 3px rgba(46,95,163,0.12);
+    }
+    .pc-label {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #0A1628;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+    .pc-submit-btn {
+      width: 100%;
+      padding: 0.95rem 1.5rem;
+      background-color: #0A1628;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .pc-submit-btn:hover:not(:disabled) {
+      background-color: #2E5FA3;
+      transform: translateY(-1px);
+    }
+    .pc-submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .pc-info-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.25rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(10,22,40,0.07);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .pc-info-card:hover {
+      box-shadow: 0 6px 24px rgba(10,22,40,0.12);
+      transform: translateY(-2px);
+    }
+    .pc-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(46,95,163,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pc-divider {
+      width: 48px;
+      height: 3px;
+      background: #C9A84C;
+      border-radius: 2px;
+      margin-bottom: 1.25rem;
+    }
+  </style>
+
+  <!-- CTA WhatsApp destacado -->
+  <section style="background: #0A1628; padding: 2.5rem 1.5rem;" class="pc-fadein">
+    <div style="max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
+      <div>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem;">¿Preferís hablar directamente con un asesor?</h2>
+        <p style="color: rgba(255,255,255,0.7); font-size: 0.975rem;">Despejá tus dudas por WhatsApp en minutos. Sin compromisos.</p>
+      </div>
+      <a href="https://wa.me/5491164977121?text=Hola%2C%20me%20gustar%C3%ADa%20conocer%20m%C3%A1s%20sobre%20los%20servicios%20de%20Pragma%20Capital." target="_blank" rel="noopener noreferrer" class="pc-btn-wa">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Chatear por WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <!-- Sección principal: Formulario + Info -->
+  <section id="contact-form" style="padding: 5rem 1.5rem; background: #f8f9fa;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="display: grid; grid-template-columns: 1fr; gap: 3rem;" class="lg:grid-cols-2-custom">
+
+        <!-- Formulario -->
+        <div class="pc-fadein-2">
+          <div class="pc-divider"></div>
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; color: #0A1628; margin-bottom: 0.75rem;">Envianos un mensaje</h2>
+          <p style="color: #4b5563; font-size: 1rem; margin-bottom: 2rem; line-height: 1.7;">Completá el formulario y un asesor especializado se comunicará con vos para entender la situación de tu empresa y proponer un plan de acción.</p>
+
+          <form id="contactForm" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div>
+              <label for="pc-nombre" class="pc-label">Nombre completo <span style="color:#C9A84C;">*</span></label>
+              <input type="text" id="pc-nombre" name="name" required placeholder="Ej: Juan García" class="pc-input">
+            </div>
+            <div>
+              <label for="pc-email" class="pc-label">Correo electrónico <span style="color:#C9A84C;">*</span></label>
+              <input type="email" id="pc-email" name="email" required placeholder="juan@tuempresa.com.ar" class="pc-input">
+            </div>
+            <div>
+              <label for="pc-mensaje" class="pc-label">¿En qué podemos ayudarte? <span style="color:#C9A84C;">*</span></label>
+              <textarea id="pc-mensaje" name="message" required rows="5" placeholder="Contanos brevemente tu situación: tipo de empresa, necesidad de financiamiento, inversión o consultoría..." class="pc-input" style="resize: vertical; min-height: 130px;"></textarea>
+            </div>
+            <div>
+              <button type="submit" id="submitBtn" class="pc-submit-btn">
+                <span id="btnText">Enviar mensaje</span>
+                <svg id="btnSpinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none; animation: spin 0.8s linear infinite;">
+                  <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+                </svg>
+              </button>
+            </div>
+            <div id="formMsg" style="display:none; padding: 1rem 1.25rem; border-radius: 6px; font-size: 0.95rem; font-weight: 500;"></div>
+          </form>
+        </div>
+
+        <!-- Info de Contacto -->
+        <div id="info" class="pc-fadein-3" style="display: flex; flex-direction: column; gap: 1.25rem; padding-top: 1rem;">
+          <div>
+            <div class="pc-divider"></div>
+            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 700; color: #0A1628; margin-bottom: 0.75rem;">Información de contacto</h2>
+            <p style="color: #4b5563; font-size: 1rem; line-height: 1.7; margin-bottom: 1.75rem;">Atendemos a PyMEs en crecimiento de todo el país. Nuestras oficinas se encuentran en la Ciudad Autónoma de Buenos Aires.</p>
+          </div>
+
+          <!-- Dirección -->
+          <div class="pc-info-card">
+            <div class="pc-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E5FA3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #0A1628; font-size: 0.9rem; margin-bottom: 0.2rem;">Oficinas</p>
+              <p style="color: #4b5563; font-size: 0.975rem; line-height: 1.5;">La Pampa 1369, 5to B<br>Ciudad Autónoma de Buenos Aires</p>
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="pc-info-card">
+            <div class="pc-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E5FA3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div>
+              <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #0A1628; font-size: 0.9rem; margin-bottom: 0.2rem;">Correo electrónico</p>
+              <a href="mailto:info@pragmacapital.com" style="color: #2E5FA3; font-size: 0.975rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#2E5FA3'">info@pragmacapital.com</a>
+            </div>
+          </div>
+
+          <!-- WhatsApp -->
+          <div class="pc-info-card">
+            <div class="pc-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#2E5FA3" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </div>
+            <div>
+              <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #0A1628; font-size: 0.9rem; margin-bottom: 0.2rem;">WhatsApp</p>
+              <a href="https://wa.me/5491164977121?text=Hola%2C%20me%20gustar%C3%ADa%20conocer%20m%C3%A1s%20sobre%20los%20servicios%20de%20Pragma%20Capital." target="_blank" rel="noopener noreferrer" style="color: #2E5FA3; font-size: 0.975rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#2E5FA3'">+54 9 11 6497 7121</a>
+            </div>
+          </div>
+
+          <!-- LinkedIn -->
+          <div class="pc-info-card">
+            <div class="pc-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#2E5FA3" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>
+              </svg>
+            </div>
+            <div>
+              <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #0A1628; font-size: 0.9rem; margin-bottom: 0.2rem;">LinkedIn</p>
+              <a href="https://linkedin.com/company/pragma-capital" target="_blank" rel="noopener noreferrer" style="color: #2E5FA3; font-size: 0.975rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#2E5FA3'">linkedin.com/company/pragma-capital</a>
+            </div>
+          </div>
+
+          <!-- Horario -->
+          <div class="pc-info-card">
+            <div class="pc-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E5FA3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div>
+              <p style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #0A1628; font-size: 0.9rem; margin-bottom: 0.2rem;">Horario de atención</p>
+              <p style="color: #4b5563; font-size: 0.975rem; line-height: 1.5;">Lunes a viernes: 9:00 – 18:00 hs<br><span style="font-size:0.875rem; color:#6b7280;">Consultas urgentes por WhatsApp fuera de horario</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Mapa -->
+  <section id="map" style="background: #fff; padding: 0;" class="pc-fadein-4">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 5rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <div class="pc-divider" style="margin: 0 auto 1.25rem;"></div>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: #0A1628; margin-bottom: 0.75rem;">Cómo llegar</h2>
+        <p style="color: #4b5563; font-size: 1rem; max-width: 520px; margin: 0 auto;">Nuestras oficinas están ubicadas en La Pampa 1369, 5to B, CABA. Estamos bien conectados con transporte público.</p>
+      </div>
+      <div style="border-radius: 14px; overflow: hidden; box-shadow: 0 4px 30px rgba(10,22,40,0.12); border: 1.5px solid #e5e7eb;">
+        <iframe
+          title="Ubicación Pragma Capital - La Pampa 1369, CABA"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-58.46460580825807%2C-34.56600954742393%2C-58.44460580825807%2C-34.55600954742393&amp;layer=mapnik&amp;marker=-34.56100954742393%2C-58.45460580825807"
+          width="100%"
+          height="400"
+          style="display: block; border: none;"
+          loading="lazy"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div style="text-align: center; margin-top: 1.25rem;">
+        <a href="https://maps.google.com/?q=La+Pampa+1369,+Buenos+Aires,+Argentina" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; color: #2E5FA3; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='#2E5FA3'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Ver en Google Maps
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @media (min-width: 1024px) {
+      .lg\\:grid-cols-2-custom {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+  </style>
+
+  <script>
+    (function() {
+      var form = document.getElementById('contactForm');
+      var submitBtn = document.getElementById('submitBtn');
+      var btnText = document.getElementById('btnText');
+      var btnSpinner = document.getElementById('btnSpinner');
+      var formMsg = document.getElementById('formMsg');
+
+      if (!form) return;
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        var name = document.getElementById('pc-nombre').value.trim();
+        var email = document.getElementById('pc-email').value.trim();
+        var message = document.getElementById('pc-mensaje').value.trim();
+
+        if (!name || !email || !message) {
+          formMsg.style.display = 'block';
+          formMsg.style.background = '#fff3cd';
+          formMsg.style.color = '#856404';
+          formMsg.style.border = '1px solid #ffc107';
+          formMsg.textContent = 'Por favor completá todos los campos antes de enviar.';
+          return;
+        }
+
+        // Disable button, show spinner
+        submitBtn.disabled = true;
+        btnText.textContent = 'Enviando...';
+        btnSpinner.style.display = 'inline-block';
+        formMsg.style.display = 'none';
+
+        try {
+          var response = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ project_id: 115, name: name, email: email, message: message })
+          });
+
+          if (response.ok) {
+            formMsg.style.display = 'block';
+            formMsg.style.background = '#d1fae5';
+            formMsg.style.color = '#065f46';
+            formMsg.style.border = '1px solid #6ee7b7';
+            formMsg.textContent = '¡Mensaje enviado con éxito! Un asesor de Pragma Capital se pondrá en contacto con vos a la brevedad.';
+            form.reset();
+          } else {
+            throw new Error('Error del servidor');
+          }
+        } catch (err) {
+          formMsg.style.display = 'block';
+          formMsg.style.background = '#fee2e2';
+          formMsg.style.color = '#991b1b';
+          formMsg.style.border = '1px solid #fca5a5';
+          formMsg.textContent = 'Hubo un error al enviar tu mensaje. Por favor, intentá nuevamente o contactanos por WhatsApp.';
+        } finally {
+          submitBtn.disabled = false;
+          btnText.textContent = 'Enviar mensaje';
+          btnSpinner.style.display = 'none';
+        }
+      });
+    })();
+  </script>
+
+</main></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="background-color: #0A1628; border-top: 1px solid rgba(201,168,76,0.25);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+
+        <!-- Brand column -->
+        <div class="flex flex-col gap-4">
+          <a href="index.html" aria-label="Pragma Capital - Inicio">
+            <img
+              src="/logo-ia.svg"
+              alt="Pragma Capital"
+              style="height:clamp(28px,4vw,44px);width:auto;max-width:160px;object-fit:contain;filter:brightness(1);"
+            />
+          </a>
+          <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.55); font-size: 0.875rem; line-height: 1.6; max-width: 260px;">
+            Soluciones financieras con visión estratégica y enfoque pragmático.
+          </p>
+        </div>
+
+        <!-- Navigation column -->
+        <div class="flex flex-col gap-3">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; color: #C9A84C; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Navegación</h3>
+          <a href="index.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Inicio</a>
+          <a href="servicios.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Servicios</a>
+          <a href="nosotros.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Nosotros</a>
+          <a href="contacto.html" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Contacto</a>
+        </div>
+
+        <!-- Contact & Social column -->
+        <div class="flex flex-col gap-3">
+          <h3 style="font-family: 'Space Grotesk', sans-serif; color: #C9A84C; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">Contacto</h3>
+
+          <!-- Email -->
+          <a href="mailto:info@pragmacapital.com" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            info@pragmacapital.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a href="https://wa.me/5491164977121" target="_blank" rel="noopener noreferrer" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.37a16 16 0 0 0 6 6l1.27-.85a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +54 9 11 6497 7121
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com/company/pragma-capital" target="_blank" rel="noopener noreferrer" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 28px; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; text-align: center;">
+        <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.35); font-size: 0.8rem; margin: 0;">
+          &copy; 2026 Pragma Capital. Todos los derechos reservados.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+      const line1 = document.getElementById('ham-line-1');
+      const line2 = document.getElementById('ham-line-2');
+      const line3 = document.getElementById('ham-line-3');
+      let isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        // Animate to X
+        line1.style.transform = 'translateY(8px) rotate(45deg)';
+        line2.style.opacity = '0';
+        line2.style.transform = 'scaleX(0)';
+        line3.style.transform = 'translateY(-8px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        // Animate back to hamburger
+        line1.style.transform = '';
+        line2.style.opacity = '1';
+        line2.style.transform = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Close menu when a link is clicked
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          closeMenu();
+        });
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+
+      // Active nav link detection
+      var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('header .nav-link').forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

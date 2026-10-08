@@ -1,129 +1,458 @@
-"use client";
+import { cookies } from 'next/headers';
+import { Code2, Megaphone, MessageSquare, GraduationCap, ArrowRight } from 'lucide-react';
+import { GradientDots } from '@/components/ui/gradient-dots';
+import { AgentCardTilt } from '@/components/ui/agent-card-tilt';
+import { LogoRotating } from '@/components/ui/logo-rotating';
+import { HeroLoginForm } from '@/components/ui/hero-login-form';
+import { IntroIllustration } from '@/components/ui/intro-illustration';
+import { PlansPricing } from '@/components/ui/plans-pricing';
+import { Reveal } from '@/components/ui/reveal';
+import { TechTicker } from '@/components/ui/tech-ticker';
+import { HowItWorks } from '@/components/ui/how-it-works';
+import { AudienceSection } from '@/components/ui/audience-section';
+import { SitesShowcase, type ShowcaseSite } from '@/components/ui/sites-showcase';
+import { FaqAccordion } from '@/components/ui/faq-accordion';
+import { TestimonialsSection } from '@/components/ui/testimonials-section';
+import { InfiniteGrid } from '@/components/ui/infinite-grid';
+import { PLANS as BILLING_PLANS } from '@/lib/billing-plans';
+import getPool from '@/lib/db-manu';
 
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import dynamic from "next/dynamic";
-import { EtherealShadow } from "@/components/ui/etheral-shadow";
+// ─── Datos estáticos ─────────────────────────────────────────────────────────
 
-const FaultyTerminal = dynamic(
-  () => import("@/components/lander/FaultyTerminal"),
-  { ssr: false }
-);
+const AGENTS = [
+  {
+    icon: <Code2 size={36} />,
+    image: '/agentes/avatares/cards/ManuDev.svg',
+    title: 'Manu Dev',
+    description: 'Creá tu sitio web con IA en minutos',
+    href: '/services/manu-dev',
+  },
+  {
+    icon: <Megaphone size={36} />,
+    image: '/agentes/avatares/cards/Margarita.svg',
+    title: 'Margarita',
+    description: 'Estrategia y contenido para redes sociales',
+    href: '/services/margarita',
+  },
+  {
+    icon: <MessageSquare size={36} />,
+    image: '/agentes/avatares/cards/Jordan.svg',
+    title: 'Jordan',
+    description: 'Tu asistente conversacional inteligente',
+    href: '/services/grant',
+  },
+  {
+    icon: <GraduationCap size={36} />,
+    image: '/agentes/avatares/cards/Mentoria.svg',
+    title: 'MentorIA',
+    description: 'Coaching y conocimiento a tu ritmo',
+    href: '/services/mentoria',
+  },
+];
 
-const AgentWorkflow = dynamic(
-  () => import("@/components/lander/AgentWorkflow"),
-  { ssr: false }
-);
+const PLANS = [
+  {
+    id: 'free',
+    name: 'Free',
+    description: 'Acceso básico a la plataforma',
+    monthlyUsd: BILLING_PLANS.free.monthlyUsd,
+    annualUsd: BILLING_PLANS.free.annualUsd,
+  },
+  {
+    id: 'basic',
+    name: 'Basic',
+    description: 'Herramientas esenciales para empezar',
+    monthlyUsd: BILLING_PLANS.basic.monthlyUsd,
+    annualUsd: BILLING_PLANS.basic.annualUsd,
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    description: 'Suite completa de agentes IA',
+    monthlyUsd: BILLING_PLANS.pro.monthlyUsd,
+    annualUsd: BILLING_PLANS.pro.annualUsd,
+  },
+  {
+    id: 'elite',
+    name: 'Elite',
+    description: 'Acceso ilimitado a todos los módulos',
+    monthlyUsd: BILLING_PLANS.elite.monthlyUsd,
+    annualUsd: BILLING_PLANS.elite.annualUsd,
+  },
+];
 
-export default function PublicHome() {
+// ─── Sub-componentes inline ───────────────────────────────────────────────────
+
+function AgentList() {
+  const glassStyle: React.CSSProperties = {
+    background: 'rgba(255,255,255,0.08)',
+    backdropFilter: 'blur(14px)',
+    WebkitBackdropFilter: 'blur(14px)',
+    border: '1px solid rgba(255,255,255,0.18)',
+    borderRadius: '16px',
+    padding: '1.5rem',
+    width: '100%',
+    maxWidth: '420px',
+  };
+
   return (
-    <div className="pb-12 md:pb-20">
-      {/* Ethereal animated background — fixed, behind all content */}
-      <EtherealShadow
-        color="rgba(88, 28, 135, 0.75)"
-        animation={{ scale: 55, speed: 65 }}
-        noise={{ opacity: 0.5, scale: 1.2 }}
-        sizing="fill"
-        className="fixed inset-0 -z-10 pointer-events-none w-screen h-screen"
-      />
-
-      {/* Hero — full-bleed, flush to top, breaks out of 70vw container */}
-      <section
-        className="relative overflow-hidden min-h-dvh -mt-24 flex items-center"
-        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
-      >
-        {/* FaultyTerminal background */}
-        <div className="absolute inset-0" aria-hidden="true">
-          <FaultyTerminal
-            tint="#2a4b6f"
-            scale={1.2}
-            gridMul={[2, 1]}
-            digitSize={1.5}
-            timeScale={0.3}
-            scanlineIntensity={0.25}
-            glitchAmount={1}
-            flickerAmount={0.8}
-            noiseAmp={1}
-            curvature={0.15}
-            chromaticAberration={0}
-            mouseReact={true}
-            mouseStrength={0.2}
-            pageLoadAnimation={true}
-            brightness={1}
-          />
-        </div>
-
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-zinc-950/55" />
-
-        {/* Content — centered back to 70vw, with top padding to clear fixed header */}
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-36 pb-24 grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: badge + title + buttons */}
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.15] bg-white/[0.07] px-3.5 py-1.5 text-xs text-zinc-300 mb-6">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Suite de agentes IA para negocios
+    <div style={glassStyle}>
+      <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>
+        Tus agentes
+      </p>
+      {AGENTS.map((agent) => (
+        <a
+          key={agent.href}
+          href={agent.href}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            padding: '0.875rem',
+            borderRadius: '10px',
+            color: 'white',
+            textDecoration: 'none',
+            transition: 'background 0.15s ease',
+            marginBottom: '0.25rem',
+          }}
+          className="hover:bg-white/10"
+        >
+          <span style={{ opacity: 0.85 }}>{agent.icon}</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: 'var(--font-syne)', fontWeight: 700, fontSize: '0.95rem' }}>
+              {agent.title}
             </div>
-
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-8">
-              Tu negocio en modo{" "}
-              {/* brand-color: from-violet-400 */}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">
-                automatico
-              </span>
-            </h1>
-
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/agentes"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-zinc-950 text-sm font-semibold hover:bg-zinc-100 transition-colors"
-              >
-                Ver agentes <ArrowRight className="size-4" />
-              </Link>
-              <Link
-                href="/precio"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/[0.20] text-zinc-200 text-sm hover:border-white/[0.35] hover:text-white transition-colors backdrop-blur-sm"
-              >
-                Ver precios
-              </Link>
+            <div style={{ fontSize: '0.8rem', opacity: 0.65, marginTop: '0.1rem' }}>
+              {agent.description}
             </div>
           </div>
+          <ArrowRight size={16} style={{ opacity: 0.5 }} />
+        </a>
+      ))}
+    </div>
+  );
+}
 
-          {/* Right: isologotipo rotating */}
-          <div className="flex items-center justify-center">
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default async function HomePage() {
+  const cookieStore = await cookies();
+  const jwt = cookieStore.get('nl360_jwt');
+  const isLoggedIn = !!jwt?.value;
+
+  // Fetch de sitios para el showcase — solo sitios live (excluye error/building/draft).
+  let showcaseSites: ShowcaseSite[] = [];
+  let totalSites = 0;
+  try {
+    const [rows] = await getPool().query<any[]>(
+      `SELECT subdomain, status, created_at
+       FROM md_projects
+       WHERE status NOT IN ('error', 'building', 'draft')
+       ORDER BY created_at DESC`
+    );
+    totalSites = (rows as any[]).length;
+    showcaseSites = (rows as any[]).slice(0, 16);
+  } catch {
+    // Silently fail — SitesShowcase devuelve null si recibe array vacío.
+    showcaseSites = [];
+    totalSites = 0;
+  }
+
+  return (
+    <main
+      style={{
+        background: 'white',
+        minHeight: '100vh',
+        // Full-bleed: rompe el contenedor max-w-5xl del layout (public)
+        // y cancela su pt-24 (6rem) para que el hero arranque arriba.
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
+        marginTop: '-6rem',
+        overflowX: 'hidden',
+      }}
+    >
+
+      {/* ── HERO ── */}
+      <section style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden' }}>
+        {/* Fondo animado de puntos con gradiente */}
+        <GradientDots duration={20} />
+
+        {/* Velo sutil para legibilidad del texto */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            minHeight: '100vh',
+            display: 'grid',
+            gap: '2rem',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem)',
+            alignItems: 'center',
+          }}
+          className="grid-cols-1 lg:grid-cols-2"
+        >
+          {/* Col 1 */}
+          <Reveal style={{ color: 'white' }}>
+            <h1
+              style={{
+                fontSize: 'clamp(2.5rem, 5.5vw, 4.5rem)',
+                lineHeight: 1.05,
+                fontFamily: 'var(--font-syne)',
+                fontWeight: 700,
+                margin: 0,
+              }}
+            >
+              Pone tu negocio en automático
+            </h1>
+            <p
+              style={{
+                fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+                marginTop: '1.5rem',
+                opacity: 0.85,
+                lineHeight: 1.65,
+                maxWidth: '42ch',
+              }}
+            >
+              Con nuestras herramientas de desarrollo, marketing y conocimiento
+            </p>
+          </Reveal>
+
+          {/* Col 2: condicional */}
+          <Reveal delay={0.15} style={{ display: 'flex', justifyContent: 'center' }}>
+            {isLoggedIn ? <AgentList /> : <HeroLoginForm />}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── TECH TICKER ── */}
+      <TechTicker />
+
+      {/* ── SECCIÓN 1 — Cards de agentes ── */}
+      <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
+        <Reveal
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto 3rem',
+            display: 'grid',
+            gap: '2.5rem',
+            alignItems: 'center',
+          }}
+          className="grid-cols-1 lg:grid-cols-2"
+        >
+          {/* Col 1 — Imagen */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="https://api.nl360.site/wp-content/uploads/2026/01/Isotipo-NL360-Black.svg"
-              alt="NL360"
-              className="invert animate-spin select-none"
-              style={{
-                width: "clamp(160px, 18vw, 280px)",
-                height: "clamp(160px, 18vw, 280px)",
-                animationDuration: "14s",
-                animationTimingFunction: "linear",
-              }}
-              draggable={false}
+              src="/agentes/manuymargarita.svg"
+              alt="Manu y Margarita"
+              style={{ maxWidth: '100%', height: 'auto' }}
             />
           </div>
+
+          {/* Col 2 — Título + texto */}
+          <div>
+            <h2
+              style={{
+                fontSize: 'clamp(1.6rem, 3.2vw, 2.6rem)',
+                lineHeight: 1.1,
+                fontFamily: 'var(--font-syne)',
+                fontWeight: 700,
+                color: '#0a0a0a',
+                margin: 0,
+                maxWidth: '20ch',
+              }}
+            >
+              Cuatro agentes trabajando para tu proyecto
+            </h2>
+            <p
+              style={{
+                marginTop: '1.5rem',
+                color: '#555',
+                lineHeight: 1.75,
+                fontSize: '1.1rem',
+                maxWidth: '60ch',
+              }}
+            >
+              Nuestros agentes integran software cloud, inteligencia artificial y conexión a
+              internet para hacer todo el trabajo digital que la gestión de tu proyecto necesita.
+            </p>
+          </div>
+        </Reveal>
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'grid',
+            gap: '1.5rem',
+          }}
+          className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {AGENTS.map((agent, i) => (
+            <Reveal key={agent.href} delay={i * 0.1} style={{ height: '100%' }}>
+              <AgentCardTilt
+                image={agent.image}
+                title={agent.title}
+                description={agent.description}
+                href={agent.href}
+              />
+            </Reveal>
+          ))}
         </div>
       </section>
 
-      {/* Stats bar */}
-      <section className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-8 py-6 grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 mb-0">
-        {[
-          { value: "4", label: "Agentes activos" },
-          { value: "IA", label: "Generativa" },
-          { value: "N8N", label: "Automatizaciones" },
-          { value: "24/7", label: "Disponibilidad" },
-        ].map(({ value, label }) => (
-          <div key={label} className="text-center">
-            <div className="text-2xl font-bold text-white mb-1">{value}</div>
-            <div className="text-xs text-zinc-500">{label}</div>
-          </div>
-        ))}
+      {/* ── CÓMO FUNCIONA ── */}
+      <HowItWorks />
+
+      {/* ── AUDIENCIA ── */}
+      <AudienceSection />
+
+      {/* ── SHOWCASE DE SITIOS ── */}
+      <SitesShowcase sites={showcaseSites} total={totalSites} />
+
+      {/* ── SECCIÓN 2 — Globalización + Globe ── */}
+      <section style={{ padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)', background: 'white' }}>
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'grid',
+            gap: '3rem',
+            alignItems: 'center',
+          }}
+          className="grid-cols-1 lg:grid-cols-2"
+        >
+          {/* Col 1 — texto */}
+          <Reveal>
+            <h2
+              style={{
+                fontSize: 'clamp(2rem, 4.2vw, 3.4rem)',
+                fontFamily: 'var(--font-syne)',
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #777 0%, #111 40%, #aaa 70%, #333 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                backgroundSize: '200% auto',
+                animation: 'gradientShift 5s linear infinite',
+                margin: 0,
+              }}
+            >
+              Digitaliza eficientemente
+            </h2>
+            <p
+              style={{
+                marginTop: '1.5rem',
+                color: '#555',
+                lineHeight: 1.75,
+                fontSize: '1.1rem',
+                maxWidth: '44ch',
+              }}
+            >
+              La suite de NL360 te provee de herramientas y conocimientos para que puedas
+              poner en marcha la identidad digital de tu negocio.
+            </p>
+          </Reveal>
+
+          {/* Col 2 — ilustración intro (floating + color por scroll) */}
+          <Reveal delay={0.15} style={{ display: 'flex', justifyContent: 'center' }}>
+            <IntroIllustration />
+          </Reveal>
+        </div>
       </section>
-      {/* Agent Workflow simulation */}
-      <AgentWorkflow />
-    </div>
+
+      {/* ── SECCIÓN 3 — Planes + Logo ── */}
+      <section
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          padding: 'clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem)',
+          background: 'white',
+        }}
+      >
+        {/* Fondo: grid infinito + flashlight + esferas */}
+        <InfiniteGrid />
+
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'grid',
+            gap: '3rem',
+            alignItems: 'center',
+          }}
+          className="grid-cols-1 lg:grid-cols-2"
+        >
+          {/* Col 1 — Planes */}
+          <Reveal>
+            <PlansPricing plans={PLANS} />
+          </Reveal>
+
+          {/* Col 2 — Logo */}
+          <Reveal delay={0.15} style={{ display: 'flex', justifyContent: 'center' }}>
+            <LogoRotating />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <FaqAccordion />
+
+      {/* ── TESTIMONIOS ── */}
+      <TestimonialsSection />
+
+      {/* ── CTA FINAL ── */}
+      <section style={{
+        padding: 'clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem)',
+        background: '#0a0a0a',
+        textAlign: 'center',
+      }}>
+        <h2 style={{
+          fontFamily: 'var(--font-syne)',
+          fontWeight: 700,
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          color: 'white',
+          margin: '0 0 1.5rem',
+          maxWidth: '18ch',
+          marginInline: 'auto',
+          lineHeight: 1.1,
+        }}>
+          ¿Listo para digitalizar tu negocio?
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem', marginBottom: '2.5rem' }}>
+          Empezá gratis hoy. Sin tarjeta de crédito.
+        </p>
+        <a
+          href="/registro"
+          style={{
+            display: 'inline-block',
+            background: 'white',
+            color: '#0a0a0a',
+            fontFamily: 'var(--font-syne)',
+            fontWeight: 700,
+            fontSize: '1rem',
+            padding: '1rem 2.5rem',
+            borderRadius: '100px',
+            textDecoration: 'none',
+          }}
+        >
+          Crear cuenta gratis
+        </a>
+      </section>
+
+    </main>
   );
 }

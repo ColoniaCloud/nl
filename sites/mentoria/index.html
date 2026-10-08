@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MentorIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1A1A2E",
+              secondary: "#7C3AED",
+              accent: "#00D4FF",
+            },
+            fontFamily: {
+              heading: ["Space Grotesk", "sans-serif"],
+              body: ["DM Sans", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        font-family: "DM Sans", sans-serif;
+        background-color: #f9fafb;
+      }
+      main {
+        flex: 1;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Space Grotesk", sans-serif;
+      }
+      .nav-link {
+        position: relative;
+        transition: color 0.3s ease;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #00d4ff;
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      .nav-link:hover {
+        color: #00d4ff;
+      }
+      .hamburger-line {
+        transition: all 0.3s ease;
+      }
+      .mobile-menu {
+        transition: max-height 0.4s ease, opacity 0.3s ease;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      .mobile-menu.open {
+        max-height: 400px;
+        opacity: 1;
+      }
+      .mobile-nav-link {
+        transition: color 0.3s ease, background-color 0.3s ease,
+          padding-left 0.3s ease;
+      }
+      .mobile-nav-link:hover {
+        color: #00d4ff;
+        background-color: rgba(124, 58, 237, 0.15);
+        padding-left: 1.5rem;
+      }
+      .logo-text {
+        transition: color 0.3s ease;
+      }
+      .logo-text:hover {
+        color: #00d4ff;
+      }
+      .footer-link {
+        transition: color 0.3s ease;
+      }
+      .footer-link:hover {
+        color: #00d4ff;
+      }
+      .social-link {
+        transition: color 0.3s ease, transform 0.3s ease;
+        display: inline-block;
+      }
+      .social-link:hover {
+        color: #00d4ff;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <a href="index.html" class="logo-text">
+            <span
+              class="font-heading font-bold text-2xl text-white tracking-tight"
+            >
+              Mentor<span class="text-accent">IA</span>
+            </span>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden md:flex items-center space-x-8">
+            <a
+              href="index.html"
+              class="nav-link font-body font-medium text-gray-200 text-sm uppercase tracking-wide"
+            >
+              Inicio
+            </a>
+            <a
+              href="servicios.html"
+              class="nav-link font-body font-medium text-gray-200 text-sm uppercase tracking-wide"
+            >
+              Servicios
+            </a>
+            <a
+              href="nosotros.html"
+              class="nav-link font-body font-medium text-gray-200 text-sm uppercase tracking-wide"
+            >
+              Nosotros
+            </a>
+            <a
+              href="contacto.html"
+              class="font-body font-medium text-sm uppercase tracking-wide bg-secondary text-white px-5 py-2 rounded-full transition-all duration-300 hover:bg-accent hover:text-primary hover:shadow-lg hover:shadow-accent/30"
+            >
+              Contacto
+            </a>
+          </nav>
+
+          <!-- Hamburger Button -->
+          <button
+            id="hamburger-btn"
+            class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+          >
+            <span
+              class="hamburger-line block w-6 h-0.5 bg-white"
+              id="line-1"
+            ></span>
+            <span
+              class="hamburger-line block w-6 h-0.5 bg-white"
+              id="line-2"
+            ></span>
+            <span
+              class="hamburger-line block w-6 h-0.5 bg-white"
+              id="line-3"
+            ></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="mobile-menu bg-primary border-t border-secondary/30 md:hidden">
+        <nav class="px-4 pt-2 pb-4 space-y-1">
+          <a
+            href="index.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Inicio
+          </a>
+          <a
+            href="servicios.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Servicios
+          </a>
+          <a
+            href="nosotros.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Nosotros
+          </a>
+          <a
+            href="contacto.html"
+            class="mobile-nav-link block font-body font-medium text-gray-200 px-4 py-3 rounded-lg"
+          >
+            Contacto
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+
+<style>
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pulse-accent {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(0, 212, 255, 0); }
+}
+.animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+.animate-fadeIn { animation: fadeIn 1.2s ease forwards; }
+.delay-1 { animation-delay: 0.2s; opacity: 0; }
+.delay-2 { animation-delay: 0.4s; opacity: 0; }
+.delay-3 { animation-delay: 0.6s; opacity: 0; }
+.delay-4 { animation-delay: 0.8s; opacity: 0; }
+.pulse-btn { animation: pulse-accent 2.5s infinite; }
+.card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.mentor-card-border { border: 1px solid rgba(124, 58, 237, 0.3); transition: border-color 0.3s ease; }
+.mentor-card-border:hover { border-color: rgba(0, 212, 255, 0.6); }
+</style>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img
+      src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80"
+      alt="Mentores y aprendizaje"
+      class="w-full h-full object-cover object-center animate-fadeIn"
+    />
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(26,26,46,0.93) 0%, rgba(26,26,46,0.80) 60%, rgba(124,58,237,0.35) 100%);"></div>
+  </div>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-6 py-24 text-center">
+    <span class="inline-block mb-4 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase animate-fadeInUp delay-1" style="background: rgba(0,212,255,0.15); color: #00D4FF; border: 1px solid rgba(0,212,255,0.3); font-family: 'DM Sans', sans-serif;">
+      La primera plataforma de mentores IA de Latam
+    </span>
+
+    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 animate-fadeInUp delay-2" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">
+      Aprende directamente de los
+      <span style="color: #00D4FF;">grandes mentes</span>
+      de la historia
+    </h1>
+
+    <p class="text-lg sm:text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-fadeInUp delay-3" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.75);">
+      MentorIA simula con precisión a tus mentores favoritos — Napoleon Hill, Dale Carnegie y más — para que apliques su filosofía de forma personalizada, interactiva y en tu idioma.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fadeInUp delay-4">
+      <a
+        href="https://wa.me/5491162504624?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20MentorIA"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="pulse-btn inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105"
+        style="background: #00D4FF; color: #1A1A2E; font-family: 'DM Sans', sans-serif;"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Consultar por WhatsApp
+      </a>
+      <a
+        href="#servicios-section"
+        class="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105"
+        style="background: rgba(255,255,255,0.08); color: #ffffff; border: 1px solid rgba(255,255,255,0.2); font-family: 'DM Sans', sans-serif; backdrop-filter: blur(8px);"
+      >
+        Conocer la plataforma
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5"/><path d="M7 6l5 5 5-5"/></svg>
+      </a>
+    </div>
+
+    <div class="mt-14 flex flex-col sm:flex-row justify-center gap-8 sm:gap-12 animate-fadeInUp delay-4">
+      <div class="text-center">
+        <p class="text-3xl font-bold" style="font-family: 'Space Grotesk', sans-serif; color: #00D4FF;">+10</p>
+        <p class="text-sm mt-1" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.6);">Mentores disponibles</p>
+      </div>
+      <div class="hidden sm:block w-px" style="background: rgba(255,255,255,0.15);"></div>
+      <div class="text-center">
+        <p class="text-3xl font-bold" style="font-family: 'Space Grotesk', sans-serif; color: #00D4FF;">100%</p>
+        <p class="text-sm mt-1" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.6);">Personalizado para vos</p>
+      </div>
+      <div class="hidden sm:block w-px" style="background: rgba(255,255,255,0.15);"></div>
+      <div class="text-center">
+        <p class="text-3xl font-bold" style="font-family: 'Space Grotesk', sans-serif; color: #00D4FF;">Latam</p>
+        <p class="text-sm mt-1" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.6);">Primera plataforma del tipo</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+    <div class="flex flex-col items-center gap-1 opacity-60">
+      <span class="text-xs tracking-widest uppercase" style="font-family: 'DM Sans', sans-serif; color: #ffffff;">Scroll</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="servicios-section" class="py-24 px-6" style="background: #1A1A2E;">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-16">
+      <span class="inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase" style="background: rgba(124,58,237,0.15); color: #7C3AED; border: 1px solid rgba(124,58,237,0.3); font-family: 'DM Sans', sans-serif;">
+        Cómo funciona
+      </span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">
+        Tu mentor ideal, disponible
+        <span style="color: #00D4FF;">las 24 horas</span>
+      </h2>
+      <p class="text-lg max-w-2xl mx-auto" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.65);">
+        No es un chatbot genérico. Es un agente IA entrenado con la filosofía, metodología y ejercicios específicos de cada mentor para guiarte en tu camino hacia el éxito.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+
+      <div class="card-hover mentor-card-border rounded-2xl p-8" style="background: rgba(255,255,255,0.04);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background: rgba(0,212,255,0.15);">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/></svg>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Elige tu mentor</h3>
+        <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.65); line-height: 1.7;">
+          Selecciona al mentor que resuena con tus objetivos. Napoleon Hill, Dale Carnegie, y otros grandes pensadores del éxito te esperan con su filosofía completa.
+        </p>
+      </div>
+
+      <div class="card-hover mentor-card-border rounded-2xl p-8" style="background: rgba(255,255,255,0.04);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background: rgba(124,58,237,0.15);">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Conversación profunda</h3>
+        <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.65); line-height: 1.7;">
+          Mantén conversaciones reales donde el mentor analiza tu situación. Napoleon Hill te guía en su fórmula de 6 pasos, revisa tus definiciones y te ayuda a construir tu declaración de propósito.
+        </p>
+      </div>
+
+      <div class="card-hover mentor-card-border rounded-2xl p-8" style="background: rgba(255,255,255,0.04);">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style="background: rgba(0,212,255,0.1);">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3 class="text-xl font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Rutas de aprendizaje</h3>
+        <p style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.65); line-height: 1.7;">
+          Sigue una ruta estructurada con ejercicios prácticos, chequeos de progreso y un mastermind virtual que pone a los mejores mentores a trabajar juntos para vos.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mentor highlight -->
+    <div class="rounded-2xl p-8 md:p-12" style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(0,212,255,0.08) 100%); border: 1px solid rgba(124,58,237,0.25);">
+      <div class="flex flex-col md:flex-row items-center gap-8">
+        <div class="flex-shrink-0">
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80"
+            alt="Mentor representativo"
+            class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover"
+            style="border: 3px solid #00D4FF;"
+          />
+        </div>
+        <div class="flex-1 text-center md:text-left">
+          <span class="inline-block mb-2 px-3 py-1 rounded-full text-xs font-semibold" style="background: rgba(0,212,255,0.15); color: #00D4FF; font-family: 'DM Sans', sans-serif;">Mentor destacado</span>
+          <h3 class="text-2xl md:text-3xl font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Napoleon Hill — La fórmula de los 6 pasos</h3>
+          <p class="mb-4" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); line-height: 1.8;">
+            Con MentorIA, el agente basado en Napoleon Hill te acompaña a definir tu deseo ardiente, fijar tu meta exacta, establecer tu fecha límite, crear tu plan de acción, escribir tu declaración de propósito y leerla dos veces al día. Todo con seguimiento personalizado y ajustes según tu avance real.
+          </p>
+          <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+            <span class="px-3 py-1 rounded-lg text-sm" style="background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif;">Piense y hágase rico</span>
+            <span class="px-3 py-1 rounded-lg text-sm" style="background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif;">Declaración de propósito</span>
+            <span class="px-3 py-1 rounded-lg text-sm" style="background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif;">Mastermind virtual</span>
+            <span class="px-3 py-1 rounded-lg text-sm" style="background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif;">Subconsciente y fe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT BRIEF -->
+<section class="py-24 px-6" style="background: #12122A;">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+
+      <div class="flex-1 order-2 lg:order-1">
+        <span class="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase" style="background: rgba(0,212,255,0.1); color: #00D4FF; border: 1px solid rgba(0,212,255,0.25); font-family: 'DM Sans', sans-serif;">
+          Por qué MentorIA es diferente
+        </span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">
+          No es vibecoding.<br/>
+          Es un agente real con
+          <span style="color: #00D4FF;">filosofía profunda</span>
+        </h2>
+        <p class="text-lg mb-6" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); line-height: 1.8;">
+          Cualquiera puede crear una imitación con NotebookLM o herramientas genéricas. Nuestros mentores son agentes construidos con código especializado, entrenados con la obra completa de cada pensador, sus metodologías, ejercicios y filosofía de vida.
+        </p>
+        <p class="text-lg mb-8" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7); line-height: 1.8;">
+          La diferencia es como hablar con un actor que improvisa un personaje versus conversar con alguien que vivió esa filosofía en profundidad. Nuestros usuarios lo sienten desde la primera sesión.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style="background: rgba(0,212,255,0.2);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <p class="text-sm" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7);">Agentes construidos con código, no con prompts simples</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style="background: rgba(0,212,255,0.2);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <p class="text-sm" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7);">Filosofía completa de cada mentor integrada</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style="background: rgba(0,212,255,0.2);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <p class="text-sm" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7);">Ejercicios prácticos con seguimiento personalizado</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5" style="background: rgba(0,212,255,0.2);">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <p class="text-sm" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.7);">Mastermind virtual con múltiples mentores</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-1 order-1 lg:order-2 w-full">
+        <div class="relative">
+          <img
+            src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80"
+            alt="Plataforma MentorIA en acción"
+            class="w-full rounded-2xl object-cover"
+            style="height: 420px; border: 1px solid rgba(124,58,237,0.3);"
+          />
+          <div class="absolute -bottom-5 -left-5 rounded-xl p-4 shadow-2xl" style="background: #1A1A2E; border: 1px solid rgba(0,212,255,0.3);">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: rgba(0,212,255,0.15);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div>
+                <p class="text-xs font-semibold" style="font-family: 'DM Sans', sans-serif; color: #ffffff;">Ley de asociación activa</p>
+                <p class="text-xs" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.5);">Sesión con Napoleon Hill</p>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -top-4 -right-4 rounded-xl px-4 py-3 shadow-2xl" style="background: linear-gradient(135deg, #7C3AED, #5b21b6); ">
+            <p class="text-xs font-bold" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Primera plataforma</p>
+            <p class="text-xs" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.8);">sin competencia directa en Latam</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-24 px-6" style="background: #1A1A2E;">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="text-center mb-16">
+      <span class="inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase" style="background: rgba(124,58,237,0.15); color: #7C3AED; border: 1px solid rgba(124,58,237,0.3); font-family: 'DM Sans', sans-serif;">
+        Testimonios
+      </span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">
+        Lo que dicen los
+        <span style="color: #00D4FF;">emprendedores</span>
+      </h2>
+      <p class="text-lg max-w-xl mx-auto" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.6);">
+        Emprendedores de Latam que ya aplican la filosofía de sus mentores con MentorIA.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="card-hover rounded-2xl p-8 flex flex-col" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">
+        <div class="flex gap-1 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="flex-1 mb-6 text-base italic" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.75); line-height: 1.8;">
+          "Llevo años leyendo a Napoleon Hill pero nunca logré completar su fórmula de los 6 pasos de forma seria. Con MentorIA lo hice en una semana. El agente me hizo las preguntas exactas que Napoleon haría. Es increíble la diferencia."
+        </p>
+        <div class="flex items-center gap-3">
+          <img
+            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80&q=80"
+            alt="Martín R."
+            class="w-10 h-10 rounded-full object-cover"
+            style="border: 2px solid rgba(0,212,255,0.4);"
+          />
+          <div>
+            <p class="font-semibold text-sm" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Martín R.</p>
+            <p class="text-xs" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.5);">Fundador de startup, Buenos Aires</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-hover rounded-2xl p-8 flex flex-col" style="background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25);">
+        <div class="flex gap-1 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="#00D4FF"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="flex-1 mb-6 text-base italic" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.75); line-height: 1.8;">
+          "Probé el NotebookLM con los audios de Dale Carnegie y fue una decepción total. MentorIA es otra dimensión. El agente recuerda tu contexto, te desafía con sus principios y adapta la respuesta a lo que vos específicamente necesitás mejorar."
+        </p>
+        <div class="flex items-center gap-3">
+          <img
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&q=80"
+            alt="Carolina V."
+            class="w-10 h-10 rounded-full object-cover"
+            style="border: 2px solid rgba(124,58,237,0.5);"
+          />
+          <div>
+            <p class="font-semibold text-sm" style="font-family: 'Space Grotesk', sans-serif; color: #ffffff;">Carolina V.</p>
+            <p class="text-xs" style="font-family: 'DM Sans', sans-serif; color: rgba(255,255,255,0.5);">Consultora de negocios, Bogotá</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-hover rounded-2xl p-8 flex flex-col" style="background: rgba(255,255,255,0.04); border: 1px solid
+</main>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary text-gray-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <!-- Brand Column -->
+          <div class="space-y-4">
+            <a href="index.html">
+              <span class="font-heading font-bold text-2xl text-white tracking-tight">
+                Mentor<span class="text-accent">IA</span>
+              </span>
+            </a>
+            <p class="font-body text-sm text-gray-400 leading-relaxed max-w-xs">
+              Potenciamos tu crecimiento con inteligencia artificial y mentoría personalizada.
+            </p>
+          </div>
+
+          <!-- Navigation Column -->
+          <div class="space-y-4">
+            <h3 class="font-heading font-semibold text-white text-sm uppercase tracking-widest">
+              Navegación
+            </h3>
+            <ul class="space-y-2">
+              <li>
+                <a href="index.html" class="footer-link font-body text-sm text-gray-400">
+                  Inicio
+                </a>
+              </li>
+              <li>
+                <a href="servicios.html" class="footer-link font-body text-sm text-gray-400">
+                  Servicios
+                </a>
+              </li>
+              <li>
+                <a href="nosotros.html" class="footer-link font-body text-sm text-gray-400">
+                  Nosotros
+                </a>
+              </li>
+              <li>
+                <a href="contacto.html" class="footer-link font-body text-sm text-gray-400">
+                  Contacto
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact & Social Column -->
+          <div class="space-y-4">
+            <h3 class="font-heading font-semibold text-white text-sm uppercase tracking-widest">
+              Contacto
+            </h3>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="mailto:nicogdublanc@gmail.com"
+                  class="footer-link font-body text-sm text-gray-400 flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  nicogdublanc@gmail.com
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/5491162504624"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="footer-link font-body text-sm text-gray-400 flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
+                  +54 9 11 6250-4624
+                </a>
+              </li>
+            </ul>
+
+            <!-- Social Icons -->
+            <div class="flex items-center gap-4 pt-2">
+              <a
+                href="mailto:nicogdublanc@gmail.com"
+                class="social-link text-gray-400"
+                aria-label="Enviar email"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </a>
+              <a
+                href="https://wa.me/5491162504624"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="social-link text-gray-400"
+                aria-label="WhatsApp"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-secondary/20 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="font-body text-xs text-gray-500">
+            &copy; 2026 MentorIA. Todos los derechos reservados.
+          </p>
+          <p class="font-body text-xs text-gray-600">
+            Hecho con dedicación e inteligencia artificial.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const hamburgerBtn = document.getElementById("hamburger-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const line1 = document.getElementById("line-1");
+      const line2 = document.getElementById("line-2");
+      const line3 = document.getElementById("line-3");
+
+      let menuOpen = false;
+
+      hamburgerBtn.addEventListener("click", function () {
+        menuOpen = !menuOpen;
+
+        if (menuOpen) {
+          mobileMenu.classList.add("open");
+          hamburgerBtn.setAttribute("aria-expanded", "true");
+          line1.style.transform = "translateY(8px) rotate(45deg)";
+          line2.style.opacity = "0";
+          line3.style.transform = "translateY(-8px) rotate(-45deg)";
+        } else {
+          mobileMenu.classList.remove("open");
+          hamburgerBtn.setAttribute("aria-expanded", "false");
+          line1.style.transform = "none";
+          line2.style.opacity = "1";
+          line3.style.transform = "none";
+        }
+      });
+
+      // Close mobile menu on resize to desktop
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 768 && menuOpen) {
+          mobileMenu.classList.remove("open");
+          hamburgerBtn.setAttribute("aria-expanded", "false");
+          line1.style.transform = "none";
+          line2.style.opacity = "1";
+          line3.style.transform = "none";
+          menuOpen = false;
+        }
+      });
+    </script>
+  </body>
+</html>

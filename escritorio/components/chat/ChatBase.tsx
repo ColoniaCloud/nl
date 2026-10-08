@@ -63,7 +63,7 @@ export default function ChatBase({
 
       {/* Messages */}
       <ScrollArea className="flex-1 min-h-0">
-        <div className="flex flex-col gap-3 px-4 py-6">
+        <div className="flex flex-col gap-5 px-4 py-6">
           {messages.map((m) => (
             <div
               key={m.id}

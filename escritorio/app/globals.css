@@ -327,6 +327,20 @@ iframe {
   animation: fade-in 0.3s ease-out forwards;
 }
 
+/* ─── Floating chat button pulse (subtle, slow) ─── */
+@keyframes pulse-slow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(139, 92, 246, 0);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
 /* ─── Chat bubble ─── */
 .nl-bubble {
   max-width: var(--bubble-max-w);
@@ -657,3 +671,59 @@ button[class*="bg-zinc-7"][class*="rounded"]:active {
     --rac-invalid:     LinkText;
   }
 }
+
+/* ─── NL360 Global Typography ─── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 700;
+}
+
+body, p, span, a, li, label, input, textarea, button, select {
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+/* ─── Gradient text animation ─── */
+@keyframes gradientShift {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ─── Metallic logo shimmer ─── */
+@keyframes logoSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes metallicShimmer {
+  0%   { filter: grayscale(1) brightness(0.55); }
+  50%  { filter: grayscale(1) brightness(0.85); }
+  100% { filter: grayscale(1) brightness(0.55); }
+}
+
+/* ─── Ticker marquee ─── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── Google Places Autocomplete dropdown (dark mode) ─── */
+.pac-container {
+  background-color: #18181b;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  font-family: var(--font-montserrat), sans-serif;
+  margin-top: 4px;
+}
+.pac-item {
+  background-color: transparent;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  color: #a1a1aa;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+.pac-item:first-child { border-top: none; }
+.pac-item:hover, .pac-item-selected { background-color: rgba(255,255,255,0.06); }
+.pac-item-query { color: #fafafa; }
+.pac-matched { color: #10b981; }
+.pac-icon { filter: invert(1) brightness(0.7); }

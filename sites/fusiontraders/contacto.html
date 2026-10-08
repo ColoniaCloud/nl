@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fusion Traders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0A1628',
+            secondary: '#C9A84C',
+            accent: '#00D09C',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #0A1628;
+      color: #ffffff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover transitions */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger icon transition */
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    /* Footer social link hover */
+    .footer-social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+
+    .footer-social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+
+    /* Footer email link */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+
+    .footer-link:hover {
+      color: #C9A84C;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-primary border-b border-secondary/20 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0 flex items-center">
+          <img
+            src="/logo-ia.svg"
+            alt="Fusion Traders"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          >
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="index.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide pb-1">Contacto</a>
+          <a
+            href="contacto.html"
+            class="ml-4 px-5 py-2 rounded-md bg-secondary text-primary font-heading font-600 text-sm tracking-wide transition-all duration-250 hover:bg-secondary/80 hover:shadow-md hover:shadow-secondary/20 active:scale-95"
+            style="font-weight:600;"
+          >
+            Comenzar
+          </a>
+        </nav>
+
+        <!-- Mobile Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-colors duration-200 hover:bg-white/5"
+        >
+          <span id="ham-line-1" class="hamburger-line block w-6 h-0.5 bg-white mb-1.5 rounded-full"></span>
+          <span id="ham-line-2" class="hamburger-line block w-6 h-0.5 bg-white mb-1.5 rounded-full"></span>
+          <span id="ham-line-3" class="hamburger-line block w-6 h-0.5 bg-white rounded-full"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 pt-2 border-t border-secondary/10 flex flex-col space-y-1">
+        <a href="index.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Inicio</a>
+        <a href="servicios.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Servicios</a>
+        <a href="nosotros.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Nosotros</a>
+        <a href="contacto.html" class="block px-3 py-2.5 text-white/90 font-body font-medium text-base rounded-md transition-all duration-200 hover:bg-white/5 hover:text-secondary hover:pl-5">Contacto</a>
+        <div class="pt-2">
+          <a
+            href="contacto.html"
+            class="block w-full text-center px-5 py-2.5 rounded-md bg-secondary text-primary font-heading text-sm tracking-wide transition-all duration-250 hover:bg-secondary/80 active:scale-95"
+            style="font-weight:600;"
+          >
+            Comenzar
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT PLACEHOLDER -->
+  <div style="flex:1;min-height:0;"><main class="bg-[#0A1628] text-white" style="font-family: 'DM Sans', sans-serif;">
+
+  <!-- Banner superior -->
+  <section class="relative flex items-center justify-center min-h-[340px] md:min-h-[420px] overflow-hidden">
+    <img
+      src="https://images.unsplash.com/photo-1758270705031-ebd46917a454?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI3ODA3NjN8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Contacto Fusion Traders"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+      loading="eager"
+    />
+    <div class="absolute inset-0 bg-[#0A1628]/80"></div>
+    <div class="relative z-10 text-center px-4 py-16" style="animation: fadeInDown 0.8s ease both;">
+      <p class="text-[#C9A84C] text-sm font-semibold uppercase tracking-widest mb-3" style="font-family: 'Space Grotesk', sans-serif;">Estamos para ayudarte</p>
+      <h1 class="text-4xl md:text-6xl font-bold leading-tight" style="font-family: 'Space Grotesk', sans-serif;">
+        Contacto
+      </h1>
+      <p class="mt-4 text-white/70 text-lg max-w-xl mx-auto">
+        Consultanos por WhatsApp o completá el formulario. Te respondemos a la brevedad.
+      </p>
+    </div>
+  </section>
+
+  <!-- contact-form -->
+  <section id="contact-form" class="py-20 px-4 md:px-8">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+
+      <!-- Texto lateral -->
+      <div style="animation: fadeInLeft 0.8s ease both 0.2s; opacity:0;" class="animate-fadein-left">
+        <span class="inline-block text-[#00D09C] text-sm font-semibold uppercase tracking-widest mb-4" style="font-family: 'Space Grotesk', sans-serif;">Hablemos</span>
+        <h2 class="text-3xl md:text-4xl font-bold mb-6" style="font-family: 'Space Grotesk', sans-serif;">
+          ¿Listo para empezar tu camino en el trading?
+        </h2>
+        <p class="text-white/70 text-base leading-relaxed mb-8">
+          Si tenés entre 18 y 25 años y querés generar un ingreso extra aprendiendo a operar en los mercados financieros, estás en el lugar correcto. Contactanos sin compromiso y te contamos cómo empezar.
+        </p>
+
+        <!-- Destacados -->
+        <ul class="space-y-5">
+          <li class="flex items-start gap-4">
+            <span class="mt-1 w-10 h-10 rounded-full bg-[#00D09C]/10 border border-[#00D09C]/30 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00D09C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="font-semibold text-white" style="font-family: 'Space Grotesk', sans-serif;">Respuesta rápida</p>
+              <p class="text-white/60 text-sm">Te respondemos en menos de 24 horas hábiles.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-4">
+            <span class="mt-1 w-10 h-10 rounded-full bg-[#00D09C]/10 border border-[#00D09C]/30 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00D09C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="font-semibold text-white" style="font-family: 'Space Grotesk', sans-serif;">Sin compromiso</p>
+              <p class="text-white/60 text-sm">Hacé todas tus preguntas antes de tomar una decisión.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-4">
+            <span class="mt-1 w-10 h-10 rounded-full bg-[#00D09C]/10 border border-[#00D09C]/30 flex items-center justify-center flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00D09C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="font-semibold text-white" style="font-family: 'Space Grotesk', sans-serif;">Asesoramiento personalizado</p>
+              <p class="text-white/60 text-sm">Te orientamos según tu nivel y tus objetivos financieros.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Formulario -->
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10" style="animation: fadeInRight 0.8s ease both 0.3s; opacity:0;">
+        <h3 class="text-xl font-bold mb-6" style="font-family: 'Space Grotesk', sans-serif;">Envianos tu consulta</h3>
+        <form id="contactForm" novalidate class="space-y-5">
+
+          <div>
+            <label for="contact-name" class="block text-sm font-medium text-white/80 mb-2">Nombre completo <span class="text-[#00D09C]">*</span></label>
+            <input
+              type="text"
+              id="contact-name"
+              name="name"
+              autocomplete="name"
+              placeholder="Tu nombre"
+              required
+              class="w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#00D09C] focus:ring-1 focus:ring-[#00D09C] transition-colors duration-200"
+            />
+          </div>
+
+          <div>
+            <label for="contact-email" class="block text-sm font-medium text-white/80 mb-2">Email <span class="text-[#00D09C]">*</span></label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              autocomplete="email"
+              placeholder="tucorreo@email.com"
+              required
+              class="w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#00D09C] focus:ring-1 focus:ring-[#00D09C] transition-colors duration-200"
+            />
+          </div>
+
+          <div>
+            <label for="contact-message" class="block text-sm font-medium text-white/80 mb-2">Mensaje <span class="text-[#00D09C]">*</span></label>
+            <textarea
+              id="contact-message"
+              name="message"
+              rows="5"
+              placeholder="Contanos en qué podemos ayudarte..."
+              required
+              class="w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3 text-white placeholder-white/30 text-sm focus:outline-none focus:border-[#00D09C] focus:ring-1 focus:ring-[#00D09C] transition-colors duration-200 resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Feedback inline -->
+          <div id="form-feedback" class="hidden rounded-lg px-4 py-3 text-sm font-medium"></div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="w-full bg-[#00D09C] hover:bg-[#00b888] text-[#0A1628] font-bold text-sm py-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
+            style="font-family: 'Space Grotesk', sans-serif;"
+          >
+            <span id="submitBtnText">Enviar mensaje</span>
+            <svg id="submitSpinner" class="hidden animate-spin w-5 h-5 text-[#0A1628]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- map -->
+  <section id="map" class="py-4 px-4 md:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="rounded-2xl overflow-hidden border border-white/10 shadow-lg" style="height: 320px;">
+        <iframe
+          title="Ubicacion Fusion Traders - Argentina"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3537445.870060312!2d-65.17492199999999!3d-34.6036844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccac630121623%3A0x53386f2ac88991a9!2sArgentina!5e0!3m2!1ses!2sar!4v1700000000000!5m2!1ses!2sar"
+          width="100%"
+          height="100%"
+          style="border:0; filter: invert(90%) hue-rotate(180deg) saturate(0.6) brightness(0.85);"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- info -->
+  <section id="info" class="py-20 px-4 md:px-8">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="inline-block text-[#C9A84C] text-sm font-semibold uppercase tracking-widest mb-3" style="font-family: 'Space Grotesk', sans-serif;">Canales de contacto</span>
+        <h2 class="text-3xl md:text-4xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">
+          Elegí como contactarnos
+        </h2>
+        <p class="text-white/60 mt-3 max-w-xl mx-auto text-base">
+          La forma más rápida es por WhatsApp. También podés escribirnos por Instagram o email.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- WhatsApp -->
+        <a
+          href="https://wa.me/5493885430011?text=Hola%20Fusion%20Traders!%20Quiero%20informaci%C3%B3n%20sobre%20sus%20cursos."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group flex flex-col items-center text-center bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#00D09C]/50 hover:bg-[#00D09C]/5 transition-all duration-300"
+        >
+          <span class="w-14 h-14 rounded-full bg-[#00D09C]/10 border border-[#00D09C]/30 flex items-center justify-center mb-5 group-hover:bg-[#00D09C]/20 transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-[#00D09C]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.57A11.96 11.96 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52zM12 22c-1.85 0-3.66-.5-5.24-1.44l-.38-.22-3.69.93.99-3.59-.25-.38A9.95 9.95 0 012 12C2 6.48 6.48 2 12 2c2.67 0 5.18 1.04 7.07 2.93A9.93 9.93 0 0122 12c0 5.52-4.48 10-10 10zm5.44-7.34c-.3-.15-1.77-.87-2.04-.97-.28-.1-.48-.15-.68.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.64-.93-2.24-.24-.59-.49-.51-.68-.52-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47 0 1.46 1.06 2.87 1.21 3.07.15.2 2.09 3.19 5.07 4.35.71.27 1.26.43 1.69.55.71.2 1.36.17 1.87.1.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.19-.57-.34z"/>
+            </svg>
+          </span>
+          <h3 class="text-lg font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">WhatsApp</h3>
+          <p class="text-white/60 text-sm mb-4">La vía más rápida para resolver tus dudas al instante.</p>
+          <span class="text-[#00D09C] font-semibold text-sm group-hover:underline" style="font-family: 'Space Grotesk', sans-serif;">+54 9 388 543-0011</span>
+        </a>
+
+        <!-- Instagram -->
+        <a
+          href="https://instagram.com/enzoacosta.fx"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group flex flex-col items-center text-center bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#C9A84C]/50 hover:bg-[#C9A84C]/5 transition-all duration-300"
+        >
+          <span class="w-14 h-14 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/30 flex items-center justify-center mb-5 group-hover:bg-[#C9A84C]/20 transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-[#C9A84C]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </span>
+          <h3 class="text-lg font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">Instagram</h3>
+          <p class="text-white/60 text-sm mb-4">Seguinos para contenido diario sobre trading y mercados.</p>
+          <span class="text-[#C9A84C] font-semibold text-sm group-hover:underline" style="font-family: 'Space Grotesk', sans-serif;">@enzoacosta.fx</span>
+        </a>
+
+        <!-- Email -->
+        <a
+          href="mailto:fusiontradersfx@gmail.com"
+          class="group flex flex-col items-center text-center bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/30 hover:bg-white/5 transition-all duration-300 sm:col-span-2 lg:col-span-1"
+        >
+          <span class="w-14 h-14 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-5 group-hover:bg-white/15 transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </span>
+          <h3 class="text-lg font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">Email</h3>
+          <p class="text-white/60 text-sm mb-4">Escribinos para consultas detalladas o información comercial.</p>
+          <span class="text-white/80 font-semibold text-sm group-hover:underline break-all" style="font-family: 'Space Grotesk', sans-serif;">fusiontradersfx@gmail.com</span>
+        </a>
+
+      </div>
+
+      <!-- CTA WhatsApp destacado -->
+      <div class="mt-14 rounded-2xl bg-gradient-to-r from-[#00D09C]/10 to-[#0A1628] border border-[#00D09C]/20 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div>
+          <h3 class="text-2xl md:text-3xl font-bold mb-3" style="font-family: 'Space Grotesk', sans-serif;">
+            ¿Preferís hablar directamente?
+          </h3>
+          <p class="text-white/60 text-base max-w-lg">
+            Nuestro equipo está disponible en WhatsApp para orientarte sin compromiso. Consultá ahora mismo.
+          </p>
+        </div>
+        <a
+          href="https://wa.me/5493885430011?text=Hola%20Fusion%20Traders!%20Quiero%20informaci%C3%B3n%20sobre%20sus%20cursos."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex-shrink-0 bg-[#00D09C] hover:bg-[#00b888] text-[#0A1628] font-bold text-sm px-8 py-4 rounded-lg transition-all duration-200 hover:scale-105 transform"
+          style="font-family: 'Space Grotesk', sans-serif;"
+        >
+          Consultar por WhatsApp
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+      animation: spin 0.8s linear infinite;
+    }
+    [style*="fadeInLeft"] {
+      animation-fill-mode: both;
+    }
+    [style*="fadeInRight"] {
+      animation-fill-mode: both;
+    }
+  </style>
+
+  <script>
+    (function () {
+      const form = document.getElementById('contactForm');
+      const btn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('submitBtnText');
+      const spinner = document.getElementById('submitSpinner');
+      const feedback = document.getElementById('form-feedback');
+
+      function showFeedback(type, message) {
+        feedback.classList.remove('hidden', 'bg-[#00D09C]/10', 'border', 'border-[#00D09C]/30', 'text-[#00D09C]', 'bg-red-500/10', 'border-red-500/30', 'text-red-400');
+        if (type === 'success') {
+          feedback.classList.add('bg-[#00D09C]/10', 'border', 'border-[#00D09C]/30', 'text-[#00D09C]');
+        } else {
+          feedback.classList.add('bg-red-500/10', 'border', 'border-red-500/30', 'text-red-400');
+        }
+        feedback.textContent = message;
+        feedback.classList.remove('hidden');
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById('contact-name').value.trim();
+        const email = document.getElementById('contact-email').value.trim();
+        const message = document.getElementById('contact-message').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('error', 'Por favor completá todos los campos antes de enviar.');
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          showFeedback('error', 'Por favor ingresá un email válido.');
+          return;
+        }
+
+        btn.disabled = true;
+        btnText.textContent = 'Enviando...';
+        spinner.classList.remove('hidden');
+        feedback.classList.add('hidden');
+
+        try {
+          const response = await fetch('https://nl360.site/api/manu-dev/form-submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ project_id: 118, name, email, message })
+          });
+
+          if (response.ok) {
+            showFeedback('success', '¡Mensaje enviado con éxito! Te contactamos a la brevedad.');
+            form.reset();
+          } else {
+            showFeedback('error', 'Ocurrió un error al enviar el mensaje. Intentá nuevamente o contactanos por WhatsApp.');
+          }
+        } catch (err) {
+          showFeedback('error', 'No se pudo conectar con el servidor. Verificá tu conexión e intentá de nuevo.');
+        } finally {
+          btn.disabled = false;
+          btnText.textContent = 'Enviar mensaje';
+          spinner.classList.add('hidden');
+        }
+      });
+    })();
+  </script>
+
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary border-t border-secondary/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+
+        <!-- Brand Column -->
+        <div class="flex flex-col items-start space-y-4">
+          <a href="index.html" class="inline-flex">
+            <img
+              src="/logo-ia.svg"
+              alt="Fusion Traders"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;"
+            >
+          </a>
+          <p class="text-white/50 text-sm font-body leading-relaxed max-w-xs">
+            Trading profesional con estrategia, disciplina y resultados consistentes.
+          </p>
+        </div>
+
+        <!-- Navigation Column -->
+        <div class="flex flex-col space-y-3">
+          <h3 class="font-heading font-semibold text-secondary text-sm uppercase tracking-widest mb-1">Navegación</h3>
+          <a href="index.html" class="footer-link text-white/70 font-body text-sm">Inicio</a>
+          <a href="servicios.html" class="footer-link text-white/70 font-body text-sm">Servicios</a>
+          <a href="nosotros.html" class="footer-link text-white/70 font-body text-sm">Nosotros</a>
+          <a href="contacto.html" class="footer-link text-white/70 font-body text-sm">Contacto</a>
+        </div>
+
+        <!-- Contact & Social Column -->
+        <div class="flex flex-col space-y-4">
+          <h3 class="font-heading font-semibold text-secondary text-sm uppercase tracking-widest mb-1">Contacto</h3>
+
+          <!-- Email -->
+          <a
+            href="mailto:fusiontradersfx@gmail.com"
+            class="footer-social-link text-white/70 font-body text-sm flex items-center gap-2 group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 group-hover:stroke-secondary transition-colors duration-200">
+              <rect width="20" height="16" x="2" y="4" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            fusiontradersfx@gmail.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/5493885430011"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-social-link text-white/70 font-body text-sm flex items-center gap-2 group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="flex-shrink-0 group-hover:fill-secondary transition-colors duration-200">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+            </svg>
+            +54 9 388 543-0011
+          </a>
+
+          <!-- Instagram -->
+          <a
+            href="https://www.instagram.com/enzoacosta.fx"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-social-link text-white/70 font-body text-sm flex items-center gap-2 group"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 group-hover:stroke-secondary transition-colors duration-200">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+            </svg>
+            @enzoacosta.fx
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="mt-10 pt-6 border-t border-secondary/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-white/30 font-body text-xs text-center sm:text-left">
+          &copy; 2026 Fusion Traders. Todos los derechos reservados.
+        </p>
+        <p class="text-white/20 font-body text-xs text-center sm:text-right">
+          Diseñado para traders profesionales.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Mobile Menu JS -->
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+      const line1 = document.getElementById('ham-line-1');
+      const line2 = document.getElementById('ham-line-2');
+      const line3 = document.getElementById('ham-line-3');
+      let isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        // Animate to X
+        line1.style.transform = 'translateY(8px) rotate(45deg)';
+        line2.style.opacity = '0';
+        line3.style.transform = 'translateY(-8px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        // Animate back to hamburger
+        line1.style.transform = '';
+        line2.style.opacity = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) {
+          closeMenu();
+          btn.focus();
+        }
+      });
+
+      // Close menu and highlight active nav link on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+
+      // Highlight active nav link based on current page
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+          link.classList.add('active');
+          link.style.color = '#C9A84C';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

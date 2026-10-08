@@ -6,12 +6,32 @@
 # Purpose: Check daily que backup succeeded, send alert si hay problemas
 ###############################################################################
 
-set -e
-
 LOG_DIR="/opt/docker-apps/logs"
 BACKUP_DIR="/opt/docker-apps/data/backups/daily"
-ALERT_EMAIL="${ALERT_EMAIL:-ops@example.com}"
+ALERT_EMAIL="${ALERT_EMAIL:-comunicacion@colonia.cloud}"
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+
+# Load RESEND_API_KEY (used instead of `mail`, which isn't installed on this host)
+if [ -f /opt/docker-apps/.env ]; then
+  RESEND_API_KEY=$(grep -m1 "^RESEND_API_KEY=" /opt/docker-apps/.env | cut -d= -f2-)
+fi
+
+send_alert() {
+  local subject="$1"
+  local body="$2"
+  if [ -z "$RESEND_API_KEY" ]; then
+    echo "⚠️  RESEND_API_KEY not found — cannot send email alert"
+    return 1
+  fi
+  curl -s -o /dev/null -w "%{http_code}" -X POST "https://api.resend.com/emails" \
+    -H "Authorization: Bearer $RESEND_API_KEY" \
+    -H "Content-Type: application/json" \
+    -d "$(printf '{"from":"NL360 <no-responder@nl360.site>","to":["%s"],"subject":"%s","html":"%s"}' \
+      "$ALERT_EMAIL" "$subject" "${body//$'\n'/<br>}")" | grep -q "^2" || {
+    echo "⚠️  Resend API call failed"
+    return 1
+  }
+}
 
 check_backup() {
   # Verify tar backup from today exists
@@ -38,16 +58,13 @@ check_backup() {
   fi
   
   # Check backup.log for errors
-  if [ -f "$LOG_DIR/backup.log" ]; then
-    if grep -q "ERROR\|FAILED" "$LOG_DIR/backup.log" | tail -1; then
-      issues+="⚠️  Errors found in backup.log\n"
-    fi
+  if [ -f "$LOG_DIR/backup.log" ] && grep -q "ERROR\|FAILED" "$LOG_DIR/backup.log"; then
+    issues+="⚠️  Errors found in backup.log\n"
   fi
-  
+
   # If issues, send alert
   if [ -n "$issues" ]; then
-    echo -e "ALERT: Backup issues detected\n\n$issues" | \
-      mail -s "🚨 NL360 Backup ALERT" "$ALERT_EMAIL"
+    send_alert "🚨 NL360 Backup ALERT" "ALERT: Backup issues detected\n\n$issues"
     return 1
   fi
   
@@ -62,7 +79,7 @@ check_s3_sync() {
   source /opt/docker-apps/config/s3-backup.conf
   
   if [ -f "$LOG_DIR/backup-s3-sync.log" ]; then
-    if grep -q "ERROR\|✅ S3 sync completed" "$LOG_DIR/backup-s3-sync.log" | tail -1 | grep -q ERROR; then
+    if tail -20 "$LOG_DIR/backup-s3-sync.log" | grep -q "ERROR"; then
       echo "❌ S3 sync failed"
       return 1
     else
@@ -88,12 +105,12 @@ check_disk_space() {
 echo "=== BACKUP HEALTH CHECK ==="
 echo ""
 
-backup_ok=$(check_backup && echo 1 || echo 0)
-s3_ok=$(check_s3_sync && echo 1 || echo 0)
-disk_ok=$(check_disk_space && echo 1 || echo 0)
+check_backup; backup_ok=$?
+check_s3_sync; s3_ok=$?
+check_disk_space; disk_ok=$?
 
 echo ""
-if [ "$backup_ok" -eq 1 ] && [ "$s3_ok" -eq 1 ] && [ "$disk_ok" -eq 1 ]; then
+if [ "$backup_ok" -eq 0 ] && [ "$s3_ok" -eq 0 ] && [ "$disk_ok" -eq 0 ]; then
   echo "✅ ALL CHECKS PASSED"
   exit 0
 else

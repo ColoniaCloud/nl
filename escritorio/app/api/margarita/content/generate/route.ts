@@ -179,10 +179,17 @@ IMPORTANTE:
       insertedIds.push(result.insertId);
     }
 
+    const chatMessage = `Genere ${contentData.posts.length} posts para 2 semanas de contenido. Revisa el panel de contenido.`;
+    await pool.execute(
+      "INSERT INTO mm_chat_history (brandbook_id, user_id, role, content, step) VALUES (?, ?, 'assistant', ?, 'strategy_confirm')",
+      [s.brandbook_id, user.id, chatMessage]
+    );
+
     return NextResponse.json({
       generated: contentData.posts.length,
       content_ids: insertedIds,
       posts: contentData.posts,
+      chat_message: chatMessage,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Error interno" }, { status: 500 });

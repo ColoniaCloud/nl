@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elevate MKT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open%20Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0D0D0D',
+            secondary: '#C9A84C',
+            accent: '#F5F5F5'
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body: ['Open Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      background-color: #F5F5F5;
+      color: #0D0D0D;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Nav link underline animation */
+    .nav-link {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #C9A84C;
+      transition: color 0.3s ease;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger icon transition */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #F5F5F5;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    .hamburger-btn.open .line-1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger-btn.open .line-2 {
+      opacity: 0;
+    }
+
+    .hamburger-btn.open .line-3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Footer social link hover */
+    .social-link {
+      transition: color 0.3s ease, opacity 0.3s ease;
+    }
+
+    .social-link:hover {
+      color: #C9A84C;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img
+            src="/logo.jpeg"
+            alt="Elevate MKT"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html" class="nav-link font-body font-semibold text-sm tracking-wide bg-secondary text-primary px-5 py-2 rounded-sm hover:bg-opacity-90 transition-all duration-300" style="text-decoration:none;">Contacto</a>
+        </nav>
+
+        <!-- Hamburger Button (mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger-btn md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 focus:outline-none"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="bg-primary border-t border-secondary border-opacity-30 px-4 pb-4 pt-2 flex flex-col gap-1">
+        <a href="index.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 border-b border-white border-opacity-10 block">Inicio</a>
+        <a href="servicios.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 border-b border-white border-opacity-10 block">Servicios</a>
+        <a href="nosotros.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 border-b border-white border-opacity-10 block">Nosotros</a>
+        <a href="contacto.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 block">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT PLACEHOLDER -->
+  <div style="flex:1;min-height:0;"><main style="font-family: 'Open Sans', sans-serif; background-color: #0D0D0D; color: #F5F5F5;">
+
+  <!-- BANNER SUPERIOR -->
+  <section style="position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1666790676906-0295230c121d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Nosotros Elevate MKT" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.22;">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,13,13,0.55) 0%, rgba(13,13,13,0.92) 100%);"></div>
+    <div style="position: relative; z-index: 2; text-align: center; padding: 2.5rem 1.5rem;">
+      <p style="font-family: 'Montserrat', sans-serif; color: #C9A84C; font-size: 0.85rem; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.75rem; animation: fadeInDown 0.8s ease both;">Quienes somos</p>
+      <h1 style="font-family: 'Montserrat', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; color: #F5F5F5; margin: 0 0 1rem; line-height: 1.15; animation: fadeInDown 0.9s ease both;">Nosotros</h1>
+      <div style="width: 56px; height: 3px; background: #C9A84C; margin: 0 auto; border-radius: 2px; animation: fadeIn 1.2s ease both;"></div>
+      <p style="max-width: 560px; margin: 1.5rem auto 0; color: rgba(245,245,245,0.7); font-size: 1.05rem; line-height: 1.7; animation: fadeInUp 1s ease both;">La agencia que une estrategia, tecnologia e inteligencia artificial para llevar tu negocio al proximo nivel.</p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" style="padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+    <div style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+      <div class="about-text" style="animation: fadeInUp 0.9s ease both;">
+        <p style="font-family: 'Montserrat', sans-serif; color: #C9A84C; font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.75rem;">Nuestra historia</p>
+        <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; color: #F5F5F5; margin: 0 0 1.5rem; line-height: 1.2;">No somos una agencia tradicional. Somos tu socio de transformacion digital.</h2>
+        <p style="color: rgba(245,245,245,0.75); line-height: 1.85; margin-bottom: 1.2rem; font-size: 1rem;">Elevate MKT nacio con una vision clara: ayudar a negocios argentinos a dejar de quedarse afuera de la era digital. Vimos que el problema no era la falta de ganas, sino la falta de tiempo, de conocimiento tecnico y de alguien de confianza que realmente entienda la tecnologia y sepa como aplicarla a cada negocio en particular.</p>
+        <p style="color: rgba(245,245,245,0.75); line-height: 1.85; margin-bottom: 1.2rem; font-size: 1rem;">Nos especializamos en integrar Inteligencia Artificial y herramientas digitales de forma estrategica: no vendemos software, vendemos resultados. Desde automatizaciones de Instagram y WhatsApp hasta funnels de venta, contenido creativo, publicidad paga y consultoria de escalado, construimos el ecosistema digital completo que tu negocio necesita.</p>
+        <p style="color: rgba(245,245,245,0.75); line-height: 1.85; font-size: 1rem;">Trabajamos con un concepto distinto: nos involucramos como parte de tu equipo, aprendemos tu negocio y ejecutamos por vos. Porque sabemos que tu tiempo vale, y que la digitalizacion bien hecha no deberia ser un dolor de cabeza.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <img src="https://images.unsplash.com/photo-1675668408848-47504a82b002?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Equipo Elevate MKT" style="width: 100%; border-radius: 12px; object-fit: cover; aspect-ratio: 4/5; transition: transform 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 12px 40px rgba(201,168,76,0.18)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='none'">
+        <img src="https://images.unsplash.com/photo-1730404691983-cc26f90b4f46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Tecnologia e IA" style="width: 100%; border-radius: 12px; object-fit: cover; aspect-ratio: 4/5; margin-top: 2rem; transition: transform 0.4s ease, box-shadow 0.4s ease;" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 12px 40px rgba(201,168,76,0.18)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='none'">
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 4rem;">
+      <div style="background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.18); border-radius: 12px; padding: 1.8rem 1.5rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.5)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.18)'">
+        <span style="font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 800; color: #C9A84C; display: block;">+50</span>
+        <span style="font-size: 0.9rem; color: rgba(245,245,245,0.65);">Negocios acompanados</span>
+      </div>
+      <div style="background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.18); border-radius: 12px; padding: 1.8rem 1.5rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.5)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.18)'">
+        <span style="font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 800; color: #C9A84C; display: block;">100%</span>
+        <span style="font-size: 0.9rem; color: rgba(245,245,245,0.65);">Enfoque en resultados</span>
+      </div>
+      <div style="background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.18); border-radius: 12px; padding: 1.8rem 1.5rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.5)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.18)'">
+        <span style="font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 800; color: #C9A84C; display: block;">IA</span>
+        <span style="font-size: 0.9rem; color: rgba(245,245,245,0.65);">Integrada en cada servicio</span>
+      </div>
+      <div style="background: rgba(201,168,76,0.07); border: 1px solid rgba(201,168,76,0.18); border-radius: 12px; padding: 1.8rem 1.5rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.5)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.18)'">
+        <span style="font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 800; color: #C9A84C; display: block;">360°</span>
+        <span style="font-size: 0.9rem; color: rgba(245,245,245,0.65);">Estrategia digital completa</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;">
+    <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.35), transparent);"></div>
+  </div>
+
+  <!-- TEAM -->
+  <section id="team" style="padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <p style="font-family: 'Montserrat', sans-serif; color: #C9A84C; font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.75rem;">Las personas detras de la agencia</p>
+      <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; color: #F5F5F5; margin: 0 0 1rem;">Nuestro equipo</h2>
+      <p style="max-width: 560px; margin: 0 auto; color: rgba(245,245,245,0.65); font-size: 1rem; line-height: 1.75;">Profesionales apasionados por la tecnologia, el marketing y los negocios. Cada integrante aporta una mirada estrategica unica.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+
+      <!-- Miembro 1 -->
+      <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 16px; overflow: hidden; transition: border-color 0.35s ease, transform 0.35s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)'">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 0;">
+          <img src="https://images.unsplash.com/photo-1758873268528-af4613d099b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Directora de Estrategia" style="width: 100%; height: 260px; object-fit: cover; object-position: center top;">
+          <div style="padding: 1.8rem 1.5rem;">
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.25rem;">Sofia Marchetti</h3>
+            <p style="color: #C9A84C; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 0.9rem;">Co-Fundadora & Directora de Estrategia</p>
+            <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">Especialista en marketing digital y desarrollo de negocios. Sofia lidera la vision estrategica de cada cliente, asegurandose de que cada accion este alineada con los objetivos reales del negocio. Cree que la IA no reemplaza el pensamiento humano, lo potencia.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Miembro 2 -->
+      <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 16px; overflow: hidden; transition: border-color 0.35s ease, transform 0.35s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)'">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 0;">
+          <img src="https://images.unsplash.com/photo-1758873272869-9130397ff7d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Director de Tecnologia" style="width: 100%; height: 260px; object-fit: cover; object-position: center top;">
+          <div style="padding: 1.8rem 1.5rem;">
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.25rem;">Tomas Benitez</h3>
+            <p style="color: #C9A84C; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 0.9rem;">Co-Fundador & Director de Tecnologia e IA</p>
+            <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">Experto en automatizacion, inteligencia artificial y desarrollo web. Tomas es quien convierte las ideas estrategicas en sistemas que funcionan solos: funnels, chatbots, integraciones y flujos automatizados que trabajan 24/7 por el negocio del cliente.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Miembro 3 -->
+      <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 16px; overflow: hidden; transition: border-color 0.35s ease, transform 0.35s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)'">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 0;">
+          <img src="https://images.unsplash.com/photo-1759884247142-028abd1e8ac2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Directora Creativa" style="width: 100%; height: 260px; object-fit: cover; object-position: center top;">
+          <div style="padding: 1.8rem 1.5rem;">
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.25rem;">Valentina Cruz</h3>
+            <p style="color: #C9A84C; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 0.9rem;">Directora Creativa & Contenido</p>
+            <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">Diseñadora y creadora de contenido con foco en identidad de marca digital. Valentina gestiona la produccion creativa de la agencia: imagenes, piezas para redes, UGC y estrategia de contenido que conecta con las audiencias y genera ventas reales.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DIVIDER -->
+  <div style="max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;">
+    <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.35), transparent);"></div>
+  </div>
+
+  <!-- VALUES -->
+  <section id="values" style="padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem;">
+      <p style="font-family: 'Montserrat', sans-serif; color: #C9A84C; font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.75rem;">Lo que nos guia cada dia</p>
+      <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800; color: #F5F5F5; margin: 0 0 1rem;">Nuestros valores</h2>
+      <p style="max-width: 540px; margin: 0 auto; color: rgba(245,245,245,0.65); font-size: 1rem; line-height: 1.75;">Estos principios no son decorativos. Son la forma en que trabajamos, nos comunicamos y tomamos decisiones junto a nuestros clientes.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+      <div style="display: flex; gap: 1.25rem; align-items: flex-start; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.14); border-radius: 14px; padding: 1.8rem 1.5rem; transition: border-color 0.3s ease, transform 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)';this.style.transform='translateX(6px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.14)';this.style.transform='translateX(0)'">
+        <div style="min-width: 52px; height: 52px; background: linear-gradient(135deg, #C9A84C22, #C9A84C44); border: 1px solid #C9A84C55; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.45rem;">Accion sobre perfeccion</h3>
+          <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">Creemos que un buen plan ejecutado hoy vale mas que un plan perfecto que nunca arranca. Ayudamos a nuestros clientes a dar el primer paso y a iterar desde la realidad del mercado.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.25rem; align-items: flex-start; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.14); border-radius: 14px; padding: 1.8rem 1.5rem; transition: border-color 0.3s ease, transform 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)';this.style.transform='translateX(6px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.14)';this.style.transform='translateX(0)'">
+        <div style="min-width: 52px; height: 52px; background: linear-gradient(135deg, #C9A84C22, #C9A84C44); border: 1px solid #C9A84C55; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.45rem;">Tu tiempo es sagrado</h3>
+          <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">Sabemos que el dueno de un negocio no tiene horas sobrantes. Por eso nos encargamos de ejecutar, gestionar y reportar. Vos tomás decisiones, nosotros hacemos el trabajo.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.25rem; align-items: flex-start; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.14); border-radius: 14px; padding: 1.8rem 1.5rem; transition: border-color 0.3s ease, transform 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)';this.style.transform='translateX(6px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.14)';this.style.transform='translateX(0)'">
+        <div style="min-width: 52px; height: 52px; background: linear-gradient(135deg, #C9A84C22, #C9A84C44); border: 1px solid #C9A84C55; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.45rem;">Tecnologia con proposito</h3>
+          <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">No implementamos tecnologia por moda. Cada herramienta, automatizacion o sistema de IA que integramos tiene un objetivo concreto: reducir costos, generar leads o escalar ventas.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.25rem; align-items: flex-start; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.14); border-radius: 14px; padding: 1.8rem 1.5rem; transition: border-color 0.3s ease, transform 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)';this.style.transform='translateX(6px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.14)';this.style.transform='translateX(0)'">
+        <div style="min-width: 52px; height: 52px; background: linear-gradient(135deg, #C9A84C22, #C9A84C44); border: 1px solid #C9A84C55; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.45rem;">Transparencia total</h3>
+          <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">Nos comunicamos con claridad, sin tecnicismos innecesarios. Reportamos resultados reales y te explicamos en lenguaje simple que estamos haciendo y por que. Sin letra chica, sin vueltas.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.25rem; align-items: flex-start; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.14); border-radius: 14px; padding: 1.8rem 1.5rem; transition: border-color 0.3s ease, transform 0.3s ease;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)';this.style.transform='translateX(6px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.14)';this.style.transform='translateX(0)'">
+        <div style="min-width: 52px; height: 52px; background: linear-gradient(135deg, #C9A84C22, #C9A84C44); border: 1px solid #C9A84C55; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.05rem; font-weight: 700; color: #F5F5F5; margin: 0 0 0.45rem;">Obsesion por el crecimiento</h3>
+          <p style="color: rgba(245,245,245,0.65); font-size: 0.95rem; line-height: 1.75; margin: 0;">No nos conformamos con mantener. Queremos que cada cliente que trabaja con nosotros escale. Por eso cada estrategia esta pensada con vision de largo plazo, no solo para el mes siguiente.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section style="padding: 5rem 1.5rem; background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, rgba(13,13,13,0) 60%);">
+    <div style="max-width: 720px; margin: 0 auto; text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.22); border-radius: 20px; padding: 3rem 2rem;">
+      <p style="font-family: 'Montserrat', sans-serif; color: #C9A84C; font-size: 0.82rem; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.75rem;">Empeza hoy</p>
+      <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: #F5F5F5; margin: 0 0 1rem; line-height: 1.25;">¿Listo para digitalizar tu negocio con quienes de verdad saben hacerlo?</h2>
+      <p style="color: rgba(245,245,245,0.65); font-size: 1rem; line-height: 1.75; margin-bottom: 2rem;">Agendate una consultoria sin cargo y descubri como podemos transformar tu negocio con tecnologia e IA, sin que tengas que entender nada de tecnologia.</p>
+      <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; justify-content: center;">
+        <a href="https://wa.me/5491166778899?text=Hola%20Elevate%20MKT%2C%20quiero%20agendar%20una%20consultoria" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.6rem; background: #C9A84C; color: #0D0D0D; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.95rem; padding: 0.9rem 2.2rem; border-radius: 8px; text-decoration: none; letter-spacing: 0.04em; transition: background 0.3s ease, transform 0.3s ease;" onmouseover="this.style.background='#e0bc5a';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#C9A84C';this.style.transform='translateY(0)'">
+          Quiero mi consultoria gratuita
+        </a>
+        <a href="servicios" style="color: rgba(245,245,245,0.55); font-size: 0.9rem; text-decoration: underline; text-underline-offset: 3px; transition: color 0.3s ease;" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='rgba(245,245,245,0.55)'">Ver todos nuestros servicios</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (min-width: 640px) {
+      #team > div { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 768px) {
+      #about > div:first-child { grid-template-columns: 1fr 1fr; }
+      #about .about-text { order: 0; }
+      #about > div:first-child > div:last-child { order: 1; }
+      #values > div { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 900px) {
+      #team > div { grid-template-columns: 1fr 1fr 1fr; }
+    }
+  </style>
+
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary text-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-3">
+          <a href="index.html">
+            <img
+              src="/logo.jpeg"
+              alt="Elevate MKT"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;opacity:0.95;"
+            />
+          </a>
+          <p class="font-body text-xs text-accent text-opacity-60" style="color:#F5F5F5;opacity:0.55;">
+            &copy; 2026 Elevate MKT. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-2">
+          <p class="font-heading font-semibold text-secondary text-xs uppercase tracking-widest mb-1">Navegación</p>
+          <a href="index.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Inicio</a>
+          <a href="servicios.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Servicios</a>
+          <a href="nosotros.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Nosotros</a>
+          <a href="contacto.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Contacto</a>
+        </div>
+
+        <!-- Contact & Socials -->
+        <div class="flex flex-col gap-2">
+          <p class="font-heading font-semibold text-secondary text-xs uppercase tracking-widest mb-1">Contacto</p>
+
+          <!-- Email -->
+          <a
+            href="mailto:elevatemkt@gmail.com"
+            class="social-link font-body text-sm flex items-center gap-2"
+            style="color:#F5F5F5;opacity:0.8;"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            elevatemkt@gmail.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/5491166778899"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link font-body text-sm flex items-center gap-2"
+            style="color:#F5F5F5;opacity:0.8;"
+            aria-label="WhatsApp Elevate MKT"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12a11.93 11.93 0 001.64 6.07L0 24l6.12-1.6A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12a11.93 11.93 0 00-3.48-8.52zM12 22a9.93 9.93 0 01-5.07-1.38l-.36-.22-3.73.98.99-3.63-.24-.37A9.93 9.93 0 012 12C2 6.49 6.49 2 12 2s10 4.49 10 10-4.49 10-10 10zm5.47-7.47c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07a8.16 8.16 0 01-2.4-1.48 9 9 0 01-1.66-2.07c-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52s-.67-1.62-.92-2.22c-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/>
+            </svg>
+            +54 9 11 6677-8899
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-secondary border-opacity-20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="font-body text-xs" style="color:#F5F5F5;opacity:0.45;">
+          Diseñado con dedicación para potenciar tu marca.
+        </p>
+        <p class="font-body text-xs" style="color:#C9A84C;opacity:0.7;">
+          Elevate MKT &mdash; 2026
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.contains('open');
+
+        if (isOpen) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        } else {
+          menu.classList.add('open');
+          btn.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-label', 'Cerrar menú');
+        }
+      });
+
+      // Close menu on link click (mobile)
+      const mobileLinks = menu.querySelectorAll('a');
+      mobileLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        }
+      });
+
+      // Active nav link highlight
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      const allNavLinks = document.querySelectorAll('.nav-link');
+      allNavLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

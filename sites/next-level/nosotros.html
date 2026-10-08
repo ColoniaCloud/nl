@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next Level</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A1AFF',
+            secondary: '#1E1E2E',
+            accent: '#7C3AED',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #1E1E2E;
+      color: #ffffff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover underline animation */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background-color: #7C3AED;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #a78bfa;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger animation */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger.open .line-1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    #hamburger.open .line-2 {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    #hamburger.open .line-3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Footer social link hover */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #a78bfa;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-secondary border-b border-white/10 sticky top-0 z-50 shadow-lg shadow-black/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center shrink-0">
+          <img
+            src="/logo-ia.svg"
+            alt="Next Level"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Contacto</a>
+          <a
+            href="contacto.html"
+            class="ml-2 bg-primary hover:bg-accent text-white text-sm font-heading font-semibold px-5 py-2.5 rounded-lg transition-colors duration-300 shadow-md shadow-primary/30 hover:shadow-accent/30"
+          >
+            Hablemos
+          </a>
+        </nav>
+
+        <!-- Hamburger (mobile) -->
+        <button
+          id="hamburger"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="border-t border-white/10 bg-secondary px-4 pb-5 pt-3 flex flex-col gap-1">
+        <a href="index.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Inicio</a>
+        <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Servicios</a>
+        <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Nosotros</a>
+        <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Contacto</a>
+        <a
+          href="contacto.html"
+          class="mt-3 bg-primary hover:bg-accent text-white text-sm font-heading font-semibold px-5 py-3 rounded-lg text-center transition-colors duration-300"
+        >
+          Hablemos
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT WRAPPER -->
+  <div style="flex:1;min-height:0;"><main style="font-family: 'DM Sans', sans-serif; background-color: #1E1E2E; color: #f1f1f1;">
+
+  <!-- BANNER SUPERIOR -->
+  <section style="position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1758518727193-a8da31447858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Next Level equipo"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; z-index: 0;"
+    />
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(26,26,255,0.72) 0%, rgba(124,58,237,0.60) 50%, rgba(30,30,46,0.88) 100%); z-index: 1;"></div>
+    <div style="position: relative; z-index: 2; text-align: center; padding: 3rem 1.5rem;">
+      <p style="font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem; letter-spacing: 0.25em; text-transform: uppercase; color: #a5b4fc; margin-bottom: 0.75rem; opacity: 0; animation: fadeInDown 0.7s ease forwards 0.2s;">Conocenos</p>
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; color: #ffffff; line-height: 1.1; margin-bottom: 1.25rem; opacity: 0; animation: fadeInDown 0.7s ease forwards 0.4s;">
+        Quiénes somos en<br/><span style="background: linear-gradient(90deg, #1A1AFF, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Next Level</span>
+      </h1>
+      <p style="font-size: 1.125rem; color: #c4c4e0; max-width: 560px; margin: 0 auto; opacity: 0; animation: fadeInDown 0.7s ease forwards 0.6s;">Más de un año de desarrollo profesional real, construyendo el futuro de la inteligencia artificial en Latinoamérica.</p>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section id="about" style="padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto;">
+    <div style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center;">
+
+      <div style="opacity: 0; animation: fadeInLeft 0.8s ease forwards 0.2s;">
+        <span style="display: inline-block; background: rgba(26,26,255,0.15); border: 1px solid rgba(26,26,255,0.35); color: #818cf8; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 999px; margin-bottom: 1.25rem;">Nuestra historia</span>
+        <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 1.5rem;">
+          Nació del inconformismo con lo que existía
+        </h2>
+        <p style="font-size: 1.05rem; color: #a8a8c4; line-height: 1.8; margin-bottom: 1.25rem;">
+          Next Level surgió de una pregunta simple pero poderosa: ¿por qué las herramientas de IA disponibles en el mercado son tan superficiales? Mientras el mundo se llenaba de soluciones hechas con vibecoding y prompts rápidos, nosotros elegimos el camino difícil: <strong style="color: #c4c4f0;">desarrollo profesional con código real</strong>, arquitectura sólida y más de un año de construcción iterativa.
+        </p>
+        <p style="font-size: 1.05rem; color: #a8a8c4; line-height: 1.8; margin-bottom: 1.25rem;">
+          Desde Latinoamérica, construimos una suite de cuatro superagentes de IA —Manu, Margarita, Jordan y MentorIA— cada uno especializado en resolver un problema concreto para emprendedores, dueños de negocio y apasionados del desarrollo personal.
+        </p>
+        <p style="font-size: 1.05rem; color: #a8a8c4; line-height: 1.8;">
+          Nuestra hoja de ruta va más lejos: nos dirigimos a ser la <strong style="color: #c4c4f0;">primera plataforma de IA descentralizada del mercado</strong>, combinando inteligencia artificial con blockchain para garantizar privacidad, autonomía y verdadera propiedad de los datos para nuestros usuarios.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; opacity: 0; animation: fadeInRight 0.8s ease forwards 0.4s;">
+        <div style="position: relative; border-radius: 1rem; overflow: hidden; height: 280px;">
+          <img src="https://images.unsplash.com/photo-1758518729922-3a9e7b62b4c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Tecnología Next Level" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/>
+          <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,30,46,0.6), transparent);"></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="position: relative; border-radius: 1rem; overflow: hidden; height: 135px;">
+            <img src="https://images.unsplash.com/photo-1758519288298-f0ceff4ccaa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="IA Next Level" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+          <div style="position: relative; border-radius: 1rem; overflow: hidden; height: 135px;">
+            <img src="https://images.unsplash.com/photo-1758519288735-93631d504920?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Innovacion Next Level" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Stats row -->
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 4rem; opacity: 0; animation: fadeInUp 0.8s ease forwards 0.6s;">
+      <div style="background: rgba(26,26,255,0.08); border: 1px solid rgba(26,26,255,0.25); border-radius: 1rem; padding: 1.75rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(26,26,255,0.6)'" onmouseout="this.style.borderColor='rgba(26,26,255,0.25)'">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #1A1AFF; margin-bottom: 0.25rem;">+1 año</p>
+        <p style="font-size: 0.9rem; color: #9090b0;">de desarrollo profesional</p>
+      </div>
+      <div style="background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.25); border-radius: 1rem; padding: 1.75rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(124,58,237,0.6)'" onmouseout="this.style.borderColor='rgba(124,58,237,0.25)'">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #7C3AED; margin-bottom: 0.25rem;">4</p>
+        <p style="font-size: 0.9rem; color: #9090b0;">superagentes especializados</p>
+      </div>
+      <div style="background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.25); border-radius: 1rem; padding: 1.75rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(124,58,237,0.6)'" onmouseout="this.style.borderColor='rgba(124,58,237,0.25)'">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #7C3AED; margin-bottom: 0.25rem;">0</p>
+        <p style="font-size: 0.9rem; color: #9090b0;">líneas de vibecoding</p>
+      </div>
+      <div style="background: rgba(26,26,255,0.08); border: 1px solid rgba(26,26,255,0.25); border-radius: 1rem; padding: 1.75rem; text-align: center; transition: border-color 0.3s ease;" onmouseover="this.style.borderColor='rgba(26,26,255,0.6)'" onmouseout="this.style.borderColor='rgba(26,26,255,0.25)'">
+        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; font-weight: 800; color: #1A1AFF; margin-bottom: 0.25rem;">1°</p>
+        <p style="font-size: 0.9rem; color: #9090b0;">IA descentralizada LATAM</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIVISOR -->
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+    <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4), rgba(26,26,255,0.4), transparent);"></div>
+  </div>
+
+  <!-- TEAM SECTION -->
+  <section id="team" style="padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.2s;">
+      <span style="display: inline-block; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.35); color: #a78bfa; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 999px; margin-bottom: 1rem;">Nuestros superagentes</span>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 1rem;">
+        El equipo que trabaja por ti <span style="color: #7C3AED;">24/7</span>
+      </h2>
+      <p style="font-size: 1.05rem; color: #9090b0; max-width: 600px; margin: 0 auto;">Cada superagente fue diseñado con personalidad propia, conocimiento profundo y un propósito específico. No son chatbots genéricos: son especialistas.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+      <!-- Manu -->
+      <div style="background: linear-gradient(135deg, rgba(26,26,255,0.10), rgba(30,30,46,0.95)); border: 1px solid rgba(26,26,255,0.30); border-radius: 1.25rem; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.3s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(26,26,255,0.65)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(26,26,255,0.30)'">
+        <div style="display: flex; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap;">
+          <div style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(26,26,255,0.5);">
+            <img src="https://images.unsplash.com/photo-1758519291448-f768beb8912d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Manu - Agente de sitios web" style="width: 100%; height: 100%; object-fit: cover;"/>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 800; color: #ffffff;">Manu</h3>
+              <span style="background: rgba(26,26,255,0.2); color: #818cf8; font-size: 0.75rem; padding: 0.2rem 0.75rem; border-radius: 999px; border: 1px solid rgba(26,26,255,0.4);">Sitios Web</span>
+            </div>
+            <p style="font-size: 0.95rem; color: #7C3AED; font-weight: 600; margin-bottom: 0.5rem;">Superagente de Desarrollo Web con IA</p>
+            <p style="font-size: 0.95rem; color: #a8a8c4; line-height: 1.7;">Manu toma tu idea desde cero y construye un sitio web completo, funcional y profesional. Ideal para emprendedores que quieren lanzar su proyecto sin conocimiento técnico, como si tuvieran una mini incubadora digital a su disposición. Desde la arquitectura hasta el diseño y el contenido, Manu lo hace todo.</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Diseño web</span>
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Desarrollo de punta a punta</span>
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Contenido con IA</span>
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Para emprendedores</span>
+        </div>
+      </div>
+
+      <!-- Margarita -->
+      <div style="background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(30,30,46,0.95)); border: 1px solid rgba(124,58,237,0.30); border-radius: 1.25rem; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.4s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(124,58,237,0.65)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(124,58,237,0.30)'">
+        <div style="display: flex; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap;">
+          <div style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(124,58,237,0.5);">
+            <img src="https://images.unsplash.com/photo-1758519290846-255734761926?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Margarita - Marketing y CRM" style="width: 100%; height: 100%; object-fit: cover;"/>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 800; color: #ffffff;">Margarita</h3>
+              <span style="background: rgba(124,58,237,0.2); color: #c4b5fd; font-size: 0.75rem; padding: 0.2rem 0.75rem; border-radius: 999px; border: 1px solid rgba(124,58,237,0.4);">Marketing y CRM</span>
+            </div>
+            <p style="font-size: 0.95rem; color: #a78bfa; font-weight: 600; margin-bottom: 0.5rem;">Superagente de Marketing Digital y Captación de Leads</p>
+            <p style="font-size: 0.95rem; color: #a8a8c4; line-height: 1.7;">Margarita diseña estrategias de marketing digital, genera contenido de alto impacto y gestiona un CRM con un buscador inteligente de leads. Perfecta para empresarios y dueños de negocio que necesitan crecer su base de clientes sin contratar un equipo completo de marketing.</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Estrategia digital</span>
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">CRM inteligente</span>
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Buscador de leads</span>
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Contenido con IA</span>
+        </div>
+      </div>
+
+      <!-- Jordan -->
+      <div style="background: linear-gradient(135deg, rgba(26,26,255,0.10), rgba(30,30,46,0.95)); border: 1px solid rgba(26,26,255,0.30); border-radius: 1.25rem; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.5s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(26,26,255,0.65)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(26,26,255,0.30)'">
+        <div style="display: flex; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap;">
+          <div style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(26,26,255,0.5);">
+            <img src="https://images.unsplash.com/photo-1758519291946-13cc7761b4e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Jordan - Ventas" style="width: 100%; height: 100%; object-fit: cover;"/>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 800; color: #ffffff;">Jordan</h3>
+              <span style="background: rgba(26,26,255,0.2); color: #818cf8; font-size: 0.75rem; padding: 0.2rem 0.75rem; border-radius: 999px; border: 1px solid rgba(26,26,255,0.4);">Ventas</span>
+            </div>
+            <p style="font-size: 0.95rem; color: #7C3AED; font-weight: 600; margin-bottom: 0.5rem;">Superagente Experto y Asesor en Ventas</p>
+            <p style="font-size: 0.95rem; color: #a8a8c4; line-height: 1.7;">Jordan es el asesor comercial que todo dueño de negocio necesita. Analiza procesos de venta, detecta oportunidades, propone estrategias y acompaña al equipo en cada etapa del cierre. Convierte conversaciones en clientes y transforma las objeciones en oportunidades reales de negocio.</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Estrategia comercial</span>
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Cierre de ventas</span>
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Manejo de objeciones</span>
+          <span style="background: rgba(26,26,255,0.12); color: #818cf8; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Para empresarios</span>
+        </div>
+      </div>
+
+      <!-- MentorIA -->
+      <div style="background: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(30,30,46,0.95)); border: 1px solid rgba(124,58,237,0.30); border-radius: 1.25rem; padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem; transition: transform 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.6s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(124,58,237,0.65)'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(124,58,237,0.30)'">
+        <div style="display: flex; align-items: flex-start; gap: 1.25rem; flex-wrap: wrap;">
+          <div style="flex-shrink: 0; width: 80px; height: 80px; border-radius: 1rem; overflow: hidden; border: 2px solid rgba(124,58,237,0.5);">
+            <img src="https://images.unsplash.com/photo-1762341120753-b53919563c87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="MentorIA - Desarrollo Personal" style="width: 100%; height: 100%; object-fit: cover;"/>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 800; color: #ffffff;">MentorIA</h3>
+              <span style="background: rgba(124,58,237,0.2); color: #c4b5fd; font-size: 0.75rem; padding: 0.2rem 0.75rem; border-radius: 999px; border: 1px solid rgba(124,58,237,0.4);">Desarrollo Personal</span>
+            </div>
+            <p style="font-size: 0.95rem; color: #a78bfa; font-weight: 600; margin-bottom: 0.5rem;">Superagente de Mentoría con IA y Personalidad Propia</p>
+            <p style="font-size: 0.95rem; color: #a8a8c4; line-height: 1.7;">MentorIA transforma el conocimiento y la filosofía de grandes mentores humanos en agentes de IA con personalidad auténtica y una ruta de aprendizaje estructurada. Para emprendedores, empresarios y apasionados del desarrollo personal que quieren aprender de los mejores en cualquier momento y a su propio ritmo.</p>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Mentores digitales</span>
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Rutas de aprendizaje</span>
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">IA con personalidad</span>
+          <span style="background: rgba(124,58,237,0.12); color: #c4b5fd; font-size: 0.78rem; padding: 0.2rem 0.65rem; border-radius: 999px;">Desarrollo personal</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DIVISOR -->
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+    <div style="height: 1px; background: linear-gradient(90deg, transparent, rgba(26,26,255,0.4), rgba(124,58,237,0.4), transparent);"></div>
+  </div>
+
+  <!-- VALUES SECTION -->
+  <section id="values" style="padding: 5rem 1.5rem; max-width: 1200px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 3.5rem; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.2s;">
+      <span style="display: inline-block; background: rgba(26,26,255,0.15); border: 1px solid rgba(26,26,255,0.35); color: #818cf8; font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.35rem 1rem; border-radius: 999px; margin-bottom: 1rem;">Lo que nos mueve</span>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 1rem;">
+        Nuestros valores y principios
+      </h2>
+      <p style="font-size: 1.05rem; color: #9090b0; max-width: 580px; margin: 0 auto;">Cada decisión de producto, cada línea de código y cada interacción con el usuario parte de estos principios.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem;">
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: background 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.3s;" onmouseover="this.style.background='rgba(26,26,255,0.08)'; this.style.borderColor='rgba(26,26,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.08)'">
+        <div style="flex-shrink: 0; width: 52px; height: 52px; background: linear-gradient(135deg, #1A1AFF, #3b3bff); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Excelencia técnica sin atajos</h3>
+          <p style="font-size: 0.95rem; color: #9090b0; line-height: 1.7;">Creemos que la IA seria se construye con código real, arquitectura sólida y profundo conocimiento del dominio. Nunca sacrificamos calidad por velocidad. Eso es lo que separa un superagente de un chatbot disfrazado.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: background 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.4s;" onmouseover="this.style.background='rgba(124,58,237,0.08)'; this.style.borderColor='rgba(124,58,237,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.08)'">
+        <div style="flex-shrink: 0; width: 52px; height: 52px; background: linear-gradient(135deg, #7C3AED, #9d5ff5); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Innovación con visión de futuro</h3>
+          <p style="font-size: 0.95rem; color: #9090b0; line-height: 1.7;">No construimos solo para hoy. Nuestra hoja de ruta apunta a ser la primera plataforma de IA descentralizada de Latinoamérica, integrando blockchain para garantizar que los usuarios sean dueños de sus datos y su inteligencia.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: background 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.5s;" onmouseover="this.style.background='rgba(26,26,255,0.08)'; this.style.borderColor='rgba(26,26,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.08)'">
+        <div style="flex-shrink: 0; width: 52px; height: 52px; background: linear-gradient(135deg, #1A1AFF, #3b3bff); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">El éxito del cliente es nuestro éxito</h3>
+          <p style="font-size: 0.95rem; color: #9090b0; line-height: 1.7;">Desde el emprendedor que lanza su primer proyecto con Manu hasta el empresario que escala sus ventas con Jordan, medimos nuestro impacto en los resultados reales de quienes usan nuestra suite. Su crecimiento es nuestra métrica más importante.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: background 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.6s;" onmouseover="this.style.background='rgba(124,58,237,0.08)'; this.style.borderColor='rgba(124,58,237,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.08)'">
+        <div style="flex-shrink: 0; width: 52px; height: 52px; background: linear-gradient(135deg, #7C3AED, #9d5ff5); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Accesibilidad sin perder profundidad</h3>
+          <p style="font-size: 0.95rem; color: #9090b0; line-height: 1.7;">Queremos que cualquier persona en Latinoamérica, sin importar su nivel técnico, pueda acceder a herramientas de IA de nivel profesional. La complejidad técnica es nuestro trabajo, no el tuyo. Tú solo te enfocas en crecer.</p>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 2rem; display: flex; align-items: flex-start; gap: 1.25rem; transition: background 0.3s ease, border-color 0.3s ease; opacity: 0; animation: fadeInUp 0.7s ease forwards 0.7s;" onmouseover="this.style.background='rgba(26,26,255,0.08)'; this.style.borderColor='rgba(26,26,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.08)'">
+        <div style="flex-shrink: 0; width: 52px; height: 52px; background: linear-gradient(135deg, #1A1AFF, #7C3AED); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center;">
+          <svg width="24" height="24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem;">Transparencia y confianza</h3>
+          <p style="font-size: 0.95rem; color: #9090b0; line-height: 1.7;">Somos directos sobre lo que nuestros agentes pueden y no pueden hacer. No prometemos magia, prometemos tecnología sólida, soporte real y una relación honesta con cada usuario. En un mundo lleno de hype de IA, la confianza es nuestro mayor activo.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ROADMAP / VISION SECTION -->
+  <section style="padding: 4rem 1
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-secondary border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col items-center md:items-start gap-3">
+          <a href="index.html">
+            <img
+              src="/logo-ia.svg"
+              alt="Next Level"
+              style="height:clamp(28px,4vw,44px);width:auto;max-width:160px;object-fit:contain;opacity:0.9;"
+            />
+          </a>
+          <p class="text-white/40 text-xs font-body">
+            &copy; 2026 Next Level. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav links -->
+        <nav class="flex flex-col items-center md:items-start gap-2" aria-label="Mapa del sitio">
+          <p class="text-white/60 text-xs font-heading font-semibold uppercase tracking-widest mb-1">Sitio</p>
+          <a href="index.html" class="social-link text-white/70 text-sm font-body">Inicio</a>
+          <a href="servicios.html" class="social-link text-white/70 text-sm font-body">Servicios</a>
+          <a href="nosotros.html" class="social-link text-white/70 text-sm font-body">Nosotros</a>
+          <a href="contacto.html" class="social-link text-white/70 text-sm font-body">Contacto</a>
+        </nav>
+
+        <!-- Social & Contact -->
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <p class="text-white/60 text-xs font-heading font-semibold uppercase tracking-widest mb-1">Contacto</p>
+          <a
+            href="mailto:oso@nl.com"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            oso@nl.com
+          </a>
+          <a
+            href="https://wa.me/5491162504624"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            WhatsApp: +54 9 11 6250-4624
+          </a>
+          <a
+            href="https://instagram.com/nextlevel360"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            Instagram: @nextlevel360
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
+        <span class="text-white/25 text-xs font-body">Hecho con dedicación por el equipo de Next Level &mdash; 2026</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var hamburger = document.getElementById('hamburger');
+      var mobileMenu = document.getElementById('mobile-menu');
+
+      if (!hamburger || !mobileMenu) return;
+
+      hamburger.addEventListener('click', function () {
+        var isOpen = mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', !isOpen);
+        hamburger.classList.toggle('open', !isOpen);
+        hamburger.setAttribute('aria-expanded', String(!isOpen));
+        hamburger.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
+      });
+
+      // Close menu when a link inside is clicked
+      var mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      // Mark active nav link based on current page
+      var currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      var allNavLinks = document.querySelectorAll('.nav-link');
+      allNavLinks.forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

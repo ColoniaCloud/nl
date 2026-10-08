@@ -14,7 +14,7 @@ import {
   prepareBuildInfra,
   queueBuild,
 } from "@/lib/manu-dev-build";
-import { normalizeGenerationMode } from "@/lib/manu-dev-lite-site";
+import { normalizeGenerationMode, isStaticMode, slugToStaticFile } from "@/lib/manu-dev-lite-site";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -148,14 +148,19 @@ export async function PATCH(req: NextRequest) {
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const isLiteMode = projectMode === "lite";
+  const isStatic = isStaticMode(projectMode);
+  const safeSubdomain = String(project.subdomain).replace(/[^a-z0-9-]/g, "");
 
-  // Read current file according to project mode
-  const pageFile = isLiteMode
-    ? path.join(SITES_DIR, project.subdomain, "index.html")
+  // Resolve the file to edit according to project mode:
+  //  - lite       → single-page landing, always index.html
+  //  - lite_plus  → multi-page static HTML, one file per slug (home → index.html)
+  //  - next       → JSX pages
+  const staticFileName = projectMode === "lite_plus" ? slugToStaticFile(page.slug) : "index.html";
+  const pageFile = isStatic
+    ? path.join(SITES_DIR, safeSubdomain, staticFileName)
     : page.slug === "home"
-      ? path.join(SITES_DIR, project.subdomain, "app", "page.jsx")
-      : path.join(SITES_DIR, project.subdomain, "app", "[slug]", "page.jsx");
+      ? path.join(SITES_DIR, safeSubdomain, "app", "page.jsx")
+      : path.join(SITES_DIR, safeSubdomain, "app", "[slug]", "page.jsx");
 
   let currentContent = "";
   try {
@@ -164,22 +169,24 @@ export async function PATCH(req: NextRequest) {
     currentContent = "// File not found";
   }
 
-  const prompt = isLiteMode
-    ? `Tienes el siguiente archivo HTML de una landing page de un sitio web:
+  const prompt = isStatic
+    ? `Tienes el siguiente archivo HTML de una pagina de un sitio web:
 
 \`\`\`html
-${currentContent.slice(0, 16000)}
+${currentContent.slice(0, 60000)}
 \`\`\`
 
 El usuario pide el siguiente cambio: "${change_description}".
 La pagina es de "${project.name}" y la seccion objetivo es "${page.title}".
 
-Genera el archivo HTML actualizado con el cambio aplicado.
-Mantener estructura existente, IDs de secciones y enlaces de anclas del header.
+Genera el archivo HTML COMPLETO actualizado con el cambio aplicado.
+Mantener intacta toda la estructura existente: <header>, <footer>, <nav>, IDs de
+secciones y enlaces de anclas. Conserva el documento entero desde <!doctype html>
+hasta </html>. Solo aplica el cambio solicitado, no recortes ni resumas el resto.
 No agregues markdown ni explicaciones.
 
 USA ESTE FORMATO:
-===FILE:index.html===
+===FILE:${staticFileName}===
 [contenido actualizado]
 ===END===`
     : `Tienes el siguiente archivo JSX de una página de un sitio web Next.js:
@@ -200,7 +207,9 @@ Mantén toda la estructura existente, solo aplica el cambio solicitado. Sin expl
 
   const resp = await client.messages.create({
     model: CONTENT_MODEL,
-    max_tokens: 6000,
+    // Static pages are full HTML documents (layout + main) and can be large;
+    // give the model enough room to emit the complete file without truncating.
+    max_tokens: isStatic ? 16000 : 6000,
     messages: [{ role: "user", content: prompt }],
   });
 
@@ -216,8 +225,8 @@ Mantén toda la estructura existente, solo aplica el cambio solicitado. Sin expl
     .replace(/\n?```\s*$/, "")
     .replace(/\n$/, "");
 
-  // Only sanitize JSX for Next projects. Lite projects use plain HTML.
-  const newContent = isLiteMode ? rawContent : sanitizeJSX(rawContent);
+  // Only sanitize JSX for Next projects. Static projects use plain HTML.
+  const newContent = isStatic ? rawContent : sanitizeJSX(rawContent);
   await fs.writeFile(pageFile, newContent, "utf8");
 
   // Update content_json in DB if provided
@@ -233,6 +242,9 @@ Mantén toda la estructura existente, solo aplica el cambio solicitado. Sin expl
   const queuedBuild = queueBuild({
     subdomain: project.subdomain,
     projectId: Number(project_id),
+    // Static sites (lite/lite_plus) must rebuild in "lite" mode (nginx), not "next",
+    // to stay consistent with how they were created and serve the edited HTML.
+    mode: isStatic ? "lite" : "next",
   });
 
   queuedBuild.run

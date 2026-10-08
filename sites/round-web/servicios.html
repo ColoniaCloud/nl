@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Round</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#2D2D2D',
+            secondary: '#E85D04',
+            accent:    '#FFB703',
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body:    ['Open Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Layout flexbox crítico */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Nav hover transitions */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #FFB703;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #FFB703;
+    }
+
+    /* Hamburger lines */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Mobile nav link */
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .mobile-nav-link:hover {
+      color: #FFB703;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Footer link transitions */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover {
+      color: #FFB703;
+    }
+  </style>
+</head>
+<body class="bg-white text-primary font-body">
+
+  <!-- ===== HEADER ===== -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex-shrink-0">
+          <img src="/logo.png" alt="Round" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <!-- Desktop Nav -->
+        <ul class="hidden md:flex items-center gap-8">
+          <li>
+            <a href="index.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="nav-link text-white text-sm font-heading font-600 tracking-wide uppercase">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="inline-block bg-secondary hover:bg-accent text-white hover:text-primary text-sm font-heading font-700 tracking-wide uppercase px-5 py-2 rounded transition-colors duration-250">
+              Contacto
+            </a>
+          </li>
+        </ul>
+
+        <!-- Hamburger Button -->
+        <button
+          id="hamburger-btn"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line" id="hline1"></span>
+          <span class="hamburger-line" id="hline2"></span>
+          <span class="hamburger-line" id="hline3"></span>
+        </button>
+
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+        <ul class="flex flex-col pb-4 gap-1">
+          <li>
+            <a href="index.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Inicio
+            </a>
+          </li>
+          <li>
+            <a href="servicios.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a href="nosotros.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Nosotros
+            </a>
+          </li>
+          <li>
+            <a href="contacto.html" class="mobile-nav-link block text-white text-sm font-heading font-semibold tracking-wide uppercase px-2 py-3 rounded">
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+  </header>
+
+  <main style="font-family: 'Open Sans', sans-serif; background-color: #f9f9f9;">
+
+  <!-- Banner superior -->
+  <section style="position: relative; min-height: 320px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+    <img
+      src="https://images.unsplash.com/photo-1610259998914-d1b9afe0dc55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Taller mecánico Round"
+      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;"
+    />
+    <div style="position: absolute; inset: 0; background: rgba(45,45,45,0.78);"></div>
+    <div style="position: relative; z-index: 1; text-align: center; padding: 2.5rem 1.5rem;">
+      <p style="color: #FFB703; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem;">Taller Round</p>
+      <h1 style="font-family: 'Montserrat', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; color: #ffffff; margin: 0 0 1rem 0; line-height: 1.15;">Nuestros Servicios</h1>
+      <p style="color: #e0e0e0; font-size: 1rem; max-width: 520px; margin: 0 auto; line-height: 1.7;">Todo lo que tu auto necesita, en un solo lugar. Trabajamos con profesionalismo y dedicación para que vuelvas a rodar tranquilo.</p>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .round-fadein { animation: fadeInUp 0.65s ease both; }
+    .round-fadein-2 { animation: fadeInUp 0.65s ease 0.15s both; }
+    .round-fadein-3 { animation: fadeInUp 0.65s ease 0.3s both; }
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(45,45,45,0.15);
+    }
+    .service-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .pricing-card:hover {
+      border-color: #E85D04;
+      box-shadow: 0 8px 28px rgba(232,93,4,0.13);
+    }
+    .pricing-card { transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .faq-item summary:hover { color: #E85D04; }
+    .faq-item summary { transition: color 0.2s ease; }
+    .btn-primary:hover { background-color: #c94f00; }
+    .btn-primary { transition: background-color 0.25s ease; }
+    .btn-accent:hover { background-color: #e0a200; }
+    .btn-accent { transition: background-color 0.25s ease; }
+  </style>
+
+  <!-- Service Detail -->
+  <section id="service-detail" style="background-color: #ffffff; padding: 5rem 1.5rem;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div class="round-fadein" style="text-align: center; margin-bottom: 3.5rem;">
+        <p style="color: #E85D04; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem;">Lo que hacemos</p>
+        <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; color: #2D2D2D; margin: 0 0 1rem 0;">Soluciones para tu vehículo</h2>
+        <p style="color: #555; font-size: 1rem; max-width: 600px; margin: 0 auto; line-height: 1.8;">En Round nos encargamos de mantener, reparar y mejorar tu auto. Desde diagnósticos básicos hasta trabajos complejos, te damos el servicio que tu vehículo merece.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+
+        <!-- Card 1 -->
+        <div class="service-card round-fadein" style="background: #f9f9f9; border-radius: 12px; overflow: hidden; border: 1px solid #ececec;">
+          <img src="https://images.unsplash.com/photo-1635352124261-b9a1fea40de3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Diagnóstico y reparación mecánica" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 1.5rem;">
+            <div style="display: inline-block; background-color: #FFB703; border-radius: 6px; padding: 0.3rem 0.75rem; margin-bottom: 0.75rem;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #2D2D2D; text-transform: uppercase; letter-spacing: 0.1em;">Mecánica general</span>
+            </div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Diagnóstico y Reparación</h3>
+            <p style="color: #666; font-size: 0.93rem; line-height: 1.7; margin: 0;">Identificamos el problema con equipos de diagnóstico modernos y lo reparamos de raíz. Motor, transmisión, frenos, suspensión y mucho más.</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="service-card round-fadein-2" style="background: #f9f9f9; border-radius: 12px; overflow: hidden; border: 1px solid #ececec;">
+          <img src="https://images.unsplash.com/photo-1664870546503-b6f134986baa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Mantenimiento preventivo" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 1.5rem;">
+            <div style="display: inline-block; background-color: #FFB703; border-radius: 6px; padding: 0.3rem 0.75rem; margin-bottom: 0.75rem;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #2D2D2D; text-transform: uppercase; letter-spacing: 0.1em;">Preventivo</span>
+            </div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Mantenimiento Preventivo</h3>
+            <p style="color: #666; font-size: 0.93rem; line-height: 1.7; margin: 0;">Cambio de aceite y filtros, revisión de líquidos, bujías, correa de distribución y pastillas de freno. Evitá gastos mayores con un buen mantenimiento.</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="service-card round-fadein-3" style="background: #f9f9f9; border-radius: 12px; overflow: hidden; border: 1px solid #ececec;">
+          <img src="https://images.unsplash.com/photo-1698998881125-b7b8f05a504b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Sistema eléctrico automotriz" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 1.5rem;">
+            <div style="display: inline-block; background-color: #FFB703; border-radius: 6px; padding: 0.3rem 0.75rem; margin-bottom: 0.75rem;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #2D2D2D; text-transform: uppercase; letter-spacing: 0.1em;">Eléctrico</span>
+            </div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Sistema Eléctrico</h3>
+            <p style="color: #666; font-size: 0.93rem; line-height: 1.7; margin: 0;">Diagnóstico y reparación del sistema eléctrico del vehículo: batería, alternador, arranque, luces, sensores y gestión electrónica.</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="service-card round-fadein" style="background: #f9f9f9; border-radius: 12px; overflow: hidden; border: 1px solid #ececec;">
+          <img src="https://images.unsplash.com/photo-1711135421701-950f3abc3ee1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Frenos y suspensión" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 1.5rem;">
+            <div style="display: inline-block; background-color: #FFB703; border-radius: 6px; padding: 0.3rem 0.75rem; margin-bottom: 0.75rem;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #2D2D2D; text-transform: uppercase; letter-spacing: 0.1em;">Seguridad</span>
+            </div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Frenos y Suspensión</h3>
+            <p style="color: #666; font-size: 0.93rem; line-height: 1.7; margin: 0;">Revisión y cambio de pastillas, discos, amortiguadores y bujes. Aseguramos que tu auto frene y maneje con total seguridad.</p>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="service-card round-fadein-2" style="background: #f9f9f9; border-radius: 12px; overflow: hidden; border: 1px solid #ececec;">
+          <img src="https://images.unsplash.com/photo-1767339736233-f4b02c41ee4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Alineación y balanceo" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 1.5rem;">
+            <div style="display: inline-block; background-color: #FFB703; border-radius: 6px; padding: 0.3rem 0.75rem; margin-bottom: 0.75rem;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #2D2D2D; text-transform: uppercase; letter-spacing: 0.1em;">Neumáticos</span>
+            </div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Alineación y Balanceo</h3>
+            <p style="color: #666; font-size: 0.93rem; line-height: 1.7; margin: 0;">Servicio de alineación computarizada y balanceo de ruedas para prolongar la vida útil de tus cubiertas y mejorar el manejo.</p>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="service-card round-fadein-3" style="background: #f9f9f9; border-radius: 12px; overflow: hidden; border: 1px solid #ececec;">
+          <img src="https://images.unsplash.com/photo-1727893141025-35d62b3f4a03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjU3ODB8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80" alt="Mejoras y tuning mecánico" style="width: 100%; height: 200px; object-fit: cover; display: block;" />
+          <div style="padding: 1.5rem;">
+            <div style="display: inline-block; background-color: #FFB703; border-radius: 6px; padding: 0.3rem 0.75rem; margin-bottom: 0.75rem;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; color: #2D2D2D; text-transform: uppercase; letter-spacing: 0.1em;">Mejoras</span>
+            </div>
+            <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Mejoras de Performance</h3>
+            <p style="color: #666; font-size: 0.93rem; line-height: 1.7; margin: 0;">¿Querés sacarle más partido a tu auto? Instalamos mejoras mecánicas para optimizar el rendimiento, el consumo y la experiencia de manejo.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Banner intermedio CTA -->
+  <section style="background-color: #2D2D2D; padding: 3.5rem 1.5rem; text-align: center;">
+    <div style="max-width: 700px; margin: 0 auto;">
+      <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; color: #ffffff; margin: 0 0 1rem 0;">¿Tu auto tiene un problema? <span style="color: #FFB703;">Hablanos ahora.</span></h2>
+      <p style="color: #bbb; font-size: 0.97rem; line-height: 1.7; margin: 0 0 2rem 0;">Atendemos en el Barrio dos Avenidas, Colonia del Sacramento. Reservá tu turno de forma rápida y sencilla.</p>
+      <a href="https://wa.me/59896969696" target="_blank" rel="noopener noreferrer" class="btn-primary" style="display: inline-block; background-color: #E85D04; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; padding: 0.9rem 2.2rem; border-radius: 8px; text-decoration: none; letter-spacing: 0.05em;">Reservar turno por WhatsApp</a>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" style="background-color: #f9f9f9; padding: 5rem 1.5rem;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div class="round-fadein" style="text-align: center; margin-bottom: 3.5rem;">
+        <p style="color: #E85D04; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.5rem;">Precios orientativos</p>
+        <h2 style="font-family: 'Montserrat', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; color: #2D2D2D; margin: 0 0 1rem 0;">¿Cuánto cuesta?</h2>
+        <p style="color: #555; font-size: 1rem; max-width: 580px; margin: 0 auto; line-height: 1.8;">Los precios varían según el vehículo y la complejidad del trabajo. Estos valores son orientativos en pesos uruguayos. Consultanos para un presupuesto exacto sin cargo.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1.75rem;">
+
+        <!-- Precio 1 -->
+        <div class="pricing-card" style="background: #ffffff; border-radius: 12px; border: 2px solid #ececec; padding: 2rem 1.75rem;">
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.3rem 0;">Cambio de aceite y filtro</h3>
+          <p style="color: #888; font-size: 0.85rem; margin: 0 0 1.25rem 0;">Incluye mano de obra. Aceite y filtro aparte según stock.</p>
+          <div style="display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 1.5rem;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; color: #E85D04;">desde</span>
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #2D2D2D;">$1.200</span>
+            <span style="font-size: 0.8rem; color: #888;">UYU</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Vaciado y carga de aceite</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Cambio de filtro de aceite</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Revisión visual general</li>
+          </ul>
+        </div>
+
+        <!-- Precio 2 -->
+        <div class="pricing-card" style="background: #2D2D2D; border-radius: 12px; border: 2px solid #E85D04; padding: 2rem 1.75rem; position: relative;">
+          <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background-color: #E85D04; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 1rem; border-radius: 20px; white-space: nowrap;">El más solicitado</div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #ffffff; margin: 0 0 0.3rem 0;">Service completo</h3>
+          <p style="color: #aaa; font-size: 0.85rem; margin: 0 0 1.25rem 0;">Mantenimiento integral para tu vehículo. Repuestos aparte.</p>
+          <div style="display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 1.5rem;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; color: #FFB703;">desde</span>
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #ffffff;">$3.500</span>
+            <span style="font-size: 0.8rem; color: #aaa;">UYU</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #ddd;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Cambio de aceite y filtros</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #ddd;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Revisión de frenos y suspensión</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #ddd;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Control de líquidos y batería</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #ddd;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Diagnóstico electrónico incluido</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #ddd;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Informe detallado del estado</li>
+          </ul>
+        </div>
+
+        <!-- Precio 3 -->
+        <div class="pricing-card" style="background: #ffffff; border-radius: 12px; border: 2px solid #ececec; padding: 2rem 1.75rem;">
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.3rem 0;">Diagnóstico electrónico</h3>
+          <p style="color: #888; font-size: 0.85rem; margin: 0 0 1.25rem 0;">Lectura de códigos de error y evaluación del sistema.</p>
+          <div style="display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 1.5rem;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; color: #E85D04;">desde</span>
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #2D2D2D;">$800</span>
+            <span style="font-size: 0.8rem; color: #888;">UYU</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Lectura de fallas del motor</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Informe de códigos OBD</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Asesoramiento sobre reparación</li>
+          </ul>
+        </div>
+
+        <!-- Precio 4 -->
+        <div class="pricing-card" style="background: #ffffff; border-radius: 12px; border: 2px solid #ececec; padding: 2rem 1.75rem;">
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.3rem 0;">Pastillas de freno (par)</h3>
+          <p style="color: #888; font-size: 0.85rem; margin: 0 0 1.25rem 0;">Mano de obra. Pastillas aparte según marca y modelo.</p>
+          <div style="display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 1.5rem;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; color: #E85D04;">desde</span>
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #2D2D2D;">$900</span>
+            <span style="font-size: 0.8rem; color: #888;">UYU</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Desmontaje y montaje</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Revisión de discos y mordaza</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Prueba de funcionamiento</li>
+          </ul>
+        </div>
+
+        <!-- Precio 5 -->
+        <div class="pricing-card" style="background: #ffffff; border-radius: 12px; border: 2px solid #ececec; padding: 2rem 1.75rem;">
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.3rem 0;">Alineación y balanceo</h3>
+          <p style="color: #888; font-size: 0.85rem; margin: 0 0 1.25rem 0;">4 ruedas, equipo computarizado. Materiales incluidos.</p>
+          <div style="display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 1.5rem;">
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 600; color: #E85D04;">desde</span>
+            <span style="font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 800; color: #2D2D2D;">$1.100</span>
+            <span style="font-size: 0.8rem; color: #888;">UYU</span>
+          </div>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Alineación computarizada</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Balanceo de las 4 ruedas</li>
+            <li style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.88rem; color: #555;"><span style="width: 8px; height: 8px; border-radius: 50%; background-color: #FFB703; flex-shrink: 0; display: inline-block;"></span>Control de presión de neumáticos</li>
+          </ul>
+        </div>
+
+        <!-- Precio 6 - Presupuesto personalizado -->
+        <div class="pricing-card" style="background: #fff8e8; border-radius: 12px; border: 2px solid #FFB703; padding: 2rem 1.75rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background-color: #FFB703; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2D2D2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <h3 style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 700; color: #2D2D2D; margin: 0 0 0.6rem 0;">Presupuesto personalizado</h3>
+          <p style="color: #666; font-size: 0.88rem; line-height: 1.7; margin: 0 0 1.5rem 0;">¿Tu reparación no está en la lista? Consultanos sin compromiso. Te respondemos rápido con un presupuesto a medida.</p>
+          <a href="https://wa.me/59896969696" target="_blank" rel="noopener noreferrer" class="btn-accent" style="display: inline-block; background-color: #FFB703; color: #2D2D2D; font-family: 'Montserrat', sans-serif; font-size: 0.88rem; font-weight: 700; padding: 0.7rem 1.6rem; border-radius: 8px; text-decoration: none;">Consultar por WhatsApp</a>
+        </div>
+
+      </div>
+
+      <p style="text-align: center; color: #888; font-size: 0.82rem; margin-top: 2rem;">* Precios expresados en pesos uruguayos (UYU), orientativos al año 2024. El costo final puede variar según el modelo del vehículo y los repuestos necesarios.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-primary text-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-800 text-xl tracking-wide text-white">Round</span>
+          <p class="text-sm text-gray-400 font-body">
+            &copy; 2026 Round. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Navegación</span>
+          <a href="index.html"     class="footer-link text-sm text-gray-300">Inicio</a>
+          <a href="servicios.html" class="footer-link text-sm text-gray-300">Servicios</a>
+          <a href="nosotros.html"  class="footer-link text-sm text-gray-300">Nosotros</a>
+          <a href="contacto.html"  class="footer-link text-sm text-gray-300">Contacto</a>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col gap-2">
+          <span class="font-heading font-700 text-xs uppercase tracking-widest text-accent mb-1">Contacto</span>
+
+          <!-- Email -->
+          <a
+            href="mailto:manu@otto.com"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            manu@otto.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/59896969696"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link text-sm text-gray-300 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-secondary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.52 3.48A11.77 11.77 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.57A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.22-3.48-8.52zM12 21.88a9.83 9.83 0 01-5.03-1.38l-.36-.21-3.69.93.98-3.58-.23-.37A9.86 9.86 0 012.13 12C2.13 6.54 6.54 2.13 12 2.13S21.87 6.54 21.87 12 17.46 21.88 12 21.88zm5.42-7.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07a8.14 8.14 0 01-2.39-1.48 8.98 8.98 0 01-1.65-2.06c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51H6.8c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.19-.57-.34z"/>
+            </svg>
+            +598 96 969 696
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-gray-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="text-xs text-gray-500 font-body">Hecho con dedicación &mdash; Round 2026</p>
+        <a href="mailto:manu@otto.com" class="footer-link text-xs text-gray-500 font-body">manu@otto.com</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== JS: Hamburger Menu ===== -->
+  <script>
+    (function () {
+      var btn    = document.getElementById('hamburger-btn');
+      var menu   = document.getElementById('mobile-menu');
+      var line1  = document.getElementById('hline1');
+      var line2  = document.getElementById('hline2');
+      var line3  = document.getElementById('hline3');
+      var isOpen = false;
+
+      function openMenu() {
+        isOpen = true;
+        menu.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Cerrar menú');
+        line1.style.transform = 'translateY(7px) rotate(45deg)';
+        line2.style.opacity   = '0';
+        line3.style.transform = 'translateY(-7px) rotate(-45deg)';
+      }
+
+      function closeMenu() {
+        isOpen = false;
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menú');
+        line1.style.transform = '';
+        line2.style.opacity   = '';
+        line3.style.transform = '';
+      }
+
+      btn.addEventListener('click', function () {
+        if (isOpen) { closeMenu(); } else { openMenu(); }
+      });
+
+      // Close on outside click
+      document.addEventListener('click', function (e) {
+        if (isOpen && !btn.contains(e.target) && !menu.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      // Close on resize to desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && isOpen) {
+          closeMenu();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

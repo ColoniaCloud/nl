@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MentoresIA</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#1A1A2E',
+            secondary: '#7C3AED',
+            accent:    '#00C896',
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body:    ['"DM Sans"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Layout flexbox garantizado */
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #f8f8fc;
+      color: #1A1A2E;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Fuente de títulos */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Animaciones nav */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #00C896;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #00C896;
+    }
+
+    /* Hamburguesa */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Footer links */
+    .footer-link {
+      transition: color 0.25s ease;
+    }
+    .footer-link:hover {
+      color: #00C896;
+    }
+
+    /* Social icon hover */
+    .social-btn {
+      transition: background-color 0.25s ease, transform 0.2s ease;
+    }
+    .social-btn:hover {
+      background-color: #00C896;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body class="font-body">
+
+  <!-- ===== HEADER ===== -->
+  <header class="bg-primary shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img
+            src="/logo.png"
+            alt="MentoresIA"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html"     class="nav-link text-gray-200 font-medium text-sm tracking-wide pb-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-gray-200 font-medium text-sm tracking-wide pb-1">Servicios</a>
+          <a href="nosotros.html"  class="nav-link text-gray-200 font-medium text-sm tracking-wide pb-1">Nosotros</a>
+          <a href="contacto.html"
+             class="ml-2 px-5 py-2 rounded-lg bg-secondary text-white text-sm font-semibold
+                    hover:bg-accent hover:text-primary transition-colors duration-300 shadow-md">
+            Contacto
+          </a>
+        </nav>
+
+        <!-- Hamburguesa (móvil) -->
+        <button
+          id="hamburger-btn"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 rounded-md
+                 focus:outline-none focus:ring-2 focus:ring-accent"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line" id="hline1"></span>
+          <span class="hamburger-line" id="hline2"></span>
+          <span class="hamburger-line" id="hline3"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="px-4 pb-4 pt-2 flex flex-col gap-1 border-t border-white/10">
+        <a href="index.html"
+           class="block px-3 py-2.5 rounded-md text-gray-200 text-sm font-medium
+                  hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+          Inicio
+        </a>
+        <a href="servicios.html"
+           class="block px-3 py-2.5 rounded-md text-gray-200 text-sm font-medium
+                  hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+          Servicios
+        </a>
+        <a href="nosotros.html"
+           class="block px-3 py-2.5 rounded-md text-gray-200 text-sm font-medium
+                  hover:bg-secondary/30 hover:text-accent transition-colors duration-200">
+          Nosotros
+        </a>
+        <a href="contacto.html"
+           class="mt-2 block text-center px-3 py-2.5 rounded-lg bg-secondary text-white text-sm font-semibold
+                  hover:bg-accent hover:text-primary transition-colors duration-300">
+          Contacto
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== CONTENIDO DE PÁGINA ===== -->
+  <main>
+    <main>
+
+  <!-- HERO -->
+  <section class="relative flex items-center justify-center" style="min-height:100vh;">
+    <img
+      src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80"
+      alt="Plataforma MentoresIA"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(26,26,46,0.92) 60%,rgba(124,58,237,0.55) 100%);"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6 py-24 text-center">
+      <span
+        class="inline-block mb-4 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
+        style="background:rgba(0,200,150,0.15);color:#00C896;border:1px solid rgba(0,200,150,0.35);"
+      >Plataforma de IA · Desarrollo Personal</span>
+      <h1
+        class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6 text-white"
+        style="font-family:'Space Grotesk',sans-serif;"
+      >
+        Aprende de los mejores mentores.<br />
+        <span style="color:#00C896;">Con inteligencia artificial real.</span>
+      </h1>
+      <p
+        class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10"
+        style="font-family:'DM Sans',sans-serif;"
+      >
+        MentoresIA convierte a los grandes referentes del desarrollo personal en agentes de IA con los que puedes tener conversaciones profundas, personalizadas y transformadoras — en modo aprendiz-mentor.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="https://wa.me/5491162504624?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20MentoresIA"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-base transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          style="background:#00C896;color:#1A1A2E;font-family:'DM Sans',sans-serif;box-shadow:0 4px 24px rgba(0,200,150,0.3);"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.118 1.526 5.845L.057 23.492a.5.5 0 00.614.612l5.757-1.51A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.892a9.855 9.855 0 01-5.031-1.378l-.361-.214-3.735.979.999-3.648-.235-.374A9.855 9.855 0 012.108 12C2.108 6.527 6.527 2.108 12 2.108S21.892 6.527 21.892 12 17.473 21.892 12 21.892z"/></svg>
+          Quiero empezar ahora
+        </a>
+        <a
+          href="#servicios-section"
+          class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-base transition-all duration-300 hover:bg-white hover:text-gray-900"
+          style="border:1px solid rgba(255,255,255,0.3);color:#fff;font-family:'DM Sans',sans-serif;"
+        >
+          Conocer la plataforma
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+      </div>
+      <p class="mt-8 text-sm" style="color:rgba(255,255,255,0.45);font-family:'DM Sans',sans-serif;">
+        Mentor activo: <span style="color:#00C896;font-weight:600;">Neville Goddard</span> · Próximamente: voz en tiempo real y sala Mastermind
+      </p>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#00C896" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="servicios-section" class="py-24 px-6" style="background:#1A1A2E;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span
+          class="inline-block mb-3 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
+          style="background:rgba(0,200,150,0.12);color:#00C896;border:1px solid rgba(0,200,150,0.3);font-family:'DM Sans',sans-serif;"
+        >Lo que ofrecemos</span>
+        <h2
+          class="text-3xl sm:text-4xl font-bold text-white mb-4"
+          style="font-family:'Space Grotesk',sans-serif;"
+        >Una plataforma que redefine <br class="hidden sm:block"/>el mentoring personal</h2>
+        <p class="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg" style="font-family:'DM Sans',sans-serif;">
+          No es un chatbot genérico. Cada mentor en MentoresIA es un agente construido con código real, entrenado con profundidad filosófica y metodológica para guiarte en tu proceso de transformación.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Card 1 -->
+        <div
+          class="rounded-2xl p-8 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+          style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"
+        >
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(0,200,150,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#00C896" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">Conversaciones Mentor-Aprendiz</h3>
+          <p class="text-gray-400 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            Dialoga en tiempo real con la IA que simula a tu mentor elegido. Recibe respuestas profundas, coherentes con su filosofía y adaptadas a tu situación personal.
+          </p>
+          <div class="mt-auto">
+            <span class="text-xs font-semibold" style="color:#00C896;font-family:'DM Sans',sans-serif;">Disponible ahora</span>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="rounded-2xl p-8 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+          style="background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);"
+        >
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(124,58,237,0.2);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#7C3AED" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">Rutas de Aprendizaje Personalizadas</h3>
+          <p class="text-gray-400 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            El agente analiza tu punto de partida y construye un camino de crecimiento único para ti. Sin cursos genéricos. Sin información irrelevante. Solo lo que necesitas.
+          </p>
+          <div class="mt-auto">
+            <span class="text-xs font-semibold" style="color:#7C3AED;font-family:'DM Sans',sans-serif;">Incluido en el plan</span>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="rounded-2xl p-8 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+          style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"
+        >
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:rgba(0,200,150,0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="#00C896" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white" style="font-family:'Space Grotesk',sans-serif;">Sala Mastermind IA</h3>
+          <p class="text-gray-400 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            Próximamente: sesiones con varios mentores activos al mismo tiempo. Debates, perspectivas cruzadas y síntesis inteligente para acelerar tu transformación.
+          </p>
+          <div class="mt-auto">
+            <span class="text-xs font-semibold" style="color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;">Próximamente</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Mentor activo destacado -->
+      <div
+        class="mt-16 rounded-2xl overflow-hidden flex flex-col md:flex-row"
+        style="background:linear-gradient(135deg,rgba(124,58,237,0.2) 0%,rgba(0,200,150,0.1) 100%);border:1px solid rgba(124,58,237,0.25);"
+      >
+        <div class="md:w-1/2 p-8 sm:p-10 flex flex-col justify-center">
+          <span
+            class="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold tracking-widest uppercase w-fit"
+            style="background:rgba(0,200,150,0.15);color:#00C896;border:1px solid rgba(0,200,150,0.3);font-family:'DM Sans',sans-serif;"
+          >Mentor activo ahora</span>
+          <h3 class="text-2xl sm:text-3xl font-bold text-white mb-4" style="font-family:'Space Grotesk',sans-serif;">Neville Goddard</h3>
+          <p class="text-gray-300 text-sm sm:text-base leading-relaxed mb-6" style="font-family:'DM Sans',sans-serif;">
+            Uno de los pensadores más influyentes del siglo XX sobre el poder de la imaginación y la conciencia. Su enseñanza sobre la ley de la asunción ha transformado la vida de millones de personas. Ahora puedes conversar con él, hacerle preguntas y recibir guía personalizada sobre cómo aplicar su filosofía a tu realidad.
+          </p>
+          <a
+            href="https://wa.me/5491162504624?text=Quiero%20conversar%20con%20el%20mentor%20Neville%20Goddard%20en%20MentoresIA"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 font-semibold text-sm transition-all duration-200 hover:gap-4 w-fit"
+            style="color:#00C896;font-family:'DM Sans',sans-serif;"
+          >
+            Comenzar con Neville
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+        </div>
+        <div class="md:w-1/2 min-h-64 relative">
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80"
+            alt="Mentor Neville Goddard IA"
+            class="w-full h-full object-cover object-center"
+            style="min-height:280px;"
+          />
+          <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(26,26,46,0.6) 0%,transparent 60%);"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT BRIEF -->
+  <section class="py-24 px-6" style="background:#0F0F1E;">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+        <div class="relative">
+          <img
+            src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=900&q=80"
+            alt="Tecnología de agentes IA MentoresIA"
+            class="rounded-2xl w-full object-cover"
+            style="max-height:480px;"
+          />
+          <div
+            class="absolute -bottom-6 -right-6 rounded-2xl p-6 shadow-2xl"
+            style="background:#1A1A2E;border:1px solid rgba(0,200,150,0.25);max-width:220px;"
+          >
+            <p class="text-3xl font-bold mb-1" style="color:#00C896;font-family:'Space Grotesk',sans-serif;">100%</p>
+            <p class="text-sm text-gray-400" style="font-family:'DM Sans',sans-serif;">Agentes construidos con código real, no imitaciones simples</p>
+          </div>
+        </div>
+
+        <div>
+          <span
+            class="inline-block mb-4 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
+            style="background:rgba(0,200,150,0.12);color:#00C896;border:1px solid rgba(0,200,150,0.3);font-family:'DM Sans',sans-serif;"
+          >Por qué somos diferentes</span>
+          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6" style="font-family:'Space Grotesk',sans-serif;">
+            Precisión que los <br/><span style="color:#00C896;">demás no pueden igualar</span>
+          </h2>
+          <div class="flex flex-col gap-6">
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1" style="background:rgba(0,200,150,0.15);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#00C896" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-1" style="font-family:'Space Grotesk',sans-serif;">Agentes con código real</h4>
+                <p class="text-gray-400 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">No usamos herramientas de armar-y-listo. Cada agente es desarrollado desde cero con arquitecturas de IA avanzadas que garantizan fidelidad y profundidad filosófica.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1" style="background:rgba(0,200,150,0.15);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#00C896" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-1" style="font-family:'Space Grotesk',sans-serif;">Personalización real</h4>
+                <p class="text-gray-400 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">El agente recuerda tu contexto, adapta su lenguaje y construye una ruta de aprendizaje que evoluciona contigo. No es un chatbot estático.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1" style="background:rgba(0,200,150,0.15);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="#00C896" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white mb-1" style="font-family:'Space Grotesk',sans-serif;">Disponible 24/7, sin límites</h4>
+                <p class="text-gray-400 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">Tu mentor IA está disponible cuando lo necesites. A las 2am, en medio de una decisión difícil, en tu momento de duda. Siempre presente.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="py-24 px-6" style="background:#1A1A2E;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span
+          class="inline-block mb-3 px-4 py-1 rounded-full text-xs font-semibold tracking-widest uppercase"
+          style="background:rgba(0,200,150,0.12);color:#00C896;border:1px solid rgba(0,200,150,0.3);font-family:'DM Sans',sans-serif;"
+        >Testimonios</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4" style="font-family:'Space Grotesk',sans-serif;">
+          Lo que dicen quienes ya <br/>están en la plataforma
+        </h2>
+        <p class="text-gray-400 max-w-xl mx-auto" style="font-family:'DM Sans',sans-serif;">
+          Emprendedores que ya experimentaron el poder de tener a sus mentores disponibles con IA de verdad.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Testimonio 1 -->
+        <div
+          class="rounded-2xl p-8 flex flex-col gap-6 transition-all duration-300 hover:-translate-y-1"
+          style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"
+        >
+          <div class="flex gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            "Llevo años leyendo a Neville Goddard pero nunca había podido aplicar sus enseñanzas de forma consistente. Con el agente de MentoresIA pude por fin tener las conversaciones que necesitaba para entender cómo llevar la ley de la asunción a mi negocio. Es otra dimensión."
+          </p>
+          <div class="flex items-center gap-3 mt-auto">
+            <img
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80"
+              alt="Valentina R."
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold text-sm text-white" style="font-family:'Space Grotesk',sans-serif;">Valentina R.</p>
+              <p class="text-xs text-gray-500" style="font-family:'DM Sans',sans-serif;">Emprendedora · Colombia</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 2 -->
+        <div
+          class="rounded-2xl p-8 flex flex-col gap-6 transition-all duration-300 hover:-translate-y-1"
+          style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);"
+        >
+          <div class="flex gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            "Probé otros chatbots que supuestamente emulan mentores y la diferencia es abismal. El agente de Neville en MentoresIA responde como alguien que realmente estudió su obra en profundidad. Las conversaciones son densas, útiles y transformadoras."
+          </p>
+          <div class="flex items-center gap-3 mt-auto">
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
+              alt="Martín L."
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold text-sm text-white" style="font-family:'Space Grotesk',sans-serif;">Martín L.</p>
+              <p class="text-xs text-gray-500" style="font-family:'DM Sans',sans-serif;">Fundador de startup · Argentina</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonio 3 -->
+        <div
+          class="rounded-2xl p-8 flex flex-col gap-6 transition-all duration-300 hover:-translate-y-1"
+          style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);"
+        >
+          <div class="flex gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="#00C896" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed" style="font-family:'DM Sans',sans-serif;">
+            "Lo que más me sorprendió es la ruta de aprendizaje. No me bombardeó con información. Me preguntó, me escuchó, y construyó un plan específico para mi momento. Sentí que finalmente tenía un mentor de verdad disponible para mí."
+          </p>
+          <div class="flex items-center gap-3 mt-auto">
+            <img
+              src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=80&q=80"
+              alt="Camila F."
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <p class="font-semibold text-sm text-white" style="font-family:'Space Grotesk',sans-serif;">Camila F.</p>
+              <p class="text-xs text-gray-500" style="font-family:'DM Sans',sans-serif;">Coach & Emprendedora · México</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="py-24 px-6 relative" style="background:#0F0F1E;">
+    <div class="absolute inset-0
+</main>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-primary text-gray-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+        <!-- Marca -->
+        <div class="flex flex-col gap-3">
+          <a href="index.html">
+            <img
+              src="/logo.png"
+              alt="MentoresIA"
+              style="height:36px;width:auto;object-fit:contain;"
+            />
+          </a>
+          <p class="text-sm text-gray-400 leading-relaxed max-w-xs">
+            Potenciamos tu crecimiento con inteligencia artificial y mentoría especializada.
+          </p>
+        </div>
+
+        <!-- Navegación -->
+        <div class="flex flex-col gap-2">
+          <h3 class="font-heading text-white font-semibold text-sm uppercase tracking-widest mb-1">
+            Navegación
+          </h3>
+          <a href="index.html"     class="footer-link text-sm text-gray-400">Inicio</a>
+          <a href="servicios.html" class="footer-link text-sm text-gray-400">Servicios</a>
+          <a href="nosotros.html"  class="footer-link text-sm text-gray-400">Nosotros</a>
+          <a href="contacto.html"  class="footer-link text-sm text-gray-400">Contacto</a>
+        </div>
+
+        <!-- Contacto y Redes -->
+        <div class="flex flex-col gap-3">
+          <h3 class="font-heading text-white font-semibold text-sm uppercase tracking-widest mb-1">
+            Contacto
+          </h3>
+          <a href="mailto:nicogdublanc@gmail.com"
+             class="footer-link text-sm text-gray-400 break-all">
+            nicogdublanc@gmail.com
+          </a>
+
+          <!-- Redes sociales -->
+          <div class="flex items-center gap-3 mt-2">
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/5491162504624"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="WhatsApp"
+               class="social-btn w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                   class="w-4 h-4 text-white">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+                         -.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075
+                         -.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059
+                         -.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52
+                         .149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52
+                         -.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51
+                         -.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372
+                         -.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074
+                         .149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625
+                         .712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413
+                         .248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.549 4.103 1.508 5.83L.057 23.997
+                         l6.305-1.654A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z
+                         m0 21.9a9.877 9.877 0 0 1-5.031-1.378l-.36-.214-3.742.981.999-3.648
+                         -.235-.374A9.861 9.861 0 0 1 2.1 12C2.1 6.533 6.533 2.1 12 2.1
+                         S21.9 6.533 21.9 12 17.467 21.9 12 21.9z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a href="https://instagram.com/mentoresia"
+               target="_blank"
+               rel="noopener noreferrer"
+               aria-label="Instagram @mentoresia"
+               class="social-btn w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                   class="w-4 h-4 text-white">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919
+                         .058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849
+                         -.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07
+                         -3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92
+                         -.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849
+                         .149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z
+                         M12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052
+                         .014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78
+                         6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072
+                         4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948
+                         0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98
+                         C15.668.014 15.259 0 12 0z
+                         M12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324z
+                         M12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8z
+                         M18.406 4.155a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:nicogdublanc@gmail.com"
+               aria-label="Enviar email"
+               class="social-btn w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                   class="w-4 h-4 text-white">
+                <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6
+                         a2 2 0 0 0-2-2zm0 4.7-8 5.334L4 8.7V6.297l8 5.333 8-5.333V8.7z"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Línea divisoria y copyright -->
+      <div class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row
+                  items-center justify-between gap-2 text-xs text-gray-500">
+        <span>© 2026 MentoresIA. Todos los derechos reservados.</span>
+        <span>Hecho con dedicación para potenciar tu futuro.</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===== JS: Menú hamburguesa ===== -->
+  <script>
+    (function () {
+      const btn   = document.getElementById('hamburger-btn');
+      const menu  = document.getElementById('mobile-menu');
+      const line1 = document.getElementById('hline1');
+      const line2 = document.getElementById('hline2');
+      const line3 = document.getElementById('hline3');
+
+      let isOpen = false;
+
+      function toggleMenu() {
+        isOpen = !isOpen;
+        btn.setAttribute('aria-expanded', isOpen.toString());
+
+        if (isOpen) {
+          menu.classList.add('open');
+          // Animación X
+          line1.style.transform = 'translateY(6px) rotate(45deg)';
+          line2.style.opacity   = '0';
+          line3.style.transform = 'translateY(-6px) rotate(-45deg)';
+        } else {
+          menu.classList.remove('open');
+          line1.style.transform = '';
+          line2.style.opacity   = '';
+          line3.style.transform = '';
+        }
+      }
+
+      btn.addEventListener('click', toggleMenu);
+
+      // Cerrar al hacer clic en un enlace del menú móvil
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          if (isOpen) toggleMenu();
+        });
+      });
+
+      // Marcar enlace activo según la página actual
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('.nav-link').forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

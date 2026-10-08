@@ -1,0 +1,27 @@
+[
+  {
+    "platform": "facebook",
+    "name": "facebook",
+    "url": "ocafintech"
+  },
+  {
+    "platform": "instagram",
+    "name": "instagram",
+    "url": "ocafintech"
+  },
+  {
+    "platform": "linkedin",
+    "name": "linkedin",
+    "url": "ocafintech"
+  },
+  {
+    "platform": "whatsapp",
+    "name": "whatsapp",
+    "url": "+59896969696"
+  },
+  {
+    "platform": "email",
+    "name": "email",
+    "url": "oca@fintech.uy"
+  }
+]

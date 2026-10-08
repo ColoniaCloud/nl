@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next Level</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A1AFF',
+            secondary: '#1E1E2E',
+            accent: '#7C3AED',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #1E1E2E;
+      color: #ffffff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover underline animation */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background-color: #7C3AED;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #a78bfa;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger animation */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger.open .line-1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    #hamburger.open .line-2 {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    #hamburger.open .line-3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Footer social link hover */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #a78bfa;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-secondary border-b border-white/10 sticky top-0 z-50 shadow-lg shadow-black/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center shrink-0">
+          <img
+            src="/logo-ia.svg"
+            alt="Next Level"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Contacto</a>
+          <a
+            href="contacto.html"
+            class="ml-2 bg-primary hover:bg-accent text-white text-sm font-heading font-semibold px-5 py-2.5 rounded-lg transition-colors duration-300 shadow-md shadow-primary/30 hover:shadow-accent/30"
+          >
+            Hablemos
+          </a>
+        </nav>
+
+        <!-- Hamburger (mobile) -->
+        <button
+          id="hamburger"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="border-t border-white/10 bg-secondary px-4 pb-5 pt-3 flex flex-col gap-1">
+        <a href="index.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Inicio</a>
+        <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Servicios</a>
+        <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Nosotros</a>
+        <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Contacto</a>
+        <a
+          href="contacto.html"
+          class="mt-3 bg-primary hover:bg-accent text-white text-sm font-heading font-semibold px-5 py-3 rounded-lg text-center transition-colors duration-300"
+        >
+          Hablemos
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT WRAPPER -->
+  <div style="flex:1;min-height:0;"><main class="bg-[#1E1E2E] text-white" style="font-family: 'DM Sans', sans-serif;">
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center justify-center">
+    <img
+      src="https://images.unsplash.com/photo-1758518727193-a8da31447858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Next Level IA"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-[#1E1E2E]/80"></div>
+    <div class="relative z-10 max-w-5xl mx-auto px-6 text-center py-32"
+      style="animation: fadeInUp 0.9s ease both;">
+      <span class="inline-block mb-4 px-4 py-1 rounded-full text-sm font-semibold tracking-widest uppercase border border-[#7C3AED] text-[#7C3AED]"
+        style="font-family: 'DM Sans', sans-serif;">Suite de Superagentes de IA</span>
+      <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight mb-6"
+        style="font-family: 'Space Grotesk', sans-serif;">
+        Tu negocio en el<br/>
+        <span class="text-[#1A1AFF]">siguiente nivel</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+        Cuatro superagentes de inteligencia artificial desarrollados con código profesional — no vibecoding — para que emprendedores y empresarios de Latinoamérica escalen sin límites.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="https://wa.me/5491162504624?text=Hola%2C%20quiero%20saber%20m%C3%A1s%20sobre%20Next%20Level"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 bg-[#1A1AFF] hover:bg-[#7C3AED] text-white font-bold px-8 py-4 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-[#1A1AFF]/40 hover:scale-105"
+          style="font-family: 'Space Grotesk', sans-serif;">
+          Hablar por WhatsApp
+        </a>
+        <a
+          href="/servicios"
+          class="inline-flex items-center justify-center gap-2 border border-white/30 hover:border-[#1A1AFF] text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-300 hover:bg-[#1A1AFF]/10"
+          style="font-family: 'Space Grotesk', sans-serif;">
+          Ver los agentes
+        </a>
+      </div>
+      <div class="mt-16 flex flex-wrap justify-center gap-8 text-sm text-gray-400">
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-2xl font-bold text-white" style="font-family: 'Space Grotesk', sans-serif;">+1 año</span>
+          <span>de desarrollo profesional</span>
+        </div>
+        <div class="w-px bg-white/10 hidden sm:block"></div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-2xl font-bold text-white" style="font-family: 'Space Grotesk', sans-serif;">4</span>
+          <span>superagentes especializados</span>
+        </div>
+        <div class="w-px bg-white/10 hidden sm:block"></div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-2xl font-bold text-white" style="font-family: 'Space Grotesk', sans-serif;">IA + Blockchain</span>
+          <span>hoja de ruta descentralizada</span>
+        </div>
+      </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="servicios" class="py-24 px-6 bg-[#1E1E2E]">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="text-[#7C3AED] text-sm font-semibold uppercase tracking-widest">Los 4 Superagentes</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl md:text-5xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">
+          Herramientas de IA que <span class="text-[#1A1AFF]">trabajan por vos</span>
+        </h2>
+        <p class="mt-4 text-gray-400 max-w-xl mx-auto text-lg">
+          Cada agente está diseñado para resolver un desafío real de tu negocio, con inteligencia artificial de nivel profesional.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Manu -->
+        <div class="group relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#1A1AFF]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#1A1AFF]/10">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1758519288298-f0ceff4ccaa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Manu - Sitios Web con IA"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1E1E2E] via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-4">
+              <span class="text-xs font-bold uppercase tracking-widest text-[#1A1AFF]">Sitios Web</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">Manu</h3>
+            <p class="text-gray-400 text-sm mb-4">
+              Crea tu sitio web de punta a punta con IA. Ideal para emprendedores que quieren lanzar su proyecto como una mini incubadora digital.
+            </p>
+            <a href="https://wa.me/5491162504624?text=Quiero%20saber%20m%C3%A1s%20sobre%20Manu"
+              target="_blank" rel="noopener noreferrer"
+              class="text-[#1A1AFF] text-sm font-semibold hover:text-[#7C3AED] transition-colors duration-200 flex items-center gap-1">
+              Consultar
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Margarita -->
+        <div class="group relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#7C3AED]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#7C3AED]/10">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1758519288735-93631d504920?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Margarita - Marketing y CRM"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1E1E2E] via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-4">
+              <span class="text-xs font-bold uppercase tracking-widest text-[#7C3AED]">Marketing & CRM</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">Margarita</h3>
+            <p class="text-gray-400 text-sm mb-4">
+              Estrategia de marketing digital, contenido y un CRM con buscador inteligente de leads. Tu equipo de marketing en un solo agente.
+            </p>
+            <a href="https://wa.me/5491162504624?text=Quiero%20saber%20m%C3%A1s%20sobre%20Margarita"
+              target="_blank" rel="noopener noreferrer"
+              class="text-[#7C3AED] text-sm font-semibold hover:text-[#1A1AFF] transition-colors duration-200 flex items-center gap-1">
+              Consultar
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Jordan -->
+        <div class="group relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#1A1AFF]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#1A1AFF]/10">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1758519291448-f768beb8912d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Jordan - Ventas con IA"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1E1E2E] via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-4">
+              <span class="text-xs font-bold uppercase tracking-widest text-[#1A1AFF]">Ventas</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">Jordan</h3>
+            <p class="text-gray-400 text-sm mb-4">
+              Experto y asesor de ventas con IA. Potencia tus cierres, mejora tu proceso comercial y convierte más oportunidades en clientes reales.
+            </p>
+            <a href="https://wa.me/5491162504624?text=Quiero%20saber%20m%C3%A1s%20sobre%20Jordan"
+              target="_blank" rel="noopener noreferrer"
+              class="text-[#1A1AFF] text-sm font-semibold hover:text-[#7C3AED] transition-colors duration-200 flex items-center gap-1">
+              Consultar
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- MentorIA -->
+        <div class="group relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#7C3AED]/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#7C3AED]/10">
+          <div class="relative h-44 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1758519290846-255734761926?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="MentorIA - Desarrollo Personal"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1E1E2E] via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-4">
+              <span class="text-xs font-bold uppercase tracking-widest text-[#7C3AED]">Desarrollo Personal</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-2" style="font-family: 'Space Grotesk', sans-serif;">MentorIA</h3>
+            <p class="text-gray-400 text-sm mb-4">
+              Convierte el conocimiento de grandes mentores en IAs con personalidad y ruta de aprendizaje. Tu mentor digital disponible 24/7.
+            </p>
+            <a href="https://wa.me/5491162504624?text=Quiero%20saber%20m%C3%A1s%20sobre%20MentorIA"
+              target="_blank" rel="noopener noreferrer"
+              class="text-[#7C3AED] text-sm font-semibold hover:text-[#1A1AFF] transition-colors duration-200 flex items-center gap-1">
+              Consultar
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT BRIEF -->
+  <section id="nosotros-brief" class="py-24 px-6 bg-[#13131F]">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="relative">
+        <div class="absolute -top-6 -left-6 w-40 h-40 bg-[#1A1AFF]/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-6 -right-6 w-40 h-40 bg-[#7C3AED]/10 rounded-full blur-3xl"></div>
+        <img
+          src="https://images.unsplash.com/photo-1758519291946-13cc7761b4e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+          alt="Desarrollo profesional Next Level"
+          class="relative z-10 rounded-2xl w-full object-cover shadow-2xl"
+          style="max-height: 460px;"
+        />
+        <div class="absolute bottom-6 left-6 z-20 bg-[#1A1AFF] text-white rounded-xl px-5 py-3 shadow-lg">
+          <p class="text-2xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">+1 año</p>
+          <p class="text-xs text-blue-200">de desarrollo profesional</p>
+        </div>
+      </div>
+      <div>
+        <span class="text-[#7C3AED] text-sm font-semibold uppercase tracking-widest">Por qué Next Level</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-bold leading-snug" style="font-family: 'Space Grotesk', sans-serif;">
+          Código real, no vibecoding.<br/>
+          <span class="text-[#1A1AFF]">Innovación que llega primero.</span>
+        </h2>
+        <p class="mt-5 text-gray-400 text-base leading-relaxed">
+          Next Level no es una plataforma armada con atajos. Cada superagente fue construido con código profesional, con más de un año de desarrollo serio y una hoja de ruta clara hacia algo que nadie ha logrado todavía en la región.
+        </p>
+        <p class="mt-4 text-gray-400 text-base leading-relaxed">
+          Nos dirigimos a convertir Next Level en la primera suite de IA descentralizada de Latinoamérica, combinando inteligencia artificial con tecnología Blockchain para darte autonomía real sobre tus herramientas digitales.
+        </p>
+        <ul class="mt-8 space-y-3">
+          <li class="flex items-start gap-3 text-gray-300 text-sm">
+            <span class="mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-[#1A1AFF]/20 border border-[#1A1AFF]/40 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#1A1AFF]" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            Desarrollo 100% profesional con código, no herramientas de arrastrar y soltar
+          </li>
+          <li class="flex items-start gap-3 text-gray-300 text-sm">
+            <span class="mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#7C3AED]" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            Pioneros en IA descentralizada — IA + Blockchain en hoja de ruta activa
+          </li>
+          <li class="flex items-start gap-3 text-gray-300 text-sm">
+            <span class="mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-[#1A1AFF]/20 border border-[#1A1AFF]/40 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#1A1AFF]" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            Diseñado para emprendedores, empresarios y apasionados del crecimiento personal
+          </li>
+          <li class="flex items-start gap-3 text-gray-300 text-sm">
+            <span class="mt-1 w-5 h-5 flex-shrink-0 rounded-full bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-[#7C3AED]" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </span>
+            4 agentes especializados que trabajan juntos dentro de un mismo ecosistema
+          </li>
+        </ul>
+        <a
+          href="/nosotros"
+          class="mt-8 inline-flex items-center gap-2 text-white font-semibold border border-white/20 hover:border-[#1A1AFF] px-6 py-3 rounded-xl transition-all duration-300 hover:bg-[#1A1AFF]/10 text-sm"
+          style="font-family: 'Space Grotesk', sans-serif;">
+          Conocer más sobre Next Level
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonios" class="py-24 px-6 bg-[#1E1E2E]">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-[#7C3AED] text-sm font-semibold uppercase tracking-widest">Lo que dicen los que ya dieron el salto</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-bold" style="font-family: 'Space Grotesk', sans-serif;">
+          Resultados <span class="text-[#1A1AFF]">reales</span>
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#1A1AFF]/40 transition-all duration-300 hover:-translate-y-1">
+          <div class="flex gap-1 mb-4">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed mb-6">
+            "Con Manu lancé mi tienda en línea en menos de una semana. Lo que antes me hubiera costado meses y miles de dólares, lo tuve listo con una herramienta que realmente entendía lo que necesitaba."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A1AFF] to-[#7C3AED] flex items-center justify-center text-white font-bold text-sm" style="font-family: 'Space Grotesk', sans-serif;">CA</div>
+            <div>
+              <p class="text-sm font-semibold text-white" style="font-family: 'Space Grotesk', sans-serif;">Camila Acosta</p>
+              <p class="text-xs text-gray-500">Emprendedora — Buenos Aires, Argentina</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#7C3AED]/40 transition-all duration-300 hover:-translate-y-1">
+          <div class="flex gap-1 mb-4">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed mb-6">
+            "Margarita cambió cómo gestionamos nuestros prospectos. El buscador de leads es una locura, encontramos contactos calificados que antes perdíamos en planillas de Excel eternas."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#1A1AFF] flex items-center justify-center text-white font-bold text-sm" style="font-family: 'Space Grotesk', sans-serif;">RV</div>
+            <div>
+              <p class="text-sm font-semibold text-white" style="font-family: 'Space Grotesk', sans-serif;">Rodrigo Vargas</p>
+              <p class="text-xs text-gray-500">Director Comercial — Bogotá, Colombia</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-7 hover:border-[#1A1AFF]/40 transition-all duration-300 hover:-translate-y-1">
+          <div class="flex gap-1 mb-4">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.957c.3.921-.755 1.688-1.54 1.118L10 14.347l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.286-3.957a1 1 0 00-.364-1.118L2.643 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69L9.05 2.927z"/></svg>
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed mb-6">
+            "MentorIA fue un antes y un después para mí. Convertir los libros que más me marcaron en un mentor digital con el que puedo hablar todos los días... no tiene precio."
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#1A1AFF] to-[#7C3AED] flex items-center justify-center text-white font-bold text-sm" style="font-family: 'Space Grotesk', sans-serif;">LM</div>
+            <div>
+              <p class="text-
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-secondary border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col items-center md:items-start gap-3">
+          <a href="index.html">
+            <img
+              src="/logo-ia.svg"
+              alt="Next Level"
+              style="height:clamp(28px,4vw,44px);width:auto;max-width:160px;object-fit:contain;opacity:0.9;"
+            />
+          </a>
+          <p class="text-white/40 text-xs font-body">
+            &copy; 2026 Next Level. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav links -->
+        <nav class="flex flex-col items-center md:items-start gap-2" aria-label="Mapa del sitio">
+          <p class="text-white/60 text-xs font-heading font-semibold uppercase tracking-widest mb-1">Sitio</p>
+          <a href="index.html" class="social-link text-white/70 text-sm font-body">Inicio</a>
+          <a href="servicios.html" class="social-link text-white/70 text-sm font-body">Servicios</a>
+          <a href="nosotros.html" class="social-link text-white/70 text-sm font-body">Nosotros</a>
+          <a href="contacto.html" class="social-link text-white/70 text-sm font-body">Contacto</a>
+        </nav>
+
+        <!-- Social & Contact -->
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <p class="text-white/60 text-xs font-heading font-semibold uppercase tracking-widest mb-1">Contacto</p>
+          <a
+            href="mailto:oso@nl.com"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            oso@nl.com
+          </a>
+          <a
+            href="https://wa.me/5491162504624"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            WhatsApp: +54 9 11 6250-4624
+          </a>
+          <a
+            href="https://instagram.com/nextlevel360"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            Instagram: @nextlevel360
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
+        <span class="text-white/25 text-xs font-body">Hecho con dedicación por el equipo de Next Level &mdash; 2026</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var hamburger = document.getElementById('hamburger');
+      var mobileMenu = document.getElementById('mobile-menu');
+
+      if (!hamburger || !mobileMenu) return;
+
+      hamburger.addEventListener('click', function () {
+        var isOpen = mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', !isOpen);
+        hamburger.classList.toggle('open', !isOpen);
+        hamburger.setAttribute('aria-expanded', String(!isOpen));
+        hamburger.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
+      });
+
+      // Close menu when a link inside is clicked
+      var mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      // Mark active nav link based on current page
+      var currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      var allNavLinks = document.querySelectorAll('.nav-link');
+      allNavLinks.forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

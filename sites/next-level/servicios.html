@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next Level</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1A1AFF',
+            secondary: '#1E1E2E',
+            accent: '#7C3AED',
+          },
+          fontFamily: {
+            heading: ['Space Grotesk', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'DM Sans', sans-serif;
+      background-color: #1E1E2E;
+      color: #ffffff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    /* Nav link hover underline animation */
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background-color: #7C3AED;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #a78bfa;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger animation */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    #hamburger.open .line-1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    #hamburger.open .line-2 {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    #hamburger.open .line-3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Footer social link hover */
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #a78bfa;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-secondary border-b border-white/10 sticky top-0 z-50 shadow-lg shadow-black/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 md:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center shrink-0">
+          <img
+            src="/logo-ia.svg"
+            alt="Next Level"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-sm tracking-wide">Contacto</a>
+          <a
+            href="contacto.html"
+            class="ml-2 bg-primary hover:bg-accent text-white text-sm font-heading font-semibold px-5 py-2.5 rounded-lg transition-colors duration-300 shadow-md shadow-primary/30 hover:shadow-accent/30"
+          >
+            Hablemos
+          </a>
+        </nav>
+
+        <!-- Hamburger (mobile) -->
+        <button
+          id="hamburger"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class="md:hidden flex flex-col justify-center items-center gap-1.5 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="border-t border-white/10 bg-secondary px-4 pb-5 pt-3 flex flex-col gap-1">
+        <a href="index.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Inicio</a>
+        <a href="servicios.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Servicios</a>
+        <a href="nosotros.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Nosotros</a>
+        <a href="contacto.html" class="nav-link text-white/90 font-body font-medium text-base py-2.5 border-b border-white/5">Contacto</a>
+        <a
+          href="contacto.html"
+          class="mt-3 bg-primary hover:bg-accent text-white text-sm font-heading font-semibold px-5 py-3 rounded-lg text-center transition-colors duration-300"
+        >
+          Hablemos
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT WRAPPER -->
+  <div style="flex:1;min-height:0;"><main class="bg-[#1E1E2E] text-white" style="font-family: 'DM Sans', sans-serif;">
+
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.8s ease forwards; }
+    .fade-in-delay-1 { animation: fadeIn 0.8s ease 0.15s forwards; opacity: 0; }
+    .fade-in-delay-2 { animation: fadeIn 0.8s ease 0.3s forwards; opacity: 0; }
+    .fade-in-delay-3 { animation: fadeIn 0.8s ease 0.45s forwards; opacity: 0; }
+    .fade-in-delay-4 { animation: fadeIn 0.8s ease 0.6s forwards; opacity: 0; }
+
+    .agent-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .agent-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(26,26,255,0.25); }
+
+    .pricing-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(124,58,237,0.3); }
+
+    .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .faq-item.open .faq-content { max-height: 400px; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-icon { transition: transform 0.3s ease; display: inline-block; }
+
+    .gradient-border { background: linear-gradient(135deg, #1A1AFF, #7C3AED); padding: 1px; border-radius: 16px; }
+    .gradient-border-inner { background: #1E1E2E; border-radius: 15px; }
+
+    .badge { background: linear-gradient(135deg, rgba(26,26,255,0.2), rgba(124,58,237,0.2)); border: 1px solid rgba(124,58,237,0.4); }
+
+    .hero-overlay { background: linear-gradient(135deg, rgba(30,30,46,0.88) 0%, rgba(26,26,255,0.35) 100%); }
+
+    .feature-tag { background: rgba(26,26,255,0.15); border: 1px solid rgba(26,26,255,0.35); }
+    .feature-tag-accent { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.35); }
+
+    .timeline-dot { background: linear-gradient(135deg, #1A1AFF, #7C3AED); }
+
+    .popular-badge { background: linear-gradient(135deg, #1A1AFF, #7C3AED); }
+
+    .btn-primary { background: linear-gradient(135deg, #1A1AFF, #7C3AED); transition: opacity 0.3s ease, transform 0.2s ease; }
+    .btn-primary:hover { opacity: 0.9; transform: scale(1.03); }
+
+    .btn-outline { border: 2px solid #1A1AFF; transition: background 0.3s ease, color 0.3s ease; }
+    .btn-outline:hover { background: #1A1AFF; color: #fff; }
+
+    .agent-img { transition: transform 0.4s ease; }
+    .agent-card:hover .agent-img { transform: scale(1.04); }
+  </style>
+
+  <!-- BANNER HERO -->
+  <section class="relative min-h-[420px] md:min-h-[520px] flex items-center justify-center">
+    <div class="absolute inset-0">
+      <img
+        src="https://images.unsplash.com/photo-1758518727193-a8da31447858?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+        alt="Next Level Servicios"
+        class="w-full h-full object-cover"
+        style="object-position: center;"
+      />
+      <div class="hero-overlay absolute inset-0"></div>
+    </div>
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto fade-in">
+      <span class="badge inline-block px-4 py-1.5 rounded-full text-sm font-medium text-purple-300 mb-5" style="font-family: 'Space Grotesk', sans-serif;">Suite de Superagentes de IA</span>
+      <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-5" style="font-family: 'Space Grotesk', sans-serif;">
+        Nuestros <span style="background: linear-gradient(135deg, #1A1AFF, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Servicios</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        Cuatro superagentes de IA desarrollados con código profesional, más de un año de ingeniería y una hoja de ruta hacia la primera IA descentralizada de Latinoamérica.
+      </p>
+    </div>
+  </section>
+
+  <!-- INTRO DIFERENCIADOR -->
+  <section class="py-16 px-6 max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-6 fade-in-delay-1">
+      <div class="rounded-2xl p-6 feature-tag text-center">
+        <div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, #1A1AFF22, #7C3AED22); border: 1px solid #1A1AFF55;">
+          <svg width="24" height="24" fill="none" stroke="#1A1AFF" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <h3 class="font-bold text-white mb-2" style="font-family: 'Space Grotesk', sans-serif;">Codigo Profesional</h3>
+        <p class="text-gray-400 text-sm">Sin vibecoding. Arquitectura solida, escalable y segura construida por ingenieros especializados.</p>
+      </div>
+      <div class="rounded-2xl p-6 feature-tag-accent text-center">
+        <div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, #7C3AED22, #1A1AFF22); border: 1px solid #7C3AED55;">
+          <svg width="24" height="24" fill="none" stroke="#7C3AED" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <h3 class="font-bold text-white mb-2" style="font-family: 'Space Grotesk', sans-serif;">Mas de 1 Ano de Desarrollo</h3>
+        <p class="text-gray-400 text-sm">Producto maduro, probado y en constante mejora. No una herramienta improvisada.</p>
+      </div>
+      <div class="rounded-2xl p-6 feature-tag text-center">
+        <div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, #1A1AFF22, #7C3AED22); border: 1px solid #1A1AFF55;">
+          <svg width="24" height="24" fill="none" stroke="#1A1AFF" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3 class="font-bold text-white mb-2" style="font-family: 'Space Grotesk', sans-serif;">IA + Blockchain</h3>
+        <p class="text-gray-400 text-sm">Pioneros en la hoja de ruta hacia la primera IA descentralizada de Latinoamerica.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL: MANU -->
+  <section id="manu" class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="fade-in-delay-1">
+          <span class="badge inline-block px-3 py-1 rounded-full text-xs font-semibold text-blue-300 mb-4" style="font-family: 'Space Grotesk', sans-serif;">SUPERAGENTE 01</span>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+            <span style="color: #1A1AFF;">Manu</span> — Tu Sitio Web con IA
+          </h2>
+          <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+            Manu es el superagente que construye sitios web de punta a punta usando inteligencia artificial. Pensado como una mini incubadora digital para emprendedores que quieren lanzar su proyecto al mundo sin complicaciones tecnicas.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Diseno, desarrollo y publicacion gestionados por IA</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Ideal para emprendedores que inician su primer proyecto digital</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Resultado profesional sin necesidad de saber programar</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Velocidad, SEO y experiencia de usuario optimizados</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21+Quiero+saber+m%C3%A1s+sobre+Manu+y+c%C3%B3mo+puede+crear+mi+sitio+web"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary inline-block px-8 py-3.5 rounded-full text-white font-semibold text-sm"
+            style="font-family: 'Space Grotesk', sans-serif;"
+          >
+            Quiero mi sitio con Manu
+          </a>
+        </div>
+        <div class="agent-card rounded-3xl overflow-hidden fade-in-delay-2">
+          <img
+            src="https://images.unsplash.com/photo-1758519288298-f0ceff4ccaa1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Manu - Sitios Web con IA"
+            class="agent-img w-full h-72 md:h-96 object-cover"
+          />
+          <div class="p-6" style="background: rgba(26,26,255,0.08); border: 1px solid rgba(26,26,255,0.2); border-top: none; border-radius: 0 0 24px 24px;">
+            <p class="text-blue-300 text-sm font-medium" style="font-family: 'Space Grotesk', sans-serif;">Para emprendedores y duenos de negocio</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL: MARGARITA -->
+  <section id="margarita" class="py-20 px-6" style="background: rgba(124,58,237,0.05);">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="agent-card rounded-3xl overflow-hidden order-2 md:order-1 fade-in-delay-1">
+          <img
+            src="https://images.unsplash.com/photo-1758519291448-f768beb8912d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Margarita - Marketing y CRM con IA"
+            class="agent-img w-full h-72 md:h-96 object-cover"
+          />
+          <div class="p-6" style="background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-top: none; border-radius: 0 0 24px 24px;">
+            <p class="text-purple-300 text-sm font-medium" style="font-family: 'Space Grotesk', sans-serif;">Para empresarios que quieren crecer digitalmente</p>
+          </div>
+        </div>
+        <div class="order-1 md:order-2 fade-in-delay-2">
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold text-purple-300 mb-4" style="font-family: 'Space Grotesk', sans-serif; background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);">SUPERAGENTE 02</span>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+            <span style="color: #7C3AED;">Margarita</span> — Marketing y CRM Inteligente
+          </h2>
+          <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+            Margarita es tu estratega de marketing digital con IA y un CRM potente que incluye un buscador inteligente de leads. Perfecta para empresarios y duenos de negocio que quieren potenciar su presencia digital y encontrar a sus clientes ideales.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Estrategia de contenido y marketing automatizada con IA</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">CRM con buscador inteligente de leads calificados</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Gestion de campanas y seguimiento de resultados en tiempo real</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Conecta tu equipo comercial con los prospectos correctos</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21+Quiero+saber+m%C3%A1s+sobre+Margarita+y+el+CRM+con+IA"
+            target="_blank"
+            rel="noopener"
+            class="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-sm transition-all duration-300"
+            style="font-family: 'Space Grotesk', sans-serif; background: linear-gradient(135deg, #7C3AED, #1A1AFF);"
+            onmouseover="this.style.opacity='0.88'"
+            onmouseout="this.style.opacity='1'"
+          >
+            Quiero potenciar mi marketing
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL: JORDAN -->
+  <section id="jordan" class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="fade-in-delay-1">
+          <span class="badge inline-block px-3 py-1 rounded-full text-xs font-semibold text-blue-300 mb-4" style="font-family: 'Space Grotesk', sans-serif;">SUPERAGENTE 03</span>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+            <span style="color: #1A1AFF;">Jordan</span> — Experto en Ventas con IA
+          </h2>
+          <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+            Jordan es tu asesor y experto en ventas potenciado por inteligencia artificial. Diseñado para empresarios y duenos de negocio que quieren cerrar mas negocios, optimizar su proceso comercial y escalar sus ingresos con estrategia.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Asesoria en estrategia comercial y proceso de ventas</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Identificacion de oportunidades y cierre de negocios con IA</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Entrenamiento y soporte continuo para tu equipo de ventas</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #1A1AFF22; border: 1px solid #1A1AFF;">
+                <svg width="10" height="10" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Reportes y analitica de desempeno comercial en tiempo real</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21+Quiero+saber+m%C3%A1s+sobre+Jordan+y+como+puede+potenciar+mis+ventas"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary inline-block px-8 py-3.5 rounded-full text-white font-semibold text-sm"
+            style="font-family: 'Space Grotesk', sans-serif;"
+          >
+            Quiero aumentar mis ventas
+          </a>
+        </div>
+        <div class="agent-card rounded-3xl overflow-hidden fade-in-delay-2">
+          <img
+            src="https://images.unsplash.com/photo-1758519290846-255734761926?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Jordan - Ventas con IA"
+            class="agent-img w-full h-72 md:h-96 object-cover"
+          />
+          <div class="p-6" style="background: rgba(26,26,255,0.08); border: 1px solid rgba(26,26,255,0.2); border-top: none; border-radius: 0 0 24px 24px;">
+            <p class="text-blue-300 text-sm font-medium" style="font-family: 'Space Grotesk', sans-serif;">Para empresarios que quieren escalar sus ingresos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE DETAIL: MENTORIA -->
+  <section id="mentoria" class="py-20 px-6" style="background: rgba(124,58,237,0.05);">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="agent-card rounded-3xl overflow-hidden order-2 md:order-1 fade-in-delay-1">
+          <img
+            src="https://images.unsplash.com/photo-1762341120753-b53919563c87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODMwODY3MjR8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="MentorIA - Desarrollo Personal con IA"
+            class="agent-img w-full h-72 md:h-96 object-cover"
+          />
+          <div class="p-6" style="background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-top: none; border-radius: 0 0 24px 24px;">
+            <p class="text-purple-300 text-sm font-medium" style="font-family: 'Space Grotesk', sans-serif;">Para mentores, emprendedores y apasionados del crecimiento personal</p>
+          </div>
+        </div>
+        <div class="order-1 md:order-2 fade-in-delay-2">
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold text-purple-300 mb-4" style="font-family: 'Space Grotesk', sans-serif; background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);">SUPERAGENTE 04</span>
+          <h2 class="text-3xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+            <span style="color: #7C3AED;">MentorIA</span> — Tu Mentor Digital con IA
+          </h2>
+          <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+            MentorIA convierte el conocimiento de los grandes mentores en inteligencias artificiales con personalidad propia y una ruta de aprendizaje estructurada. Perfecto para emprendedores con pasion por el desarrollo personal y los libros.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">IA con la personalidad y el estilo de tu mentor favorito</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Ruta de aprendizaje personalizada para tu crecimiento personal</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Mentores reales se convierten en IAs disponibles 24/7</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background: #7C3AED22; border: 1px solid #7C3AED;">
+                <svg width="10" height="10" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              </span>
+              <span class="text-gray-300">Para emprendedores, empresarios y amantes de los libros</span>
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21+Quiero+saber+m%C3%A1s+sobre+MentorIA+y+los+mentores+digitales"
+            target="_blank"
+            rel="noopener"
+            class="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-sm transition-all duration-300"
+            style="font-family: 'Space Grotesk', sans-serif; background: linear-gradient(135deg, #7C3AED, #1A1AFF);"
+            onmouseover="this.style.opacity='0.88'"
+            onmouseout="this.style.opacity='1'"
+          >
+            Quiero mi mentor con IA
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="precios" class="py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16 fade-in">
+        <span class="badge inline-block px-4 py-1.5 rounded-full text-sm font-medium text-blue-300 mb-4" style="font-family: 'Space Grotesk', sans-serif;">Planes y Precios</span>
+        <h2 class="text-3xl md:text-5xl font-bold mb-4" style="font-family: 'Space Grotesk', sans-serif;">
+          Elige tu <span style="background: linear-gradient(135deg, #1A1AFF, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">superagente</span>
+        </h2>
+        <p class="text-gray-400 max-w-xl mx-auto text-lg">Precios pensados para Latinoamerica. Inicia con el agente que necesitas y escala cuando estes listo.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 fade-in-delay-1">
+
+        <!-- Manu -->
+        <div class="pricing-card rounded-2xl p-6 flex flex-col" style="background: rgba(26,26,255,0.08); border: 1px solid rgba(26,26,255,0.3);">
+          <div class="mb-5">
+            <div class="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style="background: rgba(26,26,255,0.2);">
+              <svg width="20" height="20" fill="none" stroke="#1A1AFF" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-1" style="font-family: 'Space Grotesk', sans-serif;">Manu</h3>
+            <p class="text-gray-400 text-sm mb-4">Sitios web con IA de punta a punta</p>
+            <div class="flex items-end gap-1 mb-1">
+              <span class="text-3xl font-bold text-white" style="font-family: 'Space Grotesk', sans-serif;">USD 49</span>
+              <span class="text-gray-400 text-sm mb-1">/mes</span>
+            </div>
+            <p class="text-gray-500 text-xs">o desde USD 299 pago unico</p>
+          </div>
+          <ul class="space-y-2.5 flex-1 mb-6">
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Sitio web completo con IA
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Diseno responsivo y profesional
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Optimizacion SEO incluida
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Actualizaciones y soporte
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Hosting y dominio incluidos
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21+Me+interesa+el+plan+de+Manu"
+            target="_blank"
+            rel="noopener"
+            class="btn-outline block text-center py-3 rounded-full text-sm font-semibold text-white"
+            style="font-family: 'Space Grotesk', sans-serif;"
+          >
+            Consultar por Manu
+          </a>
+        </div>
+
+        <!-- Margarita -->
+        <div class="pricing-card rounded-2xl p-6 flex flex-col relative" style="background: rgba(124,58,237,0.12); border: 2px solid #7C3AED;">
+          <div class="popular-badge absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-white text-xs font-bold" style="font-family: 'Space Grotesk', sans-serif;">MAS POPULAR</div>
+          <div class="mb-5">
+            <div class="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style="background: rgba(124,58,237,0.2);">
+              <svg width="20" height="20" fill="none" stroke="#7C3AED" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-1" style="font-family: 'Space Grotesk', sans-serif;">Margarita</h3>
+            <p class="text-gray-400 text-sm mb-4">Marketing, CRM y buscador de leads</p>
+            <div class="flex items-end gap-1 mb-1">
+              <span class="text-3xl font-bold text-white" style="font-family: 'Space Grotesk', sans-serif;">USD 89</span>
+              <span class="text-gray-400 text-sm mb-1">/mes</span>
+            </div>
+            <p class="text-gray-500 text-xs">Suscripcion mensual cancelable</p>
+          </div>
+          <ul class="space-y-2.5 flex-1 mb-6">
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              CRM con gestion de contactos
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Buscador inteligente de leads con IA
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Estrategia de contenido automatizada
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Reportes de campanas en tiempo real
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#7C3AED" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Integraciones con redes sociales
+            </li>
+          </ul>
+          <a
+            href="https://wa.me/5491162504624?text=Hola%21+Me+interesa+el+plan+de+Margarita"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary block text-center py-3 rounded-full text-sm font-semibold text-white"
+            style="font-family: 'Space Grotesk', sans-serif;"
+          >
+            Consultar por Margarita
+          </a>
+        </div>
+
+        <!-- Jordan -->
+        <div class="pricing-card rounded-2xl p-6 flex flex-col" style="background: rgba(26,26,255,0.08); border: 1px solid rgba(26,26,255,0.3);">
+          <div class="mb-5">
+            <div class="w-10 h-10 rounded-xl mb-4 flex items-center justify-center" style="background: rgba(26,26,255,0.2);">
+              <svg width="20" height="20" fill="none" stroke="#1A1AFF" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-1" style="font-family: 'Space Grotesk', sans-serif;">Jordan</h3>
+            <p class="text-gray-400 text-sm mb-4">Asesoria y estrategia de ventas con IA</p>
+            <div class="flex items-end gap-1 mb-1">
+              <span class="text-3xl font-bold text-white" style="font-family: 'Space Grotesk', sans-serif;">USD 69</span>
+              <span class="text-gray-400 text-sm mb-1">/mes</span>
+            </div>
+            <p class="text-gray-500 text-xs">Suscripcion mensual cancelable</p>
+          </div>
+          <ul class="space-y-2.5 flex-1 mb-6">
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Asesoria comercial con IA 24/7
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Estrategia de cierre de ventas
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Entrenamiento para tu equipo
+            </li>
+            <li class="flex items-center gap-2 text-sm text-gray-300">
+              <svg width="14" height="14" fill="#1A1AFF" viewBox="0 0 10 10"><path d="M1 5l3 3 5-6"/></svg>
+              Analitica de desempeno comercial
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-secondary border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col items-center md:items-start gap-3">
+          <a href="index.html">
+            <img
+              src="/logo-ia.svg"
+              alt="Next Level"
+              style="height:clamp(28px,4vw,44px);width:auto;max-width:160px;object-fit:contain;opacity:0.9;"
+            />
+          </a>
+          <p class="text-white/40 text-xs font-body">
+            &copy; 2026 Next Level. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav links -->
+        <nav class="flex flex-col items-center md:items-start gap-2" aria-label="Mapa del sitio">
+          <p class="text-white/60 text-xs font-heading font-semibold uppercase tracking-widest mb-1">Sitio</p>
+          <a href="index.html" class="social-link text-white/70 text-sm font-body">Inicio</a>
+          <a href="servicios.html" class="social-link text-white/70 text-sm font-body">Servicios</a>
+          <a href="nosotros.html" class="social-link text-white/70 text-sm font-body">Nosotros</a>
+          <a href="contacto.html" class="social-link text-white/70 text-sm font-body">Contacto</a>
+        </nav>
+
+        <!-- Social & Contact -->
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <p class="text-white/60 text-xs font-heading font-semibold uppercase tracking-widest mb-1">Contacto</p>
+          <a
+            href="mailto:oso@nl.com"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            oso@nl.com
+          </a>
+          <a
+            href="https://wa.me/5491162504624"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            WhatsApp: +54 9 11 6250-4624
+          </a>
+          <a
+            href="https://instagram.com/nextlevel360"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link text-white/70 text-sm font-body"
+          >
+            Instagram: @nextlevel360
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
+        <span class="text-white/25 text-xs font-body">Hecho con dedicación por el equipo de Next Level &mdash; 2026</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var hamburger = document.getElementById('hamburger');
+      var mobileMenu = document.getElementById('mobile-menu');
+
+      if (!hamburger || !mobileMenu) return;
+
+      hamburger.addEventListener('click', function () {
+        var isOpen = mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', !isOpen);
+        hamburger.classList.toggle('open', !isOpen);
+        hamburger.setAttribute('aria-expanded', String(!isOpen));
+        hamburger.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
+      });
+
+      // Close menu when a link inside is clicked
+      var mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      // Mark active nav link based on current page
+      var currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      var allNavLinks = document.querySelectorAll('.nav-link');
+      allNavLinks.forEach(function (link) {
+        var href = link.getAttribute('href');
+        if (href === currentPath) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elevate MKT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open%20Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0D0D0D',
+            secondary: '#C9A84C',
+            accent: '#F5F5F5'
+          },
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            body: ['Open Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      background-color: #F5F5F5;
+      color: #0D0D0D;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* Nav link underline animation */
+    .nav-link {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #C9A84C;
+      transition: color 0.3s ease;
+    }
+
+    /* Mobile menu transition */
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Hamburger icon transition */
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #F5F5F5;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    .hamburger-btn.open .line-1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger-btn.open .line-2 {
+      opacity: 0;
+    }
+
+    .hamburger-btn.open .line-3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Footer social link hover */
+    .social-link {
+      transition: color 0.3s ease, opacity 0.3s ease;
+    }
+
+    .social-link:hover {
+      color: #C9A84C;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="bg-primary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img
+            src="/logo.jpeg"
+            alt="Elevate MKT"
+            style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide">Nosotros</a>
+          <a href="contacto.html" class="nav-link font-body font-semibold text-sm tracking-wide bg-secondary text-primary px-5 py-2 rounded-sm hover:bg-opacity-90 transition-all duration-300" style="text-decoration:none;">Contacto</a>
+        </nav>
+
+        <!-- Hamburger Button (mobile) -->
+        <button
+          id="hamburger-btn"
+          class="hamburger-btn md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 focus:outline-none"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="bg-primary border-t border-secondary border-opacity-30 px-4 pb-4 pt-2 flex flex-col gap-1">
+        <a href="index.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 border-b border-white border-opacity-10 block">Inicio</a>
+        <a href="servicios.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 border-b border-white border-opacity-10 block">Servicios</a>
+        <a href="nosotros.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 border-b border-white border-opacity-10 block">Nosotros</a>
+        <a href="contacto.html" class="nav-link text-accent font-body font-medium text-sm tracking-wide py-3 block">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT PLACEHOLDER -->
+  <div style="flex:1;min-height:0;"><main class="bg-[#0D0D0D] text-[#F5F5F5] font-['Open_Sans']">
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center justify-center">
+    <img
+      src="https://images.unsplash.com/photo-1666790676906-0295230c121d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Elevate MKT Hero"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-[#0D0D0D]/80"></div>
+    <div class="relative z-10 text-center px-4 max-w-4xl mx-auto" style="animation: fadeInUp 0.9s ease both;">
+      <span class="inline-block text-[#C9A84C] uppercase tracking-widest text-xs font-semibold mb-4 font-['Montserrat']">Agencia de Marketing con IA</span>
+      <h1 class="font-['Montserrat'] font-black text-4xl sm:text-5xl lg:text-6xl leading-tight mb-6">
+        Tu negocio en la era digital,<br/>
+        <span class="text-[#C9A84C]">sin que tengas que entenderlo todo.</span>
+      </h1>
+      <p class="text-[#F5F5F5]/80 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+        Integramos tecnología e inteligencia artificial para digitalizar tu negocio de forma completa: redes sociales, automatizaciones, publicidad, sitio web, funnels y más. Vos enfocate en lo tuyo, nosotros hacemos el resto.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/contacto"
+          class="bg-[#C9A84C] text-[#0D0D0D] font-['Montserrat'] font-bold px-8 py-4 rounded-lg text-sm uppercase tracking-wide transition-all duration-300 hover:bg-[#b8943e] hover:scale-105"
+        >
+          Quiero digitalizar mi negocio
+        </a>
+        <a
+          href="/servicios"
+          class="border border-[#C9A84C] text-[#C9A84C] font-['Montserrat'] font-semibold px-8 py-4 rounded-lg text-sm uppercase tracking-wide transition-all duration-300 hover:bg-[#C9A84C]/10"
+        >
+          Ver servicios
+        </a>
+      </div>
+    </div>
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+      <div class="w-px h-12 bg-[#C9A84C]/50 mx-auto" style="animation: pulse 2s infinite;"></div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="servicios" class="py-20 px-4 bg-[#0D0D0D]">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14" style="animation: fadeInUp 0.7s ease both;">
+        <span class="text-[#C9A84C] uppercase tracking-widest text-xs font-semibold font-['Montserrat']">Lo que hacemos</span>
+        <h2 class="font-['Montserrat'] font-black text-3xl sm:text-4xl mt-3 mb-4">Todo lo que tu negocio necesita,<br/><span class="text-[#C9A84C]">en un solo lugar.</span></h2>
+        <p class="text-[#F5F5F5]/60 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">No vendemos servicios sueltos. Construimos un ecosistema digital completo para que tu negocio crezca de forma sostenida y automatizada.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="group border border-[#C9A84C]/20 bg-[#111111] rounded-xl p-6 transition-all duration-300 hover:border-[#C9A84C]/70 hover:bg-[#151515]">
+          <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-['Montserrat'] font-bold text-lg mb-2">Sitio Web Profesional</h3>
+          <p class="text-[#F5F5F5]/60 text-sm leading-relaxed">Diseño y desarrollo de landing pages y sitios web optimizados para convertir visitantes en clientes reales.</p>
+        </div>
+
+        <div class="group border border-[#C9A84C]/20 bg-[#111111] rounded-xl p-6 transition-all duration-300 hover:border-[#C9A84C]/70 hover:bg-[#151515]">
+          <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-['Montserrat'] font-bold text-lg mb-2">Automatización con IA</h3>
+          <p class="text-[#F5F5F5]/60 text-sm leading-relaxed">Automatizamos tu Instagram y WhatsApp para que respondas, vendas y fidelices clientes sin intervención manual.</p>
+        </div>
+
+        <div class="group border border-[#C9A84C]/20 bg-[#111111] rounded-xl p-6 transition-all duration-300 hover:border-[#C9A84C]/70 hover:bg-[#151515]">
+          <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+          </div>
+          <h3 class="font-['Montserrat'] font-bold text-lg mb-2">Publicidad Paga</h3>
+          <p class="text-[#F5F5F5]/60 text-sm leading-relaxed">Campañas de Meta Ads y Google Ads gestionadas con estrategia y datos reales para maximizar tu retorno.</p>
+        </div>
+
+        <div class="group border border-[#C9A84C]/20 bg-[#111111] rounded-xl p-6 transition-all duration-300 hover:border-[#C9A84C]/70 hover:bg-[#151515]">
+          <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-['Montserrat'] font-bold text-lg mb-2">Creativos e Imágenes con IA</h3>
+          <p class="text-[#F5F5F5]/60 text-sm leading-relaxed">Contenido visual generado y editado con inteligencia artificial: fotos, videos y piezas gráficas para redes sociales.</p>
+        </div>
+
+        <div class="group border border-[#C9A84C]/20 bg-[#111111] rounded-xl p-6 transition-all duration-300 hover:border-[#C9A84C]/70 hover:bg-[#151515]">
+          <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h3 class="font-['Montserrat'] font-bold text-lg mb-2">Funnels de Venta</h3>
+          <p class="text-[#F5F5F5]/60 text-sm leading-relaxed">Diseñamos embudos de conversión que guían al usuario desde el primer contacto hasta la compra de forma automática.</p>
+        </div>
+
+        <div class="group border border-[#C9A84C]/20 bg-[#111111] rounded-xl p-6 transition-all duration-300 hover:border-[#C9A84C]/70 hover:bg-[#151515]">
+          <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>
+          </div>
+          <h3 class="font-['Montserrat'] font-bold text-lg mb-2">Consultoría de Escalado</h3>
+          <p class="text-[#F5F5F5]/60 text-sm leading-relaxed">Sesiones estratégicas para analizar tu negocio, definir objetivos y trazar el camino más rápido hacia el crecimiento.</p>
+        </div>
+
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="/servicios" class="inline-block border border-[#C9A84C] text-[#C9A84C] font-['Montserrat'] font-semibold px-8 py-3 rounded-lg text-sm uppercase tracking-wide transition-all duration-300 hover:bg-[#C9A84C] hover:text-[#0D0D0D]">
+          Ver todos los servicios
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT BRIEF -->
+  <section id="nosotros-brief" class="py-20 px-4 bg-[#0D0D0D]">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+        <div class="relative">
+          <img
+            src="https://images.unsplash.com/photo-1675668408848-47504a82b002?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Equipo Elevate MKT"
+            class="rounded-2xl w-full h-80 lg:h-[480px] object-cover object-center"
+          />
+          <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-[#0D0D0D]/70 via-transparent to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6">
+            <div class="bg-[#0D0D0D]/80 border border-[#C9A84C]/30 rounded-xl p-4 backdrop-blur-sm">
+              <div class="flex gap-6 justify-center text-center">
+                <div>
+                  <p class="font-['Montserrat'] font-black text-2xl text-[#C9A84C]">+50</p>
+                  <p class="text-[#F5F5F5]/60 text-xs">Negocios digitalizados</p>
+                </div>
+                <div class="border-l border-[#C9A84C]/20 pl-6">
+                  <p class="font-['Montserrat'] font-black text-2xl text-[#C9A84C]">360°</p>
+                  <p class="text-[#F5F5F5]/60 text-xs">Estrategia integral</p>
+                </div>
+                <div class="border-l border-[#C9A84C]/20 pl-6">
+                  <p class="font-['Montserrat'] font-black text-2xl text-[#C9A84C]">100%</p>
+                  <p class="text-[#F5F5F5]/60 text-xs">Con tecnología IA</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[#C9A84C] uppercase tracking-widest text-xs font-semibold font-['Montserrat']">Quiénes somos</span>
+          <h2 class="font-['Montserrat'] font-black text-3xl sm:text-4xl mt-3 mb-6 leading-tight">
+            No somos una agencia más.<br/>
+            <span class="text-[#C9A84C]">Somos tu equipo digital.</span>
+          </h2>
+          <p class="text-[#F5F5F5]/70 text-sm sm:text-base leading-relaxed mb-5">
+            En Elevate MKT entendemos que muchos negocios quieren dar el salto digital pero se paralizan por no saber por dónde empezar. Por eso creamos un modelo diferente: nos encargamos de todo el proceso de digitalización usando inteligencia artificial y tecnología de punta.
+          </p>
+          <p class="text-[#F5F5F5]/70 text-sm sm:text-base leading-relaxed mb-8">
+            Desde la estrategia hasta la ejecución. Desde el primer post hasta el funnel que convierte. Trabajamos como una extensión de tu equipo, para que vos puedas enfocarte en lo que realmente importa: hacer crecer tu negocio.
+          </p>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-sm text-[#F5F5F5]/80">
+              <span class="w-5 h-5 rounded-full bg-[#C9A84C]/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-3 h-3 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Implementamos IA en procesos reales de tu negocio
+            </li>
+            <li class="flex items-center gap-3 text-sm text-[#F5F5F5]/80">
+              <span class="w-5 h-5 rounded-full bg-[#C9A84C]/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-3 h-3 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Estrategia personalizada, no paquetes genéricos
+            </li>
+            <li class="flex items-center gap-3 text-sm text-[#F5F5F5]/80">
+              <span class="w-5 h-5 rounded-full bg-[#C9A84C]/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-3 h-3 text-[#C9A84C]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Resultados medibles con reportes claros
+            </li>
+          </ul>
+          <a href="/nosotros" class="inline-block bg-[#C9A84C] text-[#0D0D0D] font-['Montserrat'] font-bold px-7 py-3 rounded-lg text-sm uppercase tracking-wide transition-all duration-300 hover:bg-[#b8943e] hover:scale-105">
+            Conocé más sobre nosotros
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonios" class="py-20 px-4 bg-[#111111]">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="text-[#C9A84C] uppercase tracking-widest text-xs font-semibold font-['Montserrat']">Casos reales</span>
+        <h2 class="font-['Montserrat'] font-black text-3xl sm:text-4xl mt-3 mb-4">Lo que dicen nuestros clientes</h2>
+        <p class="text-[#F5F5F5]/60 max-w-xl mx-auto text-sm sm:text-base">Negocios que dieron el salto digital con Elevate MKT y transformaron sus resultados.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="bg-[#0D0D0D] border border-[#C9A84C]/15 rounded-xl p-6 flex flex-col justify-between transition-all duration-300 hover:border-[#C9A84C]/40">
+          <div>
+            <div class="flex gap-1 mb-4">
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-[#F5F5F5]/75 text-sm leading-relaxed mb-6">
+              "Yo quería tener presencia digital pero no sabía ni por dónde arrancar. Elevate MKT se encargó de absolutamente todo: el sitio web, el Instagram, los mensajes automáticos de WhatsApp. Ahora recibo consultas mientras duermo."
+            </p>
+          </div>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-10 h-10 rounded-full bg-[#C9A84C]/20 flex items-center justify-center font-['Montserrat'] font-bold text-[#C9A84C] text-sm">MR</div>
+            <div>
+              <p class="font-['Montserrat'] font-semibold text-sm">Martina Rodríguez</p>
+              <p class="text-[#F5F5F5]/40 text-xs">Tienda de ropa — Buenos Aires</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#0D0D0D] border border-[#C9A84C]/15 rounded-xl p-6 flex flex-col justify-between transition-all duration-300 hover:border-[#C9A84C]/40">
+          <div>
+            <div class="flex gap-1 mb-4">
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-[#F5F5F5]/75 text-sm leading-relaxed mb-6">
+              "Las campañas de publicidad que diseñaron triplicaron mis consultas en menos de 45 días. Además el bot de Instagram filtra los clientes y me manda solo los que están listos para comprar. Increíble."
+            </p>
+          </div>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-10 h-10 rounded-full bg-[#C9A84C]/20 flex items-center justify-center font-['Montserrat'] font-bold text-[#C9A84C] text-sm">CL</div>
+            <div>
+              <p class="font-['Montserrat'] font-semibold text-sm">Carlos López</p>
+              <p class="text-[#F5F5F5]/40 text-xs">Estudio contable — Córdoba</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#0D0D0D] border border-[#C9A84C]/15 rounded-xl p-6 flex flex-col justify-between transition-all duration-300 hover:border-[#C9A84C]/40">
+          <div>
+            <div class="flex gap-1 mb-4">
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-[#C9A84C]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-[#F5F5F5]/75 text-sm leading-relaxed mb-6">
+              "Tenía miedo de invertir en marketing digital porque no entendía nada. Elevate MKT me explicó todo de manera simple y luego lo ejecutó. En 3 meses dupliqué mis ventas online. Vale cada peso."
+            </p>
+          </div>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="w-10 h-10 rounded-full bg-[#C9A84C]/20 flex items-center justify-center font-['Montserrat'] font-bold text-[#C9A84C] text-sm">SV</div>
+            <div>
+              <p class="font-['Montserrat'] font-semibold text-sm">Sofía Vargas</p>
+              <p class="text-[#F5F5F5]/40 text-xs">Estética y bienestar — Rosario</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section id="cta" class="py-24 px-4 relative">
+    <img
+      src="https://images.unsplash.com/photo-1758873268528-af4613d099b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODI0Nzg4MDh8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="CTA Elevate MKT"
+      class="absolute inset-0 w-full h-full object-cover object-center"
+    />
+    <div class="absolute inset-0 bg-[#0D0D0D]/88"></div>
+    <div class="relative z-10 max-w-3xl mx-auto text-center">
+      <span class="text-[#C9A84C] uppercase tracking-widest text-xs font-semibold font-['Montserrat']">El momento es ahora</span>
+      <h2 class="font-['Montserrat'] font-black text-3xl sm:text-4xl lg:text-5xl mt-4 mb-6 leading-tight">
+        ¿Tu negocio todavía no está<br/><span class="text-[#C9A84C]">trabajando solo para vos?</span>
+      </h2>
+      <p class="text-[#F5F5F5]/70 text-sm sm:text-base leading-relaxed max-w-xl mx-auto mb-10">
+        Hablemos sin compromiso. Analizamos tu situación actual y te mostramos exactamente cómo podemos digitalizar y escalar tu negocio usando inteligencia artificial y estrategia real.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="https://wa.me/5491166778899?text=Hola%2C%20quiero%20saber%20c%C3%B3mo%20Elevate%20MKT%20puede%20ayudar%20a%20mi%20negocio"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="bg-[#C9A84C] text-[#0D0D0D] font-['Montserrat'] font-bold px-8 py-4 rounded-lg text-sm uppercase tracking-wide transition-all duration-300 hover:bg-[#b8943e] hover:scale-105 flex items-center justify-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15
+</main></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-primary text-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-3">
+          <a href="index.html">
+            <img
+              src="/logo.jpeg"
+              alt="Elevate MKT"
+              style="height:clamp(28px,4vw,48px);width:auto;max-width:160px;object-fit:contain;opacity:0.95;"
+            />
+          </a>
+          <p class="font-body text-xs text-accent text-opacity-60" style="color:#F5F5F5;opacity:0.55;">
+            &copy; 2026 Elevate MKT. Todos los derechos reservados.
+          </p>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex flex-col gap-2">
+          <p class="font-heading font-semibold text-secondary text-xs uppercase tracking-widest mb-1">Navegación</p>
+          <a href="index.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Inicio</a>
+          <a href="servicios.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Servicios</a>
+          <a href="nosotros.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Nosotros</a>
+          <a href="contacto.html" class="social-link font-body text-sm text-accent" style="opacity:0.8;">Contacto</a>
+        </div>
+
+        <!-- Contact & Socials -->
+        <div class="flex flex-col gap-2">
+          <p class="font-heading font-semibold text-secondary text-xs uppercase tracking-widest mb-1">Contacto</p>
+
+          <!-- Email -->
+          <a
+            href="mailto:elevatemkt@gmail.com"
+            class="social-link font-body text-sm flex items-center gap-2"
+            style="color:#F5F5F5;opacity:0.8;"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            elevatemkt@gmail.com
+          </a>
+
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/5491166778899"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link font-body text-sm flex items-center gap-2"
+            style="color:#F5F5F5;opacity:0.8;"
+            aria-label="WhatsApp Elevate MKT"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12a11.93 11.93 0 001.64 6.07L0 24l6.12-1.6A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12a11.93 11.93 0 00-3.48-8.52zM12 22a9.93 9.93 0 01-5.07-1.38l-.36-.22-3.73.98.99-3.63-.24-.37A9.93 9.93 0 012 12C2 6.49 6.49 2 12 2s10 4.49 10 10-4.49 10-10 10zm5.47-7.47c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07a8.16 8.16 0 01-2.4-1.48 9 9 0 01-1.66-2.07c-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52s-.67-1.62-.92-2.22c-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/>
+            </svg>
+            +54 9 11 6677-8899
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="mt-8 pt-6 border-t border-secondary border-opacity-20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <p class="font-body text-xs" style="color:#F5F5F5;opacity:0.45;">
+          Diseñado con dedicación para potenciar tu marca.
+        </p>
+        <p class="font-body text-xs" style="color:#C9A84C;opacity:0.7;">
+          Elevate MKT &mdash; 2026
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener('click', function () {
+        const isOpen = menu.classList.contains('open');
+
+        if (isOpen) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        } else {
+          menu.classList.add('open');
+          btn.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-label', 'Cerrar menú');
+        }
+      });
+
+      // Close menu on link click (mobile)
+      const mobileLinks = menu.querySelectorAll('a');
+      mobileLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        });
+      });
+
+      // Close menu on outside click
+      document.addEventListener('click', function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove('open');
+          btn.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Abrir menú');
+        }
+      });
+
+      // Active nav link highlight
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      const allNavLinks = document.querySelectorAll('.nav-link');
+      allNavLinks.forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+          link.classList.add('active');
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

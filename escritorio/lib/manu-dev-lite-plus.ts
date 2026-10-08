@@ -1,6 +1,8 @@
 // ─── Lite+ Site Generator ────────────────────────────────────────────────────
-// Uses Claude Sonnet to generate unique HTML pages per site.
-// Falls back to Lite templates if generation fails.
+// Architecture: shared layout (1 LLM call) + main content per page (N calls).
+// Layout contains header, <!-- CONTENT_PLACEHOLDER --> and footer.
+// Each page generates only <main>, then gets assembled with the layout.
+// Fallback: if layout generation fails, generates complete pages (legacy mode).
 
 import Anthropic from "@anthropic-ai/sdk";
 import { getAgent } from "@/lib/agents";
@@ -39,7 +41,8 @@ export interface LitePlusResult {
 }
 
 const SONNET_MODEL = getAgent("manu-dev")!.model;
-const GENERATION_TIMEOUT_MS = 60_000;
+
+// ── Parsers ───────────────────────────────────────────────────────────────────
 
 function parseSocialLinks(raw: any): { platform: string; url: string }[] {
   try {
@@ -64,6 +67,8 @@ function parseSections(contentJson: any): string[] {
   return [];
 }
 
+// ── Context builders ──────────────────────────────────────────────────────────
+
 function buildBusinessContext(input: LitePlusInput): string {
   const { project, design, pages } = input;
   const pageList = pages
@@ -74,9 +79,10 @@ function buildBusinessContext(input: LitePlusInput): string {
     .join("\n");
 
   const socialLinks = parseSocialLinks(project.social_links);
-  const socialInfo = socialLinks.length > 0
-    ? `\nRedes sociales:\n${socialLinks.map((l) => `  - ${l.platform}: ${l.url}`).join("\n")}`
-    : "";
+  const socialInfo =
+    socialLinks.length > 0
+      ? `\nRedes sociales:\n${socialLinks.map((l) => `  - ${l.platform}: ${l.url}`).join("\n")}`
+      : "";
 
   const contactEmail = socialLinks.find((l) => l.platform === "email")?.url || "";
 
@@ -101,72 +107,12 @@ ${pageList}`;
 
 function buildPhotoList(photos: string[]): string {
   if (photos.length === 0) return "";
-  return `\nIMAGENES DISPONIBLES (Unsplash, usa como src de <img>):\n${photos.map((url, i) => `  ${i + 1}. ${url}`).join("\n")}`;
+  return `\nIMAGENES DISPONIBLES (Unsplash, usa como src de <img>):\n${photos
+    .map((url, i) => `  ${i + 1}. ${url}`)
+    .join("\n")}`;
 }
 
-function buildPagePrompt(
-  input: LitePlusInput,
-  page: { slug: string; title?: string; content_json?: any },
-  isHome: boolean,
-): string {
-  const title = page.title || page.slug;
-  const sections = parseSections(page.content_json);
-
-  const sectionHint = sections.length > 0
-    ? `Incluye estas secciones en orden: ${sections.join(", ")}.`
-    : "";
-
-  const homeInstructions = isHome
-    ? `- Hero a pantalla completa con imagen de fondo, overlay oscuro semitransparente y texto sobre el overlay
-- Incluye CTA prominente en el hero
-- Secciones de servicios/productos, testimonios y CTA final`
-    : `- Banner superior con imagen de fondo y titulo de la pagina
-- Contenido especifico relevante para "${title}"`;
-
-  const formInstructions = (page.slug === "contacto" || page.slug === "contact")
-    ? `
-- FORMULARIO DE CONTACTO obligatorio con campos: nombre, email, mensaje
-- El formulario debe hacer fetch POST a "https://nl360.site/api/manu-dev/form-submit" 
-  con body JSON: {project_id: ${input.projectId}, name, email, message}
-- Al enviar: deshabilitar boton, mostrar spinner, mensaje exito/error inline. NO redirigir.
-- Usa JavaScript vanilla en un <script> al final para manejar el submit.`
-    : "";
-
-  return `Genera una pagina HTML completa para "${title}" de un sitio web de ${input.project.name}.
-
-${buildBusinessContext(input)}
-${buildPhotoList(input.photos)}
-
-INSTRUCCIONES ESPECIFICAS PARA ESTA PAGINA:
-${homeInstructions}
-${sectionHint}
-${formInstructions}
-
-REGLAS TECNICAS:
-- HTML completo: <!doctype html> hasta </html>
-- Usa Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-- Configura Tailwind con los colores del negocio via script tailwind.config inline: primary="${input.design?.primary_color || "#1a1a2e"}", secondary="${input.design?.secondary_color || "#16213e"}", accent="${input.design?.accent_color || "#0f3460"}"
-- Google Fonts via <link rel="preconnect"> y <link rel="stylesheet">: "${input.design?.font_heading || "Inter"}" (titulos) y "${input.design?.font_body || "Inter"}" (cuerpo). Aplica estas fuentes con font-family en el CSS correspondiente.
-- LOGO EN HEADER: ${input.project.logo_url ? `Usa <img src="${input.project.logo_url}" alt="${input.project.name}" style="height:40px;width:auto;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.` : `Muestra el nombre del negocio como texto en el header.`}
-- Mobile-first responsive
-- Contenido en espanol, real y especifico para este negocio (no lorem ipsum)
-- Precios coherentes con la economia de "${input.project.location || "America Latina"}"
-- Usa las imagenes de Unsplash proporcionadas como src de <img>
-- Sin frameworks JS, solo JavaScript vanilla si necesario
-- Header con navegacion y links a las otras paginas del sitio (usa los slugs como archivos .html)
-- Footer con nombre del negocio y ano actual
-- Animaciones CSS sutiles (fadeIn, hover transitions)
-- NO uses emojis como iconos
-
-Responde SOLO con el HTML. Empieza directamente con <!doctype html>. Sin markdown, sin explicaciones.`;
-}
-
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`${label}: timeout ${Math.round(ms / 1000)}s`)), ms);
-    promise.then((v) => { clearTimeout(timer); resolve(v); }).catch((e) => { clearTimeout(timer); reject(e); });
-  });
-}
+// ── Utilities ─────────────────────────────────────────────────────────────────
 
 function slugToFile(slug: string): string {
   if (!slug || slug === "home") return "index.html";
@@ -175,10 +121,93 @@ function slugToFile(slug: string): string {
 
 function validateHtml(content: string): boolean {
   const trimmed = content.trim();
-  if (!trimmed.toLowerCase().startsWith("<!doctype html") && !trimmed.toLowerCase().startsWith("<html")) return false;
-  if (!trimmed.includes("</html>")) return false;
-  if (trimmed.length < 500) return false;
+  if (
+    !trimmed.toLowerCase().startsWith("<!doctype html") &&
+    !trimmed.toLowerCase().startsWith("<html")
+  )
+    return false;
+  if (trimmed.length < 1000) return false;
   return true;
+}
+
+function validateLayout(content: string): boolean {
+  const trimmed = content.trim();
+  if (
+    !trimmed.toLowerCase().startsWith("<!doctype html") &&
+    !trimmed.toLowerCase().startsWith("<html")
+  )
+    return false;
+  if (trimmed.length < 500) return false;
+  if (!/<!--\s*CONTENT_PLACEHOLDER\s*-->/i.test(trimmed)) return false;
+  // Reject layout if LLM wrapped placeholder in <main> (causes double <main> after assembly)
+  const mainCount = (trimmed.toLowerCase().match(/<main[\s>]/g) || []).length;
+  if (mainCount > 0) {
+    console.warn(`[lite-plus] Layout rechazado: contiene ${mainCount} <main> (debe ser 0). Usando modo legacy.`);
+    return false;
+  }
+  return true;
+}
+
+function validateMainContent(content: string): boolean {
+  const trimmed = content.trim();
+  if (!trimmed.toLowerCase().includes("<main")) return false;
+  if (!trimmed.toLowerCase().includes("</main>")) return false;
+  if (trimmed.length < 200) return false;
+  // Warn on unbalanced tags but do NOT reject — a slightly unbalanced page
+  // is better than no page at all (missing index.html breaks the build).
+  const divOpens = (trimmed.toLowerCase().match(/<div[\s>]/g) || []).length;
+  const divCloses = (trimmed.toLowerCase().match(/<\/div>/g) || []).length;
+  if (divOpens !== divCloses) {
+    console.warn(`[lite-plus] validateMainContent: div desbalanceado (${divOpens} open / ${divCloses} close) — aceptando igual`);
+  }
+  const secOpens = (trimmed.toLowerCase().match(/<section[\s>]/g) || []).length;
+  const secCloses = (trimmed.toLowerCase().match(/<\/section>/g) || []).length;
+  if (secOpens !== secCloses) {
+    console.warn(`[lite-plus] validateMainContent: section desbalanceado (${secOpens} open / ${secCloses} close) — aceptando igual`);
+  }
+  return true;
+}
+
+function extractHtml(text: string): string {
+  let html = text.trim();
+  const lower = html.toLowerCase();
+  const startDoctype = lower.indexOf("<!doctype html");
+  const startHtml = lower.indexOf("<html");
+  const start = startDoctype !== -1 ? startDoctype : startHtml;
+  const endIdx = lower.lastIndexOf("</html>");
+  if (start !== -1 && endIdx !== -1) {
+    html = html.slice(start, endIdx + "</html>".length);
+  } else {
+    html = html.replace(/^```[a-zA-Z]*\n?/, "");
+    html = html.replace(/\n?```\s*$/, "");
+    html = html.replace(/^```\s*/, "").replace(/\s*```$/, "");
+  }
+  return html.trim();
+}
+
+function extractMainContent(text: string): string {
+  let content = text
+    .trim()
+    .replace(/^```[a-zA-Z]*\n?/, "")
+    .replace(/\n?```\s*$/, "")
+    .trim();
+  const lower = content.toLowerCase();
+  const start = lower.indexOf("<main");
+  const end = lower.lastIndexOf("</main>");
+  if (start !== -1 && end !== -1) {
+    // Both tags present — extract normally
+    return content.slice(start, end + "</main>".length).trim();
+  }
+  if (start !== -1 && end === -1) {
+    // LLM opened <main> but forgot to close it — auto-close
+    console.warn("[lite-plus] extractMainContent: </main> missing, auto-closing");
+    return content.slice(start).trim() + "\n</main>";
+  }
+  return content;
+}
+
+function assembleHtml(layout: string, mainContent: string): string {
+  return layout.replace(/<!--\s*CONTENT_PLACEHOLDER\s*-->/i, mainContent);
 }
 
 function buildDockerfileLite(): string {
@@ -202,67 +231,283 @@ function buildNginxConf(): string {
 }
 
 function buildSocialLinksJson(links: { platform: string; url: string }[]): string {
-  return JSON.stringify(links.map((l) => ({ platform: l.platform, name: l.platform, url: l.url })), null, 2);
+  return JSON.stringify(
+    links.map((l) => ({ platform: l.platform, name: l.platform, url: l.url })),
+    null,
+    2,
+  );
 }
 
-/**
- * Generate all HTML pages for a Lite+ site using Claude Sonnet.
- * Returns file list ready to write to disk.
- */
-export async function generateLitePlusSite(
+// ── Prompt builders ───────────────────────────────────────────────────────────
+
+function buildLayoutPrompt(input: LitePlusInput): string {
+  const { project, design, pages } = input;
+  const socialLinks = parseSocialLinks(project.social_links);
+  const contactEmail = socialLinks.find((l) => l.platform === "email")?.url || "";
+
+  const navLinks = pages
+    .map((p) => `  - ${p.title || p.slug} → ${slugToFile(p.slug)}`)
+    .join("\n");
+
+  const socialFooter =
+    socialLinks.length > 0
+      ? `Redes en footer:\n${socialLinks.map((l) => `  - ${l.platform}: ${l.url}`).join("\n")}`
+      : "";
+
+  const logoInstruction = project.logo_url
+    ? `Usa <img src="${project.logo_url}" alt="${project.name}" style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.`
+    : `Muestra el nombre del negocio como texto en el header.`;
+
+  return `Genera el layout base HTML compartido para el sitio web de ${project.name}.
+
+NEGOCIO:
+- Nombre: ${project.name}
+- Color primario: ${design?.primary_color || "#1a1a2e"}
+- Color secundario: ${design?.secondary_color || "#16213e"}
+- Color acento: ${design?.accent_color || "#0f3460"}
+- Fuente titulos: ${design?.font_heading || "Inter"}
+- Fuente cuerpo: ${design?.font_body || "Inter"}
+${contactEmail ? `- Email contacto: ${contactEmail}` : ""}
+${socialFooter}
+
+PAGINAS DEL SITIO (para el nav):
+${navLinks}
+
+INSTRUCCIONES:
+- Genera un documento HTML completo desde <!doctype html> hasta </html>
+- El <head> incluye: Tailwind CDN, Google Fonts, configuracion de colores Tailwind
+- El <body> tiene EXACTAMENTE esta estructura en orden:
+  1. <header> con navegacion responsive y logo
+  2. <!-- CONTENT_PLACEHOLDER --> (exactamente este texto, no lo modifiques)
+  3. <footer> con nombre del negocio, anio y redes sociales
+- El <body> tiene EXACTAMENTE esta estructura en orden:
+  <header>...</header>
+  <div style="flex:1;min-height:0;"><!-- CONTENT_PLACEHOLDER --></div>
+  <footer>...</footer>
+- CRITICO: El placeholder DEBE estar dentro de ese <div style="flex:1;min-height:0;">. No uses <main> como wrapper del placeholder.
+- El <body> tiene exactamente 3 hijos directos: <header>, el <div wrapper>, <footer>. Nada mas.
+
+HEADER:
+- ${logoInstruction}
+- Navegacion con links a todas las paginas
+- Mobile-first con menu hamburguesa para movil (JS vanilla)
+- Fondo con color primario o secundario del negocio
+
+FOOTER:
+- Nombre del negocio y anio ${new Date().getFullYear()}
+${contactEmail ? `- Email: ${contactEmail}` : ""}
+${socialLinks.length > 0 ? "- Links a redes sociales" : ""}
+- Diseno consistente con el header
+
+REGLAS TECNICAS:
+- Tailwind CDN: <script src="https://cdn.tailwindcss.com"></script>
+- Tailwind config inline con: primary="${design?.primary_color || "#1a1a2e"}", secondary="${design?.secondary_color || "#16213e"}", accent="${design?.accent_color || "#0f3460"}"
+- Google Fonts: "${design?.font_heading || "Inter"}" (titulos) y "${design?.font_body || "Inter"}" (cuerpo)
+- El placeholder DEBE ser exactamente: <!-- CONTENT_PLACEHOLDER -->
+- NO incluyas contenido de ninguna pagina especifica
+- Sin emojis como iconos
+- Animaciones CSS sutiles en nav (hover transitions)
+- CRITICO — layout flexbox en <style> dentro del <head>:
+    body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+  El flex:1 ya está en el div wrapper del placeholder — NO agregues main{flex:1}.
+  Esto garantiza que el footer siempre sea visible en todas las paginas.
+
+Responde SOLO con el HTML. Empieza directamente con <!doctype html>. Sin markdown, sin explicaciones.`;
+}
+
+function buildMainContentPrompt(
   input: LitePlusInput,
+  page: { slug: string; title?: string; content_json?: any },
+  isHome: boolean,
+): string {
+  const title = page.title || page.slug;
+  const sections = parseSections(page.content_json);
+
+  const sectionHint =
+    sections.length > 0 ? `Incluye estas secciones en orden: ${sections.join(", ")}.` : "";
+
+  const homeInstructions = isHome
+    ? `- Hero a pantalla completa con imagen de fondo, overlay oscuro semitransparente y texto sobre el overlay
+- Incluye CTA prominente en el hero
+- Secciones de servicios/productos, testimonios y CTA final`
+    : `- Banner superior con imagen de fondo y titulo de la pagina
+- Contenido especifico relevante para "${title}"`;
+
+  const formInstructions =
+    page.slug === "contacto" || page.slug === "contact"
+      ? `
+- FORMULARIO DE CONTACTO obligatorio con campos: nombre, email, mensaje
+- El formulario debe hacer fetch POST a "https://nl360.site/api/manu-dev/form-submit"
+  con body JSON: {project_id: ${input.projectId}, name, email, message}
+- Al enviar: deshabilitar boton, mostrar spinner, mensaje exito/error inline. NO redirigir.
+- Usa JavaScript vanilla en un <script> al final para manejar el submit.`
+      : "";
+
+  return `Genera SOLO el bloque <main>...</main> para la pagina "${title}" del sitio ${input.project.name}.
+
+${buildBusinessContext(input)}
+${buildPhotoList(input.photos)}
+
+INSTRUCCIONES PARA ESTA PAGINA:
+${homeInstructions}
+${sectionHint}
+${formInstructions}
+
+REGLAS CRITICAS:
+- Responde SOLO con el elemento <main>...</main> completo
+- NO incluyas <!doctype>, <html>, <head>, <header>, <nav>, <footer>, <body>
+- El header y footer ya estan en el layout compartido, NO los dupliques
+- Usa clases Tailwind (ya cargado en el layout base)
+- Usa las fuentes "${input.design?.font_heading || "Inter"}" y "${input.design?.font_body || "Inter"}" (ya cargadas)
+- Usa los colores primary="${input.design?.primary_color || "#1a1a2e"}", accent="${input.design?.accent_color || "#0f3460"}"
+- Contenido en espanol, real y especifico para este negocio (no lorem ipsum)
+- Precios coherentes con la economia de "${input.project.location || "America Latina"}"
+- Usa las imagenes de Unsplash proporcionadas como src de <img>
+- Mobile-first responsive
+- Animaciones CSS sutiles (fadeIn, hover transitions)
+- Sin emojis como iconos
+- CRITICO: el elemento <main> DEBE cerrarse con </main> al final de tu respuesta
+- NO uses overflow:hidden en body ni en el elemento <main>
+- NO uses height:100vh en el elemento <main> directamente (si necesitas una seccion hero, aplica la altura en el hijo, no en <main>)
+- NO generes ninguna seccion de cierre con nombre del negocio, redes sociales, email, copyright o links de navegacion al final del <main> — eso ya existe en el footer compartido del layout
+- El ultimo elemento del <main> debe ser contenido de la pagina (CTA, formulario, mapa, etc.), nunca un bloque resumen del negocio
+
+Responde SOLO con el elemento <main>. Sin markdown, sin explicaciones.`;
+}
+
+// Usado por el fallback legacy
+function buildPagePrompt(
+  input: LitePlusInput,
+  page: { slug: string; title?: string; content_json?: any },
+  isHome: boolean,
+): string {
+  const title = page.title || page.slug;
+  const sections = parseSections(page.content_json);
+
+  const sectionHint =
+    sections.length > 0 ? `Incluye estas secciones en orden: ${sections.join(", ")}.` : "";
+
+  const homeInstructions = isHome
+    ? `- Hero a pantalla completa con imagen de fondo, overlay oscuro semitransparente y texto sobre el overlay
+- Incluye CTA prominente en el hero
+- Secciones de servicios/productos, testimonios y CTA final`
+    : `- Banner superior con imagen de fondo y titulo de la pagina
+- Contenido especifico relevante para "${title}"`;
+
+  const formInstructions =
+    page.slug === "contacto" || page.slug === "contact"
+      ? `
+- FORMULARIO DE CONTACTO obligatorio con campos: nombre, email, mensaje
+- El formulario debe hacer fetch POST a "https://nl360.site/api/manu-dev/form-submit"
+  con body JSON: {project_id: ${input.projectId}, name, email, message}
+- Al enviar: deshabilitar boton, mostrar spinner, mensaje exito/error inline. NO redirigir.
+- Usa JavaScript vanilla en un <script> al final para manejar el submit.`
+      : "";
+
+  return `Genera una pagina HTML completa para "${title}" de un sitio web de ${input.project.name}.
+
+${buildBusinessContext(input)}
+${buildPhotoList(input.photos)}
+
+INSTRUCCIONES ESPECIFICAS PARA ESTA PAGINA:
+${homeInstructions}
+${sectionHint}
+${formInstructions}
+
+REGLAS TECNICAS:
+- HTML completo: <!doctype html> hasta </html>
+- Usa Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
+- Configura Tailwind con los colores del negocio via script tailwind.config inline: primary="${input.design?.primary_color || "#1a1a2e"}", secondary="${input.design?.secondary_color || "#16213e"}", accent="${input.design?.accent_color || "#0f3460"}"
+- Google Fonts via <link rel="preconnect"> y <link rel="stylesheet">: "${input.design?.font_heading || "Inter"}" (titulos) y "${input.design?.font_body || "Inter"}" (cuerpo).
+- LOGO EN HEADER: ${input.project.logo_url ? `Usa <img src="${input.project.logo_url}" alt="${input.project.name}" style="height:clamp(32px,5vw,56px);width:auto;max-width:180px;object-fit:contain;"> como marca en el header. NO muestres el nombre del negocio como texto en el nav, solo el logo.` : `Muestra el nombre del negocio como texto en el header.`}
+- Mobile-first responsive
+- Contenido en espanol, real y especifico para este negocio (no lorem ipsum)
+- Precios coherentes con la economia de "${input.project.location || "America Latina"}"
+- Usa las imagenes de Unsplash proporcionadas como src de <img>
+- Sin frameworks JS, solo JavaScript vanilla si necesario
+- Header con navegacion y links a las otras paginas del sitio (usa los slugs como archivos .html)
+- Footer con nombre del negocio y ano actual
+- Animaciones CSS sutiles (fadeIn, hover transitions)
+- NO uses emojis como iconos
+
+Responde SOLO con el HTML. Empieza directamente con <!doctype html>. Sin markdown, sin explicaciones.`;
+}
+
+// ── Stream helper ─────────────────────────────────────────────────────────────
+
+async function streamPrompt(
+  client: Anthropic,
+  prompt: string,
+  label: string,
+  maxTokens: number,
+): Promise<string> {
+  const IDLE_TIMEOUT_MS = 30_000;
+  let accumulated = "";
+
+  await new Promise<void>((resolve, reject) => {
+    let idleTimer: ReturnType<typeof setTimeout>;
+
+    const resetIdle = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        reject(new Error(`Generacion ${label}: idle timeout 30s`));
+      }, IDLE_TIMEOUT_MS);
+    };
+
+    resetIdle();
+
+    const stream = client.messages.stream({
+      model: SONNET_MODEL,
+      max_tokens: maxTokens,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    stream.on("text", (chunk) => {
+      accumulated += chunk;
+      resetIdle();
+    });
+
+    stream.on("error", (err) => {
+      clearTimeout(idleTimer);
+      reject(err);
+    });
+
+    stream.on("finalMessage", () => {
+      clearTimeout(idleTimer);
+      resolve();
+    });
+  });
+
+  return accumulated;
+}
+
+// ── Legacy fallback ───────────────────────────────────────────────────────────
+
+async function generateFullPages(
+  client: Anthropic,
+  input: LitePlusInput,
+  home: { slug: string; title?: string; content_json?: any },
+  others: { slug: string; title?: string; content_json?: any }[],
   onProgress?: (msg: string) => void,
 ): Promise<LitePlusResult> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return { success: false, files: [], pagesGenerated: 0, fallbackUsed: false, error: "ANTHROPIC_API_KEY no configurada" };
-  }
-
-  const client = new Anthropic({ apiKey, timeout: 90_000, maxRetries: 1 });
-  const maxPages = Math.min(input.pages.length, 6);
-  const pagesToGenerate = input.pages.slice(0, maxPages);
-
-  const home = pagesToGenerate.find((p) => p.slug === "home") || pagesToGenerate[0];
-  const others = pagesToGenerate.filter((p) => p !== home);
-
   const htmlFiles: { path: string; content: string }[] = [];
   let failCount = 0;
 
-  // Generate each page sequentially to keep costs predictable
   for (const page of [home, ...others]) {
     const isHome = page === home;
-    const prompt = buildPagePrompt(input, page, isHome);
     const label = page.title || page.slug;
 
     onProgress?.(`Generando ${label}...`);
 
     try {
-      const response = await withTimeout(
-        client.messages.create({
-          model: SONNET_MODEL,
-          max_tokens: 8192,
-          messages: [{ role: "user", content: prompt }],
-        }),
-        GENERATION_TIMEOUT_MS,
-        `Generacion ${label}`,
-      );
-
-      const text = response.content
-        .filter((b): b is Anthropic.TextBlock => b.type === "text")
-        .map((b) => b.text)
-        .join("");
-
-      // Strip any markdown wrapping Claude might add
-      let html = text.trim();
-      if (html.startsWith("```html")) html = html.slice(7);
-      if (html.startsWith("```")) html = html.slice(3);
-      if (html.endsWith("```")) html = html.slice(0, -3);
-      html = html.trim();
+      const prompt = buildPagePrompt(input, page, isHome);
+      const raw = await streamPrompt(client, prompt, label, 12000);
+      const html = extractHtml(raw);
 
       if (validateHtml(html)) {
         htmlFiles.push({ path: slugToFile(page.slug), content: html });
       } else {
-        console.warn(`[lite-plus] Invalid HTML for ${label}, length=${html.length}`);
+        console.warn(`[lite-plus] Invalid HTML for ${label}, length=${html.length}, preview=${html.slice(0, 200)}`);
         failCount++;
       }
     } catch (err: any) {
@@ -271,7 +516,6 @@ export async function generateLitePlusSite(
     }
   }
 
-  // If we got zero pages, signal failure
   if (htmlFiles.length === 0) {
     return {
       success: false,
@@ -282,20 +526,132 @@ export async function generateLitePlusSite(
     };
   }
 
-  // Build social links JSON
   const socialLinks = parseSocialLinks(input.project.social_links);
-
-  // Assemble final file list
-  const files: { path: string; content: string }[] = [
-    ...htmlFiles,
-    { path: "assets/social-links.json", content: buildSocialLinksJson(socialLinks) },
-    { path: "Dockerfile", content: buildDockerfileLite() },
-    { path: "nginx.conf", content: buildNginxConf() },
-  ];
 
   return {
     success: true,
-    files,
+    files: [
+      ...htmlFiles,
+      { path: "assets/social-links.json", content: buildSocialLinksJson(socialLinks) },
+      { path: "Dockerfile", content: buildDockerfileLite() },
+      { path: "nginx.conf", content: buildNginxConf() },
+    ],
+    pagesGenerated: htmlFiles.length,
+    fallbackUsed: failCount > 0,
+  };
+}
+
+// ── Main export ───────────────────────────────────────────────────────────────
+
+/**
+ * Generate all HTML pages for a Lite+ site using Claude Sonnet.
+ *
+ * Flow:
+ *   1. Generate shared layout (header + footer, 1 call, 6000 tokens)
+ *   2. Generate <main> content per page (N calls, 12000 tokens each)
+ *   3. Assemble each page: layout + main
+ *
+ * If layout generation fails, falls back to legacy full-page generation.
+ * Returns file list ready to write to disk.
+ */
+export async function generateLitePlusSite(
+  input: LitePlusInput,
+  onProgress?: (msg: string) => void,
+): Promise<LitePlusResult> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return {
+      success: false,
+      files: [],
+      pagesGenerated: 0,
+      fallbackUsed: false,
+      error: "ANTHROPIC_API_KEY no configurada",
+    };
+  }
+
+  const client = new Anthropic({ apiKey, timeout: 120_000, maxRetries: 0 });
+  const maxPages = Math.min(input.pages.length, 6);
+  const pagesToGenerate = input.pages.slice(0, maxPages);
+
+  const home = pagesToGenerate.find((p) => p.slug === "home") || pagesToGenerate[0];
+  const others = pagesToGenerate.filter((p) => p !== home);
+
+  // ── Step 0: Generate shared layout ─────────────────────────────────────────
+  onProgress?.("Generando layout compartido...");
+  let layout: string | null = null;
+
+  try {
+    const layoutPrompt = buildLayoutPrompt(input);
+    const layoutRaw = await streamPrompt(client, layoutPrompt, "layout", 6000);
+    const layoutHtml = extractHtml(layoutRaw);
+    if (validateLayout(layoutHtml)) {
+      layout = layoutHtml;
+      onProgress?.("Layout listo.");
+    } else {
+      console.warn(
+        `[lite-plus] Layout invalido (length=${layoutHtml.length}, placeholder ausente). Usando modo legacy.`,
+      );
+    }
+  } catch (err: any) {
+    console.error("[lite-plus] Error generando layout:", err?.message);
+  }
+
+  // ── Fallback: layout failed → generate complete pages ──────────────────────
+  if (!layout) {
+    onProgress?.("Fallback: generando paginas completas...");
+    return generateFullPages(client, input, home, others, onProgress);
+  }
+
+  // ── Steps 1–N: Generate <main> content per page ────────────────────────────
+  const htmlFiles: { path: string; content: string }[] = [];
+  let failCount = 0;
+
+  for (const page of [home, ...others]) {
+    const isHome = page === home;
+    const label = page.title || page.slug;
+
+    onProgress?.(`Generando ${label}...`);
+
+    try {
+      const prompt = buildMainContentPrompt(input, page, isHome);
+      const raw = await streamPrompt(client, prompt, label, 12000);
+      const mainContent = extractMainContent(raw);
+
+      if (validateMainContent(mainContent)) {
+        const assembled = assembleHtml(layout, mainContent);
+        htmlFiles.push({ path: slugToFile(page.slug), content: assembled });
+      } else {
+        console.warn(
+          `[lite-plus] Main content invalido para ${label}, length=${mainContent.length}, preview=${mainContent.slice(0, 200)}`,
+        );
+        failCount++;
+      }
+    } catch (err: any) {
+      console.error(`[lite-plus] Error generando ${label}:`, err?.message);
+      failCount++;
+    }
+  }
+
+  if (htmlFiles.length === 0) {
+    return {
+      success: false,
+      files: [],
+      pagesGenerated: 0,
+      fallbackUsed: false,
+      error: `No se pudo generar ninguna pagina (${failCount} errores)`,
+    };
+  }
+
+  const socialLinks = parseSocialLinks(input.project.social_links);
+
+  return {
+    success: true,
+    files: [
+      ...htmlFiles,
+      { path: "assets/social-links.json", content: buildSocialLinksJson(socialLinks) },
+      { path: "Dockerfile", content: buildDockerfileLite() },
+      { path: "nginx.conf", content: buildNginxConf() },
+    ],
     pagesGenerated: htmlFiles.length,
     fallbackUsed: failCount > 0,
   };

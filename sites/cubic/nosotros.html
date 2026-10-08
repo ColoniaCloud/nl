@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cubic</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#1A73E8",
+            secondary: "#2D2D2D",
+            accent: "#00BCD4"
+          },
+          fontFamily: {
+            heading: ["Outfit", "sans-serif"],
+            body: ["DM Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: "DM Sans", sans-serif; }
+    h1, h2, h3, h4, h5, h6 { font-family: "Outfit", sans-serif; }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0%;
+      height: 2px;
+      background-color: #00BCD4;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #00BCD4;
+    }
+
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #ffffff;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    .hamburger.open .hamburger-line:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.open .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open .hamburger-line:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    #mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .mobile-nav-link {
+      transition: color 0.2s ease, background-color 0.2s ease, padding-left 0.2s ease;
+    }
+    .mobile-nav-link:hover {
+      color: #00BCD4;
+      background-color: rgba(255,255,255,0.06);
+      padding-left: 1.5rem;
+    }
+
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .social-link:hover {
+      color: #00BCD4;
+      transform: translateY(-2px);
+    }
+
+    footer a {
+      transition: color 0.25s ease;
+    }
+    footer a:hover {
+      color: #00BCD4;
+    }
+  </style>
+</head>
+<body class="bg-white text-secondary font-body antialiased flex flex-col min-h-screen">
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="bg-secondary shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center shrink-0" aria-label="Cubic - Inicio">
+          <img
+            src="https://nl360.site/logos/logo-99.svg"
+            alt="Cubic"
+            style="height:40px;width:auto;object-fit:contain;"
+          />
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-8" aria-label="Navegación principal">
+          <a href="index.html"    class="nav-link text-white text-sm font-medium tracking-wide">Inicio</a>
+          <a href="servicios.html" class="nav-link text-white text-sm font-medium tracking-wide">Servicios</a>
+          <a href="nosotros.html"  class="nav-link text-white text-sm font-medium tracking-wide">Nosotros</a>
+          <a href="contacto.html"  class="nav-link text-white text-sm font-medium tracking-wide">Contacto</a>
+        </nav>
+
+        <!-- CTA Button Desktop -->
+        <div class="hidden md:flex items-center">
+          <a
+            href="contacto.html"
+            class="bg-primary hover:bg-accent text-white text-sm font-semibold px-5 py-2 rounded-full transition-colors duration-300 shadow-sm"
+          >
+            Hablemos
+          </a>
+        </div>
+
+        <!-- Hamburger Button Mobile -->
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col justify-center items-center gap-1.5 w-10 h-10 rounded focus:outline-none focus:ring-2 focus:ring-accent"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 flex flex-col gap-1 border-t border-white/10 pt-3">
+        <a href="index.html"     class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Inicio</a>
+        <a href="servicios.html" class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Servicios</a>
+        <a href="nosotros.html"  class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Nosotros</a>
+        <a href="contacto.html"  class="mobile-nav-link text-white text-sm font-medium py-2.5 px-4 rounded-md">Contacto</a>
+        <div class="pt-2 pb-1 px-4">
+          <a
+            href="contacto.html"
+            class="block text-center bg-primary hover:bg-accent text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors duration-300"
+          >
+            Hablemos
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== CONTENT ===================== -->
+  <main class="font-['DM_Sans'] text-[#2D2D2D]">
+
+  <!-- Banner superior -->
+  <section class="relative h-64 md:h-80 flex items-center justify-center overflow-hidden">
+    <img
+      src="https://images.unsplash.com/photo-1659353588229-6870b3b25800?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+      alt="Cubic - Nosotros"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-[#2D2D2D]/70"></div>
+    <div class="relative z-10 text-center px-4">
+      <h1 class="font-['Outfit'] text-4xl md:text-5xl font-bold text-white tracking-tight" style="animation: fadeInDown 0.7s ease both;">Nosotros</h1>
+      <p class="mt-3 text-white/80 text-lg md:text-xl max-w-xl mx-auto" style="animation: fadeInDown 0.9s ease both;">Conocé quiénes somos y por qué hacemos lo que hacemos.</p>
+    </div>
+  </section>
+
+  <style>
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-up {
+      animation: fadeInUp 0.7s ease both;
+    }
+    .fade-in {
+      animation: fadeIn 0.9s ease both;
+    }
+  </style>
+
+  <!-- Sección About -->
+  <section id="about" class="py-16 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="fade-up">
+          <span class="inline-block text-sm font-semibold uppercase tracking-widest text-[#00BCD4] mb-3">Nuestra historia</span>
+          <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-[#2D2D2D] leading-tight mb-6">
+            Reparamos computadoras con seriedad y experiencia
+          </h2>
+          <p class="text-[#2D2D2D]/80 text-base md:text-lg leading-relaxed mb-4">
+            Cubic nació con una misión clara: ofrecer un servicio de reparación de PCs confiable, accesible y transparente para todos los uruguayos. Sabemos lo frustrante que es quedarse sin computadora, por eso trabajamos con rapidez y honestidad.
+          </p>
+          <p class="text-[#2D2D2D]/80 text-base md:text-lg leading-relaxed mb-4">
+            Desde nuestros inicios en Uruguay, nos especializamos en diagnosticar y solucionar todo tipo de problemas en equipos de escritorio y portátiles, tanto de uso personal como profesional. Sin letra chica, sin cobros sorpresa.
+          </p>
+          <p class="text-[#2D2D2D]/80 text-base md:text-lg leading-relaxed">
+            Lo que nos diferencia es simple: tratamos tu equipo como si fuera nuestro. Cada reparación pasa por un proceso de revisión completo antes de ser entregada, garantizando que el problema quede realmente solucionado.
+          </p>
+        </div>
+        <div class="relative fade-in">
+          <img
+            src="https://images.unsplash.com/photo-1614792403436-ba5b3e747604?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Técnico reparando computadora"
+            class="rounded-2xl shadow-xl w-full h-80 md:h-96 object-cover"
+          />
+          <div class="absolute -bottom-5 -left-5 bg-[#1A73E8] text-white rounded-xl px-6 py-4 shadow-lg hidden md:block">
+            <p class="font-['Outfit'] text-3xl font-bold">+5</p>
+            <p class="text-sm text-white/90">años de experiencia</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Team -->
+  <section id="team" class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="inline-block text-sm font-semibold uppercase tracking-widest text-[#00BCD4] mb-3">El equipo</span>
+        <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-[#2D2D2D]">Las personas detrás de Cubic</h2>
+        <p class="mt-4 text-[#2D2D2D]/70 max-w-2xl mx-auto text-base md:text-lg">
+          Somos un equipo pequeño pero comprometido. Cada técnico cuenta con formación específica en hardware y software, y está al día con las últimas tecnologías del mercado.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Miembro 1 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+          <div class="overflow-hidden h-56">
+            <img
+              src="https://images.unsplash.com/photo-1671040690726-b78261eff126?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Técnico Cubic"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D]">Matías González</h3>
+            <p class="text-[#1A73E8] text-sm font-semibold mb-3">Técnico Principal & Fundador</p>
+            <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+              Más de 8 años reparando equipos de todo tipo. Especialista en diagnóstico de hardware y recuperación de datos.
+            </p>
+          </div>
+        </div>
+
+        <!-- Miembro 2 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+          <div class="overflow-hidden h-56">
+            <img
+              src="https://images.unsplash.com/photo-1676311396794-f14881e9daaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Técnico Cubic"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D]">Lucía Fernández</h3>
+            <p class="text-[#1A73E8] text-sm font-semibold mb-3">Técnica en Software & Soporte</p>
+            <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+              Especializada en instalación de sistemas operativos, eliminación de virus y optimización de rendimiento para todo tipo de usuarios.
+            </p>
+          </div>
+        </div>
+
+        <!-- Miembro 3 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+          <div class="overflow-hidden h-56">
+            <img
+              src="https://images.unsplash.com/photo-1731694406472-c981fc4d5872?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4MjM0NTJ8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Técnico Cubic"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+          <div class="p-6">
+            <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D]">Sebastián Pérez</h3>
+            <p class="text-[#1A73E8] text-sm font-semibold mb-3">Técnico en Hardware & Redes</p>
+            <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+              Experto en cambio de componentes, armado de equipos a medida y configuración de redes para hogares y pequeñas empresas.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección Values -->
+  <section id="values" class="py-16 md:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="inline-block text-sm font-semibold uppercase tracking-widest text-[#00BCD4] mb-3">Lo que nos guía</span>
+        <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-[#2D2D2D]">Nuestros valores</h2>
+        <p class="mt-4 text-[#2D2D2D]/70 max-w-2xl mx-auto text-base md:text-lg">
+          Cada decisión que tomamos en Cubic está respaldada por principios que ponemos en práctica todos los días.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Valor 1 -->
+        <div class="border border-gray-100 rounded-2xl p-8 hover:border-[#1A73E8] hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-[#1A73E8]/10 flex items-center justify-center mb-6 group-hover:bg-[#1A73E8] transition-colors duration-300">
+            <svg class="w-6 h-6 text-[#1A73E8] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-3">Honestidad</h3>
+          <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+            Te decimos siempre la verdad sobre el estado de tu equipo y el costo real de la reparación. Sin sorpresas ni costos ocultos.
+          </p>
+        </div>
+
+        <!-- Valor 2 -->
+        <div class="border border-gray-100 rounded-2xl p-8 hover:border-[#1A73E8] hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-[#1A73E8]/10 flex items-center justify-center mb-6 group-hover:bg-[#1A73E8] transition-colors duration-300">
+            <svg class="w-6 h-6 text-[#1A73E8] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-3">Rapidez</h3>
+          <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+            Valoramos tu tiempo. La mayoría de las reparaciones se resuelven en el día o en menos de 48 horas, según la complejidad del caso.
+          </p>
+        </div>
+
+        <!-- Valor 3 -->
+        <div class="border border-gray-100 rounded-2xl p-8 hover:border-[#1A73E8] hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-[#1A73E8]/10 flex items-center justify-center mb-6 group-hover:bg-[#1A73E8] transition-colors duration-300">
+            <svg class="w-6 h-6 text-[#1A73E8] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-3">Accesibilidad</h3>
+          <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+            Atendemos a todo el mundo: jubilados, estudiantes, profesionales. Explicamos cada paso de manera clara, sin tecnicismos innecesarios.
+          </p>
+        </div>
+
+        <!-- Valor 4 -->
+        <div class="border border-gray-100 rounded-2xl p-8 hover:border-[#1A73E8] hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-[#00BCD4]/10 flex items-center justify-center mb-6 group-hover:bg-[#00BCD4] transition-colors duration-300">
+            <svg class="w-6 h-6 text-[#00BCD4] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+          </div>
+          <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-3">Calidad garantizada</h3>
+          <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+            Cada reparación cuenta con garantía. Si el problema vuelve a aparecer dentro del período de cobertura, lo resolvemos sin costo adicional.
+          </p>
+        </div>
+
+        <!-- Valor 5 -->
+        <div class="border border-gray-100 rounded-2xl p-8 hover:border-[#1A73E8] hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-[#00BCD4]/10 flex items-center justify-center mb-6 group-hover:bg-[#00BCD4] transition-colors duration-300">
+            <svg class="w-6 h-6 text-[#00BCD4] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-3">Confidencialidad</h3>
+          <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+            Tu información personal y tus archivos son tuyos. Nunca accedemos a datos privados sin tu autorización y protegemos tu privacidad en todo momento.
+          </p>
+        </div>
+
+        <!-- Valor 6 -->
+        <div class="border border-gray-100 rounded-2xl p-8 hover:border-[#1A73E8] hover:shadow-md transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-[#00BCD4]/10 flex items-center justify-center mb-6 group-hover:bg-[#00BCD4] transition-colors duration-300">
+            <svg class="w-6 h-6 text-[#00BCD4] group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-['Outfit'] text-xl font-bold text-[#2D2D2D] mb-3">Compromiso local</h3>
+          <p class="text-[#2D2D2D]/70 text-sm leading-relaxed">
+            Somos un negocio uruguayo que apoya a su comunidad. Preferimos trabajar con proveedores locales y brindar empleo en el país.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="py-16 bg-[#1A73E8]">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="font-['Outfit'] text-3xl md:text-4xl font-bold text-white mb-4">
+        ¿Tu computadora tiene algún problema?
+      </h2>
+      <p class="text-white/85 text-base md:text-lg mb-8 max-w-xl mx-auto">
+        Llamanos hoy mismo y uno de nuestros técnicos te asesorará sin compromiso. Estamos para ayudarte.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="https://wa.me/59865656565"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 bg-white text-[#1A73E8] font-semibold px-8 py-3 rounded-xl hover:bg-[#00BCD4] hover:text-white transition-colors duration-300 shadow-md"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Escribinos por WhatsApp
+        </a>
+        <a
+          href="mailto:mail@cubic.net"
+          class="inline-flex items-center justify-center gap-2 border-2 border-white text-white font-semibold px-8 py-3 rounded-xl hover:bg-white hover:text-[#1A73E8] transition-colors duration-300"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          Envianos un email
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="bg-secondary text-white mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+        <!-- Brand -->
+        <div class="flex flex-col gap-4">
+          <a href="index.html" aria-label="Cubic - Inicio">
+            <img
+              src="https://nl360.site/logos/logo-99.svg"
+              alt="Cubic"
+              style="height:36px;width:auto;object-fit:contain;"
+            />
+          </a>
+          <p class="text-white/60 text-sm leading-relaxed max-w-xs">
+            Creamos soluciones digitales que impulsan tu negocio hacia adelante.
+          </p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex flex-col gap-3">
+          <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-white/40 mb-1">Navegación</h3>
+          <a href="index.html"     class="text-white/70 text-sm hover:text-accent">Inicio</a>
+          <a href="servicios.html" class="text-white/70 text-sm hover:text-accent">Servicios</a>
+          <a href="nosotros.html"  class="text-white/70 text-sm hover:text-accent">Nosotros</a>
+          <a href="contacto.html"  class="text-white/70 text-sm hover:text-accent">Contacto</a>
+        </div>
+
+        <!-- Contact & Social -->
+        <div class="flex flex-col gap-4">
+          <h3 class="font-heading font-semibold text-sm uppercase tracking-widest text-white/40 mb-1">Contacto</h3>
+          <a href="mailto:mail@cubic.net" class="text-white/70 text-sm hover:text-accent break-all">mail@cubic.net</a>
+
+          <!-- Social Links -->
+          <div class="flex items-center gap-5 mt-2">
+
+            <!-- Facebook -->
+            <a
+              href="https://facebook.com/cubic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-white/60"
+              aria-label="Facebook de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+
+            <!-- Instagram -->
+            <a
+              href="https://instagram.com/cubic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-white/60"
+              aria-label="Instagram de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+
+            <!-- WhatsApp -->
+            <a
+              href="https://wa.me/59865656565"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-white/60"
+              aria-label="WhatsApp de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+              </svg>
+            </a>
+
+            <!-- Email -->
+            <a
+              href="mailto:mail@cubic.net"
+              class="social-link text-white/60"
+              aria-label="Email de Cubic"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-white/40 text-xs font-body">
+          &copy; 2026 Cubic. Todos los derechos reservados.
+        </p>
+        <p class="text-white/30 text-xs font-body">
+          Diseño &amp; Desarrollo Digital
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ===================== JS ===================== -->
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.contains("open");
+
+        if (isOpen) {
+          menu.classList.remove("open");
+          btn.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        } else {
+          menu.classList.add("open");
+          btn.classList.add("open");
+          btn.setAttribute("aria-expanded", "true");
+          btn.setAttribute("aria-label", "Cerrar menú");
+        }
+      });
+
+      // Close on outside click
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Abrir menú");
+        }
+      });
+
+      // Mark active nav link
+      const currentPage = window.location.pathname.split("/").pop() || "index.html";
+      const allLinks = document.querySelectorAll(".nav-link, .mobile-nav-link");
+      allLinks.forEach(function (link) {
+        const href = link.getAttribute("href");
+        if (href === currentPage || (currentPage === "" && href === "index.html")) {
+          link.classList.add("active");
+          if (link.classList.contains("nav-link")) {
+            link.style.color = "#00BCD4";
+          }
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

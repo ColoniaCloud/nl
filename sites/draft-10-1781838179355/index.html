@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hola manu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FAF6F0",
+            secondary: "#C9A84C",
+            accent: "#F4C2C2"
+          },
+          fontFamily: {
+            heading: ["Nunito", "sans-serif"],
+            body: ["DM Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: #FAF6F0;
+    }
+    main {
+      flex: 1;
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #C9A84C;
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .nav-link:hover {
+      color: #C9A84C;
+    }
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    #mobile-menu.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+    .hamburger-line {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background-color: #C9A84C;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger.active .line1 {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger.active .line2 {
+      opacity: 0;
+    }
+    .hamburger.active .line3 {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+    .social-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+      display: inline-block;
+    }
+    .social-link:hover {
+      color: #C9A84C;
+      transform: translateY(-2px);
+    }
+    footer a {
+      transition: color 0.25s ease;
+    }
+    footer a:hover {
+      color: #C9A84C;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bg-primary border-b border-secondary/20 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <a href="index.html" class="flex items-center flex-shrink-0">
+          <img src="/logo.png" alt="Hola manu" style="height:40px;width:auto;object-fit:contain;" />
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Inicio</a>
+          <a href="servicios.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Servicios</a>
+          <a href="nosotros.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Nosotros</a>
+          <a href="contacto.html" class="nav-link text-sm font-medium text-gray-700 font-body pb-1">Contacto</a>
+        </nav>
+
+        <button
+          id="hamburger-btn"
+          class="hamburger md:hidden flex flex-col gap-1.5 p-2 rounded focus:outline-none focus:ring-2 focus:ring-secondary/50"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="hamburger-line line1"></span>
+          <span class="hamburger-line line2"></span>
+          <span class="hamburger-line line3"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-menu" role="navigation" aria-label="Menú móvil">
+      <div class="px-4 pb-4 pt-2 flex flex-col gap-1 bg-primary border-t border-secondary/10">
+        <a href="index.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Inicio</a>
+        <a href="servicios.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Servicios</a>
+        <a href="nosotros.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Nosotros</a>
+        <a href="contacto.html" class="block py-2.5 px-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-secondary/10 hover:text-secondary transition-colors duration-200 font-body">Contacto</a>
+      </div>
+    </div>
+  </header>
+
+<main>
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .animate-fadeInUp {
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    .animate-fadeIn {
+      animation: fadeIn 1s ease forwards;
+    }
+    .delay-200 { animation-delay: 0.2s; opacity: 0; }
+    .delay-400 { animation-delay: 0.4s; opacity: 0; }
+    .delay-600 { animation-delay: 0.6s; opacity: 0; }
+    .delay-800 { animation-delay: 0.8s; opacity: 0; }
+    .hero-btn-primary {
+      background-color: #C9A84C;
+      color: #FAF6F0;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .hero-btn-primary:hover {
+      background-color: #b8943e;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+    }
+    .hero-btn-secondary {
+      border: 2px solid #FAF6F0;
+      color: #FAF6F0;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+    .hero-btn-secondary:hover {
+      background-color: #FAF6F0;
+      color: #333;
+      transform: translateY(-2px);
+    }
+    .service-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+    }
+    .testimonial-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    }
+    .cta-btn {
+      background-color: #FAF6F0;
+      color: #C9A84C;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .cta-btn:hover {
+      background-color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    .accent-line {
+      background-color: #C9A84C;
+    }
+    .icon-box {
+      background-color: #F4C2C2;
+      transition: background-color 0.3s ease;
+    }
+    .service-card:hover .icon-box {
+      background-color: #C9A84C;
+    }
+    .step-number {
+      background-color: #C9A84C;
+      color: #FAF6F0;
+    }
+  </style>
+
+  <!-- HERO SECTION -->
+  <section class="relative w-full" style="min-height: 100vh;">
+    <div class="absolute inset-0">
+      <img
+        src="https://images.unsplash.com/photo-1758518727707-b023e285b709?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+        alt="Madre feliz con su bebé"
+        class="w-full h-full object-cover object-center"
+      />
+      <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.38) 100%);"></div>
+    </div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-8" style="min-height: 100vh; padding-top: 80px; padding-bottom: 60px;">
+      <div class="max-w-3xl mx-auto">
+        <span class="inline-block mb-4 px-4 py-1 rounded-full text-sm font-semibold tracking-widest uppercase animate-fadeIn" style="background-color: rgba(244,194,194,0.25); color: #F4C2C2; border: 1px solid rgba(244,194,194,0.5); font-family: 'DM Sans', sans-serif;">
+          Caja de suscripción mensual para tu bebé
+        </span>
+
+        <h1 class="animate-fadeInUp delay-200 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6" style="font-family: 'Nunito', sans-serif; color: #FAF6F0;">
+          Todo lo que tu bebé necesita,<br />
+          <span style="color: #C9A84C;">sin que pienses en ello.</span>
+        </h1>
+
+        <p class="animate-fadeInUp delay-400 text-lg sm:text-xl md:text-2xl mb-10 max-w-2xl mx-auto leading-relaxed" style="color: rgba(250,246,240,0.88); font-family: 'DM Sans', sans-serif;">
+          Recibí cada mes una caja cuidadosamente seleccionada con los productos esenciales para tu bebé. Vos disfrutá el momento, nosotros nos encargamos del resto.
+        </p>
+
+        <div class="animate-fadeInUp delay-600 flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a href="#suscribirse" class="hero-btn-primary font-bold text-lg px-8 py-4 rounded-full w-full sm:w-auto" style="font-family: 'DM Sans', sans-serif;">
+            Quiero mi caja mensual
+          </a>
+          <a href="#servicios" class="hero-btn-secondary font-semibold text-lg px-8 py-4 rounded-full w-full sm:w-auto" style="font-family: 'DM Sans', sans-serif;">
+            Ver qué incluye
+          </a>
+        </div>
+
+        <div class="animate-fadeInUp delay-800 flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
+          <div class="flex items-center gap-2" style="color: rgba(250,246,240,0.8); font-family: 'DM Sans', sans-serif;">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #C9A84C;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-sm">Envío a domicilio</span>
+          </div>
+          <div class="flex items-center gap-2" style="color: rgba(250,246,240,0.8); font-family: 'DM Sans', sans-serif;">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #C9A84C;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-sm">Productos seleccionados a mano</span>
+          </div>
+          <div class="flex items-center gap-2" style="color: rgba(250,246,240,0.8); font-family: 'DM Sans', sans-serif;">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #C9A84C;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-sm">Sin compromisos anuales</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-fadeIn delay-800">
+      <a href="#servicios" class="flex flex-col items-center gap-2" style="color: rgba(250,246,240,0.6);">
+        <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- SERVICES SECTION -->
+  <section id="servicios" class="py-20 px-4 sm:px-8" style="background-color: #FAF6F0;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="inline-block text-sm font-semibold tracking-widest uppercase mb-4" style="color: #C9A84C; font-family: 'DM Sans', sans-serif;">Cómo funciona</span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">
+          Tu rutina mensual, resuelta en 3 pasos
+        </h2>
+        <div class="w-16 h-1 accent-line mx-auto rounded-full mb-6"></div>
+        <p class="text-lg max-w-2xl mx-auto" style="color: #666; font-family: 'DM Sans', sans-serif; line-height: 1.7;">
+          Sabemos que el tiempo es el bien más preciado de una mamá. Por eso diseñamos una experiencia sin complicaciones para que nunca te falte nada.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        <div class="service-card bg-white rounded-3xl p-8 text-center shadow-sm">
+          <div class="icon-box w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          <div class="step-number w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-4 text-sm font-bold" style="font-family: 'Nunito', sans-serif;">1</div>
+          <h3 class="text-xl font-bold mb-4" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Elegí tu plan</h3>
+          <p class="leading-relaxed" style="color: #666; font-family: 'DM Sans', sans-serif;">Suscribite al plan que más se adapte a la etapa de tu bebé. Todo online, en menos de 5 minutos.</p>
+        </div>
+
+        <div class="service-card bg-white rounded-3xl p-8 text-center shadow-sm">
+          <div class="icon-box w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <div class="step-number w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-4 text-sm font-bold" style="font-family: 'Nunito', sans-serif;">2</div>
+          <h3 class="text-xl font-bold mb-4" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Armamos tu caja</h3>
+          <p class="leading-relaxed" style="color: #666; font-family: 'DM Sans', sans-serif;">Seleccionamos con cuidado los mejores productos para la edad y necesidades de tu bebé cada mes.</p>
+        </div>
+
+        <div class="service-card bg-white rounded-3xl p-8 text-center shadow-sm">
+          <div class="icon-box w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          <div class="step-number w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-4 text-sm font-bold" style="font-family: 'Nunito', sans-serif;">3</div>
+          <h3 class="text-xl font-bold mb-4" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">Recibís en casa</h3>
+          <p class="leading-relaxed" style="color: #666; font-family: 'DM Sans', sans-serif;">Tu caja llega directo a tu puerta. Solo abrís y disfrutás. Nosotros nos encargamos de todo lo demás.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="rounded-3xl overflow-hidden shadow-lg" style="max-height: 460px;">
+          <img
+            src="https://images.unsplash.com/photo-1758518727077-ffb66ffccced?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+            alt="Caja Nubox con productos para bebé"
+            class="w-full h-full object-cover"
+            style="min-height: 320px;"
+          />
+        </div>
+        <div>
+          <span class="inline-block text-sm font-semibold tracking-widest uppercase mb-4" style="color: #C9A84C; font-family: 'DM Sans', sans-serif;">Qué incluye cada caja</span>
+          <h3 class="text-3xl sm:text-4xl font-extrabold mb-6" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">
+            Productos pensados para cada etapa
+          </h3>
+          <p class="text-lg mb-8 leading-relaxed" style="color: #555; font-family: 'DM Sans', sans-serif;">
+            Cada caja contiene entre 6 y 10 productos seleccionados según la edad de tu bebé. Desde pañales y cremas hasta juguetes de estimulación y snacks saludables.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style="background-color: #F4C2C2;">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <span style="color: #555; font-family: 'DM Sans', sans-serif; line-height: 1.6;">Higiene y cuidado: pañales, toallitas húmedas, cremas de barrera</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style="background-color: #F4C2C2;">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <span style="color: #555; font-family: 'DM Sans', sans-serif; line-height: 1.6;">Alimentación: papillas, snacks y bebidas según la etapa</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style="background-color: #F4C2C2;">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <span style="color: #555; font-family: 'DM Sans', sans-serif; line-height: 1.6;">Juegos y estimulación: libros, mordillos, sonajeros y más</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5" style="background-color: #F4C2C2;">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #2d2d2d;">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <span style="color: #555; font-family: 'DM Sans', sans-serif; line-height: 1.6;">Sorpresas mensuales: productos exclusivos y ediciones especiales</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT BRIEF SECTION -->
+  <section id="nosotros-brief" class="py-20 px-4 sm:px-8" style="background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="inline-block text-sm font-semibold tracking-widest uppercase mb-4" style="color: #C9A84C; font-family: 'DM Sans', sans-serif;">Nuestra historia</span>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-tight" style="font-family: 'Nunito', sans-serif; color: #FAF6F0;">
+            Nació de una mamá que entendió el problema
+          </h2>
+          <div class="w-16 h-1 accent-line rounded-full mb-8"></div>
+          <p class="text-lg mb-6 leading-relaxed" style="color: rgba(250,246,240,0.75); font-family: 'DM Sans', sans-serif;">
+            Hola Manu nació en Buenos Aires con una misión clara: devolverle tiempo a las madres. Porque ser mamá es el trabajo más bonito y más exigente del mundo, y nadie debería preocuparse por quedarse sin pañales a las 11 de la noche.
+          </p>
+          <p class="text-lg mb-10 leading-relaxed" style="color: rgba(250,246,240,0.75); font-family: 'DM Sans', sans-serif;">
+            Con Nubox, diseñamos cada caja pensando en lo que realmente necesita tu bebé en cada etapa de su crecimiento. Trabajamos con proveedores de confianza y seleccionamos cada producto con el mismo cuidado que pondrías vos.
+          </p>
+          <div class="grid grid-cols-3 gap-6">
+            <div class="text-center">
+              <div class="text-3xl font-extrabold mb-1" style="font-family: 'Nunito', sans-serif; color: #C9A84C;">+500</div>
+              <div class="text-sm" style="color: rgba(250,246,240,0.6); font-family: 'DM Sans', sans-serif;">Mamás suscritas</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-extrabold mb-1" style="font-family: 'Nunito', sans-serif; color: #C9A84C;">100%</div>
+              <div class="text-sm" style="color: rgba(250,246,240,0.6); font-family: 'DM Sans', sans-serif;">Productos seguros</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-extrabold mb-1" style="font-family: 'Nunito', sans-serif; color: #C9A84C;">4.9</div>
+              <div class="text-sm" style="color: rgba(250,246,240,0.6); font-family: 'DM Sans', sans-serif;">Valoración promedio</div>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <div class="rounded-3xl overflow-hidden shadow-2xl" style="aspect-ratio: 4/5;">
+            <img
+              src="https://images.unsplash.com/photo-1758630737403-1bda34e3f98e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4OTMzMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE3ODE4Mzg4Mzd8&ixlib=rb-4.1.0&q=80&w=1080&w=1200&q=80"
+              alt="Madre disfrutando con su bebé"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl p-5 shadow-xl" style="max-width: 200px;">
+            <div class="flex items-center gap-1 mb-2">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-xs font-medium" style="color: #2d2d2d; font-family: 'DM Sans', sans-serif; line-height: 1.5;">"La mejor decisión que tomé como mamá"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS SECTION -->
+  <section id="testimonios" class="py-20 px-4 sm:px-8" style="background-color: #FAF6F0;">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="inline-block text-sm font-semibold tracking-widest uppercase mb-4" style="color: #C9A84C; font-family: 'DM Sans', sans-serif;">Testimonios reales</span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6" style="font-family: 'Nunito', sans-serif; color: #2d2d2d;">
+          Lo que dicen las mamás que ya lo vivieron
+        </h2>
+        <div class="w-16 h-1 accent-line mx-auto rounded-full"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="testimonial-card bg-white rounded-3xl p-8 shadow-sm relative">
+          <div class="absolute -top-4 left-8 w-8 h-8 rounded-full flex items-center justify-center" style="background-color: #C9A84C;">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" style="color: white;">
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+            </svg>
+          </div>
+          <div class="mt-4">
+            <div class="flex items-center gap-1 mb-4">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" style="color: #C9A84C;"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.
+</main>
+
+  <footer class="bg-secondary/10 border-t border-secondary/25 text-gray-700">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+
+        <div class="flex flex-col items-center md:items-start gap-2">
+          <a href="index.html" class="flex items-center">
+            <img src="/logo.png" alt="Hola manu" style="height:36px;width:auto;object-fit:contain;" />
+          </a>
+          <p class="text-xs text-gray-500 font-body mt-1">© 2026 Hola manu. Todos los derechos reservados.</p>
+        </div>
+
+        <div class="flex flex-col items-center gap-3">
+          <p class="text-xs font-semibold uppercase tracking-widest text-secondary font-heading">Seguinos</p>
+          <div class="flex items-center gap-5">
+
+            <a
+              href="https://wa.me/5492392448733"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="WhatsApp"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+              </svg>
+              WhatsApp
+            </a>
+
+            <a
+              href="https://instagram.com/Nubox"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="Instagram @Nubox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+              </svg>
+              @Nubox
+            </a>
+
+            <a
+              href="https://tiktok.com/@Nubox"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="TikTok @Nubox"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+              </svg>
+              @Nubox
+            </a>
+
+            <a
+              href="mailto:nuboxbaby@gmail.com"
+              class="social-link text-gray-600 text-sm font-body flex items-center gap-1.5"
+              aria-label="Email nuboxbaby@gmail.com"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+              nuboxbaby@gmail.com
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const btn = document.getElementById("hamburger-btn");
+      const menu = document.getElementById("mobile-menu");
+
+      btn.addEventListener("click", function () {
+        const isOpen = menu.classList.toggle("open");
+        btn.classList.toggle("active", isOpen);
+        btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && menu.classList.contains("open")) {
+          menu.classList.remove("open");
+          btn.classList.remove("active");
+          btn.setAttribute("aria-expanded", "false");
+          btn.focus();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

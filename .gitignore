@@ -17,8 +17,7 @@ Agent-Docu/
 mysql/
 wordpress/
 n8n/
-sites/
-sites-lander/
+# sites/ y sites-lander/ ahora se versionan (frontend de clientes NL360, monorepo)
 uploads/
 filebrowser/
 /data/
@@ -74,3 +73,7 @@ WIP-*.md
 # Trackear plugin nl360-core
 !wordpress/wp-content/plugins/nl360-core/
 !wordpress/wp-content/plugins/nl360-core/**
+
+# Trackear mu-plugin nl360-waas
+!wordpress/wp-content/mu-plugins/
+!wordpress/wp-content/mu-plugins/nl360-waas.php
